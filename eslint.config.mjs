@@ -1,14 +1,16 @@
-// @ts-check
+// eslint.config.mjs
 import withNuxt from "./.nuxt/eslint.config.mjs";
-import eslintPluginPrettier from "eslint-plugin-prettier";
-import eslintConfigPrettier from "eslint-config-prettier";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
-export default withNuxt({
-  plugins: {
-    prettier: eslintPluginPrettier,
-  },
+export default withNuxt(eslintPluginPrettierRecommended, {
   rules: {
-    "prettier/prettier": "error",
-    ...eslintConfigPrettier.rules,
+    "prettier/prettier": [
+      "error",
+      {
+        singleQuotes: "true",
+        semi: "true",
+        endOfLine: "auto",
+      },
+    ],
   },
 });
