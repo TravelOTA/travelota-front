@@ -9,11 +9,12 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write",
+    "format": "prettier --check",
+    "format:fix": "prettier --write",
     "typecheck": "nuxt typecheck",
     "prepare": "husky"
   },
-  "lint-staged":{
+  "lint-staged": {
     "*.{js,ts,vue}": [
       "eslint --fix",
       "prettier --write"
