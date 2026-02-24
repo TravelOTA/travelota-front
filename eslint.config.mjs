@@ -7,8 +7,8 @@ export default withNuxt(eslintPluginPrettierRecommended, {
     "prettier/prettier": [
       "error",
       {
-        singleQuotes: "true",
-        semi: "true",
+        singleQuotes: true,
+        semi: true,
         endOfLine: "auto",
       },
     ],
