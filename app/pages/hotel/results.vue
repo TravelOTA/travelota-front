@@ -14,6 +14,30 @@ const filterState = ref({
 
 const hotels = ref<PricingPlanProps[]>([
   {
+    title: "Hotel Varadero Iberostar",
+    description: dummyDescription,
+    badge: {
+      label: "Varadero, Cuba",
+      icon: "i-lucide-map-pin",
+      color: "warning",
+    },
+    price: "$549",
+    tagline: "Best Price",
+    features: [
+      {
+        title: "Stay in shape with a fully equipped gym",
+        icon: "i-lucide-dumbbell",
+      },
+      {
+        title: "Provides internet access at all times",
+        icon: "i-lucide-wifi",
+      },
+    ],
+    button: {
+      label: "Book now",
+    },
+  },
+  {
     title: "Hotel Varadero Resort & Spa",
     description: dummyDescription,
     badge: {
@@ -114,94 +138,103 @@ const hotels = ref<PricingPlanProps[]>([
     <template #left>
       <UCard>
         <template #header>
-          <div>Filters</div>
+          <div class="flex flex-row justify-between gap-4">
+            <div class="text-highlighted text-xl text-pretty font-semibold">
+              Advanced Filters
+            </div>
+            <UButton class="" icon="i-lucide-search" />
+          </div>
         </template>
 
-        <UForm>
-          <!-- Pricing -->
-          <UFormField label="Min Price">
-            <UInputNumber
-              v-model="filterState.minPrice"
-              :format-options="{
-                style: 'currency',
-                currency: 'USD',
-                currencyDisplay: 'code',
-                currencySign: 'standard',
-              }"
-            />
-          </UFormField>
+        <UScrollArea class="h-200 w-full" :ui="{ viewport: 'gap-4 p-4' }">
+          <UForm class="flex flex-col gap-6 w-fill self-center">
+            <!-- Pricing -->
+            <UFormField label="Min Price">
+              <UInputNumber
+                v-model="filterState.minPrice"
+                :format-options="{
+                  style: 'currency',
+                  currency: 'USD',
+                  currencyDisplay: 'code',
+                  currencySign: 'standard',
+                }"
+              />
+            </UFormField>
 
-          <UFormField label="Max Price">
-            <UInputNumber
-              v-model="filterState.maxPrice"
-              :format-options="{
-                style: 'currency',
-                currency: 'USD',
-                currencyDisplay: 'code',
-                currencySign: 'standard',
-              }"
-            />
-          </UFormField>
+            <UFormField label="Max Price">
+              <UInputNumber
+                v-model="filterState.maxPrice"
+                :format-options="{
+                  style: 'currency',
+                  currency: 'USD',
+                  currencyDisplay: 'code',
+                  currencySign: 'standard',
+                }"
+              />
+            </UFormField>
 
-          <!-- Timespan -->
-          <UFormField label="Days of availability">
-            <UCalendar range />
-          </UFormField>
+            <!-- Timespan -->
+            <UFormField label="Days of Availability">
+              <UCalendar range />
+            </UFormField>
 
-          <!-- Search by Name -->
-          <UFormField label="Find Hotel by name">
-            <UInput
-              v-model="filterState.hotelName"
-              icon="i-lucide-search"
-              size="md"
-              variant="outline"
-              placeholder="Search..."
-            />
-          </UFormField>
+            <!-- Search by Name -->
+            <UFormField label="Find Hotel">
+              <UInput
+                v-model="filterState.hotelName"
+                icon="i-lucide-search"
+                size="md"
+                variant="outline"
+                placeholder="Search..."
+              />
+            </UFormField>
 
-          <!-- Address -->
-          <UFormField label="Near the following places">
-            <UInputTags
-              v-model="filterState.nearly"
-              icon="i-lucide-map-pin"
-              size="md"
-              variant="outline"
-            />
-          </UFormField>
+            <!-- Address -->
+            <UFormField label="Near the following places">
+              <UInputTags
+                v-model="filterState.nearly"
+                icon="i-lucide-map-pin"
+                size="md"
+                variant="outline"
+              />
+            </UFormField>
 
-          <UFormField label="Within a radius of">
-            <UInputNumber v-model="filterState.radius" placeholder="Km" />
-          </UFormField>
+            <UFormField label="Within a Radius">
+              <UInputNumber v-model="filterState.radius" placeholder="Km" />
+            </UFormField>
 
-          <!-- Features -->
-          <UFormField label="Services">
-            <URadioGroup
-              size="xl"
-              variant="list"
-              required
-              :items="[
-                'Accommodation and Breakfast',
-                'Accommodation Only',
-                'Rental House',
-                'Room and Meals',
-                'Room Only',
-                'All Inclusive',
-              ]"
-            />
-          </UFormField>
-        </UForm>
+            <!-- Features -->
+            <UFormField label="Services">
+              <URadioGroup
+                size="xl"
+                variant="list"
+                required
+                :items="[
+                  'Accommodation and Breakfast',
+                  'Accommodation Only',
+                  'Rental House',
+                  'Room and Meals',
+                  'Room Only',
+                  'All Inclusive',
+                ]"
+              />
+            </UFormField>
+          </UForm>
+        </UScrollArea>
       </UCard>
     </template>
 
     <UPageBody>
-      <UPricingPlans :plans="hotels" orientation="vertical" compact>
-        <template #button>
-          <div class="flex gap-2">
-            <UButton label="Book now" icon="i-lucide-book-marked" />
-            <UButton label="More options" icon="i-lucide-circle-ellipsis" />
-          </div>
-        </template>
-      </UPricingPlans>
+      <UScrollArea class="h-200 w-full" :ui="{ viewport: 'gap-4 p-4' }">
+        <UPricingPlans :plans="hotels" orientation="vertical" compact>
+          <template #button>
+            <div class="flex gap-2">
+              <UButton label="Book now" icon="i-lucide-book-marked" />
+              <UButton label="More options" icon="i-lucide-circle-ellipsis" />
+            </div>
+          </template>
+        </UPricingPlans>
+      </UScrollArea>
     </UPageBody>
 
     <template #right />
