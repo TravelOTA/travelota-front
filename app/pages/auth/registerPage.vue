@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div
+    class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+  >
     <div class="max-w-md w-full space-y-8">
       <div>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -7,12 +9,15 @@
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
           Or
-          <NuxtLink to="/login" class="font-medium text-blue-600 hover:text-blue-500">
+          <NuxtLink
+            to="/login"
+            class="font-medium text-blue-600 hover:text-blue-500"
+          >
             Log in to existing account
           </NuxtLink>
         </p>
       </div>
-      
+
       <form class="mt-8 space-y-6" @submit.prevent="handleRegister">
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
@@ -64,7 +69,9 @@
             />
           </div>
           <div>
-            <label for="confirm-password" class="sr-only">Confirm Password</label>
+            <label for="confirm-password" class="sr-only"
+              >Confirm Password</label
+            >
             <input
               id="confirm-password"
               v-model="confirmPassword"
@@ -88,9 +95,13 @@
           />
           <label for="terms" class="ml-2 block text-sm text-gray-900">
             I agree to the
-            <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Terms and Conditions</a>
+            <a href="#" class="font-medium text-blue-600 hover:text-blue-500"
+              >Terms and Conditions</a
+            >
             and
-            <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Privacy Policy</a>
+            <a href="#" class="font-medium text-blue-600 hover:text-blue-500"
+              >Privacy Policy</a
+            >
           </label>
         </div>
         <div>
@@ -120,42 +131,43 @@
 
 <script setup>
 definePageMeta({
-  layout: 'default'
-})
+  layout: "default",
+});
 
-const fullName = ref('')
-const email = ref('')
-const phone = ref('')
-const password = ref('')
-const confirmPassword = ref('')
-const acceptTerms = ref(false)
-const loading = ref(false)
-const error = ref('')
-const success = ref('')
+const fullName = ref("");
+const email = ref("");
+const phone = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const acceptTerms = ref(false);
+const loading = ref(false);
+const error = ref("");
+const success = ref("");
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const validateForm = () => {
   if (password.value !== confirmPassword.value) {
-    error.value = 'Passwords do not match'
-    return false
+    error.value = "Passwords do not match";
+    return false;
   }
-  
+
   if (password.value.length < 8) {
-    error.value = 'Password must be at least 8 characters long'
-    return false
+    error.value = "Password must be at least 8 characters long";
+    return false;
   }
-  
+
   if (!acceptTerms.value) {
-    error.value = 'You must accept the terms and conditions'
-    return false
+    error.value = "You must accept the terms and conditions";
+    return false;
   }
-  
-  return true
-}
+
+  return true;
+};
 
 const handleRegister = async () => {
-  error.value = ''
-  success.value = ''
-  
-  //register logic
-}
+  error.value = "";
+  success.value = "";
+
+  // register logic
+};
 </script>

@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div
+    class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+  >
     <div class="max-w-md w-full space-y-8">
       <div>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -7,12 +9,15 @@
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
           Or
-          <NuxtLink to="/register" class="font-medium text-blue-600 hover:text-blue-500">
+          <NuxtLink
+            to="/register"
+            class="font-medium text-blue-600 hover:text-blue-500"
+          >
             create a new account
           </NuxtLink>
         </p>
       </div>
-      
+
       <form class="mt-8 space-y-6" @submit.prevent="handleLogin">
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
@@ -86,20 +91,19 @@
 
 <script setup>
 definePageMeta({
-  layout: 'default'
-})
+  layout: "default",
+});
 
-const email = ref('')
-const password = ref('')
-const rememberMe = ref(false)
-const loading = ref(false)
-const error = ref('')
+const email = ref("");
+const password = ref("");
+const rememberMe = ref(false);
+const loading = ref(false);
+const error = ref("");
 
 const handleLogin = async () => {
-  loading.value = true
-  error.value = ''
- 
-  //login logic
+  loading.value = true;
+  error.value = "";
 
-}
+  // login logic
+};
 </script>
