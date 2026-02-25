@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { PricingPlanProps } from "@nuxt/ui";
 
+const dummyDescription =
+  "Nestled in a prime location, the hotel offers a perfect blend of comfort and convenience for the modern traveler. Guests can enjoy elegantly appointed rooms, modern amenities, and personalized service designed to make their stay unforgettable. Whether visiting for business or leisure, the establishment provides a tranquil retreat in the heart of the action.";
+
 const filterState = ref({
   minPrice: 600,
   maxPrice: 2000,
@@ -12,24 +15,25 @@ const filterState = ref({
 const hotels = ref<PricingPlanProps[]>([
   {
     title: "Hotel Varadero Resort & Spa",
-    description: "Varadero, Cuba",
-    price: "$949",
+    description: dummyDescription,
+    badge: {
+      label: "Varadero, Cuba",
+      icon: "i-lucide-map-pin",
+      color: "warning",
+    },
+    price: "$849",
     tagline: "Best Price",
     features: [
       {
-        title: "Vault",
-        icon: "i-lucide-vault",
-      },
-      {
-        title: "Gym",
+        title: "Stay in shape with a fully equipped gym",
         icon: "i-lucide-dumbbell",
       },
       {
-        title: "Wifi",
+        title: "Provides internet access at all times",
         icon: "i-lucide-wifi",
       },
       {
-        title: "Pool",
+        title: "Excellent pool condition",
         icon: "i-lucide-waves-ladder",
       },
     ],
@@ -39,20 +43,30 @@ const hotels = ref<PricingPlanProps[]>([
   },
   {
     title: "Hotel Paseo del Prado",
-    description: "Habana, Cuba",
-    price: "$1.499",
+    description: dummyDescription,
+    badge: {
+      label: "Habana, Cuba",
+      icon: "i-lucide-map-pin",
+      color: "warning",
+    },
+    price: "$1.599",
+    discount: "1.299",
     tagline: "Best Price",
     features: [
       {
-        title: "Gym",
+        title: "Offers security vault for personal belongings",
+        icon: "i-lucide-vault",
+      },
+      {
+        title: "Stay in shape with a fully equipped gym",
         icon: "i-lucide-dumbbell",
       },
       {
-        title: "Wifi",
+        title: "Provides internet access on rooms",
         icon: "i-lucide-wifi",
       },
       {
-        title: "Pool",
+        title: "Large pool to hang out in",
         icon: "i-lucide-waves-ladder",
       },
     ],
@@ -62,24 +76,29 @@ const hotels = ref<PricingPlanProps[]>([
   },
   {
     title: "Hotel del Cayo",
-    description: "Villa Clara, Cuba",
+    description: dummyDescription,
+    badge: {
+      label: "Villa Clara, Cuba",
+      icon: "i-lucide-map-pin",
+      color: "warning",
+    },
     price: "$1.999",
     tagline: "Best Price",
     features: [
       {
-        title: "Boat Travels",
+        title: "Tourist trips to nature reserves",
         icon: "i-lucide-sailboat",
       },
       {
-        title: "Gym",
+        title: "Stay in shape with a fully equipped gym",
         icon: "i-lucide-dumbbell",
       },
       {
-        title: "Wifi",
+        title: "Provides internet access on rooms",
         icon: "i-lucide-wifi",
       },
       {
-        title: "Beach",
+        title: "Enjoy a beachwith clean water and fine sand",
         icon: "i-lucide-waves",
       },
     ],
@@ -95,7 +114,7 @@ const hotels = ref<PricingPlanProps[]>([
     <template #left>
       <UCard>
         <template #header>
-          <p div="self-center">Filter Header</p>
+          <div>Filters</div>
         </template>
 
         <UForm>
@@ -159,7 +178,7 @@ const hotels = ref<PricingPlanProps[]>([
             <URadioGroup
               size="xl"
               variant="list"
-              :required="false"
+              required
               :items="[
                 'Accommodation and Breakfast',
                 'Accommodation Only',
@@ -175,7 +194,14 @@ const hotels = ref<PricingPlanProps[]>([
     </template>
 
     <UPageBody>
-      <UPricingPlans :plans="hotels" orientation="vertical" />
+      <UPricingPlans :plans="hotels" orientation="vertical" compact>
+        <template #button>
+          <div class="flex gap-2">
+            <UButton label="Book now" icon="i-lucide-book-marked" />
+            <UButton label="More options" icon="i-lucide-circle-ellipsis" />
+          </div>
+        </template>
+      </UPricingPlans>
     </UPageBody>
 
     <template #right />
