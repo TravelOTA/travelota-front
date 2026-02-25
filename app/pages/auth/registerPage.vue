@@ -1,13 +1,13 @@
 <template>
   <div
-    class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+    class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
   >
     <div class="max-w-md w-full space-y-8">
       <div>
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 class="mt-6 text-center text-3xl font-extrabold">
           Create your account
         </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
+        <p class="mt-2 text-center text-sm">
           Or
           <NuxtLink
             to="/login"
@@ -28,7 +28,7 @@
               name="fullName"
               type="text"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               placeholder="Full Name"
             />
           </div>
@@ -41,7 +41,7 @@
               type="email"
               autocomplete="email"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               placeholder="Email address"
             />
           </div>
@@ -52,7 +52,7 @@
               v-model="phone"
               name="phone"
               type="tel"
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               placeholder="Phone Number"
             />
           </div>
@@ -64,7 +64,7 @@
               name="password"
               type="password"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               placeholder="Password"
             />
           </div>
@@ -78,7 +78,7 @@
               name="confirmPassword"
               type="password"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               placeholder="Confirm Password"
             />
           </div>
@@ -91,11 +91,11 @@
             name="terms"
             type="checkbox"
             required
-            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            class="h-4 w-4 focus:ring-blue-500 border-gray-300 rounded"
           />
-          <label for="terms" class="ml-2 block text-sm text-gray-900">
+          <label for="terms" class="ml-2 block text-sm">
             I agree to the
-            <a href="#" class="font-medium text-blue-600 hover:text-blue-500"
+            <a href="#" class="font-medium hover:text-blue-500"
               >Terms and Conditions</a
             >
             and
