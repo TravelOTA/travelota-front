@@ -1,171 +1,159 @@
 <template>
   <div
-    class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+    class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
   >
-    <div class="max-w-md w-full space-y-8">
-      <div>
-        <h2 class="mt-6 text-center text-3xl font-extrabold">
+    <UCard class="max-w-md w-full">
+      <template #header>
+        <h2
+          class="text-center text-3xl font-bold text-gray-900 dark:text-white"
+        >
           Create your account
         </h2>
-        <p class="mt-2 text-center text-sm">
+        <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
           Or
           <NuxtLink
             to="/login"
-            class="font-medium text-blue-600 hover:text-blue-500"
+            class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400"
           >
-            Log in to existing account
+            log in to existing account
           </NuxtLink>
         </p>
-      </div>
+      </template>
 
-      <form class="mt-8 space-y-6" @submit.prevent="handleRegister">
-        <div class="rounded-md shadow-sm -space-y-px">
-          <div>
-            <label for="full-name" class="sr-only">Full Name</label>
-            <input
-              id="full-name"
-              v-model="fullName"
-              name="fullName"
-              type="text"
-              required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              placeholder="Full Name"
-            />
-          </div>
-          <div>
-            <label for="email" class="sr-only">Email address</label>
-            <input
-              id="email"
-              v-model="email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              placeholder="Email address"
-            />
-          </div>
-          <div>
-            <label for="phone" class="sr-only">Phone Number</label>
-            <input
-              id="phone"
-              v-model="phone"
-              name="phone"
-              type="tel"
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              placeholder="Phone Number"
-            />
-          </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <input
-              id="password"
-              v-model="password"
-              name="password"
-              type="password"
-              required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              placeholder="Password"
-            />
-          </div>
-          <div>
-            <label for="confirm-password" class="sr-only"
-              >Confirm Password</label
-            >
-            <input
-              id="confirm-password"
-              v-model="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              placeholder="Confirm Password"
-            />
-          </div>
-        </div>
-
-        <div class="flex items-center">
-          <input
-            id="terms"
-            v-model="acceptTerms"
-            name="terms"
-            type="checkbox"
-            required
-            class="h-4 w-4 focus:ring-blue-500 border-gray-300 rounded"
+      <UForm :schema="registerSchema" :state="state" @submit="handleRegister">
+        <UFormGroup label="Full Name" name="fullName" required class="mb-4">
+          <UInput
+            v-model="state.fullName"
+            placeholder="John Doe"
+            icon="i-lucide-user"
+            autocomplete="name"
           />
-          <label for="terms" class="ml-2 block text-sm">
-            I agree to the
-            <a href="#" class="font-medium hover:text-blue-500"
-              >Terms and Conditions</a
-            >
-            and
-            <a href="#" class="font-medium text-blue-600 hover:text-blue-500"
-              >Privacy Policy</a
-            >
-          </label>
-        </div>
-        <div>
-          <button
-            type="submit"
-            :disabled="loading"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            <span v-if="!loading">Create Account</span>
-            <span v-else>Creating account...</span>
-          </button>
-        </div>
-      </form>
+        </UFormGroup>
 
-      <!-- Error message -->
-      <div v-if="error" class="text-red-500 text-center text-sm">
-        {{ error }}
-      </div>
+        <UFormGroup label="Email" name="email" required class="mb-4">
+          <UInput
+            v-model="state.email"
+            type="email"
+            placeholder="you@example.com"
+            icon="i-lucide-mail"
+            autocomplete="email"
+          />
+        </UFormGroup>
+
+        <UFormGroup label="Phone Number" name="phone" class="mb-4">
+          <UInput
+            v-model="state.phone"
+            type="tel"
+            placeholder="+1 234 567 8900"
+            icon="i-lucide-phone"
+            autocomplete="tel"
+          />
+        </UFormGroup>
+
+        <UFormGroup label="Password" name="password" required class="mb-4">
+          <UInput
+            v-model="state.password"
+            type="password"
+            placeholder="••••••••"
+            icon="i-lucide-lock"
+            autocomplete="new-password"
+          />
+        </UFormGroup>
+
+        <UFormGroup
+          label="Confirm Password"
+          name="confirmPassword"
+          required
+          class="mb-4"
+        >
+          <UInput
+            v-model="state.confirmPassword"
+            type="password"
+            placeholder="••••••••"
+            icon="i-lucide-lock"
+            autocomplete="new-password"
+          />
+        </UFormGroup>
+
+        <UCheckbox v-model="acceptTerms" name="terms" class="mb-4">
+          <template #label>
+            <span class="text-sm text-gray-600 dark:text-gray-400">
+              I agree to the
+              <NuxtLink
+                to="/terms"
+                class="font-medium text-primary-600 hover:text-primary-500"
+                >Terms and Conditions</NuxtLink
+              >
+              and
+              <NuxtLink
+                to="/privacy"
+                class="font-medium text-primary-600 hover:text-primary-500"
+                >Privacy Policy</NuxtLink
+              >
+            </span>
+          </template>
+        </UCheckbox>
+
+        <UButton
+          type="submit"
+          block
+          :loading="loading"
+          :disabled="loading || !acceptTerms"
+          trailing-icon="i-lucide-user-plus"
+        >
+          Create Account
+        </UButton>
+      </UForm>
 
       <!-- Success message -->
-      <div v-if="success" class="text-green-500 text-center text-sm">
-        {{ success }}
-      </div>
-    </div>
+      <UAlert
+        v-if="success"
+        :icon="'i-lucide-check-circle'"
+        color="green"
+        variant="solid"
+        :title="success"
+        class="mt-4"
+        @close="success = ''"
+      />
+    </UCard>
   </div>
 </template>
 
 <script setup>
+// import { z } from "zod";
+
 definePageMeta({
   layout: "default",
 });
 
-const fullName = ref("");
-const email = ref("");
-const phone = ref("");
-const password = ref("");
-const confirmPassword = ref("");
+// Form state
+const state = reactive({
+  fullName: "",
+  email: "",
+  phone: "",
+  password: "",
+  confirmPassword: "",
+});
+
 const acceptTerms = ref(false);
 const loading = ref(false);
-const error = ref("");
 const success = ref("");
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const validateForm = () => {
-  if (password.value !== confirmPassword.value) {
-    error.value = "Passwords do not match";
-    return false;
-  }
-
-  if (password.value.length < 8) {
-    error.value = "Password must be at least 8 characters long";
-    return false;
-  }
-
-  if (!acceptTerms.value) {
-    error.value = "You must accept the terms and conditions";
-    return false;
-  }
-
-  return true;
-};
-
+// Validation schema
+/* const registerSchema = z
+  .object({
+    fullName: z.string().min(2, "Full name must be at least 2 characters"),
+    email: z.string().email("Please enter a valid email address"),
+    phone: z.string().optional(),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  }); */
 const handleRegister = async () => {
-  error.value = "";
+  loading.value = true;
   success.value = "";
 
   // register logic
