@@ -205,8 +205,8 @@ const hotels = ref<PricingPlanProps[]>([
 
             <!-- Features -->
             <UFormField label="Services">
-              <URadioGroup
-                size="xl"
+              <UCheckboxGroup
+                size="md"
                 variant="list"
                 required
                 :items="[
