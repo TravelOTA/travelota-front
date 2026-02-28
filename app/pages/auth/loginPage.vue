@@ -25,7 +25,7 @@
           class="space-y-5"
           @submit="handleLogin"
         >
-          <UFormGroup label="Email" name="email" required>
+          <UFormField label="Email" name="email" required>
             <UInput
               v-model="state.email"
               type="email"
@@ -34,9 +34,9 @@
               autocomplete="email"
               size="lg"
             />
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup label="Password" name="password" required>
+          <UFormField label="Password" name="password" required>
             <UInput
               v-model="state.password"
               type="password"
@@ -45,7 +45,7 @@
               autocomplete="current-password"
               size="lg"
             />
-          </UFormGroup>
+          </UFormField>
 
           <div class="flex items-center justify-between">
             <UCheckbox v-model="rememberMe" label="Remember me" size="sm" />
