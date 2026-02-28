@@ -101,9 +101,28 @@ const handleLogin = () => {
 
                 <div class="flex items-center justify-between pt-2">
                   <UCheckbox
-                    v-model="form.rememberMe"
-                    label="Aceptar Política de privacidad"
-                  />
+                    v-model="form.aceptaPrivacidad"
+                    name="privacidad"
+                    :ui="{
+                      base: 'w-4 h-4',
+                      rounded: 'rounded',
+                      color: 'text-primary-500 focus:ring-primary-500',
+                      border: 'border-gray-300 dark:border-gray-600',
+                    }"
+                  >
+                    <template #label>
+                      <span
+                        class="text-sm text-gray-500 dark:text-gray-400 ml-2"
+                      >
+                        Acepto la
+                        <NuxtLink
+                          to="/privacy"
+                          class="text-[#00A1A1] hover:text-[#008181] underline underline-offset-2 decoration-[#00A1A1]"
+                          >política de privacidad</NuxtLink
+                        >
+                      </span>
+                    </template>
+                  </UCheckbox>
                 </div>
 
                 <UButton
@@ -123,7 +142,7 @@ const handleLogin = () => {
                 >
                   <span class="mb-1">¿Necesitas una cuenta?</span>
                   <NuxtLink
-                    to="/registro"
+                    to="/register"
                     class="text-primary-500 hover:underline font-medium"
                     >Regístrate ahora</NuxtLink
                   >
