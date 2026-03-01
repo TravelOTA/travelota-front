@@ -82,8 +82,8 @@ const handleLogin = () => {
                 <UFormField label="Contraseña" name="password">
                   <template #help>
                     <div class="text-right w-full mt-1">
+                      <!-- Here include the reference to recovery password page -->
                       <NuxtLink
-                        to="/recuperar"
                         class="text-xs text-primary-500 hover:text-primary-600 transition-colors"
                         >Recuperar contraseña</NuxtLink
                       >
