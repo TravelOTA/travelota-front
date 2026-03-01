@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps({
   hotel: {
-    type: Object,
+    type: Object, // REFACTOR: This should be a corresponding hotel type
     required: true,
   },
 });
