@@ -664,7 +664,9 @@ watch(
     <!-- Grid Layout Principal -->
     <div class="flex flex-col lg:flex-row gap-6 items-start">
       <!-- Columna Izquierda: Filtros (hidden on mobile) -->
-      <aside class="hidden lg:block w-[320px] shrink-0 sticky top-24">
+      <aside
+        class="hidden lg:block w-[320px] shrink-0 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto"
+      >
         <FiltersSidebar :hotels="mockHotels" @update:filters="onFilterUpdate" />
       </aside>
 
