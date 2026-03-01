@@ -46,13 +46,6 @@ const submitSearch = () => {
   emit("search", form.value);
 };
 
-const distributionOptions = [
-  "1 Habitación",
-  "1 Habitación, 2 Adultos",
-  "2 Habitaciones",
-  "2 Habitaciones, 4 Adultos",
-];
-
 const nationalityOptions = [
   "Estados Unidos",
   "España",
@@ -124,16 +117,7 @@ const nationalityOptions = [
       <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
         Distribución
       </label>
-      <USelectMenu
-        v-model="form.distribution"
-        :options="distributionOptions"
-        size="md"
-        class="w-full"
-      >
-        <template #leading>
-          <UIcon name="i-heroicons-user" class="w-5 h-5 text-gray-500" />
-        </template>
-      </USelectMenu>
+      <B2bHotelRoomDistribution />
     </div>
 
     <!-- Origin (Nationality) -->
