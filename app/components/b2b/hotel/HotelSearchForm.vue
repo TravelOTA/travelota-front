@@ -65,32 +65,35 @@ const nationalityOptions = [
 
 <template>
   <form
-    class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-4 flex flex-col lg:flex-row gap-4 items-end w-full"
+    class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-4 flex flex-col lg:flex-row gap-4 lg:items-end w-full"
     @submit.prevent="submitSearch"
   >
     <!-- Destination -->
-    <div class="flex-1 w-full lg:min-w-[200px]">
-      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5"
-        >Selecciona un destino</label
-      >
+    <div class="flex-1 w-full min-w-0">
+      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
+        Selecciona un destino
+      </label>
       <UInput
         v-model="form.destination"
         icon="i-heroicons-map-pin"
         placeholder="Ciudad, País o Aeropuerto"
+        size="md"
+        class="w-full"
       />
     </div>
 
     <!-- Date Range Picker -->
-    <div class="flex-[1.5] w-full">
-      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5"
-        >Fechas</label
-      >
-      <UPopover>
+    <div class="flex-1 w-full min-w-0">
+      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
+        Fechas
+      </label>
+      <UPopover class="w-full">
         <UButton
           color="neutral"
           variant="outline"
           icon="i-lucide-calendar"
-          class="w-full justify-start h-10 font-normal"
+          size="md"
+          class="w-full justify-start font-normal"
         >
           <template v-if="dateRange.start">
             <template v-if="dateRange.end">
@@ -117,11 +120,16 @@ const nationalityOptions = [
     </div>
 
     <!-- Distribution -->
-    <div class="flex-1 w-full">
-      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5"
-        >Distribución</label
+    <div class="flex-1 w-full min-w-0">
+      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
+        Distribución
+      </label>
+      <USelectMenu
+        v-model="form.distribution"
+        :options="distributionOptions"
+        size="md"
+        class="w-full"
       >
-      <USelectMenu v-model="form.distribution" :options="distributionOptions">
         <template #leading>
           <UIcon name="i-heroicons-user" class="w-5 h-5 text-gray-500" />
         </template>
@@ -129,11 +137,16 @@ const nationalityOptions = [
     </div>
 
     <!-- Origin (Nationality) -->
-    <div class="flex-1 w-full">
-      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5"
-        >Origen</label
+    <div class="flex-1 w-full min-w-0">
+      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
+        Origen
+      </label>
+      <USelectMenu
+        v-model="form.nationality"
+        :options="nationalityOptions"
+        size="md"
+        class="w-full"
       >
-      <USelectMenu v-model="form.nationality" :options="nationalityOptions">
         <template #leading>
           <UIcon
             name="i-heroicons-globe-americas"
@@ -144,12 +157,14 @@ const nationalityOptions = [
     </div>
 
     <!-- Search Button -->
-    <div class="w-full lg:w-auto mt-4 lg:mt-0">
+    <div class="w-full lg:w-auto">
       <UButton
         type="submit"
-        class="h-10 w-full lg:w-16 flex justify-center items-center !bg-[#bedb39] hover:!bg-[#a6c12d] text-gray-900 transition-colors"
+        color="primary"
+        size="md"
+        class="w-full lg:w-auto flex justify-center items-center transition-colors px-4"
       >
-        <UIcon name="i-heroicons-magnifying-glass" class="w-6 h-6" />
+        <UIcon name="i-heroicons-magnifying-glass" class="w-5 h-5" />
       </UButton>
     </div>
   </form>

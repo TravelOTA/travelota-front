@@ -132,7 +132,7 @@ const selectedRateOption = ref("all");
           v-model="priceRange[0]"
           :min="151"
           :max="31764"
-          class="accent-[#bedb39]"
+          class="accent-green-500"
         />
         <div
           class="flex justify-between items-center text-xs text-gray-500 mt-2"

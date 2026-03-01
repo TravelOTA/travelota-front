@@ -25,7 +25,7 @@ const handleSearchUpdate = (newData: typeof mockSearchData.value) => {
     <!-- Barra de edición activa -->
     <div
       v-if="isEditing"
-      class="bg-[#f2f4f6] dark:bg-gray-800 rounded-lg p-4 shadow-sm mb-6 border-b-4 border-[#bedb39]"
+      class="bg-[#f2f4f6] dark:bg-gray-800 rounded-lg p-4 shadow-sm mb-6 border-b-4 border-primary-500"
     >
       <HotelSearchForm
         :initial-data="mockSearchData"
@@ -36,7 +36,7 @@ const handleSearchUpdate = (newData: typeof mockSearchData.value) => {
     <!-- Barra de resumen (Modo lectura) -->
     <div
       v-else
-      class="bg-[#f2f4f6] dark:bg-gray-800 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between shadow-sm mb-6 border-b-4 border-[#bedb39]"
+      class="bg-[#f2f4f6] dark:bg-gray-800 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between shadow-sm mb-6 border-b-4 border-primary-500"
     >
       <div
         class="text-gray-700 dark:text-gray-300 font-medium text-sm lg:text-base"
@@ -50,9 +50,9 @@ const handleSearchUpdate = (newData: typeof mockSearchData.value) => {
 
       <div class="mt-4 sm:mt-0 flex gap-2">
         <UButton
-          color="neutral"
+          color="primary"
           variant="solid"
-          class="bg-[#bedb39] hover:bg-[#a6c12d] text-gray-900 font-bold px-6 border border-[#a6c12d]"
+          class="font-bold px-6"
           @click="isEditing = true"
         >
           Editar

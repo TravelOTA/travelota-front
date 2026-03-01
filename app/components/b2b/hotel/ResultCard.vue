@@ -27,12 +27,12 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
         <div v-if="hotel.badge" class="absolute top-0 left-0">
           <span
             v-if="hotel.badge === 'recomendado'"
-            class="bg-[#bedb39] text-white p-2 block"
+            class="bg-primary-500 text-white p-2 block"
             ><UIcon name="i-heroicons-hand-thumb-up" class="w-5 h-5"
           /></span>
           <span
             v-else-if="hotel.badge === 'hot'"
-            class="bg-[#bedb39] text-white px-2 py-1 text-xs font-bold uppercase tracking-wider block"
+            class="bg-primary-500 text-white px-2 py-1 text-xs font-bold uppercase tracking-wider block"
             >Hot Deal!</span
           >
         </div>
@@ -86,14 +86,14 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
           <span class="font-bold">$</span>
           {{ hotel.bestPrice.toLocaleString("en-US") }}
         </p>
-        <div class="bg-[#bedb39] p-1 rounded-sm text-white">
+        <div class="bg-primary-500 p-1 rounded-sm text-white">
           <UIcon name="i-heroicons-hand-thumb-up" class="w-4 h-4 block" />
         </div>
       </div>
     </div>
 
     <!-- Separador Estético opcional si está colapsado -->
-    <div v-if="isExpanded" class="w-full h-1 bg-[#bedb39]/20"></div>
+    <div v-if="isExpanded" class="w-full h-1 bg-primary-500/20"></div>
 
     <!-- Grid de Habitaciones (Accordion Mode) -->
     <div v-if="isExpanded" class="bg-gray-50 dark:bg-gray-800/20 px-4 py-2">
@@ -103,7 +103,7 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
         class="flex flex-col sm:flex-row items-center py-4 border-b border-gray-200 dark:border-gray-700 last:border-0 gap-4"
       >
         <!-- Icono (Medalla) -->
-        <div class="w-8 flex justify-center text-[#bedb39]">
+        <div class="w-8 flex justify-center text-primary-500">
           <UIcon name="i-heroicons-check-badge" class="w-6 h-6" />
         </div>
 
@@ -140,11 +140,7 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
 
         <!-- Botón Reservar -->
         <div class="w-28 text-right">
-          <UButton
-            block
-            class="!bg-[#bedb39] hover:!bg-[#a6c12d] text-gray-900 font-bold border border-[#a6c12d]"
-            >Reservar</UButton
-          >
+          <UButton block color="primary" class="font-bold">Reservar</UButton>
         </div>
       </div>
 
