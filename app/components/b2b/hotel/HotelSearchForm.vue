@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import {
-  DateFormatter,
-  getLocalTimeZone,
-  today as todayDate,
-} from "@internationalized/date";
+import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
+import type { DateValue } from "@internationalized/date";
 
-const df = new DateFormatter("es-ES", { dateStyle: "medium" });
+// Format date as dd/MM/yy (e.g. 25/05/26)
+const formatDate = (date: DateValue): string => {
+  const d = date.toDate(getLocalTimeZone());
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yy = String(d.getFullYear()).slice(-2);
+  return `${dd}/${mm}/${yy}`;
+};
 
 const props = defineProps({
   initialData: {
@@ -90,12 +94,12 @@ const nationalityOptions = [
         >
           <template v-if="dateRange.start">
             <template v-if="dateRange.end">
-              {{ df.format(dateRange.start.toDate(getLocalTimeZone())) }}
+              {{ formatDate(dateRange.start) }}
               &nbsp;→&nbsp;
-              {{ df.format(dateRange.end.toDate(getLocalTimeZone())) }}
+              {{ formatDate(dateRange.end) }}
             </template>
             <template v-else>
-              {{ df.format(dateRange.start.toDate(getLocalTimeZone())) }}
+              {{ formatDate(dateRange.start) }}
             </template>
           </template>
           <template v-else> Entrada - Salida </template>
