@@ -18,7 +18,7 @@ jobs:
       - name: Install and Build static site with PNPM
         uses: pnpm/action-setup@v4
       - run: pnpm install
-      - run: pnpm nuxt build --preset github_pages
+      - run: NUXT_APP_BASE_URL=/travelota-front/ pnpm nuxt build --preset github_pages
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
