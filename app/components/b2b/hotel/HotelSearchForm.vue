@@ -48,11 +48,33 @@ const submitSearch = () => {
 
 const nationalityOptions = [
   "Estados Unidos",
-  "España",
-  "República Dominicana",
+  "Canadá",
   "México",
+  "Guatemala",
+  "Honduras",
+  "El Salvador",
+  "Nicaragua",
+  "Costa Rica",
+  "Panamá",
+  "Cuba",
+  "República Dominicana",
+  "Puerto Rico",
   "Colombia",
+  "Venezuela",
+  "Ecuador",
+  "Perú",
+  "Bolivia",
+  "Chile",
   "Argentina",
+  "Uruguay",
+  "Paraguay",
+  "Brasil",
+  "España",
+  "Portugal",
+  "Francia",
+  "Italia",
+  "Alemania",
+  "Reino Unido",
 ];
 </script>
 
@@ -106,6 +128,11 @@ const nationalityOptions = [
             v-model="dateRange"
             class="p-2"
             :number-of-months="2"
+            :fixed-weeks="false"
+            :ui="{
+              cellTrigger:
+                'data-[outside-view]:opacity-0 data-[outside-view]:pointer-events-none',
+            }"
             range
           />
         </template>
@@ -127,7 +154,7 @@ const nationalityOptions = [
       </label>
       <USelectMenu
         v-model="form.nationality"
-        :options="nationalityOptions"
+        :items="nationalityOptions"
         size="md"
         class="w-full"
       >

@@ -59,15 +59,5 @@ const handleSearchUpdate = (newData: typeof mockSearchData.value) => {
         </UButton>
       </div>
     </div>
-
-    <div
-      class="text-xs text-gray-500 dark:text-gray-400 mb-6 flex items-center gap-2"
-    >
-      <span>Home</span>
-      <span class="text-gray-300">/</span>
-      <span class="font-medium">Buscador de hoteles</span>
-      <span class="text-gray-300">/</span>
-      <span class="text-primary-600 font-bold">Listado de hoteles</span>
-    </div>
   </div>
 </template>

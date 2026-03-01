@@ -11,7 +11,33 @@ useHead({
   title: "Resultados: Punta Cana - TravelOTA B2B",
 });
 
-// Hotel Mock to paint UI (Matches user reference)
+// Mobile filter panel toggle
+const showMobileFilters = ref(false);
+
+// Sort state: field + direction
+const sortField = ref<"price" | "stars" | "name" | null>(null);
+const sortDirection = ref<"asc" | "desc">("asc");
+
+const toggleSort = (field: "price" | "stars" | "name") => {
+  if (sortField.value === field) {
+    // Same field clicked: toggle direction
+    sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+  } else {
+    // New field: set it and default to ascending
+    sortField.value = field;
+    sortDirection.value = "asc";
+  }
+};
+
+// Sort icon helper
+const sortIcon = (field: string): string => {
+  if (sortField.value !== field) return "i-heroicons-chevron-up-down";
+  return sortDirection.value === "asc"
+    ? "i-heroicons-chevron-up"
+    : "i-heroicons-chevron-down";
+};
+
+// Hotel Mock data
 const mockHotels = [
   {
     id: 1,
@@ -86,56 +112,130 @@ const mockHotels = [
     ],
   },
 ];
+
+// Sorted hotels computed
+const sortedHotels = computed(() => {
+  const list = [...mockHotels];
+  if (!sortField.value) return list;
+
+  const dir = sortDirection.value === "asc" ? 1 : -1;
+  return list.sort((a, b) => {
+    switch (sortField.value) {
+      case "price":
+        return (a.bestPrice - b.bestPrice) * dir;
+      case "stars":
+        return (a.stars - b.stars) * dir;
+      case "name":
+        return a.name.localeCompare(b.name) * dir;
+      default:
+        return 0;
+    }
+  });
+});
+
+// Min price for display
+const minPrice = computed(() =>
+  Math.min(...mockHotels.map((h) => h.bestPrice)),
+);
 </script>
 
 <template>
   <div class="max-w-[1400px] mx-auto pb-12">
-    <!-- Header Resumen (Breadcrumb + Botón Editar) -->
+    <!-- Header Resumen -->
     <SearchSummaryBar />
 
     <!-- Grid Layout Principal -->
     <div class="flex flex-col lg:flex-row gap-6 items-start">
-      <!-- Columna Izquierda: Filtros -->
-      <aside class="w-full lg:w-[320px] shrink-0 sticky top-24">
-        <FiltersSidebar :total-results="139" :min-price="151" />
+      <!-- Columna Izquierda: Filtros (hidden on mobile) -->
+      <aside class="hidden lg:block w-[320px] shrink-0 sticky top-24">
+        <FiltersSidebar />
       </aside>
 
       <!-- Columna Derecha: Resultados -->
       <main class="flex-1 w-full min-w-0">
-        <!-- Toolbar de Ordenación Superior -->
+        <!-- Results count -->
+        <p
+          class="text-sm text-primary-600 dark:text-primary-400 font-medium mb-3"
+        >
+          <span class="font-bold">{{ mockHotels.length }}</span> hoteles
+          encontrados desde
+          <span class="font-bold">${{ minPrice.toLocaleString("en-US") }}</span>
+        </p>
+
+        <!-- Sort toolbar -->
         <div class="flex flex-wrap items-center gap-2 mb-4">
+          <!-- Mobile-only filter button -->
+          <UButton
+            color="primary"
+            variant="outline"
+            icon="i-heroicons-funnel"
+            class="lg:hidden"
+            @click="showMobileFilters = true"
+          >
+            Filtros
+          </UButton>
+
           <UButton
             color="neutral"
-            variant="solid"
-            class="bg-gray-400 hover:bg-gray-500 text-white rounded-none"
-            >Recomendado</UButton
+            :variant="sortField === 'price' ? 'solid' : 'outline'"
+            size="sm"
+            :icon="sortIcon('price')"
+            @click="toggleSort('price')"
           >
-          <USelectMenu
-            :options="['Precio']"
-            placeholder="Precio"
-            class="w-32"
-          />
-          <USelectMenu
-            :options="['Categoría']"
-            placeholder="Categoría"
-            class="w-32"
-          />
-          <USelectMenu
-            :options="['Nombre']"
-            placeholder="Nombre"
-            class="w-32"
-          />
+            Precio
+          </UButton>
+          <UButton
+            color="neutral"
+            :variant="sortField === 'stars' ? 'solid' : 'outline'"
+            size="sm"
+            :icon="sortIcon('stars')"
+            @click="toggleSort('stars')"
+          >
+            Categoría
+          </UButton>
+          <UButton
+            color="neutral"
+            :variant="sortField === 'name' ? 'solid' : 'outline'"
+            size="sm"
+            :icon="sortIcon('name')"
+            @click="toggleSort('name')"
+          >
+            Nombre
+          </UButton>
         </div>
 
         <!-- Renderizado de Tarjetas -->
         <div>
           <ResultCard
-            v-for="hotel in mockHotels"
+            v-for="hotel in sortedHotels"
             :key="hotel.id"
             :hotel="hotel"
           />
         </div>
       </main>
     </div>
+
+    <!-- Mobile Filters Slideover -->
+    <USlideover v-model:open="showMobileFilters" side="left" class="lg:hidden">
+      <template #header>
+        <div class="flex items-center justify-between w-full">
+          <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+            Filtros
+          </h3>
+          <UButton
+            color="neutral"
+            variant="ghost"
+            icon="i-heroicons-x-mark"
+            @click="showMobileFilters = false"
+          />
+        </div>
+      </template>
+
+      <template #body>
+        <div class="p-4">
+          <FiltersSidebar />
+        </div>
+      </template>
+    </USlideover>
   </div>
 </template>
