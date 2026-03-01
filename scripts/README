@@ -1,0 +1,6 @@
+Include here project utils scripts
+==================================
+
+- start: enchanted pnpm dev
+
+- stop: ensure stop the local service

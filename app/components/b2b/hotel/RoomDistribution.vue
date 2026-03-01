@@ -101,6 +101,7 @@ watch(
 );
 </script>
 
+<!-- REFACTOR: Room Distribution could be displayed via UModal. -->
 <template>
   <UPopover v-model:open="isOpen" class="w-full">
     <!-- Trigger Button -->
