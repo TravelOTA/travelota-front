@@ -26,7 +26,7 @@ const langItems = [[{ label: "ES" }, { label: "EN" }]];
           icon="i-lucide-user"
           variant="ghost"
           color="neutral"
-          to="/"
+          to="/dashboard"
         />
         <UDropdownMenu :items="langItems">
           <UButton
