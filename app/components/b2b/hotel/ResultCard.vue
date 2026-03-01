@@ -16,46 +16,30 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
     <!-- Cabecera de la Tarjeta de Hotel -->
     <div class="flex flex-col md:flex-row bg-white dark:bg-gray-900">
       <!-- Imagen -->
-      <div
-        class="relative w-full md:w-64 h-48 md:h-auto shrink-0 cursor-pointer"
-      >
+      <div class="relative w-full md:w-64 h-48 shrink-0 cursor-pointer">
         <img
           :src="hotel.image"
           :alt="hotel.name"
           class="w-full h-full object-cover"
         />
-        <div v-if="hotel.badge" class="absolute top-0 left-0">
-          <span
-            v-if="hotel.badge === 'recomendado'"
-            class="bg-primary-500 text-white p-2 block"
-            ><UIcon name="i-heroicons-hand-thumb-up" class="w-5 h-5"
-          /></span>
-          <span
-            v-else-if="hotel.badge === 'hot'"
-            class="bg-primary-500 text-white px-2 py-1 text-xs font-bold uppercase tracking-wider block"
-            >Hot Deal!</span
-          >
-        </div>
       </div>
 
       <!-- Info Central -->
       <div class="p-4 flex-1 flex flex-col justify-between">
         <div>
-          <div class="flex items-center gap-2 mb-1">
-            <h3
-              class="text-lg font-bold text-gray-900 dark:text-white cursor-pointer hover:text-primary-600 transition-colors"
-            >
-              {{ hotel.name }}
-            </h3>
-            <div class="flex text-yellow-400">
-              <UIcon
-                v-for="i in hotel.stars"
-                :key="i"
-                name="i-heroicons-star-16-solid"
-                class="w-4 h-4"
-              />
-            </div>
+          <div class="flex text-yellow-400 mb-1">
+            <UIcon
+              v-for="i in hotel.stars"
+              :key="i"
+              name="i-heroicons-star-16-solid"
+              class="w-4 h-4"
+            />
           </div>
+          <h3
+            class="text-lg font-bold text-gray-900 dark:text-white cursor-pointer hover:text-primary-600 transition-colors"
+          >
+            {{ hotel.name }}
+          </h3>
 
           <div
             class="flex items-center text-sm text-gray-500 mb-4 cursor-pointer hover:text-gray-700"
@@ -64,10 +48,6 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
             <span>{{ hotel.location }}</span>
             <span class="ml-2 underline underline-offset-2">Ver el mapa</span>
           </div>
-
-          <UButton variant="outline" color="neutral" size="sm" class="mb-2"
-            >Comparar</UButton
-          >
         </div>
       </div>
 
@@ -84,11 +64,13 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
           class="text-3xl font-light text-gray-900 dark:text-white tracking-tight mb-2"
         >
           <span class="font-bold">$</span>
-          {{ hotel.bestPrice.toLocaleString("en-US") }}
+          {{
+            hotel.bestPrice.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })
+          }}
         </p>
-        <div class="bg-primary-500 p-1 rounded-sm text-white">
-          <UIcon name="i-heroicons-hand-thumb-up" class="w-4 h-4 block" />
-        </div>
       </div>
     </div>
 
@@ -100,7 +82,7 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
       <div
         v-for="(room, idx) in hotel.rooms"
         :key="idx"
-        class="flex flex-col sm:flex-row items-center py-4 border-b border-gray-200 dark:border-gray-700 last:border-0 gap-4"
+        class="flex flex-col sm:flex-row items-center py-1 border-b border-gray-200 dark:border-gray-700 last:border-0 gap-1"
       >
         <!-- Icono (Medalla) -->
         <div class="w-8 flex justify-center text-primary-500">
@@ -127,15 +109,14 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
           >
         </div>
 
-        <!-- Precio Fila -->
-        <div
-          class="w-32 text-right font-bold text-gray-900 dark:text-white flex items-center justify-end gap-1"
-        >
-          $ {{ room.price.toLocaleString("en-US") }}
-          <UIcon
-            name="i-heroicons-information-circle"
-            class="w-4 h-4 text-gray-400 cursor-help"
-          />
+        <div class="w-32 text-right font-bold text-gray-900 dark:text-white">
+          $
+          {{
+            room.price.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })
+          }}
         </div>
 
         <!-- Botón Reservar -->

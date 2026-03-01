@@ -1,48 +1,108 @@
 <script setup lang="ts">
+interface Hotel {
+  id: number;
+  name: string;
+  stars: number;
+  bestPrice: number;
+  rooms: { regimen: string }[];
+}
+
+const props = defineProps<{
+  hotels: Hotel[];
+}>();
+
+const emit = defineEmits<{
+  (e: "update:filters", filters: FilterState): void;
+}>();
+
+interface FilterState {
+  hotelName: string;
+  priceMin: number;
+  priceMax: number;
+  categories: string[];
+  regimes: string[];
+}
+
 // Reactive filter state
 const hotelName = ref("");
 
-// Price range (dual slider)
-const priceMin = ref(151);
-const priceMax = ref(31764);
-const PRICE_FLOOR = 151;
-const PRICE_CEIL = 31764;
+// Derive price bounds from actual hotel data
+const PRICE_FLOOR = computed(() =>
+  props.hotels.length
+    ? Math.floor(Math.min(...props.hotels.map((h) => h.bestPrice)))
+    : 0,
+);
+const PRICE_CEIL = computed(() =>
+  props.hotels.length
+    ? Math.ceil(Math.max(...props.hotels.map((h) => h.bestPrice)))
+    : 10000,
+);
 
-// Price distribution histogram (mock data simulating a decreasing curve)
-const priceDistribution = [
-  95, 88, 82, 76, 70, 65, 60, 55, 50, 46, 42, 38, 35, 32, 29, 26, 24, 22, 20,
-  18, 16, 14, 12, 10, 9, 8, 7, 6, 5, 4,
-];
-const maxBar = Math.max(...priceDistribution);
+const priceMin = ref(0);
+const priceMax = ref(10000);
+
+// Initialize price range when hotels change
+watch(
+  () => props.hotels,
+  () => {
+    priceMin.value = PRICE_FLOOR.value;
+    priceMax.value = PRICE_CEIL.value;
+  },
+  { immediate: true },
+);
+
+// Price distribution histogram – compute from actual hotel data
+const HISTOGRAM_BARS = 30;
+const priceDistribution = computed(() => {
+  const bars = new Array(HISTOGRAM_BARS).fill(0);
+  const floor = PRICE_FLOOR.value;
+  const ceil = PRICE_CEIL.value;
+  const range = ceil - floor || 1;
+  for (const h of props.hotels) {
+    const idx = Math.min(
+      Math.floor(((h.bestPrice - floor) / range) * HISTOGRAM_BARS),
+      HISTOGRAM_BARS - 1,
+    );
+    bars[idx]++;
+  }
+  return bars;
+});
+const maxBar = computed(() => Math.max(...priceDistribution.value, 1));
 
 // Computed positions for dual slider overlay
 const minPercent = computed(
-  () => ((priceMin.value - PRICE_FLOOR) / (PRICE_CEIL - PRICE_FLOOR)) * 100,
+  () =>
+    ((priceMin.value - PRICE_FLOOR.value) /
+      (PRICE_CEIL.value - PRICE_FLOOR.value || 1)) *
+    100,
 );
 const maxPercent = computed(
-  () => ((priceMax.value - PRICE_FLOOR) / (PRICE_CEIL - PRICE_FLOOR)) * 100,
+  () =>
+    ((priceMax.value - PRICE_FLOOR.value) /
+      (PRICE_CEIL.value - PRICE_FLOOR.value || 1)) *
+    100,
 );
 
-// Clamp values on blur and reactively
+// Clamp values on blur
 const clampMin = () => {
-  if (priceMin.value < 0) priceMin.value = 0;
-  if (priceMin.value > PRICE_CEIL) priceMin.value = PRICE_CEIL;
+  if (priceMin.value < PRICE_FLOOR.value) priceMin.value = PRICE_FLOOR.value;
+  if (priceMin.value > PRICE_CEIL.value) priceMin.value = PRICE_CEIL.value;
   if (priceMin.value >= priceMax.value) priceMin.value = priceMax.value - 1;
 };
 const clampMax = () => {
-  if (priceMax.value < 0) priceMax.value = 0;
-  if (priceMax.value > PRICE_CEIL) priceMax.value = PRICE_CEIL;
+  if (priceMax.value < PRICE_FLOOR.value) priceMax.value = PRICE_FLOOR.value;
+  if (priceMax.value > PRICE_CEIL.value) priceMax.value = PRICE_CEIL.value;
   if (priceMax.value <= priceMin.value) priceMax.value = priceMin.value + 1;
 };
 
-// Also enforce limits reactively via watch (prevents histogram overflow while typing)
+// Enforce limits reactively
 watch(priceMin, (val) => {
-  if (val < 0) priceMin.value = 0;
-  if (val > PRICE_CEIL) priceMin.value = PRICE_CEIL;
+  if (val < PRICE_FLOOR.value) priceMin.value = PRICE_FLOOR.value;
+  if (val > PRICE_CEIL.value) priceMin.value = PRICE_CEIL.value;
 });
 watch(priceMax, (val) => {
-  if (val < 0) priceMax.value = 0;
-  if (val > PRICE_CEIL) priceMax.value = PRICE_CEIL;
+  if (val < PRICE_FLOOR.value) priceMax.value = PRICE_FLOOR.value;
+  if (val > PRICE_CEIL.value) priceMax.value = PRICE_CEIL.value;
 });
 
 // Slider input handlers
@@ -61,22 +121,42 @@ const onMaxSlider = (e: Event) => {
 
 // Which histogram bars are inside the selected range
 const barInRange = (barIndex: number): boolean => {
-  const totalBars = priceDistribution.length;
-  const barStart =
-    PRICE_FLOOR + (barIndex / totalBars) * (PRICE_CEIL - PRICE_FLOOR);
-  const barEnd =
-    PRICE_FLOOR + ((barIndex + 1) / totalBars) * (PRICE_CEIL - PRICE_FLOOR);
+  const floor = PRICE_FLOOR.value;
+  const ceil = PRICE_CEIL.value;
+  const range = ceil - floor || 1;
+  const barStart = floor + (barIndex / HISTOGRAM_BARS) * range;
+  const barEnd = floor + ((barIndex + 1) / HISTOGRAM_BARS) * range;
   return barEnd >= priceMin.value && barStart <= priceMax.value;
 };
 
-// Category filters
-const categories = [
-  { label: "★★★★★", count: 80, value: "5" },
-  { label: "★★★★", count: 17, value: "4" },
-  { label: "★★★", count: 30, value: "3" },
-  { label: "★★", count: 8, value: "2" },
-  { label: "★", count: 1, value: "1" },
-];
+// Category filters – compute counts from hotel data
+const categories = computed(() => [
+  {
+    label: "★★★★★",
+    count: props.hotels.filter((h) => h.stars === 5).length,
+    value: "5",
+  },
+  {
+    label: "★★★★",
+    count: props.hotels.filter((h) => h.stars === 4).length,
+    value: "4",
+  },
+  {
+    label: "★★★",
+    count: props.hotels.filter((h) => h.stars === 3).length,
+    value: "3",
+  },
+  {
+    label: "★★",
+    count: props.hotels.filter((h) => h.stars === 2).length,
+    value: "2",
+  },
+  {
+    label: "★",
+    count: props.hotels.filter((h) => h.stars === 1).length,
+    value: "1",
+  },
+]);
 const selectedCategories = ref<string[]>([]);
 
 // Board/regime filters
@@ -88,6 +168,21 @@ const regimes = [
   { label: "Todo Incluido", value: "TI" },
 ];
 const selectedRegimes = ref<string[]>([]);
+
+// Emit filter state whenever any filter changes
+watch(
+  [hotelName, priceMin, priceMax, selectedCategories, selectedRegimes],
+  () => {
+    emit("update:filters", {
+      hotelName: hotelName.value,
+      priceMin: priceMin.value,
+      priceMax: priceMax.value,
+      categories: selectedCategories.value,
+      regimes: selectedRegimes.value,
+    });
+  },
+  { deep: true },
+);
 </script>
 
 <template>
