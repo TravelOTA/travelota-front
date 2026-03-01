@@ -1,0 +1,73 @@
+<script setup lang="ts">
+import HotelSearchForm from "~/components/b2b/hotel/HotelSearchForm.vue";
+
+const isEditing = ref(false);
+
+const mockSearchData = ref({
+  destination: "Punta Cana, La Altagracia, Republica Dominicana",
+  checkIn: "2026-06-13",
+  nights: 6,
+  checkOut: "2026-06-19",
+  distribution: "1 Habitaciones, 2 Adultos",
+  nationality: "Estados Unidos",
+});
+
+const handleSearchUpdate = (newData: typeof mockSearchData.value) => {
+  console.log("Renewing results for:", newData);
+  mockSearchData.value = { ...newData };
+  isEditing.value = false;
+  // Emit or regenerate search here
+};
+</script>
+
+<template>
+  <div>
+    <!-- Barra de edición activa -->
+    <div
+      v-if="isEditing"
+      class="bg-[#f2f4f6] dark:bg-gray-800 rounded-lg p-4 shadow-sm mb-6 border-b-4 border-[#bedb39]"
+    >
+      <HotelSearchForm
+        :initial-data="mockSearchData"
+        @search="handleSearchUpdate"
+      />
+    </div>
+
+    <!-- Barra de resumen (Modo lectura) -->
+    <div
+      v-else
+      class="bg-[#f2f4f6] dark:bg-gray-800 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between shadow-sm mb-6 border-b-4 border-[#bedb39]"
+    >
+      <div
+        class="text-gray-700 dark:text-gray-300 font-medium text-sm lg:text-base"
+      >
+        <span class="font-bold text-gray-900 dark:text-white">{{
+          mockSearchData.destination
+        }}</span
+        >, {{ mockSearchData.checkIn }} - {{ mockSearchData.checkOut }},
+        {{ mockSearchData.distribution }}
+      </div>
+
+      <div class="mt-4 sm:mt-0 flex gap-2">
+        <UButton
+          color="neutral"
+          variant="solid"
+          class="bg-[#bedb39] hover:bg-[#a6c12d] text-gray-900 font-bold px-6 border border-[#a6c12d]"
+          @click="isEditing = true"
+        >
+          Editar
+        </UButton>
+      </div>
+    </div>
+
+    <div
+      class="text-xs text-gray-500 dark:text-gray-400 mb-6 flex items-center gap-2"
+    >
+      <span>Home</span>
+      <span class="text-gray-300">/</span>
+      <span class="font-medium">Buscador de hoteles</span>
+      <span class="text-gray-300">/</span>
+      <span class="text-primary-600 font-bold">Listado de hoteles</span>
+    </div>
+  </div>
+</template>

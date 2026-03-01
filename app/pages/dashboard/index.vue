@@ -1,5 +1,6 @@
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { useRouter } from "vue-router";
+import HotelSearchForm from "~/components/b2b/hotel/HotelSearchForm.vue";
 
 definePageMeta({
   layout: "dashboard",
@@ -9,17 +10,12 @@ useHead({
   title: "Buscador de Hoteles - Portal B2B",
 });
 
-const searchForm = ref({
-  destination: "",
-  checkIn: "",
-  checkOut: "",
-  guests: 2,
-  rooms: 1,
-});
+const router = useRouter();
 
-const handleSearch = () => {
-  // Aquí se redirigiría a los resultados de búsqueda de hoteles
-  console.log("Buscando hoteles internamente con:", searchForm.value);
+const handleSearch = (data: Record<string, unknown>) => {
+  // TODO: Pass searchForm data to Pinia store or via query params
+  console.log("Starting search with payload:", data);
+  router.push("/dashboard/hotels/results");
 };
 </script>
 
@@ -36,70 +32,9 @@ const handleSearch = () => {
     </div>
 
     <!-- Buscador Principal -->
-    <UCard :ui="{ shadow: 'shadow-md', rounded: 'rounded-lg' }" class="mb-10">
-      <form
-        class="grid grid-cols-1 md:grid-cols-12 gap-x-4 gap-y-6 items-end"
-        @submit.prevent="handleSearch"
-      >
-        <!-- Destino -->
-        <UFormGroup label="Destino o nombre del hotel" class="md:col-span-4">
-          <UInput
-            v-model="searchForm.destination"
-            icon="i-heroicons-map-pin"
-            placeholder="Ej. Madrid, Cancún, Punta Cana..."
-            size="lg"
-            :ui="{ base: 'h-11' }"
-          />
-        </UFormGroup>
-
-        <!-- Fechas (simplificado con 2 inputs de fecha por ahora) -->
-        <UFormGroup label="Entrada" class="md:col-span-2">
-          <UInput
-            v-model="searchForm.checkIn"
-            type="date"
-            icon="i-heroicons-calendar"
-            size="lg"
-            :ui="{ base: 'h-11' }"
-          />
-        </UFormGroup>
-
-        <UFormGroup label="Salida" class="md:col-span-2">
-          <UInput
-            v-model="searchForm.checkOut"
-            type="date"
-            icon="i-heroicons-calendar"
-            size="lg"
-            :ui="{ base: 'h-11' }"
-          />
-        </UFormGroup>
-
-        <!-- Habitaciones y Huéspedes -->
-        <UFormGroup label="Huéspedes" class="md:col-span-2">
-          <UInput
-            v-model="searchForm.guests"
-            type="number"
-            min="1"
-            icon="i-heroicons-users"
-            size="lg"
-            :ui="{ base: 'h-11' }"
-          />
-        </UFormGroup>
-
-        <!-- Botón Buscar -->
-        <div class="md:col-span-2">
-          <UButton
-            type="submit"
-            color="primary"
-            size="lg"
-            block
-            icon="i-heroicons-magnifying-glass"
-            class="font-bold tracking-wide h-11"
-          >
-            BUSCAR
-          </UButton>
-        </div>
-      </form>
-    </UCard>
+    <div class="mb-10">
+      <HotelSearchForm @search="handleSearch" />
+    </div>
 
     <!-- Ofertas Destacadas o Inspiración -->
     <div>
@@ -121,7 +56,7 @@ const handleSearch = () => {
               class="w-full h-full object-cover"
             />
             <UBadge
-              color="red"
+              color="error"
               class="absolute top-3 right-3 font-bold px-2 py-1"
               >-20%</UBadge
             >
