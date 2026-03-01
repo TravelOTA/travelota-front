@@ -24,12 +24,15 @@
     "@iconify-json/lucide": "^1.2.90",
     "@iconify-json/simple-icons": "^1.2.70",
     "@nuxt/ui": "^4.4.0",
+    "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vuepic/vue-datepicker": "^12.1.0",
+    "leaflet": "^1.9.4",
     "nuxt": "^4.3.1",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.1",
+    "@types/leaflet": "^1.9.21",
     "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",

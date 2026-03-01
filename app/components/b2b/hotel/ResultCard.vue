@@ -46,7 +46,6 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
           >
             <UIcon name="i-heroicons-map-pin" class="w-4 h-4 mr-1" />
             <span>{{ hotel.location }}</span>
-            <span class="ml-2 underline underline-offset-2">Ver el mapa</span>
           </div>
         </div>
       </div>
