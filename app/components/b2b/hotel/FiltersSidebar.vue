@@ -160,13 +160,23 @@ const categories = computed(() => [
 const selectedCategories = ref<string[]>([]);
 
 // Board/regime filters
-const regimes = [
-  { label: "Solo Alojamiento", value: "SA" },
-  { label: "Alojamiento y Desayuno", value: "CP" },
-  { label: "Media Pension", value: "MP" },
-  { label: "Pension Completa", value: "PC" },
-  { label: "Todo Incluido", value: "TI" },
-];
+const regimes = computed(() => {
+  const baseRegimes = [
+    { label: "Solo Alojamiento", value: "SA" },
+    { label: "Alojamiento y Desayuno", value: "CP" },
+    { label: "Media Pensión", value: "MP" },
+    { label: "Pensión Completa", value: "PC" },
+    { label: "Todo Incluido", value: "TI" },
+  ];
+
+  return baseRegimes.map((reg) => {
+    // A hotel counts for a regime if ANY of its rooms have that regime
+    const count = props.hotels.filter((h) =>
+      h.rooms.some((r) => r.regimen === reg.value),
+    ).length;
+    return { ...reg, count };
+  });
+});
 const selectedRegimes = ref<string[]>([]);
 
 // Emit filter state whenever any filter changes
@@ -359,7 +369,10 @@ watch(
               :value="reg.value"
               class="w-4 h-4 rounded border-gray-300 accent-green-600 focus:ring-primary-500"
             />
-            {{ reg.label }}
+            <span class="text-gray-700 dark:text-gray-300">{{
+              reg.label
+            }}</span>
+            <span class="text-gray-400 ml-auto">({{ reg.count }})</span>
           </label>
         </div>
       </div>
@@ -379,7 +392,10 @@ watch(
               type="checkbox"
               class="w-4 h-4 rounded border-gray-300 accent-green-600 focus:ring-primary-500"
             />
-            Todas las Ofertas
+            <span>Todas las Ofertas</span>
+            <span class="text-gray-400 ml-auto"
+              >({{ props.hotels.length }})</span
+            >
           </label>
           <label
             class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 dark:text-gray-300"
@@ -388,7 +404,8 @@ watch(
               type="checkbox"
               class="w-4 h-4 rounded border-gray-300 accent-green-600 focus:ring-primary-500"
             />
-            Descartar Ofertas Bajo Petición
+            <span>Descartar Ofertas Bajo Petición</span>
+            <span class="text-gray-400 ml-auto">(0)</span>
           </label>
         </div>
       </div>

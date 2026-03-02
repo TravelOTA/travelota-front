@@ -270,6 +270,279 @@ const mockHotels = [
       },
     ],
   },
+  {
+    id: 11,
+    name: "Hard Rock Hotel & Casino Punta Cana",
+    stars: 5,
+    location: "Punta Cana, DO",
+    coordinates: [18.73, -68.46],
+    image: hotelImages[0],
+    bestPrice: 2800.0,
+    rooms: [
+      {
+        name: "Rock Royalty Suite",
+        regimen: "TI",
+        cancellation: "Cancelación gratuita",
+        price: 3200.0,
+      },
+      {
+        name: "Islander Junior Suite",
+        regimen: "TI",
+        cancellation: "Gastos de cancelación",
+        price: 2800.0,
+      },
+    ],
+  },
+  {
+    id: 12,
+    name: "Majestic Elegance Punta Cana",
+    stars: 5,
+    location: "Playa Bavaro, DO",
+    coordinates: [18.72, -68.445],
+    image: hotelImages[1],
+    bestPrice: 1550.75,
+    rooms: [
+      {
+        name: "Elegance Club Suite",
+        regimen: "TI",
+        cancellation: "No reembolsable",
+        price: 1550.75,
+      },
+    ],
+  },
+  {
+    id: 13,
+    name: "Bahia Principe Grand Bavaro",
+    stars: 4,
+    location: "Punta Cana, DO",
+    coordinates: [18.718, -68.44],
+    image: hotelImages[2],
+    bestPrice: 850.5,
+    rooms: [
+      {
+        name: "Superior Junior Suite",
+        regimen: "TI",
+        cancellation: "Gastos de cancelación",
+        price: 850.5,
+      },
+    ],
+  },
+  {
+    id: 14,
+    name: "Sanctuary Cap Cana",
+    stars: 5,
+    location: "Cap Cana, DO",
+    coordinates: [18.52, -68.39],
+    image: hotelImages[3],
+    bestPrice: 3500.0,
+    rooms: [
+      {
+        name: "Monarch Villa",
+        regimen: "TI",
+        cancellation: "Gastos de cancelación",
+        price: 4200.0,
+      },
+      {
+        name: "Castle Suite",
+        regimen: "TI",
+        cancellation: "Cancelación gratuita",
+        price: 3500.0,
+      },
+    ],
+  },
+  {
+    id: 15,
+    name: "Nickelodeon Hotels & Resorts",
+    stars: 5,
+    location: "Uvero Alto, DO",
+    coordinates: [18.81, -68.58],
+    image: hotelImages[4],
+    bestPrice: 2100.25,
+    rooms: [
+      {
+        name: "Pad Suite",
+        regimen: "TI",
+        cancellation: "Gastos de cancelación",
+        price: 2100.25,
+      },
+      {
+        name: "Pineapple Villa",
+        regimen: "TI",
+        cancellation: "Cancelación gratuita",
+        price: 5500.0,
+      },
+    ],
+  },
+  {
+    id: 16,
+    name: "Dreams Royal Beach",
+    stars: 5,
+    location: "Punta Cana, DO",
+    coordinates: [18.6755, -68.406],
+    image: hotelImages[0],
+    bestPrice: 1950.0,
+    rooms: [
+      {
+        name: "Preferred Club Junior Suite",
+        regimen: "TI",
+        cancellation: "No reembolsable",
+        price: 1950.0,
+      },
+    ],
+  },
+  {
+    id: 17,
+    name: "Lopesan Costa Bávaro",
+    stars: 5,
+    location: "Playa Bavaro, DO",
+    coordinates: [18.66, -68.39],
+    image: hotelImages[1],
+    bestPrice: 1780.6,
+    rooms: [
+      {
+        name: "Junior Suite Tropical",
+        regimen: "TI",
+        cancellation: "Cancelación gratuita",
+        price: 1780.6,
+      },
+    ],
+  },
+  {
+    id: 18,
+    name: "Vista Sol Punta Cana Beach Resort",
+    stars: 4,
+    location: "Playa Bavaro, DO",
+    coordinates: [18.682, -68.412],
+    image: hotelImages[2],
+    bestPrice: 650.0,
+    rooms: [
+      {
+        name: "Habitación Doble",
+        regimen: "TI",
+        cancellation: "Gastos de cancelación",
+        price: 650.0,
+      },
+    ],
+  },
+  {
+    id: 19,
+    name: "Eden Roc Cap Cana",
+    stars: 5,
+    location: "Cap Cana, DO",
+    coordinates: [18.515, -68.395],
+    image: hotelImages[3],
+    bestPrice: 4800.0,
+    rooms: [
+      {
+        name: "Luxury Pool Suite",
+        regimen: "CP",
+        cancellation: "Cancelación gratuita",
+        price: 4800.0,
+      },
+    ],
+  },
+  {
+    id: 20,
+    name: "Breathless Punta Cana",
+    stars: 5,
+    location: "Uvero Alto, DO",
+    coordinates: [18.815, -68.585],
+    image: hotelImages[4],
+    bestPrice: 2200.0,
+    rooms: [
+      {
+        name: "Xhale Club Suite",
+        regimen: "TI",
+        cancellation: "Gastos de cancelación",
+        price: 2200.0,
+      },
+    ],
+  },
+  {
+    id: 21,
+    name: "Hyatt Ziva Cap Cana",
+    stars: 5,
+    location: "Cap Cana, DO",
+    coordinates: [18.525, -68.385],
+    image: hotelImages[0],
+    bestPrice: 2950.0,
+    rooms: [
+      {
+        name: "Ocean View Master",
+        regimen: "TI",
+        cancellation: "Gastos de cancelación",
+        price: 2950.0,
+      },
+    ],
+  },
+  {
+    id: 22,
+    name: "Sunscape Coco Punta Cana",
+    stars: 4,
+    location: "Cabeza de Toro, DO",
+    coordinates: [18.63, -68.35],
+    image: hotelImages[1],
+    bestPrice: 720.5,
+    rooms: [
+      {
+        name: "Deluxe Tropical View",
+        regimen: "TI",
+        cancellation: "No reembolsable",
+        price: 720.5,
+      },
+    ],
+  },
+  {
+    id: 23,
+    name: "Catalonia Royal Bavaro",
+    stars: 5,
+    location: "Cabeza de Toro, DO",
+    coordinates: [18.635, -68.355],
+    image: hotelImages[2],
+    bestPrice: 1100.0,
+    rooms: [
+      {
+        name: "Superior Junior Suite",
+        regimen: "TI",
+        cancellation: "Gastos de cancelación",
+        price: 1100.0,
+      },
+    ],
+  },
+  {
+    id: 24,
+    name: "Royalton Splash Punta Cana",
+    stars: 4,
+    location: "Punta Cana, DO",
+    coordinates: [18.725, -68.455],
+    image: hotelImages[3],
+    bestPrice: 890.0,
+    rooms: [
+      {
+        name: "Luxury Room",
+        regimen: "TI",
+        cancellation: "Gastos de cancelación",
+        price: 890.0,
+      },
+    ],
+  },
+  {
+    id: 25,
+    name: "Ocean Blue & Sand",
+    stars: 4,
+    location: "Playa Bavaro, DO",
+    coordinates: [18.712, -68.438],
+    image: hotelImages[4],
+    bestPrice: 910.75,
+    rooms: [
+      {
+        name: "Privilege Junior Suite",
+        regimen: "TI",
+        cancellation: "Gastos de cancelación",
+        price: 910.75,
+      },
+    ],
+  },
 ];
 
 // Filter state from sidebar
@@ -375,7 +648,7 @@ watch(
     <div class="flex flex-col lg:flex-row gap-6 items-start">
       <!-- Columna Izquierda: Filtros (hidden on mobile) -->
       <aside
-        class="hidden lg:block w-[320px] shrink-0 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto"
+        class="hidden lg:block w-[320px] shrink-0 sticky top-24 self-start max-h-[calc(100vh-6rem)] overflow-y-auto rounded-lg scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600"
       >
         <FiltersSidebar :hotels="mockHotels" @update:filters="onFilterUpdate" />
       </aside>
