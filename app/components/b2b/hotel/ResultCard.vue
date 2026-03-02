@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   hotel: {
     type: Object, // REFACTOR: This should be a corresponding hotel type
     required: true,
@@ -11,6 +11,19 @@ const emit = defineEmits<{
 }>();
 
 const isExpanded = ref(true); // Simulate that by default the first 2 are shown expanded
+const showAllRooms = ref(false);
+
+const sortedRooms = computed(() => {
+  if (!props.hotel || !Array.isArray(props.hotel.rooms)) return [];
+  return [...props.hotel.rooms].sort(
+    (a: { price?: number }, b: { price?: number }) =>
+      (a.price || 0) - (b.price || 0),
+  );
+});
+
+const visibleRooms = computed(() => {
+  return showAllRooms.value ? sortedRooms.value : sortedRooms.value.slice(0, 1);
+});
 </script>
 
 <template>
@@ -85,7 +98,7 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
     <!-- Grid de Habitaciones (Accordion Mode) -->
     <div v-if="isExpanded" class="bg-gray-50 dark:bg-gray-800/20 px-4 py-2">
       <div
-        v-for="(room, idx) in hotel.rooms"
+        v-for="(room, idx) in visibleRooms"
         :key="idx"
         class="flex flex-col sm:flex-row items-center py-1 border-b border-gray-200 dark:border-gray-700 last:border-0 gap-1"
       >
@@ -107,11 +120,47 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
         </div>
 
         <!-- Cancelación -->
-        <div class="w-40">
-          <span
-            class="text-xs text-gray-500 underline underline-offset-2 cursor-pointer hover:text-gray-700"
-            >{{ room.cancellation }}</span
+        <div class="w-auto sm:w-48 flex items-center gap-1">
+          <UPopover>
+            <span
+              class="text-xs text-gray-500 underline underline-offset-2 cursor-pointer hover:text-gray-700 block"
+            >
+              Gastos de cancelación
+            </span>
+            <template #content>
+              <div class="p-3 w-64 text-sm z-50">
+                <p class="font-bold text-gray-900 dark:text-white mb-1">
+                  Política de Cancelación
+                </p>
+                <p class="text-gray-600 dark:text-gray-300 text-xs">
+                  {{ room.cancellation }}. (Texto de ejemplo, será devuelto por
+                  el backend próximamente).
+                </p>
+              </div>
+            </template>
+          </UPopover>
+          <UBadge
+            v-if="
+              String(room.cancellation)
+                .toLowerCase()
+                .includes('no reembolsable')
+            "
+            color="error"
+            variant="soft"
+            size="xs"
+            class="ml-1 px-1 py-0 text-[9px] font-bold leading-tight"
           >
+            NR
+          </UBadge>
+          <UBadge
+            v-if="room.onRequest"
+            color="warning"
+            variant="soft"
+            size="xs"
+            class="ml-1 px-1 py-0 text-[9px] font-bold leading-tight"
+          >
+            OR
+          </UBadge>
         </div>
 
         <div class="w-32 text-right font-bold text-gray-900 dark:text-white">
@@ -132,13 +181,22 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
 
       <!-- Toggle "Ver Más opciones" -->
       <div
+        v-if="sortedRooms.length > 1"
         class="py-3 text-center border-t border-gray-200 dark:border-gray-700 mt-2"
       >
         <button
           class="inline-flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary-600 transition-colors"
+          @click="showAllRooms = !showAllRooms"
         >
-          <UIcon name="i-heroicons-plus-circle" class="w-5 h-5 mr-2" />
-          Ver más opciones
+          <UIcon
+            :name="
+              showAllRooms
+                ? 'i-heroicons-minus-circle'
+                : 'i-heroicons-plus-circle'
+            "
+            class="w-5 h-5 mr-2"
+          />
+          {{ showAllRooms ? "Ver menos opciones" : "Ver más opciones" }}
         </button>
       </div>
     </div>

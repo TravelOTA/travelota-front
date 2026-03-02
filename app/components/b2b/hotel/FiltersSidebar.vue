@@ -4,7 +4,7 @@ interface Hotel {
   name: string;
   stars: number;
   bestPrice: number;
-  rooms: { regimen: string }[];
+  rooms: { regimen: string; cancellation?: string }[];
 }
 
 const props = defineProps<{
@@ -22,6 +22,8 @@ interface FilterState {
   priceMax: number;
   categories: string[];
   regimes: string[];
+  hideNR: boolean;
+  hideOR: boolean;
 }
 
 // Reactive filter state
@@ -180,9 +182,20 @@ const regimes = computed(() => {
 });
 const selectedRegimes = ref<string[]>([]);
 
+const hideNR = ref(false);
+const hideOR = ref(false);
+
 // Emit filter state whenever any filter changes
 watch(
-  [hotelName, priceMin, priceMax, selectedCategories, selectedRegimes],
+  [
+    hotelName,
+    priceMin,
+    priceMax,
+    selectedCategories,
+    selectedRegimes,
+    hideNR,
+    hideOR,
+  ],
   () => {
     emit("update:filters", {
       hotelName: hotelName.value,
@@ -190,6 +203,8 @@ watch(
       priceMax: priceMax.value,
       categories: selectedCategories.value,
       regimes: selectedRegimes.value,
+      hideNR: hideNR.value,
+      hideOR: hideOR.value,
     });
   },
   { deep: true },
@@ -411,23 +426,21 @@ watch(
             class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 dark:text-gray-300"
           >
             <input
+              v-model="hideNR"
               type="checkbox"
               class="w-4 h-4 rounded border-gray-300 accent-green-600 focus:ring-primary-500"
             />
-            <span>Todas las Ofertas</span>
-            <span class="text-gray-400 ml-auto"
-              >({{ props.hotels.length }})</span
-            >
+            <span>Ocultar Ofertas No Reembolsables</span>
           </label>
           <label
             class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 dark:text-gray-300"
           >
             <input
+              v-model="hideOR"
               type="checkbox"
               class="w-4 h-4 rounded border-gray-300 accent-green-600 focus:ring-primary-500"
             />
-            <span>Descartar Ofertas Bajo Petición</span>
-            <span class="text-gray-400 ml-auto">(0)</span>
+            <span>Ocultar Ofertas Bajo Petición</span>
           </label>
         </div>
       </div>

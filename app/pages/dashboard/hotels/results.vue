@@ -90,6 +90,7 @@ const mockHotels = [
         regimen: "TI",
         cancellation: "Gastos de cancelación",
         price: 2749.2,
+        onRequest: true,
       },
     ],
   },
@@ -111,8 +112,9 @@ const mockHotels = [
       {
         name: "Premium cerca de la playa",
         regimen: "TI",
-        cancellation: "Gastos de cancelación",
+        cancellation: "No reembolsable",
         price: 1171.68,
+        onRequest: true,
       },
     ],
   },
@@ -565,6 +567,8 @@ interface FilterState {
   priceMax: number;
   categories: string[];
   regimes: string[];
+  hideNR: boolean;
+  hideOR: boolean;
 }
 const activeFilters = ref<FilterState>({
   hotelName: "",
@@ -572,6 +576,8 @@ const activeFilters = ref<FilterState>({
   priceMax: 999999,
   categories: [],
   regimes: [],
+  hideNR: false,
+  hideOR: false,
 });
 const onFilterUpdate = (filters: FilterState) => {
   activeFilters.value = filters;
@@ -580,25 +586,66 @@ const onFilterUpdate = (filters: FilterState) => {
 // Filtered hotels (apply sidebar filters)
 const filteredHotels = computed(() => {
   const f = activeFilters.value;
-  return mockHotels.filter((h) => {
-    // Name search
-    if (
-      f.hotelName &&
-      !h.name.toLowerCase().includes(f.hotelName.toLowerCase())
-    )
-      return false;
-    // Price range
-    if (h.bestPrice < f.priceMin || h.bestPrice > f.priceMax) return false;
-    // Category (stars)
-    if (f.categories.length > 0 && !f.categories.includes(String(h.stars)))
-      return false;
-    // Regime
-    if (f.regimes.length > 0) {
-      const hotelRegimes = h.rooms.map((r) => r.regimen);
-      if (!f.regimes.some((reg) => hotelRegimes.includes(reg))) return false;
-    }
-    return true;
-  });
+  return mockHotels
+    .filter((h) => {
+      // Name search
+      if (
+        f.hotelName &&
+        !h.name.toLowerCase().includes(f.hotelName.toLowerCase())
+      )
+        return false;
+      // Price range
+      if (h.bestPrice < f.priceMin || h.bestPrice > f.priceMax) return false;
+      // Category (stars)
+      if (f.categories.length > 0 && !f.categories.includes(String(h.stars)))
+        return false;
+      // Regime
+      if (f.regimes.length > 0) {
+        const hotelRegimes = h.rooms.map((r) => r.regimen);
+        if (!f.regimes.some((reg) => hotelRegimes.includes(reg))) return false;
+      }
+
+      // Non-Refundable filtering
+      if (f.hideNR) {
+        const hasRefundableRooms = h.rooms.some(
+          (r) =>
+            !String(r.cancellation || "")
+              .toLowerCase()
+              .includes("no reembolsable"),
+        );
+        if (!hasRefundableRooms) return false;
+      }
+
+      // On Request filtering
+      if (f.hideOR) {
+        const hasInstantRooms = h.rooms.some((r) => !r.onRequest);
+        if (!hasInstantRooms) return false;
+      }
+
+      return true;
+    })
+    .map((h) => {
+      let filteredRooms = h.rooms;
+
+      // Strip NR rooms
+      if (f.hideNR) {
+        filteredRooms = filteredRooms.filter(
+          (r) =>
+            !String(r.cancellation || "")
+              .toLowerCase()
+              .includes("no reembolsable"),
+        );
+      }
+      // Strip OR rooms
+      if (f.hideOR) {
+        filteredRooms = filteredRooms.filter((r) => !r.onRequest);
+      }
+
+      return {
+        ...h,
+        rooms: filteredRooms,
+      };
+    });
 });
 
 // Sorted hotels computed (sorts filtered, not all)
