@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import HotelSearchForm from "~/components/b2b/hotel/HotelSearchForm.vue";
 
+const props = defineProps<{
+  hotelName?: string;
+}>();
+
 const isEditing = ref(false);
 
 const mockSearchData = ref({
@@ -42,7 +46,7 @@ const handleSearchUpdate = (newData: typeof mockSearchData.value) => {
         class="text-gray-700 dark:text-gray-300 font-medium text-sm lg:text-base"
       >
         <span class="font-bold text-gray-900 dark:text-white">{{
-          mockSearchData.destination
+          props.hotelName || mockSearchData.destination
         }}</span
         >, {{ mockSearchData.checkIn }} - {{ mockSearchData.checkOut }},
         {{ mockSearchData.distribution }}

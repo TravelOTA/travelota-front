@@ -33,13 +33,16 @@ const visibleRooms = computed(() => {
     <!-- Cabecera de la Tarjeta de Hotel -->
     <div class="flex flex-col md:flex-row bg-white dark:bg-gray-900">
       <!-- Imagen -->
-      <div class="relative w-full md:w-64 h-48 shrink-0 cursor-pointer">
+      <NuxtLink
+        :to="`/dashboard/hotels/${hotel.id}`"
+        class="relative w-full md:w-64 h-48 shrink-0 cursor-pointer block"
+      >
         <img
           :src="hotel.image"
           :alt="hotel.name"
           class="w-full h-full object-cover"
         />
-      </div>
+      </NuxtLink>
 
       <!-- Info Central -->
       <div class="p-4 flex-1 flex flex-col justify-between">
@@ -52,11 +55,13 @@ const visibleRooms = computed(() => {
               class="w-4 h-4"
             />
           </div>
-          <h3
-            class="text-lg font-bold text-gray-900 dark:text-white cursor-pointer hover:text-primary-600 transition-colors"
-          >
-            {{ hotel.name }}
-          </h3>
+          <NuxtLink :to="`/dashboard/hotels/${hotel.id}`">
+            <h3
+              class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary-600 transition-colors"
+            >
+              {{ hotel.name }}
+            </h3>
+          </NuxtLink>
 
           <div
             class="flex items-center text-sm text-gray-500 mb-4 cursor-pointer hover:text-gray-700"

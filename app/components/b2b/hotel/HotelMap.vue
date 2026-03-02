@@ -220,7 +220,8 @@ onMounted(async () => {
                     color="primary"
                     block
                     class="mt-2 font-bold cursor-pointer"
-                    >Ver Detalles</UButton
+                    :to="`/dashboard/hotels/${hotel.id}`"
+                    >Detalles</UButton
                   >
                 </div>
               </component>
