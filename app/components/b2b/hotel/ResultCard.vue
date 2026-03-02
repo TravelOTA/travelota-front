@@ -180,7 +180,13 @@ const visibleRooms = computed(() => {
 
         <!-- Botón Reservar -->
         <div class="w-28 text-right">
-          <UButton block color="primary" class="font-bold">Reservar</UButton>
+          <UButton
+            block
+            color="primary"
+            class="font-bold"
+            to="/dashboard/hotels/checkout"
+            >Reservar</UButton
+          >
         </div>
       </div>
 
