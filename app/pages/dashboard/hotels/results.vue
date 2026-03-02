@@ -2,6 +2,7 @@
 import SearchSummaryBar from "~/components/b2b/hotel/SearchSummaryBar.vue";
 import FiltersSidebar from "~/components/b2b/hotel/FiltersSidebar.vue";
 import ResultCard from "~/components/b2b/hotel/ResultCard.vue";
+import HotelMap from "~/components/b2b/hotel/HotelMap.vue";
 
 definePageMeta({
   layout: "dashboard",
@@ -545,6 +546,18 @@ const mockHotels = [
   },
 ];
 
+const isMapOpen = ref(false);
+const selectedHotelId = ref<number | string | null>(null);
+
+const handleOpenMap = (hotel?: Record<string, unknown>) => {
+  if (hotel && hotel.id) {
+    selectedHotelId.value = hotel.id as string | number;
+  } else {
+    selectedHotelId.value = null;
+  }
+  isMapOpen.value = true;
+};
+
 // Filter state from sidebar
 interface FilterState {
   hotelName: string;
@@ -650,7 +663,11 @@ watch(
       <aside
         class="hidden lg:block w-[320px] shrink-0 sticky top-24 self-start max-h-[calc(100vh-6rem)] overflow-y-auto rounded-lg scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600"
       >
-        <FiltersSidebar :hotels="mockHotels" @update:filters="onFilterUpdate" />
+        <FiltersSidebar
+          :hotels="mockHotels"
+          @update:filters="onFilterUpdate"
+          @open-map="handleOpenMap()"
+        />
       </aside>
 
       <!-- Columna Derecha: Resultados -->
@@ -759,6 +776,7 @@ watch(
             v-for="hotel in paginatedHotels"
             :key="hotel.id"
             :hotel="hotel"
+            @open-map="handleOpenMap($event)"
           />
         </div>
 
@@ -825,9 +843,17 @@ watch(
           <FiltersSidebar
             :hotels="mockHotels"
             @update:filters="onFilterUpdate"
+            @open-map="handleOpenMap()"
           />
         </div>
       </template>
     </USlideover>
+
+    <!-- Modals -->
+    <HotelMap
+      v-model="isMapOpen"
+      :hotels="filteredHotels"
+      :selected-hotel-id="selectedHotelId"
+    />
   </div>
 </template>

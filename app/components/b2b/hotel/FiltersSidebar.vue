@@ -13,6 +13,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "update:filters", filters: FilterState): void;
+  (e: "open-map"): void;
 }>();
 
 interface FilterState {
@@ -197,6 +198,27 @@ watch(
 
 <template>
   <div class="w-full flex flex-col gap-6">
+    <!-- Map placeholder -->
+    <div class="rounded-lg overflow-hidden">
+      <div class="relative h-32 bg-gray-700">
+        <img
+          src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+          alt="Map"
+          class="absolute inset-0 w-full h-full object-cover opacity-40 grayscale"
+        />
+        <div class="absolute inset-0 flex items-center justify-center">
+          <UButton
+            color="primary"
+            variant="solid"
+            class="uppercase tracking-wider text-xs font-bold px-4"
+            @click="emit('open-map')"
+          >
+            Ver hoteles en el mapa
+          </UButton>
+        </div>
+      </div>
+    </div>
+
     <!-- Filter controls -->
     <div
       class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-b-lg p-5 flex flex-col gap-6"

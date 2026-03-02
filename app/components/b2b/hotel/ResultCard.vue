@@ -6,6 +6,10 @@ defineProps({
   },
 });
 
+const emit = defineEmits<{
+  (e: "open-map", hotel: Record<string, unknown>): void;
+}>();
+
 const isExpanded = ref(true); // Simulate that by default the first 2 are shown expanded
 </script>
 
@@ -43,9 +47,11 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
 
           <div
             class="flex items-center text-sm text-gray-500 mb-4 cursor-pointer hover:text-gray-700"
+            @click="emit('open-map', hotel)"
           >
             <UIcon name="i-heroicons-map-pin" class="w-4 h-4 mr-1" />
             <span>{{ hotel.location }}</span>
+            <span class="ml-2 underline underline-offset-2">Ver el mapa</span>
           </div>
         </div>
       </div>
