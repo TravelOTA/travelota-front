@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, computed } from "vue";
+
 const props = defineProps<{
   images: string[];
 }>();
@@ -7,6 +9,21 @@ const mainImage = ref(props.images[0] || "");
 
 const setMainImage = (img: string) => {
   mainImage.value = img;
+};
+
+const currentIndex = computed(() => props.images.indexOf(mainImage.value));
+
+const nextImage = () => {
+  if (props.images.length === 0) return;
+  const nextIdx = (currentIndex.value + 1) % props.images.length;
+  mainImage.value = props.images[nextIdx];
+};
+
+const prevImage = () => {
+  if (props.images.length === 0) return;
+  const prevIdx =
+    (currentIndex.value - 1 + props.images.length) % props.images.length;
+  mainImage.value = props.images[prevIdx];
 };
 </script>
 
@@ -22,9 +39,10 @@ const setMainImage = (img: string) => {
         class="w-full h-full object-cover transition-opacity duration-300"
         alt="Hotel"
       />
-      <!-- Navigation arrows (placeholder functionality for UI) -->
+      <!-- Navigation arrows -->
       <button
-        class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/80 dark:bg-black/50 dark:hover:bg-black/80 w-10 h-10 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+        class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white/90 dark:bg-black/50 dark:hover:bg-black/80 w-10 h-10 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+        @click="prevImage"
       >
         <UIcon
           name="i-heroicons-chevron-left"
@@ -32,7 +50,8 @@ const setMainImage = (img: string) => {
         />
       </button>
       <button
-        class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/80 dark:bg-black/50 dark:hover:bg-black/80 w-10 h-10 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+        class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white/90 dark:bg-black/50 dark:hover:bg-black/80 w-10 h-10 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+        @click="nextImage"
       >
         <UIcon
           name="i-heroicons-chevron-right"

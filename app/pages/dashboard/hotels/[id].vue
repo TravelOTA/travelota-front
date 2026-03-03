@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
 import SearchSummaryBar from "~/components/b2b/hotel/SearchSummaryBar.vue";
-import HotelHeader from "~/components/b2b/hotel/detail/HotelHeader.vue";
+import ResultHotelSummary from "~/components/b2b/hotel/ResultHotelSummary.vue";
 import HotelGallery from "~/components/b2b/hotel/detail/HotelGallery.vue";
-import HotelPriceBox from "~/components/b2b/hotel/detail/HotelPriceBox.vue";
-import HotelRooms from "~/components/b2b/hotel/detail/HotelRooms.vue";
+import ResultRoomList from "~/components/b2b/hotel/ResultRoomList.vue";
 import HotelInfo from "~/components/b2b/hotel/detail/HotelInfo.vue";
 import HotelMap from "~/components/b2b/hotel/HotelMap.vue";
 
@@ -35,6 +34,7 @@ const hotel = ref({
   address:
     "Carretera Arena Gorda Playa Bavaro Punta Cana, Dominican Republic, Playa Bavaro 23000",
   coordinates: [18.7035, -68.4215] as [number, number],
+  image: hotelImages[0], // Agregada la foto principal
   images: hotelImages,
   bestPrice: 1118.76,
   rooms: [
@@ -93,32 +93,19 @@ useHead({
       </UButton>
     </div>
 
-    <div v-if="hotel">
-      <!-- Header -->
-      <HotelHeader
-        :name="hotel.name"
-        :stars="hotel.stars"
-        :address="hotel.address"
+    <div v-if="hotel" class="flex flex-col gap-6 mt-6">
+      <!-- 1. Top Summary (Reused from Results) -->
+      <ResultHotelSummary :hotel="hotel" @open-map="isMapOpen = true" />
+
+      <!-- 2. Middle Gallery -->
+      <HotelGallery :images="hotel.images" />
+
+      <!-- 3. Bottom Room List (Reused from Results) -->
+      <ResultRoomList
+        :rooms="hotel.rooms"
+        :is-expanded="true"
+        :default-expanded-rooms="true"
       />
-
-      <!-- Main Layout Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <!-- Left Column: Gallery -->
-        <div class="lg:col-span-2">
-          <HotelGallery :images="hotel.images" />
-        </div>
-
-        <!-- Right Column: Price & Map -->
-        <div class="lg:col-span-1">
-          <HotelPriceBox
-            :best-price="hotel.bestPrice"
-            @open-map="isMapOpen = true"
-          />
-        </div>
-      </div>
-
-      <!-- Rooms Section -->
-      <HotelRooms :rooms="hotel.rooms" />
 
       <!-- Info Section -->
       <HotelInfo />

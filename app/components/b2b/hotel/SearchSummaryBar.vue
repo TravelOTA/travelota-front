@@ -25,11 +25,13 @@ const handleSearchUpdate = (newData: typeof mockSearchData.value) => {
 </script>
 
 <template>
-  <div>
+  <div
+    class="sticky top-[104px] md:top-[64px] z-40 bg-gray-50 dark:bg-gray-900 pb-4 pt-2 -mt-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 mb-2"
+  >
     <!-- Barra de edición activa -->
     <div
       v-if="isEditing"
-      class="bg-[#f2f4f6] dark:bg-gray-800 rounded-lg p-4 shadow-sm mb-6 border-b-4 border-primary-500"
+      class="bg-[#f2f4f6] dark:bg-gray-800 rounded-lg p-4 shadow-sm border-b-4 border-primary-500"
     >
       <HotelSearchForm
         :initial-data="mockSearchData"
@@ -40,7 +42,7 @@ const handleSearchUpdate = (newData: typeof mockSearchData.value) => {
     <!-- Barra de resumen (Modo lectura) -->
     <div
       v-else
-      class="bg-[#f2f4f6] dark:bg-gray-800 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between shadow-sm mb-6 border-b-4 border-primary-500"
+      class="bg-[#f2f4f6] dark:bg-gray-800 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between shadow-sm border-b-4 border-primary-500"
     >
       <div
         class="text-gray-700 dark:text-gray-300 font-medium text-sm lg:text-base"

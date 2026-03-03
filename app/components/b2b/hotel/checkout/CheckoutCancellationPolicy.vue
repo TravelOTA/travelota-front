@@ -1,28 +1,79 @@
 <script setup lang="ts">
 defineProps<{
-  policyText: string;
+  total: number;
+  policies: {
+    status: string;
+    fromDate: string;
+    toDate: string;
+    time: string;
+    price: number;
+  }[];
 }>();
 </script>
 
 <template>
   <div
-    class="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-lg p-5"
+    class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-5"
   >
-    <div class="flex items-start gap-3">
+    <h3
+      class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2"
+    >
       <UIcon
-        name="i-heroicons-exclamation-triangle"
-        class="w-6 h-6 text-red-600 dark:text-red-400 shrink-0 mt-0.5"
+        name="i-heroicons-shield-exclamation"
+        class="w-5 h-5 text-primary-500"
       />
-      <div>
-        <h3 class="font-bold text-red-800 dark:text-red-300 mb-2">
-          Políticas de Cancelación
-        </h3>
-        <p
-          class="text-sm text-red-700 dark:text-red-200/80 leading-relaxed text-justify"
+      Gastos de cancelación
+    </h3>
+
+    <div class="mb-4">
+      <span class="text-sm text-gray-600 dark:text-gray-400">Total: </span>
+      <span class="font-bold text-gray-900 dark:text-white"
+        >${{
+          total.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        }}</span
+      >
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm whitespace-nowrap">
+        <thead>
+          <tr
+            class="border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white"
+          >
+            <th class="py-2 pr-4 font-bold">Gastos</th>
+            <th class="py-2 pr-4 font-bold">Desde fecha</th>
+            <th class="py-2 pr-4 font-bold">Hasta fecha</th>
+            <th class="py-2 pr-4 font-bold">Hora</th>
+            <th class="py-2 font-bold">Precio</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-gray-100 dark:divide-gray-800 text-gray-600 dark:text-gray-300"
         >
-          {{ policyText }}
-        </p>
-      </div>
+          <tr
+            v-for="(policy, idx) in policies"
+            :key="idx"
+            class="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+          >
+            <td class="py-2.5 pr-4">{{ policy.status }}</td>
+            <td class="py-2.5 pr-4">{{ policy.fromDate }}</td>
+            <td class="py-2.5 pr-4">{{ policy.toDate }}</td>
+            <td class="py-2.5 pr-4">{{ policy.time }}</td>
+            <td class="py-2.5 font-bold text-gray-900 dark:text-white">
+              ${{
+                policy.price.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>

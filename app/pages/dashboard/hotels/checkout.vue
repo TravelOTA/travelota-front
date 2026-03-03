@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import CheckoutHotelSummary from "~/components/b2b/hotel/checkout/CheckoutHotelSummary.vue";
-import CheckoutReservationDetails from "~/components/b2b/hotel/checkout/CheckoutReservationDetails.vue";
+import CheckoutSidebarSummary from "~/components/b2b/hotel/checkout/CheckoutSidebarSummary.vue";
+import CheckoutImportantInfo from "~/components/b2b/hotel/checkout/CheckoutImportantInfo.vue";
 import CheckoutCancellationPolicy from "~/components/b2b/hotel/checkout/CheckoutCancellationPolicy.vue";
-import CheckoutComments from "~/components/b2b/hotel/checkout/CheckoutComments.vue";
-import CheckoutPassengers from "~/components/b2b/hotel/checkout/CheckoutPassengers.vue";
-import CheckoutAgencyInfo from "~/components/b2b/hotel/checkout/CheckoutAgencyInfo.vue";
+import CheckoutTitularForm from "~/components/b2b/hotel/checkout/CheckoutTitularForm.vue";
 import CheckoutPaymentOptions from "~/components/b2b/hotel/checkout/CheckoutPaymentOptions.vue";
 import { computed } from "vue";
 
@@ -35,12 +33,47 @@ const reservation = ref({
       pax: "2 Adultos",
       price: 3027.93,
     },
+    {
+      id: 2,
+      name: "Premium double room (full double bed) - Todo Incluido",
+      pax: "2 Adultos",
+      price: 3253.48,
+    },
+    {
+      id: 3,
+      name: "Suite - family - Todo Incluido",
+      pax: "2 Adultos, 1 Niño",
+      price: 4181.59,
+    },
   ],
-  policyText:
-    "En caso de anulación de la reserva se pueden aplicar gastos mínimos en caso de no presentarse se facturará el 100% de la reserva.",
+  infoText:
+    "Las tarifas no reembolsables no permiten cambios ni cancelaciones. Cualquier modificación o cancelación incurrirá en una penalización del 100% sobre el valor total. Se requiere presentar pasaporte o documento de identidad oficial al realizar el check-in. Es posible que el hotel cobre tasas locales directamente al cliente en destino.",
+  policies: [
+    {
+      status: "Sin gastos",
+      fromDate: "03/03/26",
+      toDate: "06/04/26",
+      time: "23:59",
+      price: 0,
+    },
+    {
+      status: "Con gastos",
+      fromDate: "07/04/26",
+      toDate: "09/04/26",
+      time: "00:00:00",
+      price: 161.79,
+    },
+    {
+      status: "Con gastos",
+      fromDate: "10/04/26",
+      toDate: "15/04/26",
+      time: "00:00:00",
+      price: 809.0,
+    },
+  ],
+  paymentDeadline: "06/04/26",
+  cancellationDeadline: "06/04/26",
 });
-
-const totalPax = ref(2); // Since it's 2 adults
 
 const totalPrice = computed(() => {
   return reservation.value.rooms.reduce((acc, room) => acc + room.price, 0);
@@ -72,39 +105,39 @@ useHead({
     </div>
 
     <!-- Layout Grid -->
-    <div class="flex flex-col gap-6">
-      <!-- 1. Hotel Summary -->
-      <CheckoutHotelSummary
-        :name="hotel.name"
-        :stars="hotel.stars"
-        :address="hotel.address"
-        :image="hotel.image"
-      />
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column: Summary Reservation Data -->
+      <div class="lg:col-span-1">
+        <div class="sticky top-24">
+          <CheckoutSidebarSummary
+            :hotel="hotel"
+            :reservation="reservation"
+            :total-price="totalPrice"
+          />
+        </div>
+      </div>
 
-      <!-- 2. Reservation Details -->
-      <CheckoutReservationDetails
-        :check-in="reservation.checkIn"
-        :check-out="reservation.checkOut"
-        :rooms="reservation.rooms"
-      />
+      <!-- Right Column: Passenger & Payment -->
+      <div class="lg:col-span-2 flex flex-col gap-6">
+        <!-- 1. Important Info -->
+        <CheckoutImportantInfo :info-text="reservation.infoText" />
 
-      <!-- 3. Cancellation Policy -->
-      <CheckoutCancellationPolicy :policy-text="reservation.policyText" />
+        <!-- 2. Cancellation Policy -->
+        <CheckoutCancellationPolicy
+          :total="totalPrice"
+          :policies="reservation.policies"
+        />
 
-      <!-- 4. Comments -->
-      <CheckoutComments />
+        <!-- 3. Titular Form & Observations -->
+        <CheckoutTitularForm />
 
-      <!-- 5. Passenger Details -->
-      <CheckoutPassengers :total-pax="totalPax" />
-
-      <!-- 6. Agency Info -->
-      <CheckoutAgencyInfo />
-
-      <!-- 7. Payment Options -->
-      <CheckoutPaymentOptions
-        :total-price="totalPrice"
-        :cancellation-policy="reservation.policyText"
-      />
+        <!-- 4. Payment Options & Checks -->
+        <CheckoutPaymentOptions
+          :total-price="totalPrice"
+          :payment-deadline="reservation.paymentDeadline"
+          :cancellation-deadline="reservation.cancellationDeadline"
+        />
+      </div>
     </div>
   </div>
 </template>
