@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 
 defineProps<{
   totalPrice: number;
@@ -18,13 +19,15 @@ const isBookEnabled = computed(() => {
 
 const isProcessing = ref(false);
 
+const router = useRouter();
+
 const submitBooking = () => {
   if (!isBookEnabled.value) return;
   isProcessing.value = true;
   // TODO: Emulate booking call
   setTimeout(() => {
     isProcessing.value = false;
-    alert("¡Reserva procesada con éxito!");
+    router.push("/dashboard/hotels/booking/TRV-987654321");
   }, 1500);
 };
 </script>

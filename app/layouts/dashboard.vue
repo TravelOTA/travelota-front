@@ -19,7 +19,7 @@ const userLinks = computed(() => {
     {
       label: "Mis Reservas",
       icon: "i-heroicons-briefcase",
-      to: "#",
+      to: "/dashboard/bookings",
     },
   ];
 
