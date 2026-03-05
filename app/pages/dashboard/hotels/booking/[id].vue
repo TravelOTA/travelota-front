@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
 import CheckoutSidebarSummary from "~/components/b2b/hotel/checkout/CheckoutSidebarSummary.vue";
+import BookingStatusHero from "~/components/b2b/hotel/checkout/BookingStatusHero.vue";
+import BookingCancellation from "~/components/b2b/hotel/checkout/BookingCancellation.vue";
+import BookingPayment from "~/components/b2b/hotel/checkout/BookingPayment.vue";
 
 definePageMeta({
   layout: "dashboard",
@@ -9,8 +12,65 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 
-// Mock Data
+// Determine origin: 'confirmation' (from checkout) vs 'detail' (from bookings list)
+const origin = computed(() =>
+  route.query.from === "confirmation" ? "confirmation" : "detail",
+);
+
+// Mock Data — In a real app this would come from an API based on route.params.id
 const bookingId = (route.params.id as string) || "TRV-987654321";
+
+interface BookingMeta {
+  status: string;
+  paymentStatus: string;
+  paidDate: string | null;
+  paymentDeadline: string | null;
+  cancelledDate: string | null;
+}
+
+// Mock: Different data depending on the booking ID for demo purposes
+const bookingDataMap: Record<string, BookingMeta> = {
+  "TRV-987654321": {
+    status: "Confirmada",
+    paymentStatus: "Pagada",
+    paidDate: "02/03/2026 16:00",
+    paymentDeadline: "01/03/2026",
+    cancelledDate: null,
+  },
+  "TRV-123456789": {
+    status: "Confirmada",
+    paymentStatus: "Pendiente Pago",
+    paidDate: null,
+    paymentDeadline: "10/05/2026",
+    cancelledDate: null,
+  },
+  "TRV-456789123": {
+    status: "Vencida",
+    paymentStatus: "Pendiente Pago",
+    paidDate: null,
+    paymentDeadline: "15/02/2026",
+    cancelledDate: null,
+  },
+  "TRV-789123456": {
+    status: "Cancelada",
+    paymentStatus: "Pagada",
+    paidDate: "05/12/2025 17:00",
+    paymentDeadline: null,
+    cancelledDate: "10/12/2025",
+  },
+};
+
+const bookingMeta = computed(() => {
+  return (
+    bookingDataMap[bookingId] || {
+      status: "Confirmada",
+      paymentStatus: "Pagada",
+      paidDate: "02/03/2026 16:00",
+      paymentDeadline: "01/03/2026",
+      cancelledDate: null,
+    }
+  );
+});
 
 const hotel = ref({
   name: "Iberostar WAVES DOMINICANA",
@@ -25,7 +85,6 @@ const reservation = ref({
   checkOut: "2026-03-10",
   titular: "Juan Pérez",
   agencyReference: "Ref-12345",
-  status: "Confirmada",
   agent: "María Gómez",
   createdDate: "02/03/2026 15:30",
   rooms: [
@@ -48,6 +107,39 @@ const totalPrice = computed(() => {
   return reservation.value.rooms.reduce((acc, room) => acc + room.price, 0);
 });
 
+// Mock cancellation policies
+const cancellationPolicies = [
+  {
+    status: "Sin gastos",
+    fromDate: "20/02/2026",
+    toDate: "25/02/2026",
+    time: "23:59 CET",
+    price: 0,
+  },
+  {
+    status: "50% del total",
+    fromDate: "26/02/2026",
+    toDate: "28/02/2026",
+    time: "23:59 CET",
+    price: 3140.71,
+  },
+  {
+    status: "100% del total",
+    fromDate: "01/03/2026",
+    toDate: "03/03/2026",
+    time: "23:59 CET",
+    price: 6281.41,
+  },
+];
+
+// Computed flags for conditional rendering
+const showCancellation = computed(() => {
+  return (
+    bookingMeta.value.status !== "Cancelada" &&
+    bookingMeta.value.status !== "Vencida"
+  );
+});
+
 useHead({
   title: `Reserva ${bookingId} - TravelOTA B2B`,
 });
@@ -55,29 +147,19 @@ useHead({
 
 <template>
   <div class="max-w-[1000px] mx-auto pb-12 pt-6">
-    <!-- Hero / Alert Success -->
-    <div
-      class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 mb-8 flex flex-col items-center text-center"
-    >
-      <div
-        class="w-16 h-16 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mb-4 text-green-600 dark:text-green-400"
-      >
-        <UIcon name="i-heroicons-check-circle-solid" class="w-10 h-10" />
-      </div>
-      <h1
-        class="text-2xl md:text-3xl font-black text-green-800 dark:text-green-400 tracking-tight mb-2"
-      >
-        ¡Reserva Confirmada Exitosamente!
-      </h1>
-      <p class="text-green-700 dark:text-green-300">
-        Hemos enviado un correo de confirmación con los detalles de esta
-        reserva.
-      </p>
-    </div>
+    <!-- Dynamic Status Hero -->
+    <BookingStatusHero
+      :origin="origin"
+      :booking-status="bookingMeta.status"
+      :payment-status="bookingMeta.paymentStatus"
+      :booking-id="bookingId"
+      :payment-deadline="bookingMeta.paymentDeadline"
+      :cancelled-date="bookingMeta.cancelledDate"
+    />
 
     <!-- Layout Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Right Column: PNR Data & Action Buttons (Appears first logically but right visually) -->
+      <!-- Left Column: PNR Data, Payment, Cancellation & Action Buttons -->
       <div class="lg:col-span-2 flex flex-col gap-6 order-last lg:order-none">
         <!-- PNR Card -->
         <div
@@ -97,11 +179,29 @@ useHead({
               >
                 {{ bookingId }}
                 <UBadge
-                  color="success"
+                  :color="
+                    bookingMeta.status === 'Confirmada'
+                      ? 'success'
+                      : bookingMeta.status === 'Cancelada'
+                        ? 'error'
+                        : 'warning'
+                  "
                   variant="soft"
                   class="ml-2 px-2 py-1 text-xs uppercase tracking-wider font-bold"
                 >
-                  {{ reservation.status }}
+                  {{ bookingMeta.status }}
+                </UBadge>
+                <UBadge
+                  v-if="bookingMeta.status !== 'Cancelada'"
+                  :color="
+                    bookingMeta.paymentStatus === 'Pagada'
+                      ? 'success'
+                      : 'warning'
+                  "
+                  variant="subtle"
+                  class="px-2 py-1 text-xs uppercase tracking-wider font-bold"
+                >
+                  {{ bookingMeta.paymentStatus }}
                 </UBadge>
               </h2>
             </div>
@@ -178,6 +278,31 @@ useHead({
           </div>
         </div>
 
+        <!-- Payment Status Component (always visible, adapts to paid or pending) -->
+        <BookingPayment
+          v-if="bookingMeta.status !== 'Vencida'"
+          :payment-status="bookingMeta.paymentStatus"
+          :total-price="totalPrice"
+          :payment-deadline="bookingMeta.paymentDeadline"
+          :paid-date="bookingMeta.paidDate"
+        />
+
+        <!-- Cancellation Component (hidden for already cancelled or expired) -->
+        <BookingCancellation
+          v-if="showCancellation"
+          :booking-status="bookingMeta.status"
+          :total-price="totalPrice"
+          :policies="cancellationPolicies"
+        />
+
+        <!-- Already cancelled info -->
+        <BookingCancellation
+          v-if="bookingMeta.status === 'Cancelada'"
+          :booking-status="bookingMeta.status"
+          :total-price="totalPrice"
+          :policies="cancellationPolicies"
+        />
+
         <!-- B2B Actions Card -->
         <div
           class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6"
@@ -217,21 +342,30 @@ useHead({
             </UButton>
           </div>
 
-          <div class="mt-6 flex justify-center">
+          <div class="mt-6 flex justify-center gap-4">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              icon="i-heroicons-arrow-left"
+              class="text-gray-500 font-bold uppercase tracking-wider text-xs"
+              @click="router.push('/dashboard/bookings')"
+            >
+              Volver a Mis Reservas
+            </UButton>
             <UButton
               color="neutral"
               variant="ghost"
               icon="i-heroicons-magnifying-glass"
               class="text-gray-500 font-bold uppercase tracking-wider text-xs"
-              @click="router.push('/dashboard/hotels')"
+              @click="router.push('/dashboard')"
             >
-              Realizar Nueva Búsqueda
+              Nueva Búsqueda
             </UButton>
           </div>
         </div>
       </div>
 
-      <!-- Left Column: Hotel Summary (Reusing Sidebar) -->
+      <!-- Right Column: Hotel Summary (Reusing Sidebar) -->
       <div
         class="lg:col-span-1 border-gray-200 lg:border-l pl-0 lg:pl-8 mt-8 lg:mt-0"
       >

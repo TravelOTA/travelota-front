@@ -91,7 +91,7 @@ const handleSearch = (data: Record<string, unknown>) => {
         >
           <div class="h-48 bg-gray-200 dark:bg-gray-800 relative">
             <img
-              src="https://images.unsplash.com/photo-1539037116277-4db20202d03d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+              src="https://images.unsplash.com/photo-1543783207-ec64e4d95325?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
               alt="Madrid"
               class="w-full h-full object-cover"
             />

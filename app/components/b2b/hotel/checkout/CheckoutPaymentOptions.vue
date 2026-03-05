@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import PaymentMethodSelector from "~/components/b2b/hotel/checkout/PaymentMethodSelector.vue";
 
 defineProps<{
   totalPrice: number;
@@ -27,7 +28,7 @@ const submitBooking = () => {
   // TODO: Emulate booking call
   setTimeout(() => {
     isProcessing.value = false;
-    router.push("/dashboard/hotels/booking/TRV-987654321");
+    router.push("/dashboard/hotels/booking/TRV-987654321?from=confirmation");
   }, 1500);
 };
 </script>
@@ -43,118 +44,15 @@ const submitBooking = () => {
       Métodos de Pago
     </h3>
 
-    <!-- Payment Options -->
-    <div class="space-y-3 mb-6">
-      <!-- Option 1: Reserve & Pay Later -->
-      <div
-        class="border rounded-lg p-4 cursor-pointer transition-colors"
-        :class="
-          selectedMethod === 'pay_later'
-            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10'
-            : 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-gray-600'
-        "
-        @click="selectedMethod = 'pay_later'"
-      >
-        <div class="flex items-center justify-between mb-2">
-          <div
-            class="flex items-center gap-2 font-bold text-gray-900 dark:text-white"
-          >
-            <UIcon name="i-heroicons-clock" class="w-5 h-5 text-primary-500" />
-            Reservar y no Pagar Ahora
-          </div>
-          <div
-            class="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-            :class="
-              selectedMethod === 'pay_later'
-                ? 'border-primary-500'
-                : 'border-gray-300 dark:border-gray-600'
-            "
-          >
-            <div
-              v-show="selectedMethod === 'pay_later'"
-              class="w-2.5 h-2.5 bg-primary-500 rounded-full"
-            ></div>
-          </div>
-        </div>
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          Importe total:
-          <strong class="text-gray-900 dark:text-white"
-            >${{
-              totalPrice.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })
-            }}</strong
-          >. Fecha límite para el pago:
-          <strong class="text-gray-900 dark:text-white">{{
-            paymentDeadline
-          }}</strong
-          >. Fecha límite para cancelar sin gastos:
-          <strong class="text-gray-900 dark:text-white">{{
-            cancellationDeadline
-          }}</strong
-          >.
-        </p>
-      </div>
-
-      <!-- Option 2: Credit Card Immediate -->
-      <div
-        class="border rounded-lg p-4 cursor-pointer transition-colors"
-        :class="
-          selectedMethod === 'credit_card'
-            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10'
-            : 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-gray-600'
-        "
-        @click="selectedMethod = 'credit_card'"
-      >
-        <div class="flex items-center justify-between mb-2">
-          <div
-            class="flex items-center gap-2 font-bold text-gray-900 dark:text-white"
-          >
-            <UIcon
-              name="i-heroicons-credit-card"
-              class="w-5 h-5 text-primary-500"
-            />
-            Pago con tarjeta
-            <div class="flex items-center gap-1 ml-2 opacity-80">
-              <!-- Usando íconos flat simples o emojis temporales que emulen tarjetas -->
-              <Icon
-                name="i-fa-brands-cc-visa"
-                class="w-6 h-6 text-primary-500"
-              />
-              <Icon
-                name="i-fa-brands-cc-mastercard"
-                class="w-6 h-6 text-primary-500"
-              />
-            </div>
-          </div>
-          <div
-            class="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-            :class="
-              selectedMethod === 'credit_card'
-                ? 'border-primary-500'
-                : 'border-gray-300 dark:border-gray-600'
-            "
-          >
-            <div
-              v-show="selectedMethod === 'credit_card'"
-              class="w-2.5 h-2.5 bg-primary-500 rounded-full"
-            ></div>
-          </div>
-        </div>
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          Has elegido pago con tarjeta, la reserva se cobrará al reservar.<br />
-          Importe:
-          <strong class="text-gray-900 dark:text-white"
-            >${{
-              totalPrice.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })
-            }}</strong
-          >
-        </p>
-      </div>
+    <!-- Payment Options (shared component with pay-later option) -->
+    <div class="mb-6">
+      <PaymentMethodSelector
+        v-model="selectedMethod"
+        show-pay-later
+        :total-price="totalPrice"
+        :payment-deadline="paymentDeadline"
+        :cancellation-deadline="cancellationDeadline"
+      />
     </div>
 
     <!-- Legal Terms & Checks -->
