@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import WalletWidgets from "~/components/b2b/finance/WalletWidgets.vue";
+import AgencyTransactions from "~/components/b2b/finance/AgencyTransactions.vue";
+
 definePageMeta({ layout: "dashboard" });
 const appConfig = useAppConfig();
 const { agency, updateAgency } = useAgency();
@@ -251,6 +254,19 @@ function saveAgency() {
         </p>
       </div>
     </UCard>
+
+    <!-- Wallet Finances -->
+    <div class="mt-8 mb-6">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
+        Crédito y Finanzas
+      </h2>
+      <WalletWidgets />
+    </div>
+
+    <!-- Transactions -->
+    <div class="mb-8">
+      <AgencyTransactions />
+    </div>
 
     <!-- Modal Formulario de Branding -->
     <UModal v-model:open="isEditModalOpen" title="Configuración White-Label">
