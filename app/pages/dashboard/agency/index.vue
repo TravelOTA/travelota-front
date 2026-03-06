@@ -1,21 +1,59 @@
 <script setup lang="ts">
 definePageMeta({ layout: "dashboard" });
-useHead({ title: "Mi Agencia - TravelOTA" });
+const appConfig = useAppConfig();
+const { agency, updateAgency } = useAgency();
 
-const agency = ref({
-  name: "Viajes El Corte Inglés",
-  rut: "B-12345678",
-  country: "España",
-  email: "b2b@elcorteingles.es",
-  phone: "+34 91 418 88 00",
-  address: "Hermosilla 112, Madrid, España",
-  logo: "https://ui-avatars.com/api/?name=V+C&color=0284c7&background=e0f2fe",
-  registeredAt: "2024-03-15",
-  status: "Activa",
-  usersCount: 8,
-  bookingsCount: 312,
-  nextSettlement: "2026-04-01",
-});
+const isEditModalOpen = ref(false);
+const formAgency = ref({ ...agency.value });
+
+const colorMap: Record<string, string> = {
+  red: "#ef4444",
+  orange: "#f97316",
+  amber: "#f59e0b",
+  yellow: "#eab308",
+  lime: "#84cc16",
+  green: "#22c55e",
+  emerald: "#10b981",
+  teal: "#14b8a6",
+  cyan: "#06b6d4",
+  sky: "#0ea5e9",
+  blue: "#3b82f6",
+  indigo: "#6366f1",
+  violet: "#8b5cf6",
+  purple: "#a855f7",
+  fuchsia: "#d946ef",
+  pink: "#ec4899",
+  rose: "#f43f5e",
+};
+const themeColors = Object.keys(colorMap);
+
+function openEditModal() {
+  formAgency.value = { ...agency.value };
+  isEditModalOpen.value = true;
+}
+
+function handleLogoUpload(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      formAgency.value.logo = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function saveAgency() {
+  updateAgency(formAgency.value);
+
+  if (formAgency.value.primaryColor) {
+    if (appConfig.ui && appConfig.ui.colors) {
+      appConfig.ui.colors.primary = formAgency.value.primaryColor;
+    }
+  }
+
+  isEditModalOpen.value = false;
+}
 </script>
 
 <template>
@@ -110,14 +148,23 @@ const agency = ref({
     <!-- Agency Profile Data -->
     <UCard class="shadow-sm rounded-xl overflow-hidden">
       <template #header>
-        <div class="flex items-center gap-2">
-          <UIcon
-            name="i-heroicons-identification"
-            class="w-5 h-5 text-gray-500"
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <UIcon
+              name="i-heroicons-identification"
+              class="w-5 h-5 text-gray-500"
+            />
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+              Perfil Corporativo
+            </h2>
+          </div>
+          <UButton
+            color="primary"
+            variant="ghost"
+            icon="i-heroicons-pencil-square"
+            label="Configurar White-Label"
+            @click="openEditModal"
           />
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white">
-            Perfil Corporativo
-          </h2>
         </div>
       </template>
 
@@ -199,9 +246,108 @@ const agency = ref({
       <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800">
         <p class="text-sm text-gray-500">
           * Para modificar los datos corporativos, legales o fiscales de tu
-          agencia, por favor contacta con tu soporte asignado en TravelOTA.
+          agencia, por favor contacta con tu soporte asignado en TravelOTA. El
+          branding y logos pueden editarse libremente.
         </p>
       </div>
     </UCard>
+
+    <!-- Modal Formulario de Branding -->
+    <UModal v-model:open="isEditModalOpen" title="Configuración White-Label">
+      <template #body>
+        <div class="space-y-4">
+          <UFormGroup
+            label="Logo de la Agencia"
+            name="logo"
+            description="Sube una imagen para mostrar en la plataforma y documentos."
+          >
+            <div class="flex items-center gap-4 mt-1">
+              <UAvatar
+                :src="formAgency.logo"
+                size="lg"
+                class="bg-white border border-gray-200 p-0.5"
+              />
+              <div class="flex-1">
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 dark:file:bg-primary-900/20 dark:file:text-primary-400 cursor-pointer"
+                  @change="handleLogoUpload"
+                />
+              </div>
+            </div>
+          </UFormGroup>
+
+          <UFormGroup
+            label="Color Principal del Sistema"
+            name="primaryColor"
+            description="Personaliza el color de botones y acentos visuales B2B."
+          >
+            <div class="flex flex-col gap-4 mt-2">
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="color in themeColors"
+                  :key="color"
+                  type="button"
+                  :class="[
+                    'w-8 h-8 rounded-full border-2 focus:outline-none transition-transform hover:scale-110 shadow-sm',
+                    formAgency.primaryColor === color
+                      ? 'border-gray-900 dark:border-white scale-110'
+                      : 'border-transparent',
+                  ]"
+                  :style="`background-color: ${colorMap[color]}`"
+                  :title="color"
+                  @click="formAgency.primaryColor = color"
+                />
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="text-sm text-gray-500 font-medium">
+                  O usa un código HEX personalizado:
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    v-model="formAgency.primaryColor"
+                    type="color"
+                    class="w-8 h-8 rounded cursor-pointer border-0 p-0 overflow-hidden"
+                  />
+                  <UInput
+                    v-model="formAgency.primaryColor"
+                    placeholder="#000000"
+                    class="w-32"
+                  />
+                </div>
+              </div>
+            </div>
+          </UFormGroup>
+
+          <UFormGroup label="Correo de Contacto Público" name="email">
+            <UInput
+              v-model="formAgency.email"
+              type="email"
+              icon="i-heroicons-envelope"
+            />
+          </UFormGroup>
+
+          <UFormGroup label="Teléfono de Contacto" name="phone">
+            <UInput v-model="formAgency.phone" icon="i-heroicons-phone" />
+          </UFormGroup>
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            label="Cancelar"
+            @click="isEditModalOpen = false"
+          />
+          <UButton
+            color="primary"
+            label="Guardar Cambios"
+            @click="saveAgency"
+          />
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>

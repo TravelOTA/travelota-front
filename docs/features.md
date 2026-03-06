@@ -56,8 +56,19 @@
 | Componente de pago individual | 🔧 | `BookingPayment.vue` |
 | Pago masivo de reservas pendientes | 🔧 | `BookingMassPayment.vue` |
 | Selección masiva de reservas pendientes | ✅ | integrado en `bookings/index.vue` |
-| Descarga de voucher (PDF) | ⬜ | — |
-| Descarga de factura (PDF) | ⬜ | — |
+| Descarga de voucher B2B | ✅ | Vista Modal y generador para impresión PDF |
+| Descarga de factura B2B | ✅ | Desglose de precios dinámico para impresión PDF |
+
+---
+
+## Dashboard — White-Label y Agencia
+
+| Funcionalidad | Estado | Ruta / Componente |
+|--------------|--------|-------------------|
+| Editor de Perfil B2B | 🔧 | `/dashboard/agency` |
+| Configuración de Logo | ✅ | Modal Customización White-Label |
+| Configuración de Colores | ✅ | Selector HEX interactivo global |
+| Reglas de Markup y Ganancia | 🔧 | `/dashboard/agency/markup` |
 
 ---
 
@@ -96,7 +107,7 @@
 |-----------|--------------|-------------|
 | 🔴 Alta | Integración API | Reemplazar datos mock con llamadas a API real |
 | 🔴 Alta | Autenticación | Login, JWT, protección de rutas |
-| 🔴 Alta | Generación de PDFs | Voucher (sin precio) y Factura (con precio) |
+| 🔴 Alta | Cotizador B2B (Quoter) | Herramienta para generar presupuestos a clientes finales |
 | 🟡 Media | Notificaciones | Sistema de alertas y notificaciones en tiempo real |
 | 🟡 Media | Historial de pagos | Registro de transacciones realizadas |
 | 🟡 Media | Tests automatizados | Unit tests y tests E2E |

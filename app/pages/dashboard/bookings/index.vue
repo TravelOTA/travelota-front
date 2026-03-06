@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import BookingSearchFilters from "~/components/b2b/hotel/checkout/BookingSearchFilters.vue";
 import BookingMassPayment from "~/components/b2b/hotel/checkout/BookingMassPayment.vue";
+import VoucherPreviewModal from "~/components/b2b/hotel/checkout/VoucherPreviewModal.vue";
 
 definePageMeta({
   layout: "dashboard",
@@ -517,6 +518,15 @@ const handleMassPay = () => {
   handleSearch(activeFilters.value);
 };
 
+// Voucher Modal State
+const isVoucherModalOpen = ref(false);
+const selectedVoucherBooking = ref<BookingRow | null>(null);
+
+const openVoucher = (booking: BookingRow) => {
+  selectedVoucherBooking.value = booking;
+  isVoucherModalOpen.value = true;
+};
+
 // Table Columns
 const columns = [
   { accessorKey: "actions", header: "" },
@@ -844,6 +854,7 @@ const resultStats = computed(() => {
                   variant="ghost"
                   icon="i-heroicons-document-arrow-down"
                   class="text-gray-500 hover:text-primary-600"
+                  @click="openVoucher((row as any).original)"
                 />
               </UTooltip>
               <UTooltip text="Ver Detalles">
@@ -1004,6 +1015,21 @@ const resultStats = computed(() => {
       @select-all="selectAllPending"
       @deselect-all="deselectAllPending"
       @pay="handleMassPay"
+    />
+
+    <!-- Voucher Modal -->
+    <VoucherPreviewModal
+      v-if="selectedVoucherBooking"
+      v-model:is-open="isVoucherModalOpen"
+      :booking-id="selectedVoucherBooking.id"
+      :hotel-name="selectedVoucherBooking.destination"
+      :reservation="{
+        titular: selectedVoucherBooking.titular,
+        checkIn: selectedVoucherBooking.checkIn,
+        checkOut: selectedVoucherBooking.checkOut,
+        agent: selectedVoucherBooking.seller,
+        rooms: [{ id: 1, name: 'Standard Room', pax: '2 Adultos' }],
+      }"
     />
   </div>
 </template>

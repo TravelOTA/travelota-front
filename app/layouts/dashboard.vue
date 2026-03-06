@@ -1,7 +1,38 @@
 <script setup lang="ts">
+const appConfig = useAppConfig();
+
+// Dynamically generate UI Hex colors when a custom color is set
+const hexThemeStyles = computed(() => {
+  const color = appConfig.ui?.colors?.primary;
+  if (color && color.startsWith("#")) {
+    return `
+      :root, .dark, html.dark {
+        --ui-color-primary-50: color-mix(in srgb, ${color}, white 90%);
+        --ui-color-primary-100: color-mix(in srgb, ${color}, white 80%);
+        --ui-color-primary-200: color-mix(in srgb, ${color}, white 60%);
+        --ui-color-primary-300: color-mix(in srgb, ${color}, white 40%);
+        --ui-color-primary-400: color-mix(in srgb, ${color}, white 20%);
+        --ui-color-primary-500: ${color};
+        --ui-color-primary-600: color-mix(in srgb, ${color}, black 20%);
+        --ui-color-primary-700: color-mix(in srgb, ${color}, black 40%);
+        --ui-color-primary-800: color-mix(in srgb, ${color}, black 60%);
+        --ui-color-primary-900: color-mix(in srgb, ${color}, black 80%);
+        --ui-color-primary-950: color-mix(in srgb, ${color}, black 90%);
+      }
+    `;
+  }
+  return "";
+});
+
+useHead(() => ({
+  style: hexThemeStyles.value ? [{ innerHTML: hexThemeStyles.value }] : [],
+}));
+
 // Available roles: 'USER', 'AGENCY_ADMIN', 'SUPPORT', 'SUPER_ADMIN'
 // TODO: This should be connected to the real session store in the future
 const userRole = ref("AGENCY_ADMIN");
+
+const { agency } = useAgency();
 
 // Roles that are internal TravelOTA staff (no bookings, no agency management)
 const isInternalRole = computed(() =>
@@ -76,10 +107,24 @@ const langItems = [[{ label: "ES" }, { label: "EN" }]];
       >
         <!-- Logo -->
         <div class="flex items-center gap-8">
-          <NuxtLink to="/dashboard" class="flex items-center gap-2">
-            <span class="text-xl font-black tracking-tight text-primary"
-              >TravelOTA B2B</span
-            >
+          <NuxtLink to="/dashboard" class="flex items-center gap-3">
+            <template v-if="!isInternalRole">
+              <UAvatar
+                :src="agency.logo"
+                :alt="agency.name"
+                size="sm"
+                class="bg-white border border-gray-100 shadow-sm"
+              />
+              <span
+                class="text-lg sm:text-xl font-black tracking-tight text-primary truncate max-w-[140px] sm:max-w-[200px]"
+                >{{ agency.name }}</span
+              >
+            </template>
+            <template v-else>
+              <span class="text-xl font-black tracking-tight text-primary"
+                >TravelOTA Admin</span
+              >
+            </template>
           </NuxtLink>
 
           <!-- Desktop Navigation -->

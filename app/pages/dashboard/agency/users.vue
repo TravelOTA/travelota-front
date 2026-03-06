@@ -172,7 +172,7 @@ function toggleUserStatus(user: AgencyUser) {
         />
         <USelectMenu
           v-model="statusFilter"
-          :options="['Todos', 'Activos', 'Inactivos']"
+          :items="['Todos', 'Activos', 'Inactivos']"
           class="w-full sm:w-40"
         />
       </div>
@@ -341,14 +341,14 @@ function toggleUserStatus(user: AgencyUser) {
             <UFormGroup label="Rol en Plataforma" name="role" required>
               <USelectMenu
                 v-model="formUser.role"
-                :options="['Vendedor', 'Admin Agencia']"
+                :items="['Vendedor', 'Admin Agencia']"
               />
             </UFormGroup>
 
             <UFormGroup label="Estado Inicial" name="status">
               <USelectMenu
                 v-model="formUser.status"
-                :options="['Activo', 'Inactivo']"
+                :items="['Activo', 'Inactivo']"
               />
             </UFormGroup>
           </div>

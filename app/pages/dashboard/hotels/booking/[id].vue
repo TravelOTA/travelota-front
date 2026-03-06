@@ -4,6 +4,7 @@ import CheckoutSidebarSummary from "~/components/b2b/hotel/checkout/CheckoutSide
 import BookingStatusHero from "~/components/b2b/hotel/checkout/BookingStatusHero.vue";
 import BookingCancellation from "~/components/b2b/hotel/checkout/BookingCancellation.vue";
 import BookingPayment from "~/components/b2b/hotel/checkout/BookingPayment.vue";
+import VoucherPreviewModal from "~/components/b2b/hotel/checkout/VoucherPreviewModal.vue";
 
 definePageMeta({
   layout: "dashboard",
@@ -139,6 +140,14 @@ const showCancellation = computed(() => {
     bookingMeta.value.status !== "Vencida"
   );
 });
+
+const isVoucherModalOpen = ref(false);
+const documentMode = ref<"voucher" | "invoice">("voucher");
+
+const openDocument = (mode: "voucher" | "invoice") => {
+  documentMode.value = mode;
+  isVoucherModalOpen.value = true;
+};
 
 useHead({
   title: `Reserva ${bookingId} - TravelOTA B2B`,
@@ -317,6 +326,7 @@ useHead({
               variant="outline"
               icon="i-heroicons-document-arrow-down"
               class="font-bold justify-start py-3"
+              @click="openDocument('voucher')"
             >
               <div class="text-left">
                 <span class="block">Descargar Voucher</span>
@@ -332,6 +342,7 @@ useHead({
               variant="solid"
               icon="i-heroicons-document-currency-dollar-solid"
               class="font-bold justify-start py-3"
+              @click="openDocument('invoice')"
             >
               <div class="text-left">
                 <span class="block">Descargar Factura</span>
@@ -381,5 +392,14 @@ useHead({
         />
       </div>
     </div>
+
+    <!-- Voucher White-Label Modal -->
+    <VoucherPreviewModal
+      v-model:is-open="isVoucherModalOpen"
+      :mode="documentMode"
+      :booking-id="bookingId"
+      :hotel-name="hotel.name"
+      :reservation="reservation"
+    />
   </div>
 </template>
