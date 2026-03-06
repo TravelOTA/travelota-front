@@ -121,11 +121,12 @@ useHead({
       </UCard>
 
       <UCard
-        class="cursor-pointer hover:border-primary-500 transition-colors opacity-75"
+        class="cursor-pointer hover:border-primary-500 transition-colors"
+        @click="$router.push('/dashboard/admin/support-users')"
       >
         <div class="p-2">
           <div
-            class="w-10 h-10 bg-gray-100 dark:bg-gray-800 text-gray-500 rounded-lg flex items-center justify-center mb-4"
+            class="w-10 h-10 bg-primary-50 dark:bg-primary-900/20 text-primary-500 rounded-lg flex items-center justify-center mb-4"
           >
             <UIcon name="i-heroicons-user-group" class="w-6 h-6" />
           </div>
@@ -137,7 +138,7 @@ useHead({
         </div>
         <template #footer>
           <div
-            class="flex items-center justify-between text-gray-500 text-sm font-semibold"
+            class="flex items-center justify-between text-primary text-sm font-semibold"
           >
             Gestionar Soporte
             <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
@@ -146,11 +147,12 @@ useHead({
       </UCard>
 
       <UCard
-        class="cursor-pointer hover:border-primary-500 transition-colors opacity-75"
+        class="cursor-pointer hover:border-primary-500 transition-colors"
+        @click="$router.push('/dashboard/admin/bookings')"
       >
         <div class="p-2">
           <div
-            class="w-10 h-10 bg-gray-100 dark:bg-gray-800 text-gray-500 rounded-lg flex items-center justify-center mb-4"
+            class="w-10 h-10 bg-primary-50 dark:bg-primary-900/20 text-primary-500 rounded-lg flex items-center justify-center mb-4"
           >
             <UIcon name="i-heroicons-briefcase" class="w-6 h-6" />
           </div>
@@ -162,9 +164,34 @@ useHead({
         </div>
         <template #footer>
           <div
-            class="flex items-center justify-between text-gray-500 text-sm font-semibold"
+            class="flex items-center justify-between text-primary text-sm font-semibold"
           >
             Ver todas <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
+          </div>
+        </template>
+      </UCard>
+      <UCard
+        class="cursor-pointer hover:border-primary-500 transition-colors"
+        @click="$router.push('/dashboard/admin/agency-groups')"
+      >
+        <div class="p-2">
+          <div
+            class="w-10 h-10 bg-primary-50 dark:bg-primary-900/20 text-primary-500 rounded-lg flex items-center justify-center mb-4"
+          >
+            <UIcon name="i-heroicons-user-group" class="w-6 h-6" />
+          </div>
+          <h3 class="font-bold text-lg mb-1">Grupos de Agencia</h3>
+          <p class="text-sm text-gray-500">
+            Define conjuntos de reglas comerciales compartidas (Markup Base,
+            condiciones) para las distintas agencias.
+          </p>
+        </div>
+        <template #footer>
+          <div
+            class="flex items-center justify-between text-primary text-sm font-semibold"
+          >
+            Gestionar Grupos
+            <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </div>
         </template>
       </UCard>

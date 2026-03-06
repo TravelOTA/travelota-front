@@ -65,11 +65,14 @@
 
 | Funcionalidad | Estado | Ruta |
 |--------------|--------|------|
-| Panel de administración | 🔧 | `/dashboard/admin` |
-| Gestión de agencias | 🔧 | `/dashboard/admin/agencies` |
-| Perfil de agencia | 🔧 | `/dashboard/agency` |
-| Configuración de markup/comisiones | 🔧 | `/dashboard/agency/markup` |
-| Gestión de usuarios | 🔧 | `/dashboard/agency/users` |
+| Panel de administración (KPIs globales) | 🔧 | `/dashboard/admin` |
+| Gestión de agencias B2B | 🔧 | `/dashboard/admin/agencies` |
+| Detalle de agencia (Info, Usuarios, Reservas) | 🔧 | `/dashboard/admin/agencies/[id]` |
+| Gestión de Grupos de Agencia (Markup Base) | 🔧 | `/dashboard/admin/agency-groups` |
+| Usuarios de Soporte interno | 🔧 | `/dashboard/admin/support-users` |
+| Monitor global de reservas (precio neto) | 🔧 | `/dashboard/admin/bookings` |
+| Perfil de mi agencia | 🔧 | `/dashboard/agency` |
+| Gestión de usuarios de mi agencia | 🔧 | `/dashboard/agency/users` |
 
 ---
 
@@ -82,6 +85,8 @@
 | Modo oscuro | ✅ | Soporte nativo via Nuxt UI |
 | Diseño responsive | ✅ | Mobile-first con breakpoints lg |
 | Iconografía (Lucide, Heroicons) | ✅ | Via @iconify |
+| Control de menú por rol | ✅ | `USER`/`AGENCY_ADMIN`: todos los menús. `SUPER_ADMIN`/`SUPPORT`: sin "Mis Reservas" ni "Mi Agencia" |
+| Roles disponibles | ✅ | `USER`, `AGENCY_ADMIN`, `SUPPORT`, `SUPER_ADMIN` (mock en `dashboard.vue`) |
 
 ---
 

@@ -1,15 +1,31 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
 import BookingSearchFilters from "~/components/b2b/hotel/checkout/BookingSearchFilters.vue";
-import BookingMassPayment from "~/components/b2b/hotel/checkout/BookingMassPayment.vue";
 
 definePageMeta({
   layout: "dashboard",
 });
 
 useHead({
-  title: "Mis Reservas - TravelOTA B2B",
+  title: "Todas las Reservas - TravelOTA Admin",
 });
+
+interface BookingRow {
+  id: string;
+  createdAt: string;
+  createdAtISO: string;
+  titular: string;
+  destination: string;
+  checkIn: string;
+  checkInISO: string;
+  checkOut: string;
+  agency: string;
+  seller: string;
+  netPrice: number;
+  agencyPrice: number;
+  salePrice: number;
+  paymentStatus: string;
+  status: string;
+}
 
 interface SearchFilters {
   pnr: string;
@@ -26,25 +42,7 @@ interface SearchFilters {
   [key: string]: string | string[];
 }
 
-// Types
-interface BookingRow {
-  id: string;
-  createdAt: string;
-  createdAtISO: string;
-  titular: string;
-  destination: string;
-  checkIn: string;
-  checkInISO: string;
-  checkOut: string;
-  total: number;
-  salePrice: number;
-  seller: string;
-  paymentStatus: string;
-  status: string;
-  [key: string]: string | number;
-}
-
-// Expanded Mock Data
+// Mock data — todas las agencias, precios netos visibles
 const allBookings = ref<BookingRow[]>([
   {
     id: "TRV-987654321",
@@ -55,9 +53,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "03/03/2026",
     checkInISO: "2026-03-03",
     checkOut: "10/03/2026",
-    total: 6281.41,
-    salePrice: 7035.0,
+    agency: "Viajes El Corte Inglés",
     seller: "Juan Pérez Vendedor",
+    netPrice: 5230.0,
+    agencyPrice: 6281.41,
+    salePrice: 6900.0,
     paymentStatus: "Pagada",
     status: "Confirmada",
   },
@@ -70,9 +70,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "15/05/2026",
     checkInISO: "2026-05-15",
     checkOut: "22/05/2026",
-    total: 3150.0,
-    salePrice: 3530.0,
+    agency: "Destinia",
     seller: "María Gómez",
+    netPrice: 2625.0,
+    agencyPrice: 3150.0,
+    salePrice: 3500.0,
     paymentStatus: "Pendiente Pago",
     status: "Confirmada",
   },
@@ -85,9 +87,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "20/02/2026",
     checkInISO: "2026-02-20",
     checkOut: "25/02/2026",
-    total: 1840.5,
-    salePrice: 2060.0,
-    seller: "Juan Pérez Vendedor",
+    agency: "Viajes El Corte Inglés",
+    seller: "Carlos López",
+    netPrice: 1534.0,
+    agencyPrice: 1840.5,
+    salePrice: 2000.0,
     paymentStatus: "Pendiente Pago",
     status: "Vencida",
   },
@@ -100,9 +104,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "10/01/2026",
     checkInISO: "2026-01-10",
     checkOut: "17/01/2026",
-    total: 4200.75,
-    salePrice: 4705.0,
-    seller: "María Gómez",
+    agency: "Agencia Demo B2B",
+    seller: "Ana Ruiz",
+    netPrice: 3500.0,
+    agencyPrice: 4200.75,
+    salePrice: 4600.0,
     paymentStatus: "Pagada",
     status: "Cancelada",
   },
@@ -115,25 +121,12 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "20/04/2026",
     checkInISO: "2026-04-20",
     checkOut: "27/04/2026",
-    total: 2890.0,
-    salePrice: 3240.0,
-    seller: "Carlos López",
+    agency: "Destinia",
+    seller: "Pedro Morales",
+    netPrice: 2408.0,
+    agencyPrice: 2890.0,
+    salePrice: 3100.0,
     paymentStatus: "Pendiente Pago",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-444555666",
-    createdAt: "25/02/2026 14:20",
-    createdAtISO: "2026-02-25",
-    titular: "Pedro Sánchez Ruiz",
-    destination: "Madrid, ES",
-    checkIn: "01/04/2026",
-    checkInISO: "2026-04-01",
-    checkOut: "05/04/2026",
-    total: 1520.0,
-    salePrice: 1700.0,
-    seller: "Carlos López",
-    paymentStatus: "Pagada",
     status: "Confirmada",
   },
   {
@@ -145,56 +138,13 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "10/06/2026",
     checkInISO: "2026-06-10",
     checkOut: "17/06/2026",
-    total: 8450.25,
-    salePrice: 9465.0,
+    agency: "Viajes El Corte Inglés",
     seller: "Juan Pérez Vendedor",
+    netPrice: 7042.0,
+    agencyPrice: 8450.25,
+    salePrice: 9200.0,
     paymentStatus: "Pendiente Pago",
     status: "Confirmada",
-  },
-  {
-    id: "TRV-333444555",
-    createdAt: "10/02/2026 12:30",
-    createdAtISO: "2026-02-10",
-    titular: "Miguel Ángel Rodríguez",
-    destination: "Riviera Maya, MX",
-    checkIn: "15/03/2026",
-    checkInISO: "2026-03-15",
-    checkOut: "22/03/2026",
-    total: 5100.0,
-    salePrice: 5710.0,
-    seller: "María Gómez",
-    paymentStatus: "Pagada",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-666777888",
-    createdAt: "18/02/2026 16:00",
-    createdAtISO: "2026-02-18",
-    titular: "Elena García",
-    destination: "Roma, IT",
-    checkIn: "05/04/2026",
-    checkInISO: "2026-04-05",
-    checkOut: "10/04/2026",
-    total: 2340.6,
-    salePrice: 2620.0,
-    seller: "Carlos López",
-    paymentStatus: "Pendiente Pago",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-999000111",
-    createdAt: "12/01/2026 09:00",
-    createdAtISO: "2026-01-12",
-    titular: "Roberto Díaz",
-    destination: "Tokio, JP",
-    checkIn: "01/02/2026",
-    checkInISO: "2026-02-01",
-    checkOut: "08/02/2026",
-    total: 6750.0,
-    salePrice: 7560.0,
-    seller: "Juan Pérez Vendedor",
-    paymentStatus: "Pagada",
-    status: "Cancelada",
   },
   {
     id: "TRV-101010101",
@@ -205,9 +155,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "01/05/2026",
     checkInISO: "2026-05-01",
     checkOut: "08/05/2026",
-    total: 3780.0,
-    salePrice: 4235.0,
-    seller: "María Gómez",
+    agency: "Agencia Demo B2B",
+    seller: "Ana Ruiz",
+    netPrice: 3150.0,
+    agencyPrice: 3780.0,
+    salePrice: 4100.0,
     paymentStatus: "Pagada",
     status: "Confirmada",
   },
@@ -220,9 +172,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "12/04/2026",
     checkInISO: "2026-04-12",
     checkOut: "19/04/2026",
-    total: 2100.5,
-    salePrice: 2355.0,
-    seller: "Carlos López",
+    agency: "Destinia",
+    seller: "Pedro Morales",
+    netPrice: 1750.0,
+    agencyPrice: 2100.5,
+    salePrice: 2300.0,
     paymentStatus: "Pendiente Pago",
     status: "Confirmada",
   },
@@ -235,9 +189,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "25/05/2026",
     checkInISO: "2026-05-25",
     checkOut: "01/06/2026",
-    total: 1650.0,
+    agency: "Viajes El Corte Inglés",
+    seller: "Carlos López",
+    netPrice: 1375.0,
+    agencyPrice: 1650.0,
     salePrice: 1850.0,
-    seller: "Juan Pérez Vendedor",
     paymentStatus: "Pagada",
     status: "Confirmada",
   },
@@ -250,9 +206,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "10/03/2026",
     checkInISO: "2026-03-10",
     checkOut: "17/03/2026",
-    total: 4320.75,
-    salePrice: 4840.0,
-    seller: "María Gómez",
+    agency: "Agencia Demo B2B",
+    seller: "Ana Ruiz",
+    netPrice: 3600.0,
+    agencyPrice: 4320.75,
+    salePrice: 4800.0,
     paymentStatus: "Pagada",
     status: "Cancelada",
   },
@@ -265,9 +223,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "20/07/2026",
     checkInISO: "2026-07-20",
     checkOut: "30/07/2026",
-    total: 12400.0,
-    salePrice: 13890.0,
-    seller: "Carlos López",
+    agency: "Destinia",
+    seller: "María Gómez",
+    netPrice: 10333.0,
+    agencyPrice: 12400.0,
+    salePrice: 13500.0,
     paymentStatus: "Pendiente Pago",
     status: "Confirmada",
   },
@@ -280,9 +240,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "14/04/2026",
     checkInISO: "2026-04-14",
     checkOut: "20/04/2026",
-    total: 3200.0,
-    salePrice: 3585.0,
+    agency: "Viajes El Corte Inglés",
     seller: "Juan Pérez Vendedor",
+    netPrice: 2667.0,
+    agencyPrice: 3200.0,
+    salePrice: 3500.0,
     paymentStatus: "Pagada",
     status: "Confirmada",
   },
@@ -295,9 +257,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "03/06/2026",
     checkInISO: "2026-06-03",
     checkOut: "10/06/2026",
-    total: 1980.0,
-    salePrice: 2220.0,
-    seller: "María Gómez",
+    agency: "Agencia Demo B2B",
+    seller: "Ana Ruiz",
+    netPrice: 1650.0,
+    agencyPrice: 1980.0,
+    salePrice: 2200.0,
     paymentStatus: "Pendiente Pago",
     status: "Confirmada",
   },
@@ -310,9 +274,11 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "15/08/2026",
     checkInISO: "2026-08-15",
     checkOut: "22/08/2026",
-    total: 9850.0,
-    salePrice: 11030.0,
-    seller: "Carlos López",
+    agency: "Destinia",
+    seller: "Pedro Morales",
+    netPrice: 8208.0,
+    agencyPrice: 9850.0,
+    salePrice: 10800.0,
     paymentStatus: "Pagada",
     status: "Confirmada",
   },
@@ -325,26 +291,13 @@ const allBookings = ref<BookingRow[]>([
     checkIn: "25/04/2026",
     checkInISO: "2026-04-25",
     checkOut: "30/04/2026",
-    total: 2750.0,
-    salePrice: 3080.0,
-    seller: "Juan Pérez Vendedor",
+    agency: "Viajes El Corte Inglés",
+    seller: "Carlos López",
+    netPrice: 2292.0,
+    agencyPrice: 2750.0,
+    salePrice: 3000.0,
     paymentStatus: "Pendiente Pago",
     status: "Vencida",
-  },
-  {
-    id: "TRV-010101010",
-    createdAt: "20/12/2025 09:30",
-    createdAtISO: "2025-12-20",
-    titular: "Javier Serrano",
-    destination: "Bangkok, TH",
-    checkIn: "10/05/2026",
-    checkInISO: "2026-05-10",
-    checkOut: "20/05/2026",
-    total: 5600.0,
-    salePrice: 6275.0,
-    seller: "María Gómez",
-    paymentStatus: "Pagada",
-    status: "Confirmada",
   },
 ]);
 
@@ -375,16 +328,14 @@ const paginatedBookings = computed(() => {
   const start = (currentPage.value - 1) * PAGE_SIZE;
   return filteredBookings.value.slice(start, start + PAGE_SIZE);
 });
-
-// Reset to page 1 when results change
 watch(filteredBookings, () => {
   currentPage.value = 1;
 });
 
-// Mass payment selection
-const selectedIds = ref<Set<string>>(new Set());
-
-// Seller options derived from data
+// Derived options for filters
+const agencyOptions = computed(() => [
+  ...new Set(allBookings.value.map((b) => b.agency)),
+]);
 const sellerOptions = computed(() => [
   ...new Set(allBookings.value.map((b) => b.seller)),
 ]);
@@ -394,141 +345,90 @@ const handleSearch = (filters: SearchFilters) => {
   activeFilters.value = filters;
   let results = [...allBookings.value];
 
-  // PNR filter
   if (filters.pnr) {
     const q = filters.pnr.toLowerCase();
     results = results.filter((b) => b.id.toLowerCase().includes(q));
   }
-
-  // Titular filter
   if (filters.titular) {
     const q = filters.titular.toLowerCase();
     results = results.filter((b) => b.titular.toLowerCase().includes(q));
   }
-
-  // Destination filter
   if (filters.destination) {
     const q = filters.destination.toLowerCase();
     results = results.filter((b) => b.destination.toLowerCase().includes(q));
   }
-
-  // Status filter (reservation status only: Confirmada, Cancelada, Vencida)
   if (filters.statuses && filters.statuses.length > 0) {
     results = results.filter((b) => filters.statuses.includes(b.status));
   }
-
-  // Payment status filter (Pagada, Pendiente de Pago)
   if (filters.paymentStatuses && filters.paymentStatuses.length > 0) {
     results = results.filter((b) =>
       filters.paymentStatuses.includes(b.paymentStatus),
     );
   }
-
-  // Created date range
   if (filters.createdFrom) {
     results = results.filter((b) => b.createdAtISO >= filters.createdFrom);
   }
   if (filters.createdTo) {
     results = results.filter((b) => b.createdAtISO <= filters.createdTo);
   }
-
-  // Check-in date range
   if (filters.checkInFrom) {
     results = results.filter((b) => b.checkInISO >= filters.checkInFrom);
   }
   if (filters.checkInTo) {
     results = results.filter((b) => b.checkInISO <= filters.checkInTo);
   }
-
-  // Seller filter
+  if (filters.agency && filters.agency !== "Todas") {
+    results = results.filter((b) => b.agency === filters.agency);
+  }
   if (filters.seller && filters.seller !== "Todos") {
     results = results.filter((b) => b.seller === filters.seller);
   }
 
   filteredBookings.value = results;
   hasSearched.value = true;
-  // Clear selections on new search
-  selectedIds.value = new Set();
 };
 
 const handleClear = () => {
   hasSearched.value = false;
   filteredBookings.value = [];
-  activeFilters.value = {
-    pnr: "",
-    titular: "",
-    destination: "",
-    statuses: [],
-    paymentStatuses: [],
-    createdFrom: "",
-    createdTo: "",
-    checkInFrom: "",
-    checkInTo: "",
-    agency: "",
-    seller: "",
-  };
-  selectedIds.value = new Set();
 };
 
-// Pending payment bookings in current results
-const pendingPaymentBookings = computed(() => {
-  return filteredBookings.value.filter(
+// Stats
+const resultStats = computed(() => {
+  const total = filteredBookings.value.length;
+  const confirmed = filteredBookings.value.filter(
+    (b) => b.status === "Confirmada",
+  ).length;
+  const pending = filteredBookings.value.filter(
     (b) => b.paymentStatus === "Pendiente Pago",
+  ).length;
+  const totalNet = filteredBookings.value.reduce(
+    (acc, b) => acc + b.netPrice,
+    0,
   );
+  const totalAgency = filteredBookings.value.reduce(
+    (acc, b) => acc + b.agencyPrice,
+    0,
+  );
+  const totalSale = filteredBookings.value.reduce(
+    (acc, b) => acc + b.salePrice,
+    0,
+  );
+  return { total, confirmed, pending, totalNet, totalAgency, totalSale };
 });
 
-// Selected bookings for mass payment
-const selectedBookings = computed(() => {
-  return pendingPaymentBookings.value.filter((b) =>
-    selectedIds.value.has(b.id),
-  );
-});
-
-// Toggle selection
-const toggleSelection = (id: string) => {
-  const newSet = new Set(selectedIds.value);
-  if (newSet.has(id)) {
-    newSet.delete(id);
-  } else {
-    newSet.add(id);
-  }
-  selectedIds.value = newSet;
-};
-
-const selectAllPending = () => {
-  const newSet = new Set(selectedIds.value);
-  pendingPaymentBookings.value.forEach((b) => newSet.add(b.id));
-  selectedIds.value = newSet;
-};
-
-const deselectAllPending = () => {
-  selectedIds.value = new Set();
-};
-
-const handleMassPay = () => {
-  // TODO: After real API call, refresh the data
-  selectedIds.value.forEach((id) => {
-    const booking = allBookings.value.find((b) => b.id === id);
-    if (booking) {
-      booking.paymentStatus = "Pagada";
-    }
-  });
-  selectedIds.value = new Set();
-  handleSearch(activeFilters.value);
-};
-
-// Table Columns
+// Table columns
 const columns = [
   { accessorKey: "actions", header: "" },
-  { accessorKey: "select", header: "" },
   { accessorKey: "id", header: "Localizador PNR" },
   { accessorKey: "status", header: "Estado" },
   { accessorKey: "paymentStatus", header: "Pago" },
-  { accessorKey: "prices", header: "Coste / Venta" },
+  { accessorKey: "prices", header: "Precios (Neto / Agencia / Venta)" },
   { accessorKey: "createdAt", header: "F. Creación" },
   { accessorKey: "titular", header: "Titular" },
   { accessorKey: "destination", header: "Destino / Hotel" },
   { accessorKey: "dates", header: "Fechas de Viaje" },
+  { accessorKey: "agency", header: "Agencia" },
   { accessorKey: "seller", header: "Vendedor" },
 ];
 
@@ -547,35 +447,27 @@ const getStatusColor = (status: string) => {
   }
 };
 
-// Stats computation
-const resultStats = computed(() => {
-  const total = filteredBookings.value.length;
-  const confirmed = filteredBookings.value.filter(
-    (b) => b.status === "Confirmada",
-  ).length;
-  const pending = pendingPaymentBookings.value.length;
-  const cancelled = filteredBookings.value.filter(
-    (b) => b.status === "Cancelada",
-  ).length;
-  const totalAmount = filteredBookings.value.reduce(
-    (acc, b) => acc + b.total,
-    0,
-  );
-  const pendingAmount = pendingPaymentBookings.value.reduce(
-    (acc, b) => acc + b.total,
-    0,
-  );
-  return { total, confirmed, pending, cancelled, totalAmount, pendingAmount };
-});
+const fmt = (v: number) =>
+  new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  }).format(v);
 </script>
 
 <template>
-  <div class="max-w-[1400px] mx-auto pb-24 pt-6">
-    <!-- Header Section -->
+  <div class="max-w-[1500px] mx-auto pb-24 pt-6">
+    <!-- Header -->
     <div
       class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8"
     >
       <div>
+        <NuxtLink
+          to="/dashboard/admin"
+          class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
+        >
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> Panel Admin
+        </NuxtLink>
         <h1
           class="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tight flex items-center gap-3"
         >
@@ -583,35 +475,45 @@ const resultStats = computed(() => {
             name="i-heroicons-briefcase"
             class="w-8 h-8 text-primary-500"
           />
-          Mis Reservas
+          Todas las Reservas
         </h1>
         <p class="text-gray-500 mt-1 dark:text-gray-400">
-          Busca, gestiona y realiza pagos de las reservas de tu agencia.
+          Monitor global. Precios netos visibles — solo para uso interno de
+          TravelOTA.
         </p>
       </div>
-      <UButton
-        color="primary"
-        variant="solid"
-        icon="i-heroicons-plus"
-        to="/dashboard"
-      >
-        Nueva Venta
-      </UButton>
     </div>
+
+    <!-- Net price alert -->
+    <UAlert
+      icon="i-heroicons-eye"
+      color="info"
+      variant="soft"
+      class="mb-8"
+      title="Vista de precios netos"
+      description="Estás viendo los 3 niveles de precio: Neto (coste TravelOTA), Agencia (precio de venta de la agencia) y Venta final (precio al cliente). Esta información es confidencial."
+    />
 
     <!-- Search Filters -->
     <div class="mb-8">
       <BookingSearchFilters
+        :show-agency-filter="true"
         :show-seller-filter="true"
+        :agency-options="agencyOptions"
         :seller-options="sellerOptions"
+        :status-options="[
+          { label: 'Confirmada', value: 'Confirmada' },
+          { label: 'Cancelada', value: 'Cancelada' },
+          { label: 'Vencida', value: 'Vencida' },
+        ]"
         @search="handleSearch"
         @clear="handleClear"
       />
     </div>
 
-    <!-- Results Section (only after search) -->
+    <!-- Results -->
     <template v-if="hasSearched">
-      <!-- Results Stats Bar -->
+      <!-- Stats bar -->
       <div
         class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 mb-6 shadow-sm"
       >
@@ -628,100 +530,47 @@ const resultStats = computed(() => {
               resultStats.total
             }}</span>
           </div>
-          <div class="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
+          <div class="h-4 w-px bg-gray-200 dark:bg-gray-700" />
           <div class="flex items-center gap-2">
             <UBadge color="success" variant="subtle" class="text-xs font-bold"
               >{{ resultStats.confirmed }} Confirmadas</UBadge
             >
             <UBadge color="warning" variant="subtle" class="text-xs font-bold"
-              >{{ resultStats.pending }} Pendientes Pago</UBadge
-            >
-            <UBadge
-              v-if="resultStats.cancelled > 0"
-              color="error"
-              variant="subtle"
-              class="text-xs font-bold"
-              >{{ resultStats.cancelled }} Canceladas</UBadge
+              >{{ resultStats.pending }} Pend. Pago</UBadge
             >
           </div>
-          <div class="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
-          <div class="flex items-center gap-2">
-            <span class="text-sm text-gray-600 dark:text-gray-400"
-              >Vol. Total:</span
-            >
-            <span class="text-sm font-bold text-gray-900 dark:text-white"
-              >${{
-                resultStats.totalAmount.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })
-              }}</span
-            >
-          </div>
-          <div
-            v-if="resultStats.pendingAmount > 0"
-            class="flex items-center gap-2"
-          >
-            <span class="text-sm text-amber-600 dark:text-amber-400"
-              >Pend. Pago:</span
-            >
-            <span class="text-sm font-bold text-amber-700 dark:text-amber-300"
-              >${{
-                resultStats.pendingAmount.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })
-              }}</span
-            >
+          <div class="h-4 w-px bg-gray-200 dark:bg-gray-700" />
+          <div class="flex items-center gap-3 flex-wrap">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-semibold text-gray-400 uppercase"
+                >Neto:</span
+              >
+              <span class="text-sm font-bold text-gray-900 dark:text-white">{{
+                fmt(resultStats.totalNet)
+              }}</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-semibold text-orange-500 uppercase"
+                >Agencia:</span
+              >
+              <span
+                class="text-sm font-bold text-orange-600 dark:text-orange-400"
+                >{{ fmt(resultStats.totalAgency) }}</span
+              >
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-semibold text-primary-500 uppercase"
+                >Venta:</span
+              >
+              <span class="text-sm font-bold text-primary-600">{{
+                fmt(resultStats.totalSale)
+              }}</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Mass Select Bar -->
-      <div
-        v-if="pendingPaymentBookings.length > 0"
-        class="flex items-center justify-between bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-xl px-5 py-3 mb-6"
-      >
-        <div class="flex items-center gap-3">
-          <UIcon
-            name="i-heroicons-credit-card"
-            class="w-5 h-5 text-amber-600 dark:text-amber-400"
-          />
-          <span class="text-sm font-medium text-amber-800 dark:text-amber-300">
-            {{ pendingPaymentBookings.length }}
-            {{
-              pendingPaymentBookings.length === 1
-                ? "reserva pendiente"
-                : "reservas pendientes"
-            }}
-            de pago en los resultados
-          </span>
-        </div>
-        <UButton
-          v-if="selectedIds.size < pendingPaymentBookings.length"
-          color="warning"
-          variant="soft"
-          size="sm"
-          icon="i-heroicons-check-circle"
-          class="font-bold"
-          @click="selectAllPending"
-        >
-          Seleccionar todas las pendientes de pago
-        </UButton>
-        <UButton
-          v-else
-          color="neutral"
-          variant="soft"
-          size="sm"
-          icon="i-heroicons-x-circle"
-          class="font-bold"
-          @click="deselectAllPending"
-        >
-          Deseleccionar todas
-        </UButton>
-      </div>
-
-      <!-- Data Table -->
+      <!-- Table -->
       <div
         v-if="filteredBookings.length > 0"
         class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl overflow-hidden"
@@ -731,28 +580,17 @@ const resultStats = computed(() => {
           :columns="columns as any"
           class="w-full"
         >
-          <!-- Select Column (Checkbox) -->
-          <template #select-cell="{ row }">
-            <div class="flex items-center justify-center">
-              <UCheckbox
-                v-if="(row as any).original.paymentStatus === 'Pendiente Pago'"
-                :model-value="selectedIds.has((row as any).original.id)"
-                @update:model-value="toggleSelection((row as any).original.id)"
-              />
-            </div>
-          </template>
-
-          <!-- Id Column -->
+          <!-- PNR -->
           <template #id-cell="{ row }">
             <NuxtLink
               :to="`/dashboard/hotels/booking/${(row as any).original.id}`"
-              class="font-bold text-primary-600 dark:text-primary-400 hover:underline"
+              class="font-bold text-primary-600 dark:text-primary-400 hover:underline font-mono text-sm"
             >
               {{ (row as any).original.id }}
             </NuxtLink>
           </template>
 
-          <!-- Dates Column -->
+          <!-- Dates -->
           <template #dates-cell="{ row }">
             <div class="text-sm">
               <span class="block text-gray-900 dark:text-white">{{
@@ -764,7 +602,18 @@ const resultStats = computed(() => {
             </div>
           </template>
 
-          <!-- Seller Column -->
+          <!-- Agency -->
+          <template #agency-cell="{ row }">
+            <div class="flex items-center gap-1.5">
+              <UIcon
+                name="i-heroicons-building-storefront"
+                class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"
+              />
+              <span class="text-sm">{{ (row as any).original.agency }}</span>
+            </div>
+          </template>
+
+          <!-- Seller -->
           <template #seller-cell="{ row }">
             <div class="flex items-center gap-1.5">
               <UIcon
@@ -777,20 +626,23 @@ const resultStats = computed(() => {
             </div>
           </template>
 
-          <!-- Prices Column (Coste / Venta) -->
+          <!-- Prices: Net / Agency / Sale -->
           <template #prices-cell="{ row }">
             <div class="text-xs space-y-0.5">
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-gray-400 w-12">COSTE</span>
+                <span class="font-semibold text-gray-400 w-12">NETO</span>
                 <span
                   class="font-bold text-gray-900 dark:text-white tabular-nums"
                 >
-                  ${{
-                    (row as any).original.total.toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                  }}
+                  {{ fmt((row as any).original.netPrice) }}
+                </span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-semibold text-orange-500 w-12">AGENC.</span>
+                <span
+                  class="font-bold text-orange-600 dark:text-orange-400 tabular-nums"
+                >
+                  {{ fmt((row as any).original.agencyPrice) }}
                 </span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -798,18 +650,13 @@ const resultStats = computed(() => {
                 <span
                   class="font-bold text-primary-600 dark:text-primary-400 tabular-nums"
                 >
-                  ${{
-                    (row as any).original.salePrice.toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                  }}
+                  {{ fmt((row as any).original.salePrice) }}
                 </span>
               </div>
             </div>
           </template>
 
-          <!-- Payment Status Column -->
+          <!-- Payment Status -->
           <template #paymentStatus-cell="{ row }">
             <UBadge
               :color="
@@ -824,7 +671,7 @@ const resultStats = computed(() => {
             </UBadge>
           </template>
 
-          <!-- Status Column -->
+          <!-- Status -->
           <template #status-cell="{ row }">
             <UBadge
               :color="getStatusColor((row as any).original.status) as any"
@@ -835,17 +682,9 @@ const resultStats = computed(() => {
             </UBadge>
           </template>
 
-          <!-- Actions Column -->
+          <!-- Actions -->
           <template #actions-cell="{ row }">
-            <div class="flex items-center justify-end gap-2">
-              <UTooltip text="Descargar Voucher">
-                <UButton
-                  color="neutral"
-                  variant="ghost"
-                  icon="i-heroicons-document-arrow-down"
-                  class="text-gray-500 hover:text-primary-600"
-                />
-              </UTooltip>
+            <div class="flex items-center justify-end gap-2 pr-2">
               <UTooltip text="Ver Detalles">
                 <UButton
                   color="neutral"
@@ -858,7 +697,7 @@ const resultStats = computed(() => {
             </div>
           </template>
 
-          <!-- Empty State -->
+          <!-- Empty state -->
           <template #empty-state>
             <div
               class="flex flex-col items-center justify-center py-12 px-4 text-center"
@@ -873,8 +712,7 @@ const resultStats = computed(() => {
                 No se encontraron reservas
               </h3>
               <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-                Intenta ajustar los filtros de búsqueda o realiza una nueva
-                búsqueda con diferentes criterios.
+                Ajusta los filtros de búsqueda e inténtalo de nuevo.
               </p>
             </div>
           </template>
@@ -911,7 +749,7 @@ const resultStats = computed(() => {
         </div>
       </div>
 
-      <!-- No results state -->
+      <!-- No results -->
       <div
         v-else
         class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm"
@@ -929,14 +767,14 @@ const resultStats = computed(() => {
             No se encontraron reservas
           </h3>
           <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-            No hay reservas que coincidan con los filtros aplicados. Intenta
-            modificar los criterios de búsqueda.
+            No hay reservas que coincidan con los filtros aplicados. Prueba con
+            otros criterios.
           </p>
         </div>
       </div>
     </template>
 
-    <!-- Initial state: No search yet -->
+    <!-- Initial state -->
     <template v-else>
       <div
         class="bg-white dark:bg-gray-900 border border-dashed border-gray-300 dark:border-gray-700 rounded-xl"
@@ -953,57 +791,32 @@ const resultStats = computed(() => {
             />
           </div>
           <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-            Busca tus reservas
+            Busca entre todas las reservas
           </h3>
           <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
-            Utiliza los filtros de arriba para buscar reservas por localizador,
-            titular, destino, estado o fechas.
+            Utiliza los filtros para buscar por localizador, titular, destino,
+            agencia, vendedor, estado o fechas.
           </p>
           <div class="flex flex-wrap justify-center gap-3">
-            <UBadge color="primary" variant="subtle" class="px-3 py-1 text-xs">
-              <UIcon
-                name="i-heroicons-document-text"
-                class="w-3 h-3 mr-1 inline"
-              />
-              PNR
-            </UBadge>
-            <UBadge color="primary" variant="subtle" class="px-3 py-1 text-xs">
-              <UIcon name="i-heroicons-user" class="w-3 h-3 mr-1 inline" />
-              Titular
-            </UBadge>
-            <UBadge color="primary" variant="subtle" class="px-3 py-1 text-xs">
-              <UIcon name="i-heroicons-map-pin" class="w-3 h-3 mr-1 inline" />
-              Destino
-            </UBadge>
-            <UBadge color="primary" variant="subtle" class="px-3 py-1 text-xs">
-              <UIcon name="i-heroicons-funnel" class="w-3 h-3 mr-1 inline" />
-              Estado
-            </UBadge>
-            <UBadge color="primary" variant="subtle" class="px-3 py-1 text-xs">
-              <UIcon
-                name="i-heroicons-calendar-days"
-                class="w-3 h-3 mr-1 inline"
-              />
-              Fechas
-            </UBadge>
+            <UBadge
+              v-for="label in [
+                'PNR',
+                'Titular',
+                'Destino',
+                'Agencia',
+                'Vendedor',
+                'Estado',
+                'Fechas',
+              ]"
+              :key="label"
+              color="primary"
+              variant="subtle"
+              class="px-3 py-1 text-xs"
+              >{{ label }}</UBadge
+            >
           </div>
         </div>
       </div>
     </template>
-
-    <!-- Mass Payment Component -->
-    <BookingMassPayment
-      :selected-bookings="
-        selectedBookings.map((b) => ({
-          id: b.id,
-          titular: b.titular,
-          total: b.total,
-        }))
-      "
-      :pending-count="pendingPaymentBookings.length"
-      @select-all="selectAllPending"
-      @deselect-all="deselectAllPending"
-      @pay="handleMassPay"
-    />
   </div>
 </template>

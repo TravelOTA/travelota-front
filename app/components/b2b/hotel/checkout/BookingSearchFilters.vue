@@ -1,8 +1,43 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 
+interface Props {
+  showAgencyFilter?: boolean;
+  showSellerFilter?: boolean;
+  agencyOptions?: string[];
+  sellerOptions?: string[];
+  statusOptions?: { label: string; value: string }[];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showAgencyFilter: false,
+  showSellerFilter: false,
+  agencyOptions: () => [],
+  sellerOptions: () => [],
+  statusOptions: () => [
+    { label: "Confirmada", value: "Confirmada" },
+    { label: "Cancelada", value: "Cancelada" },
+    { label: "Vencida", value: "Vencida" },
+  ],
+});
+
+interface FilterPayload {
+  pnr: string;
+  titular: string;
+  destination: string;
+  statuses: string[];
+  paymentStatuses: string[];
+  createdFrom: string;
+  createdTo: string;
+  checkInFrom: string;
+  checkInTo: string;
+  agency: string;
+  seller: string;
+  [key: string]: string | string[];
+}
+
 const emit = defineEmits<{
-  (e: "search", filters: typeof filters): void;
+  (e: "search", filters: FilterPayload): void;
   (e: "clear"): void;
 }>();
 
@@ -11,18 +46,14 @@ const filters = reactive({
   titular: "",
   destination: "",
   statuses: [] as string[],
+  paymentStatuses: [] as string[],
   createdFrom: "",
   createdTo: "",
   checkInFrom: "",
   checkInTo: "",
+  agency: "",
+  seller: "",
 });
-
-const statusOptions = [
-  { label: "Confirmada", value: "Confirmada" },
-  { label: "Pendiente Pago", value: "Pendiente Pago" },
-  { label: "Cancelada", value: "Cancelada" },
-  { label: "Vencida", value: "Vencida" },
-];
 
 const handleSearch = () => {
   emit("search", { ...filters });
@@ -33,10 +64,13 @@ const handleClear = () => {
   filters.titular = "";
   filters.destination = "";
   filters.statuses = [];
+  filters.paymentStatuses = [];
   filters.createdFrom = "";
   filters.createdTo = "";
   filters.checkInFrom = "";
   filters.checkInTo = "";
+  filters.agency = "";
+  filters.seller = "";
   emit("clear");
 };
 
@@ -46,10 +80,13 @@ const hasActiveFilters = computed(() => {
     filters.titular ||
     filters.destination ||
     filters.statuses.length > 0 ||
+    filters.paymentStatuses.length > 0 ||
     filters.createdFrom ||
     filters.createdTo ||
     filters.checkInFrom ||
-    filters.checkInTo
+    filters.checkInTo ||
+    filters.agency ||
+    filters.seller
   );
 });
 </script>
@@ -108,33 +145,107 @@ const hasActiveFilters = computed(() => {
         </UFormField>
       </div>
 
-      <!-- Row 2: Status + Date ranges -->
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-        <UFormField label="Estado" class="md:col-span-1">
+      <!-- Row 2: Agency (opcional) - solo si NO hay seller también -->
+      <div
+        v-if="props.showAgencyFilter && !props.showSellerFilter"
+        class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"
+      >
+        <UFormField label="Agencia">
+          <USelectMenu
+            v-model="filters.agency"
+            :items="['Todas', ...props.agencyOptions]"
+            placeholder="Todas las agencias"
+            icon="i-heroicons-building-storefront"
+            class="w-full"
+          />
+        </UFormField>
+      </div>
+
+      <!-- Row 3: Fechas -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <UFormField label="Creación desde">
+          <UInput v-model="filters.createdFrom" type="date" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Creación hasta">
+          <UInput v-model="filters.createdTo" type="date" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Check-in desde">
+          <UInput v-model="filters.checkInFrom" type="date" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Check-in hasta">
+          <UInput v-model="filters.checkInTo" type="date" class="w-full" />
+        </UFormField>
+      </div>
+
+      <!-- Row 4: Estado Reserva + Estado Pago -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <UFormField label="Estado Reserva">
           <USelectMenu
             v-model="filters.statuses"
-            :items="statusOptions"
+            :items="props.statusOptions"
             multiple
-            placeholder="Todos"
+            placeholder="Todos los estados"
             value-key="value"
             class="w-full"
           />
         </UFormField>
 
-        <UFormField label="Creación desde" class="md:col-span-1">
-          <UInput v-model="filters.createdFrom" type="date" class="w-full" />
+        <UFormField label="Estado Pago">
+          <USelectMenu
+            v-model="filters.paymentStatuses"
+            :items="[
+              { label: 'Pagada', value: 'Pagada' },
+              { label: 'Pendiente Pago', value: 'Pendiente Pago' },
+            ]"
+            multiple
+            placeholder="Todos los pagos"
+            value-key="value"
+            class="w-full"
+          />
         </UFormField>
+      </div>
 
-        <UFormField label="Creación hasta" class="md:col-span-1">
-          <UInput v-model="filters.createdTo" type="date" class="w-full" />
+      <!-- Row 4: Agencia + Vendedor juntos (cuando ambos activos, Agencia primero) -->
+      <div
+        v-if="props.showAgencyFilter && props.showSellerFilter"
+        class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"
+      >
+        <UFormField label="Agencia">
+          <USelectMenu
+            v-model="filters.agency"
+            :items="['Todas', ...props.agencyOptions]"
+            placeholder="Todas las agencias"
+            icon="i-heroicons-building-storefront"
+            class="w-full"
+          />
         </UFormField>
-
-        <UFormField label="Check-in desde" class="md:col-span-1">
-          <UInput v-model="filters.checkInFrom" type="date" class="w-full" />
+        <UFormField label="Vendedor">
+          <USelectMenu
+            v-model="filters.seller"
+            :items="['Todos', ...props.sellerOptions]"
+            placeholder="Todos los vendedores"
+            icon="i-heroicons-user-circle"
+            class="w-full"
+          />
         </UFormField>
+      </div>
 
-        <UFormField label="Check-in hasta" class="md:col-span-1">
-          <UInput v-model="filters.checkInTo" type="date" class="w-full" />
+      <!-- Row 4b: Solo Vendedor (cuando no hay agencia) -->
+      <div
+        v-if="props.showSellerFilter && !props.showAgencyFilter"
+        class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"
+      >
+        <UFormField label="Vendedor">
+          <USelectMenu
+            v-model="filters.seller"
+            :items="['Todos', ...props.sellerOptions]"
+            placeholder="Todos los vendedores"
+            icon="i-heroicons-user-circle"
+            class="w-full"
+          />
         </UFormField>
       </div>
 

@@ -1,7 +1,12 @@
 <script setup lang="ts">
 // Available roles: 'USER', 'AGENCY_ADMIN', 'SUPPORT', 'SUPER_ADMIN'
 // TODO: This should be connected to the real session store in the future
-const userRole = ref("SUPER_ADMIN");
+const userRole = ref("AGENCY_ADMIN");
+
+// Roles that are internal TravelOTA staff (no bookings, no agency management)
+const isInternalRole = computed(() =>
+  ["SUPER_ADMIN", "SUPPORT"].includes(userRole.value),
+);
 
 const userLinks = computed(() => {
   const baseLinks = [
@@ -16,27 +21,41 @@ const userLinks = computed(() => {
       to: "#",
       badge: "Prónto",
     },
-    {
+  ];
+
+  // "Mis Reservas" y "Mi Agencia" solo para roles de agencia (no para staff interno)
+  if (!isInternalRole.value) {
+    baseLinks.push({
       label: "Mis Reservas",
       icon: "i-heroicons-briefcase",
       to: "/dashboard/bookings",
-    },
-  ];
-
-  // B2B Navbar permission logic
-  if (["AGENCY_ADMIN", "SUPER_ADMIN"].includes(userRole.value)) {
-    baseLinks.push({
-      label: "Mi Agencia",
-      icon: "i-heroicons-building-storefront",
-      to: "/dashboard/agency/markup", // Redirect to first tab
     });
   }
 
+  // "Mi Agencia" solo para AGENCY_ADMIN
+  if (userRole.value === "AGENCY_ADMIN") {
+    baseLinks.push({
+      label: "Mi Agencia",
+      icon: "i-heroicons-building-storefront",
+      to: "/dashboard/agency",
+    });
+  }
+
+  // Admin completo para SUPER_ADMIN
   if (userRole.value === "SUPER_ADMIN") {
     baseLinks.push({
       label: "Administración",
       icon: "i-heroicons-shield-check",
       to: "/dashboard/admin",
+    });
+  }
+
+  // Soporte solo ve "Todas las Reservas" bajo una entrada de Administración
+  if (userRole.value === "SUPPORT") {
+    baseLinks.push({
+      label: "Administración",
+      icon: "i-heroicons-shield-check",
+      to: "/dashboard/admin/bookings",
     });
   }
 
