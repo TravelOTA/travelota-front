@@ -72,6 +72,29 @@
 
 ---
 
+## Dashboard — Finanzas y Crédito (Wallet)
+
+| Funcionalidad | Estado | Ruta / Componente |
+|--------------|--------|-------------------|
+| Estado global y límite de crédito | ✅ | `useWallet.ts` |
+| Dashboard de resumen financiero B2B | ✅ | `WalletWidgets.vue` |
+| Tabla de historial de transacciones | ✅ | `AgencyTransactions.vue` |
+| Bloqueo por crédito insuficiente en checkout | ✅ | `CheckoutPaymentOptions.vue` |
+
+---
+
+## Dashboard — Cotizador B2B (Quoter)
+
+| Funcionalidad | Estado | Ruta / Componente |
+|--------------|--------|-------------------|
+| Estado global del carrito de cotización | ⬜ | `useQuoter.ts` |
+| Botón "Añadir a Cotización" en tarjetas de hotel | ⬜ | `ResultHotelSummary.vue` |
+| Botón "Añadir a Cotización" en detalle de habitaciones | ⬜ | `HotelRooms.vue` |
+| Interfaz principal del cotizador (ajuste de markup) | ⬜ | `/dashboard/quoter/index.vue` |
+| Generación de vista previa para cliente final | ⬜ | `QuoterPreviewModal.vue` |
+
+---
+
 ## Dashboard — Administración
 
 | Funcionalidad | Estado | Ruta |
@@ -107,9 +130,8 @@
 |-----------|--------------|-------------|
 | 🔴 Alta | Integración API | Reemplazar datos mock con llamadas a API real |
 | 🔴 Alta | Autenticación | Login, JWT, protección de rutas |
-| 🔴 Alta | Cotizador B2B (Quoter) | Herramienta para generar presupuestos a clientes finales |
-| 🟡 Media | Notificaciones | Sistema de alertas y notificaciones en tiempo real |
-| 🟡 Media | Historial de pagos | Registro de transacciones realizadas |
+| 🔴 Alta | Notificaciones | Sistema de alertas y notificaciones en tiempo real |
+| 🟡 Media | Tests automatizados | Unit tests y tests E2E |
 | 🟡 Media | Tests automatizados | Unit tests y tests E2E |
 | 🟢 Baja | Soporte multi-idioma | i18n para internacionalización |
 | 🟢 Baja | Analytics dashboard | Métricas de ventas y rendimiento para agencias |
