@@ -10,7 +10,6 @@
  *     :total-price="6281.41" payment-deadline="01/03/2026" cancellation-deadline="25/02/2026" />
  */
 import { computed } from "vue";
-import { useWallet } from "~/composables/useWallet";
 
 const props = defineProps<{
   modelValue: string;

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 
+import { useItinerary } from "~/composables/useItinerary";
+
 const props = defineProps({
   rooms: {
     type: Array as PropType<
@@ -37,6 +39,18 @@ const sortedRooms = computed(() => {
 const visibleRooms = computed(() => {
   return showAllRooms.value ? sortedRooms.value : sortedRooms.value.slice(0, 1);
 });
+const { triggerAddOption } = useItinerary();
+
+const addToItinerary = (room: Record<string, unknown>) => {
+  triggerAddOption({
+    providerId: "HOTEL-CURRENT",
+    name: "Alojamiento",
+    image:
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
+    description: `${room.name} (${room.regimen})`,
+    netPrice: room.price,
+  });
+};
 </script>
 
 <template>
@@ -121,15 +135,21 @@ const visibleRooms = computed(() => {
         }}
       </div>
 
-      <!-- Botón Reservar -->
-      <div class="w-28 text-right">
+      <!-- Acciones: Cotizar y Reservar -->
+      <div class="w-auto flex items-center justify-end gap-2 ml-4">
         <UButton
-          block
+          color="gray"
+          variant="soft"
+          icon="i-heroicons-document-plus"
+          @click="addToItinerary(room)"
+        />
+        <UButton
           color="primary"
-          class="font-bold"
+          class="font-bold w-24 justify-center"
           to="/dashboard/hotels/checkout"
-          >Reservar</UButton
         >
+          Reservar
+        </UButton>
       </div>
     </div>
 

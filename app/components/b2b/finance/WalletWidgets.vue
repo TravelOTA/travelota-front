@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useWallet } from "~/composables/useWallet";
-
 const { creditLimit, currentBalance, availableCredit, creditUsagePercentage } =
   useWallet();
 

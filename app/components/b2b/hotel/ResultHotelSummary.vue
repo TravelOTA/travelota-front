@@ -1,5 +1,7 @@
 <script setup lang="ts">
-defineProps({
+import { useItinerary } from "~/composables/useItinerary";
+
+const props = defineProps({
   hotel: {
     type: Object, // REFACTOR: This should be a corresponding hotel type
     required: true,
@@ -9,6 +11,19 @@ defineProps({
 const emit = defineEmits<{
   (e: "open-map", hotel: Record<string, unknown>): void;
 }>();
+const { triggerAddOption } = useItinerary();
+
+const addToItinerary = () => {
+  triggerAddOption({
+    providerId: String(props.hotel.id),
+    name: props.hotel.name,
+    image:
+      props.hotel.image ||
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
+    description: props.hotel.location + " - Alojamiento Completo",
+    netPrice: props.hotel.bestPrice,
+  });
+};
 </script>
 
 <template>
@@ -77,6 +92,17 @@ const emit = defineEmits<{
           })
         }}
       </p>
+
+      <UButton
+        color="gray"
+        variant="solid"
+        icon="i-heroicons-document-plus"
+        class="mt-auto w-full justify-center"
+        size="sm"
+        @click.prevent="addToItinerary"
+      >
+        Cotizar / Itinerario
+      </UButton>
     </div>
   </div>
 </template>

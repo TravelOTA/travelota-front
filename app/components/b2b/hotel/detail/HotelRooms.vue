@@ -22,6 +22,28 @@ const sortedRooms = computed(() => {
 const visibleRooms = computed(() => {
   return showAllRooms.value ? sortedRooms.value : sortedRooms.value.slice(0, 3);
 });
+
+const { addItem } = useQuoter();
+const toast = useToast();
+
+const addToQuote = (room: Room) => {
+  addItem({
+    hotelId: "HOTEL-CURRENT", // Mock ID since hotel detail is not passed down here
+    hotelName: "Hotel Seleccionado", // Mock Name
+    hotelImage:
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
+    location: "Ubicación del Hotel",
+    roomsDescription: `${room.name} (${room.regimen})`,
+    netPrice: room.price,
+  });
+
+  toast.add({
+    title: "Habitación Añadida",
+    description: `La habitación ${room.name} se agregó a la cotización B2B.`,
+    icon: "i-heroicons-check-circle",
+    color: "primary",
+  });
+};
 </script>
 
 <template>
@@ -120,15 +142,21 @@ const visibleRooms = computed(() => {
           }}
         </div>
 
-        <!-- Botón Reservar -->
-        <div class="w-28 text-right">
+        <!-- Acciones: Cotizar y Reservar -->
+        <div class="w-auto flex items-center justify-end gap-2 ml-4">
           <UButton
-            block
+            color="gray"
+            variant="soft"
+            icon="i-heroicons-document-plus"
+            @click="addToQuote(room)"
+          />
+          <UButton
             color="primary"
-            class="font-bold"
+            class="font-bold w-24 justify-center"
             to="/dashboard/hotels/checkout"
-            >Reservar</UButton
           >
+            Reservar
+          </UButton>
         </div>
       </div>
 

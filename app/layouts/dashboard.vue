@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AddToItineraryModal from "~/components/b2b/quoter/AddToItineraryModal.vue";
+
 const appConfig = useAppConfig();
 
 // Dynamically generate UI Hex colors when a custom color is set
@@ -30,7 +32,7 @@ useHead(() => ({
 
 // Available roles: 'USER', 'AGENCY_ADMIN', 'SUPPORT', 'SUPER_ADMIN'
 // TODO: This should be connected to the real session store in the future
-const userRole = ref("AGENCY_ADMIN");
+const userRole = ref("SUPER_ADMIN");
 
 const { agency } = useAgency();
 
@@ -45,6 +47,11 @@ const userLinks = computed(() => {
       label: "Hoteles",
       icon: "i-heroicons-building-office-2",
       to: "/dashboard",
+    },
+    {
+      label: "Cotizador B2B",
+      icon: "i-heroicons-calculator",
+      to: "/dashboard/quoter/builder",
     },
     {
       label: "Traslados",
@@ -87,6 +94,15 @@ const userLinks = computed(() => {
       label: "Administración",
       icon: "i-heroicons-shield-check",
       to: "/dashboard/admin/bookings",
+    });
+  }
+
+  // Enlaces comunes de administración interna para plantillas
+  if (isInternalRole.value) {
+    baseLinks.push({
+      label: "Plantillas B2B",
+      icon: "i-heroicons-document-duplicate",
+      to: "/dashboard/admin/templates",
     });
   }
 
@@ -224,6 +240,9 @@ const langItems = [[{ label: "ES" }, { label: "EN" }]];
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <slot />
     </main>
+
+    <!-- Itinerary Global Modal -->
+    <AddToItineraryModal />
   </div>
 </template>
 

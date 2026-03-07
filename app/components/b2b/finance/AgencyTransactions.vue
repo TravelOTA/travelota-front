@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useWallet } from "~/composables/useWallet";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
