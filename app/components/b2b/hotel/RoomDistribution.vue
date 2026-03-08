@@ -8,7 +8,9 @@ interface Room {
   children: ChildAge[];
 }
 
-const rooms = ref<Room[]>([{ adults: 2, children: [] }]);
+const rooms = defineModel<Room[]>({
+  default: () => [{ adults: 2, children: [] }],
+});
 
 const isOpen = ref(false);
 const expandedRooms = ref<number[]>([0]);
@@ -86,19 +88,6 @@ const toggleRoom = (idx: number) => {
     expandedRooms.value.push(idx);
   }
 };
-
-// Emit the distribution data
-const emit = defineEmits<{
-  (e: "update", value: Room[]): void;
-}>();
-
-watch(
-  rooms,
-  (val) => {
-    emit("update", val);
-  },
-  { deep: true },
-);
 </script>
 
 <!-- REFACTOR: Room Distribution could be displayed via UModal. -->

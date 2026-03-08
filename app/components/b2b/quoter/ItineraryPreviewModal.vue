@@ -3,6 +3,11 @@ import { computed } from "vue";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useItinerary } from "~/composables/useItinerary";
+import type {
+  ItineraryBlock,
+  Room,
+  ItineraryOption,
+} from "~/composables/useItinerary";
 import { useAgency } from "~/composables/useAgency";
 
 defineProps<{
@@ -11,8 +16,13 @@ defineProps<{
 
 const emit = defineEmits(["update:isOpen"]);
 
-const { itinerary, calculateOptionSellPrice, minItineraryPrice } =
-  useItinerary();
+const {
+  itinerary,
+  totalPax,
+  calculateOptionSellPrice,
+  calculatePriceBreakdown,
+  minItineraryPrice,
+} = useItinerary();
 const { agency } = useAgency();
 
 const printVoucher = () => {
@@ -70,24 +80,62 @@ const formatCurrency = (amount: number) => {
           class="flex justify-between items-start border-b-2 border-primary-500 pb-6 mb-8"
         >
           <div>
+            <p class="text-sm font-bold text-gray-500 mb-2">
+              Fecha de Emisión: {{ currentDate }}
+            </p>
             <h1
-              class="text-3xl font-black text-primary-600 mb-2 tracking-tight"
+              class="text-3xl font-black text-primary-600 mb-4 tracking-tight"
             >
               {{ itinerary.title }}
             </h1>
-            <p class="text-sm text-gray-500 font-medium">
+
+            <!-- Cliente, Pax, Origen -->
+            <p class="text-sm text-gray-700 font-medium mb-3">
               Cliente:
               <span class="font-bold text-gray-900">{{
                 itinerary.clientName || "No Especificado"
               }}</span>
-              • Viajeros:
-              <span class="font-bold text-gray-900"
-                >{{ itinerary.pax }} PAX</span
-              >
+              &nbsp;—&nbsp; Pax:
+              <span class="font-bold text-gray-900">{{ totalPax }}</span>
+              <template v-if="itinerary.origin">
+                &nbsp;—&nbsp; Origen:
+                <span class="font-bold text-gray-900">{{
+                  itinerary.origin
+                }}</span>
+              </template>
             </p>
-            <p class="text-sm text-gray-500 font-medium">
-              Fecha de Emisión: {{ currentDate }}
-            </p>
+
+            <!-- Enumeración de Habitaciones -->
+            <div>
+              <p class="text-sm text-gray-700 font-medium mb-1">
+                Habitaciones:
+              </p>
+              <ul class="text-sm text-gray-600 space-y-1 pl-1">
+                <li
+                  v-for="(room, rIdx) in itinerary.rooms as Room[]"
+                  :key="rIdx"
+                  class="flex items-center gap-2"
+                >
+                  <span class="font-bold text-gray-800"
+                    >Habitación {{ rIdx + 1 }}:</span
+                  >
+                  <span>{{ room.adults }} Adultos</span>
+
+                  <template v-if="room.children.length > 0">
+                    <span class="text-gray-400">•</span>
+                    <span>
+                      {{ room.children.length }} Niño{{
+                        room.children.length > 1 ? "s" : ""
+                      }}
+                      <span class="text-xs text-gray-500">
+                        (Edades:
+                        {{ room.children.map((c) => c.age).join(", ") }})
+                      </span>
+                    </span>
+                  </template>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div class="text-right">
@@ -129,7 +177,7 @@ const formatCurrency = (amount: number) => {
           </div>
 
           <div
-            v-for="(block, bIndex) in itinerary.blocks"
+            v-for="(block, bIndex) in itinerary.blocks as ItineraryBlock[]"
             :key="block.id"
             class="relative"
           >
@@ -210,8 +258,122 @@ const formatCurrency = (amount: number) => {
           </div>
         </div>
 
+        <!-- Price Breakdown Summary Table -->
+        <div
+          v-if="itinerary.blocks.length > 0"
+          class="mb-12 mt-16 page-break-before"
+        >
+          <h3
+            class="text-xl font-bold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2"
+          >
+            Resumen de Cotización por Opción
+          </h3>
+          <div class="overflow-hidden border border-gray-200 rounded-lg">
+            <table class="min-w-full text-sm text-left">
+              <thead
+                class="bg-gray-50 text-gray-700 text-xs uppercase font-bold tracking-wider"
+              >
+                <tr>
+                  <th scope="col" class="px-6 py-3 border-b border-gray-200">
+                    Servicio / Opción
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 border-b border-gray-200 text-right"
+                  >
+                    Precio Adulto
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 border-b border-gray-200 text-right"
+                  >
+                    Precio Niño
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 border-b border-gray-200 text-right"
+                  >
+                    Precio Total
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white">
+                <!-- Group by Block -->
+                <template
+                  v-for="(
+                    block, bIndex
+                  ) in itinerary.blocks as ItineraryBlock[]"
+                  :key="block.id"
+                >
+                  <!-- Block Header Row -->
+                  <tr class="bg-gray-50/50">
+                    <td
+                      colspan="4"
+                      class="px-6 py-2 font-bold text-gray-900 border-t border-b border-gray-200"
+                    >
+                      {{ bIndex + 1 }}. {{ block.title }}
+                      <span class="font-normal text-xs text-gray-500 ml-2"
+                        >({{ block.date || "Fechas por definir" }})</span
+                      >
+                    </td>
+                  </tr>
+
+                  <!-- Options Rows -->
+                  <tr v-if="block.options.length === 0">
+                    <td
+                      colspan="4"
+                      class="px-6 py-3 text-gray-400 italic text-center"
+                    >
+                      Sin opciones configuradas
+                    </td>
+                  </tr>
+                  <tr
+                    v-for="(opt, oIndex) in block.options as ItineraryOption[]"
+                    :key="opt.id"
+                    class="hover:bg-gray-50 transition-colors"
+                  >
+                    <td class="px-6 py-3">
+                      <div class="flex flex-col">
+                        <span class="font-semibold text-gray-800"
+                          >Opción {{ oIndex + 1 }}: {{ opt.name }}</span
+                        >
+                      </div>
+                    </td>
+
+                    <!-- Calculate Prices using the Heuristic Math from Composable -->
+                    <!-- We use an IIFE-like structure or just call the function directly -->
+                    <td class="px-6 py-3 text-right font-medium text-gray-600">
+                      {{
+                        formatCurrency(
+                          calculatePriceBreakdown(opt.netPrice).perAdult,
+                        )
+                      }}
+                    </td>
+                    <td class="px-6 py-3 text-right font-medium text-gray-600">
+                      {{
+                        formatCurrency(
+                          calculatePriceBreakdown(opt.netPrice).perChild,
+                        )
+                      }}
+                    </td>
+                    <td
+                      class="px-6 py-3 text-right font-bold text-primary-600 tracking-tight"
+                    >
+                      {{
+                        formatCurrency(
+                          calculatePriceBreakdown(opt.netPrice).total,
+                        )
+                      }}
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- Total Estimate Summary -->
-        <div class="flex justify-end mb-12 mt-16">
+        <div class="flex justify-end mb-12 mt-12">
           <div
             class="w-1/2 md:w-1/3 text-right border-t-2 border-gray-900 pt-4"
           >

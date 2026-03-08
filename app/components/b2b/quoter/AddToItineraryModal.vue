@@ -160,22 +160,19 @@ const handleConfirm = () => {
         <!-- Add to Existing Block -->
         <div v-if="!showNewBlockForm">
           <UFormGroup label="Selecciona el Bloque">
-            <USelectMenu
+            <select
               v-model="selectedBlockId"
-              :options="availableBlocks"
-              option-attribute="title"
-              value-attribute="id"
-              placeholder="Escoge de la lista"
+              class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-select rounded-md font-medium text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
             >
-              <template #label>
-                <span v-if="selectedBlockId" class="truncate">
-                  {{
-                    availableBlocks.find((b) => b.id === selectedBlockId)?.title
-                  }}
-                </span>
-                <span v-else>Escoge de la lista</span>
-              </template>
-            </USelectMenu>
+              <option value="" disabled selected>Escoge de la lista</option>
+              <option
+                v-for="block in availableBlocks"
+                :key="block.id"
+                :value="block.id"
+              >
+                {{ block.title }} ({{ block.options.length }}/5)
+              </option>
+            </select>
             <p
               v-if="availableBlocks.length === 0"
               class="text-xs text-red-500 mt-2"

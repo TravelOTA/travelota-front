@@ -4,6 +4,7 @@ import { useItinerary } from "~/composables/useItinerary";
 import ItineraryPreviewModal from "~/components/b2b/quoter/ItineraryPreviewModal.vue";
 import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
 import type { DateValue } from "@internationalized/date";
+import type { ItineraryBlock } from "~/composables/useItinerary";
 
 const formatDate = (date: DateValue): string => {
   const d = date.toDate(getLocalTimeZone());
@@ -17,6 +18,7 @@ definePageMeta({ layout: "dashboard" });
 
 const {
   itinerary,
+  totalPax,
   addBlock,
   removeBlock,
   removeOptionFromBlock,
@@ -60,6 +62,37 @@ const formatCurrency = (amount: number) => {
     currency: "USD",
   }).format(amount);
 };
+
+const nationalityOptions = [
+  "Estados Unidos",
+  "Canadá",
+  "México",
+  "Guatemala",
+  "Honduras",
+  "El Salvador",
+  "Nicaragua",
+  "Costa Rica",
+  "Panamá",
+  "Cuba",
+  "República Dominicana",
+  "Puerto Rico",
+  "Colombia",
+  "Venezuela",
+  "Ecuador",
+  "Perú",
+  "Bolivia",
+  "Chile",
+  "Argentina",
+  "Uruguay",
+  "Paraguay",
+  "Brasil",
+  "España",
+  "Portugal",
+  "Francia",
+  "Italia",
+  "Alemania",
+  "Reino Unido",
+];
 </script>
 
 <template>
@@ -95,13 +128,40 @@ const formatCurrency = (amount: number) => {
           <span class="flex items-center gap-1">
             <UIcon name="i-heroicons-users" class="w-4 h-4" />
             <UInput
-              v-model.number="itinerary.pax"
-              type="number"
+              :model-value="totalPax"
+              readonly
               variant="none"
               size="xs"
-              class="w-16 border-b border-dashed border-gray-300 dark:border-gray-700 text-center"
+              class="w-8 text-center text-primary-600 font-bold bg-transparent pr-0"
+              :ui="{
+                wrapper: 'pr-0',
+                base: 'px-0 text-center font-bold text-primary-600 cursor-default',
+              }"
             />
-            PAX
+            <span class="text-xs font-bold text-gray-500">PAX</span>
+          </span>
+          <span
+            class="flex items-center gap-1 ml-2 border-l pl-4 border-gray-200 dark:border-gray-700"
+          >
+            <B2bHotelRoomDistribution v-model="itinerary.rooms" />
+          </span>
+          <span
+            class="flex items-center gap-1 ml-2 border-l pl-4 border-gray-200 dark:border-gray-700"
+          >
+            <UIcon name="i-heroicons-globe-americas" class="w-4 h-4" />
+            <select
+              v-model="itinerary.origin"
+              class="w-32 bg-transparent border-0 border-b border-dashed border-gray-300 dark:border-gray-700 text-xs px-1 py-0.5 focus:ring-0 cursor-pointer outline-none"
+            >
+              <option value="" disabled selected>Origen</option>
+              <option
+                v-for="country in nationalityOptions"
+                :key="country"
+                :value="country"
+              >
+                {{ country }}
+              </option>
+            </select>
           </span>
         </p>
       </div>
@@ -160,7 +220,7 @@ const formatCurrency = (amount: number) => {
 
         <!-- Blocks Render -->
         <div
-          v-for="(block, index) in itinerary.blocks"
+          v-for="(block, index) in itinerary.blocks as ItineraryBlock[]"
           :key="block.id"
           class="relative"
         >

@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { computed } from "vue";
 
 export interface ItineraryOption {
   id: string;
@@ -18,29 +18,51 @@ export interface ItineraryBlock {
   options: ItineraryOption[]; // Min 1, Max 5
 }
 
+export interface ChildAge {
+  age: number;
+}
+
+export interface Room {
+  adults: number;
+  children: ChildAge[];
+}
+
 export interface Itinerary {
   id?: string;
   title: string;
   clientName: string;
-  pax: number;
+  rooms: Room[];
+  origin: string;
   markupPercentage: number;
   blocks: ItineraryBlock[];
 }
 
-// Global active builder state
-const itinerary = ref<Itinerary>({
-  title: "Nuevo Itinerario",
-  clientName: "",
-  pax: 2,
-  markupPercentage: 15, // Default 15% margin
-  blocks: [],
-});
-
-// Global Modal State for Adding Options
-const isAddOptionModalOpen = ref(false);
-const pendingOption = ref<Omit<ItineraryOption, "id"> | null>(null);
-
+// Global active builder state mapped to Nuxt useState
 export const useItinerary = () => {
+  const itinerary = useState<Itinerary>("quoter-itinerary", () => ({
+    title: "Nuevo Itinerario",
+    clientName: "",
+    rooms: [{ adults: 2, children: [] }],
+    origin: "",
+    markupPercentage: 15, // Default 15% margin
+    blocks: [],
+  }));
+
+  const totalPax = computed(() => {
+    return itinerary.value.rooms.reduce((acc, room) => {
+      return acc + room.adults + room.children.length;
+    }, 0);
+  });
+
+  // Global Modal State for Adding Options
+  const isAddOptionModalOpen = useState<boolean>(
+    "quoter-modal-open",
+    () => false,
+  );
+  const pendingOption = useState<Omit<ItineraryOption, "id"> | null>(
+    "quoter-pending-option",
+    () => null,
+  );
   const addBlock = (
     type: ItineraryBlock["type"],
     title: string,
@@ -111,11 +133,41 @@ export const useItinerary = () => {
     }, 0);
   });
 
+  const calculatePriceBreakdown = (netPrice: number) => {
+    const sellPrice = calculateOptionSellPrice(netPrice);
+
+    let totalAdults = 0;
+    let totalChildren = 0;
+
+    itinerary.value.rooms.forEach((room) => {
+      totalAdults += room.adults;
+      totalChildren += room.children.length;
+    });
+
+    if (totalAdults === 0 && totalChildren === 0) {
+      return { total: sellPrice, perAdult: 0, perChild: 0 };
+    }
+
+    // Heurística B2B: Niño paga 50% de la tarifa de un adulto (Peso 0.5)
+    // Precio Total = (Adultos * TarifaAdulto) + (Niños * TarifaAdulto * 0.5)
+    // TarifaAdulto = Precio Total / (Adultos + (Niños * 0.5))
+    const totalWeights = totalAdults + totalChildren * 0.5;
+    const adultRate = sellPrice / totalWeights;
+    const childRate = adultRate * 0.5;
+
+    return {
+      total: sellPrice,
+      perAdult: adultRate,
+      perChild: childRate,
+    };
+  };
+
   const clearItinerary = () => {
     itinerary.value = {
       title: "Nuevo Itinerario",
       clientName: "",
-      pax: 2,
+      rooms: [{ adults: 2, children: [] }],
+      origin: "",
       markupPercentage: 15,
       blocks: [],
     };
@@ -128,6 +180,7 @@ export const useItinerary = () => {
 
   return {
     itinerary,
+    totalPax,
     isAddOptionModalOpen,
     pendingOption,
     addBlock,
@@ -135,6 +188,7 @@ export const useItinerary = () => {
     addOptionToBlock,
     removeOptionFromBlock,
     calculateOptionSellPrice,
+    calculatePriceBreakdown,
     getBlockPriceRange,
     minItineraryPrice,
     clearItinerary,
