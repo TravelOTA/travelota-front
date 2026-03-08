@@ -1,5 +1,6 @@
 <script setup>
 import { reactive } from "vue";
+import { useAuth } from "~/composables/useAuth";
 
 useSeoMeta({
   title: "TravelOTA - Inicio",
@@ -12,6 +13,8 @@ const form = reactive({
   password: "",
   rememberMe: false,
 });
+
+const { loginAs } = useAuth();
 
 const handleLogin = () => {
   console.log("Login attempt:", form);
@@ -135,6 +138,58 @@ const handleLogin = () => {
                   Entrar
                 </UButton>
               </form>
+
+              <div
+                class="mt-8 border-t border-gray-100 dark:border-gray-800 pt-6"
+              >
+                <p
+                  class="text-xs text-center text-gray-500 font-bold uppercase tracking-wider mb-4"
+                >
+                  Simulador de Roles de Prueba
+                </p>
+                <div class="grid grid-cols-2 gap-2">
+                  <UButton
+                    color="gray"
+                    variant="soft"
+                    size="sm"
+                    icon="i-lucide-user"
+                    class="justify-center text-xs"
+                    @click="loginAs('USER')"
+                  >
+                    Usuario
+                  </UButton>
+                  <UButton
+                    color="blue"
+                    variant="soft"
+                    size="sm"
+                    icon="i-lucide-building"
+                    class="justify-center text-xs"
+                    @click="loginAs('AGENCY_ADMIN')"
+                  >
+                    Admin Agencia
+                  </UButton>
+                  <UButton
+                    color="amber"
+                    variant="soft"
+                    size="sm"
+                    icon="i-lucide-life-buoy"
+                    class="justify-center text-xs"
+                    @click="loginAs('SUPPORT')"
+                  >
+                    Soporte
+                  </UButton>
+                  <UButton
+                    color="red"
+                    variant="soft"
+                    size="sm"
+                    icon="i-lucide-shield-alert"
+                    class="justify-center text-xs"
+                    @click="loginAs('SUPER_ADMIN')"
+                  >
+                    Super Admin
+                  </UButton>
+                </div>
+              </div>
 
               <template #footer>
                 <div
