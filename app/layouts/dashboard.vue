@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AddToItineraryModal from "~/components/b2b/quoter/AddToItineraryModal.vue";
+import { useAuth } from "~/composables/useAuth";
 
 const appConfig = useAppConfig();
 
@@ -31,8 +32,7 @@ useHead(() => ({
 }));
 
 // Available roles: 'USER', 'AGENCY_ADMIN', 'SUPPORT', 'SUPER_ADMIN'
-// TODO: This should be connected to the real session store in the future
-const userRole = ref("SUPER_ADMIN");
+const { role: userRole, logout } = useAuth();
 
 const { agency } = useAgency();
 
@@ -205,8 +205,8 @@ const langItems = [[{ label: "ES" }, { label: "EN" }]];
               icon="i-heroicons-arrow-right-on-rectangle"
               color="error"
               variant="ghost"
-              to="/"
               class="ml-1"
+              @click="logout"
             />
           </div>
         </div>
