@@ -11,11 +11,6 @@ const emit = defineEmits(["update:isOpen"]);
 
 const { itinerary } = useItinerary();
 
-const printVoucher = () => {
-  localStorage.setItem("print_itinerary", JSON.stringify(itinerary.value));
-  window.open("/print/itinerary", "_blank");
-};
-
 const downloadImage = async () => {
   const node = document.getElementById("itinerary-document");
   if (!node) return;
@@ -42,31 +37,24 @@ const downloadImage = async () => {
     @update:open="emit('update:isOpen', $event)"
   >
     <template #header>
-      <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white">
-          Previsualización de Itinerario
-        </h3>
-        <div class="flex items-center gap-2">
+      <div class="flex items-center justify-between w-full">
+        <div class="flex items-center gap-3">
           <UButton
             color="neutral"
             variant="ghost"
             icon="i-heroicons-x-mark"
             @click="emit('update:isOpen', false)"
           />
-          <UButton
-            color="primary"
-            variant="ghost"
-            icon="i-heroicons-photo"
-            label="Descargar Imagen (PNG)"
-            @click="downloadImage"
-          />
-          <UButton
-            color="primary"
-            icon="i-heroicons-printer"
-            label="Descargar PDF / Imprimir"
-            @click="printVoucher"
-          />
+          <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+            Previsualización de Itinerario
+          </h3>
         </div>
+        <UButton
+          color="primary"
+          icon="i-heroicons-photo"
+          label="Descargar Itinerario"
+          @click="downloadImage"
+        />
       </div>
     </template>
 
