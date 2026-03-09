@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import QuoterDocument from "./QuoterDocument.vue";
 import { useQuoter } from "~/composables/useQuoter";
+import { toPng } from "html-to-image";
 
 defineProps<{
   isOpen: boolean;
@@ -19,6 +20,24 @@ const printVoucher = () => {
     }),
   );
   window.open("/print/quoter", "_blank");
+};
+
+const downloadImage = async () => {
+  const node = document.getElementById("quoter-document");
+  if (!node) return;
+
+  try {
+    const dataUrl = await toPng(node, {
+      backgroundColor: "#ffffff",
+      cacheBust: true,
+    });
+    const link = document.createElement("a");
+    link.download = `quote-${new Date().getTime()}.png`;
+    link.href = dataUrl;
+    link.click();
+  } catch (err) {
+    console.error("Oops, something went wrong!", err);
+  }
 };
 </script>
 
@@ -39,6 +58,13 @@ const printVoucher = () => {
             variant="ghost"
             icon="i-heroicons-x-mark"
             @click="emit('update:isOpen', false)"
+          />
+          <UButton
+            color="primary"
+            variant="ghost"
+            icon="i-heroicons-photo"
+            label="Descargar Imagen (PNG)"
+            @click="downloadImage"
           />
           <UButton
             color="primary"

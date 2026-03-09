@@ -33,7 +33,7 @@ const formatCurrency = (amount: number) => {
 
 <template>
   <div
-    id="printable-itinerary"
+    id="itinerary-document"
     class="max-w-4xl mx-auto bg-white p-8 md:p-12 shadow-none border-none print:shadow-none print:border-none print:p-0 my-0 print:my-0 text-gray-900"
   >
     <!-- Header: Agency Branding -->

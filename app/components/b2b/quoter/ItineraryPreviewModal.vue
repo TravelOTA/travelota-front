@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ItineraryDocument from "./ItineraryDocument.vue";
 import { useItinerary } from "~/composables/useItinerary";
+import { toPng } from "html-to-image";
 
 defineProps<{
   isOpen: boolean;
@@ -13,6 +14,24 @@ const { itinerary } = useItinerary();
 const printVoucher = () => {
   localStorage.setItem("print_itinerary", JSON.stringify(itinerary.value));
   window.open("/print/itinerary", "_blank");
+};
+
+const downloadImage = async () => {
+  const node = document.getElementById("itinerary-document");
+  if (!node) return;
+
+  try {
+    const dataUrl = await toPng(node, {
+      backgroundColor: "#ffffff",
+      cacheBust: true,
+    });
+    const link = document.createElement("a");
+    link.download = `itinerary-${itinerary.value.clientName || "travel"}.png`;
+    link.href = dataUrl;
+    link.click();
+  } catch (err) {
+    console.error("Oops, something went wrong!", err);
+  }
 };
 </script>
 
@@ -33,6 +52,13 @@ const printVoucher = () => {
             variant="ghost"
             icon="i-heroicons-x-mark"
             @click="emit('update:isOpen', false)"
+          />
+          <UButton
+            color="primary"
+            variant="ghost"
+            icon="i-heroicons-photo"
+            label="Descargar Imagen (PNG)"
+            @click="downloadImage"
           />
           <UButton
             color="primary"
