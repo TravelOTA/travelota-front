@@ -1,7 +1,0 @@
-# Prueba de Flujo Local de TravelOTA
-Este archivo demuestra el ciclo de vida local:
-1. Creación de rama desde la activa.
-2. Modificación local con commit semántico.
-3. Aprobación del usuario.
-4. Merge automático a la rama original.
-5. Limpieza de la rama temporal.
