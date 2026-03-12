@@ -168,14 +168,14 @@ const nationalityOptions = [
 
       <div class="flex items-center gap-2">
         <UButton
-          color="gray"
+          color="neutral"
           variant="ghost"
           icon="i-heroicons-trash"
           label="Vaciar"
           @click="clearItinerary"
         />
         <UButton
-          color="gray"
+          color="neutral"
           variant="solid"
           icon="i-heroicons-document-duplicate"
           label="Guardar Plantilla"
@@ -299,7 +299,7 @@ const nationalityOptions = [
                   </p>
                   <UButton
                     size="xs"
-                    color="gray"
+                    color="neutral"
                     variant="solid"
                     icon="i-heroicons-magnifying-glass"
                     to="/dashboard/hotels/results"
@@ -363,7 +363,7 @@ const nationalityOptions = [
         <div v-if="itinerary.blocks.length > 0" class="pl-16">
           <UButton
             icon="i-heroicons-plus"
-            color="gray"
+            color="neutral"
             variant="outline"
             @click="isAddBlockModalOpen = true"
           >
@@ -501,7 +501,7 @@ const nationalityOptions = [
       <template #footer>
         <div class="flex justify-end gap-2">
           <UButton
-            color="gray"
+            color="neutral"
             variant="ghost"
             @click="isAddBlockModalOpen = false"
             >Cancelar</UButton

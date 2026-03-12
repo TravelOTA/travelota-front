@@ -145,7 +145,7 @@ const addToQuote = (room: Room) => {
         <!-- Acciones: Cotizar y Reservar -->
         <div class="w-auto flex items-center justify-end gap-2 ml-4">
           <UButton
-            color="gray"
+            color="neutral"
             variant="soft"
             icon="i-heroicons-document-plus"
             @click="addToQuote(room)"

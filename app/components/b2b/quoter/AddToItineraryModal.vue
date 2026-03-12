@@ -247,7 +247,7 @@ const handleConfirm = () => {
     <template #footer>
       <div class="flex justify-end gap-2">
         <UButton
-          color="gray"
+          color="neutral"
           variant="ghost"
           @click="isAddOptionModalOpen = false"
           >Cancelar</UButton

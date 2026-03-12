@@ -149,7 +149,7 @@ const handleLogin = () => {
                 </p>
                 <div class="grid grid-cols-2 gap-2">
                   <UButton
-                    color="gray"
+                    color="neutral"
                     variant="soft"
                     size="sm"
                     icon="i-lucide-user"

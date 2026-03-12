@@ -94,7 +94,7 @@ const addToItinerary = () => {
       </p>
 
       <UButton
-        color="gray"
+        color="neutral"
         variant="solid"
         icon="i-heroicons-document-plus"
         class="mt-auto w-full justify-center"

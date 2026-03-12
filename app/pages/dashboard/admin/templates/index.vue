@@ -172,7 +172,7 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
         class="flex flex-col h-full hover:border-primary-500 transition-colors"
       >
         <div class="flex justify-between items-start mb-4">
-          <UBadge color="gray" variant="soft">{{ tpl.id }}</UBadge>
+          <UBadge color="neutral" variant="soft">{{ tpl.id }}</UBadge>
           <UDropdown
             :items="[
               [
@@ -182,7 +182,7 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
             ]"
           >
             <UButton
-              color="gray"
+              color="neutral"
               variant="ghost"
               icon="i-heroicons-ellipsis-horizontal"
             />
@@ -212,7 +212,7 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
         >
           <UButton
             block
-            color="gray"
+            color="neutral"
             variant="soft"
             class="flex-1"
             @click="loadTemplateIntoBuilder(tpl)"
