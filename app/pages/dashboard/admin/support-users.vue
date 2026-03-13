@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import {
+  useSupportUsers,
+  type SupportUser,
+} from "~/composables/useSupportUsers";
+
 definePageMeta({
   layout: "dashboard",
 });
@@ -6,6 +11,15 @@ definePageMeta({
 useHead({
   title: "Usuarios de Soporte - TravelOTA Admin",
 });
+
+const {
+  users,
+  stats: supportStats,
+  addUser,
+  updateUser,
+  deleteUser: removeUser,
+  toggleStatus: toggleUserStatus,
+} = useSupportUsers();
 
 const columns = [
   { accessorKey: "name", header: "Nombre" },
@@ -15,33 +29,6 @@ const columns = [
   { accessorKey: "status", header: "Estado" },
   { id: "actions" },
 ];
-
-const users = ref([
-  {
-    id: 1,
-    name: "Laura Martínez",
-    email: "laura@travelota.com",
-    role: "SUPER_ADMIN",
-    lastLogin: "2026-03-05",
-    status: "Activo",
-  },
-  {
-    id: 2,
-    name: "Carlos Ríos",
-    email: "carlos@travelota.com",
-    role: "SUPPORT",
-    lastLogin: "2026-03-04",
-    status: "Activo",
-  },
-  {
-    id: 3,
-    name: "Sofía Delgado",
-    email: "sofia@travelota.com",
-    role: "SUPPORT",
-    lastLogin: "2026-02-28",
-    status: "Inactivo",
-  },
-]);
 
 const searchQuery = ref("");
 const statusFilter = ref("Todos");
@@ -67,7 +54,7 @@ const newUser = ref({
   name: "",
   email: "",
   password: "",
-  role: "SUPPORT",
+  role: "SUPPORT" as const,
 });
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -91,13 +78,10 @@ function openModal() {
 
 function saveUser() {
   if (!isFormValid.value) return;
-  users.value.push({
-    id: users.value.length + 1,
+  addUser({
     name: newUser.value.name,
     email: newUser.value.email,
     role: newUser.value.role,
-    lastLogin: "—",
-    status: "Activo",
   });
   isModalOpen.value = false;
 }
@@ -112,19 +96,19 @@ const roleLabels: Record<string, string> = {
   SUPPORT: "Soporte",
 };
 
-function toggleStatus(user: (typeof users.value)[0]) {
-  user.status = user.status === "Activo" ? "Inactivo" : "Activo";
+function toggleStatus(user: SupportUser) {
+  toggleUserStatus(user.id);
 }
 
-function deleteUser(user: (typeof users.value)[0]) {
+function deleteUser(user: SupportUser) {
   if (confirm(`¿Eliminar a ${user.name}? Esta acción no se puede deshacer.`)) {
-    users.value = users.value.filter((u) => u.id !== user.id);
+    removeUser(user.id);
   }
 }
 
 // Modal edición
 const isEditModalOpen = ref(false);
-const editUser = ref<(typeof users.value)[0] | null>(null);
+const editUser = ref<SupportUser | null>(null);
 const editPassword = ref("");
 const editEmailTouched = ref(false);
 const editEmailValid = computed(() =>
@@ -137,7 +121,7 @@ const isEditFormValid = computed(
     (editPassword.value === "" || editPassword.value.length >= 8),
 );
 
-function openEditModal(user: (typeof users.value)[0]) {
+function openEditModal(user: SupportUser) {
   editUser.value = { ...user };
   editPassword.value = "";
   editEmailTouched.value = false;
@@ -146,8 +130,7 @@ function openEditModal(user: (typeof users.value)[0]) {
 
 function saveEditUser() {
   if (!isEditFormValid.value || !editUser.value) return;
-  const idx = users.value.findIndex((u) => u.id === editUser.value!.id);
-  if (idx !== -1) users.value[idx] = { ...editUser.value };
+  updateUser(editUser.value.id, { ...editUser.value });
   isEditModalOpen.value = false;
 }
 </script>
@@ -194,7 +177,7 @@ function saveEditUser() {
           </div>
           <div>
             <p class="text-xs text-gray-500 font-medium">Total</p>
-            <p class="text-xl font-bold">{{ users.length }}</p>
+            <p class="text-xl font-bold">{{ supportStats.total }}</p>
           </div>
         </div>
       </UCard>
@@ -208,7 +191,7 @@ function saveEditUser() {
           <div>
             <p class="text-xs text-gray-500 font-medium">Activos</p>
             <p class="text-xl font-bold">
-              {{ users.filter((u) => u.status === "Activo").length }}
+              {{ supportStats.active }}
             </p>
           </div>
         </div>
@@ -223,7 +206,7 @@ function saveEditUser() {
           <div>
             <p class="text-xs text-gray-500 font-medium">Admins</p>
             <p class="text-xl font-bold">
-              {{ users.filter((u) => u.role === "SUPER_ADMIN").length }}
+              {{ supportStats.admins }}
             </p>
           </div>
         </div>
@@ -238,7 +221,7 @@ function saveEditUser() {
           <div>
             <p class="text-xs text-gray-500 font-medium">Soporte</p>
             <p class="text-xl font-bold">
-              {{ users.filter((u) => u.role === "SUPPORT").length }}
+              {{ supportStats.support }}
             </p>
           </div>
         </div>

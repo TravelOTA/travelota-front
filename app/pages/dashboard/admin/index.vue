@@ -97,7 +97,7 @@ const fmtCurrency = (v: number) =>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
               Agentes de Soporte
             </p>
-            <p class="text-2xl font-bold">8</p>
+            <p class="text-2xl font-bold">{{ adminStats.totalSupportUsers }}</p>
           </div>
         </div>
       </UCard>

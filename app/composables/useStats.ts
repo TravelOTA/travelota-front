@@ -1,9 +1,11 @@
 import { useAgencies } from "~/composables/useAgencies";
 import { useBookings } from "~/composables/useBookings";
+import { useSupportUsers } from "~/composables/useSupportUsers";
 
 export function useStats() {
   const { agencies } = useAgencies();
   const { bookings } = useBookings();
+  const { stats: supportStats } = useSupportUsers();
 
   const adminStats = computed(() => {
     const activeAgencies = agencies.value.filter(
@@ -27,6 +29,7 @@ export function useStats() {
       totalNetVolume,
       confirmedBookings,
       pendingPayment,
+      totalSupportUsers: supportStats.value.total,
     };
   });
 
