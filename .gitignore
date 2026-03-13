@@ -26,3 +26,6 @@ logs
 
 # Antigravity Agent
 .agent/
+CLAUDE.md
+artifacts/superpowers/execution.md
+artifacts/superpowers/plan.md
