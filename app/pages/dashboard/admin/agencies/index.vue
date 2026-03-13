@@ -1,101 +1,17 @@
 <script setup lang="ts">
+import { useAgencies } from "~/composables/useAgencies";
+
 definePageMeta({ layout: "dashboard" });
 useHead({ title: "Gestor de Agencias B2B - TravelOTA" });
 
-interface Agency {
-  id: string;
-  name: string;
-  country: string;
-  email: string;
-  phone: string;
-  agencyGroup: string;
-  markup: number;
-  usersCount: number;
-  bookingsCount: number;
-  registeredAt: string;
-  status: "Activa" | "Pendiente" | "Bloqueada";
-}
-
-const agencies = ref<Agency[]>([
-  {
-    id: "AG-1001",
-    name: "Viajes El Corte Inglés",
-    country: "España",
-    email: "b2b@elcorteingles.es",
-    phone: "+34 91 418 88 00",
-    agencyGroup: "Grupo VIP",
-    markup: 12,
-    usersCount: 8,
-    bookingsCount: 312,
-    registeredAt: "2024-03-15",
-    status: "Activa",
-  },
-  {
-    id: "AG-1002",
-    name: "Destinia",
-    country: "España",
-    email: "b2b@destinia.com",
-    phone: "+34 91 123 45 67",
-    agencyGroup: "Grupo Mayorista",
-    markup: 10,
-    usersCount: 5,
-    bookingsCount: 187,
-    registeredAt: "2024-06-01",
-    status: "Activa",
-  },
-  {
-    id: "AG-1003",
-    name: "Agencia Demo B2B",
-    country: "México",
-    email: "contacto@agenciademo.mx",
-    phone: "+52 55 1234 5678",
-    agencyGroup: "Grupo Estándar",
-    markup: 15,
-    usersCount: 3,
-    bookingsCount: 0,
-    registeredAt: "2026-02-28",
-    status: "Pendiente",
-  },
-  {
-    id: "AG-1004",
-    name: "Viajes Barceló",
-    country: "España",
-    email: "b2b@barcelo.com",
-    phone: "+34 971 78 91 00",
-    agencyGroup: "Grupo VIP",
-    markup: 11,
-    usersCount: 12,
-    bookingsCount: 534,
-    registeredAt: "2023-11-10",
-    status: "Activa",
-  },
-  {
-    id: "AG-1005",
-    name: "TurMundo Colombia",
-    country: "Colombia",
-    email: "ventas@turmundo.co",
-    phone: "+57 1 745 3210",
-    agencyGroup: "Grupo Estándar",
-    markup: 14,
-    usersCount: 4,
-    bookingsCount: 91,
-    registeredAt: "2025-01-20",
-    status: "Bloqueada",
-  },
-  {
-    id: "AG-1006",
-    name: "Global Travel Agency",
-    country: "Argentina",
-    email: "info@globaltravel.ar",
-    phone: "+54 11 4567 8901",
-    agencyGroup: "Grupo Estándar",
-    markup: 13,
-    usersCount: 0,
-    bookingsCount: 0,
-    registeredAt: "2026-03-01",
-    status: "Pendiente",
-  },
-]);
+const {
+  agencies,
+  agencyStats: stats,
+  approveAgency,
+  toggleBlock,
+  addAgency,
+} = useAgencies();
+const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
 
 // Filters
 const searchQuery = ref("");
@@ -113,23 +29,6 @@ const filteredAgencies = computed(() => {
     return matchSearch && matchStatus;
   });
 });
-
-// Stats
-const stats = computed(() => ({
-  total: agencies.value.length,
-  active: agencies.value.filter((a) => a.status === "Activa").length,
-  pending: agencies.value.filter((a) => a.status === "Pendiente").length,
-  blocked: agencies.value.filter((a) => a.status === "Bloqueada").length,
-}));
-
-// Actions
-function approveAgency(agency: Agency) {
-  agency.status = "Activa";
-}
-
-function toggleBlock(agency: Agency) {
-  agency.status = agency.status === "Bloqueada" ? "Activa" : "Bloqueada";
-}
 
 // Status helpers
 const statusColor = (s: string) =>
@@ -150,7 +49,6 @@ const isCreateValid = computed(
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newAgency.value.email),
 );
 
-const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
 const groupNames = computed(() => agencyGroups.value.map((g) => g.name));
 
 function openCreate() {
@@ -173,20 +71,16 @@ function saveAgency() {
   );
   const appliedMarkup = selectedGroup?.baseMarkup || 10;
 
-  agencies.value.push({
-    id: `AG-${1000 + agencies.value.length + 1}`,
-    name: newAgency.value.name as string,
-    country: newAgency.value.country as string,
-    email: newAgency.value.email as string,
-    phone: newAgency.value.phone as string,
+  addAgency({
+    name: newAgency.value.name,
+    country: newAgency.value.country,
+    email: newAgency.value.email,
+    phone: newAgency.value.phone,
     agencyGroup: String(
       newAgency.value.agencyGroup || groupNames.value[0] || "Grupo Estándar",
     ),
-    markup: appliedMarkup as number,
-    usersCount: 0,
-    bookingsCount: 0,
+    markup: appliedMarkup,
     registeredAt: new Date().toISOString().split("T")[0],
-    status: "Pendiente",
   });
 
   if (selectedGroup) {
@@ -357,7 +251,7 @@ const columns = [
         <template #usersCount-cell="{ row }">
           <div class="flex items-center gap-1.5">
             <UIcon name="i-heroicons-users" class="w-3.5 h-3.5 text-gray-400" />
-            <span class="text-sm">{{ row.original.usersCount }}</span>
+            <span class="text-sm">{{ row.original.users.length }}</span>
           </div>
         </template>
 
@@ -404,7 +298,7 @@ const columns = [
                 color="success"
                 variant="ghost"
                 size="xs"
-                @click="approveAgency(row.original)"
+                @click="approveAgency(row.original.id)"
               />
             </UTooltip>
             <UTooltip
@@ -423,7 +317,7 @@ const columns = [
                 "
                 variant="ghost"
                 size="xs"
-                @click="toggleBlock(row.original)"
+                @click="toggleBlock(row.original.id)"
               />
             </UTooltip>
           </div>

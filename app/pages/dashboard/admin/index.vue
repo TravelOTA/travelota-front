@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useStats } from "~/composables/useStats";
+
 definePageMeta({
   layout: "dashboard",
 });
@@ -6,6 +8,16 @@ definePageMeta({
 useHead({
   title: "Portal de Administración - TravelOTA",
 });
+
+const { adminStats } = useStats();
+
+const fmtCurrency = (v: number) =>
+  new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "USD",
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(v);
 </script>
 
 <template>
@@ -35,7 +47,7 @@ useHead({
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
               Agencias Activas
             </p>
-            <p class="text-2xl font-bold">142</p>
+            <p class="text-2xl font-bold">{{ adminStats.activeAgencies }}</p>
           </div>
         </div>
       </UCard>
@@ -51,7 +63,7 @@ useHead({
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
               Reservas del Mes
             </p>
-            <p class="text-2xl font-bold">3,850</p>
+            <p class="text-2xl font-bold">{{ adminStats.totalBookings }}</p>
           </div>
         </div>
       </UCard>
@@ -67,7 +79,9 @@ useHead({
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
               Volumen Neto
             </p>
-            <p class="text-2xl font-bold">$1.2M</p>
+            <p class="text-2xl font-bold">
+              {{ fmtCurrency(adminStats.totalNetVolume) }}
+            </p>
           </div>
         </div>
       </UCard>

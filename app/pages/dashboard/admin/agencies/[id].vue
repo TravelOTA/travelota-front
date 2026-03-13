@@ -1,180 +1,18 @@
 <script setup lang="ts">
+import { useAgencies, type AgencyUser } from "~/composables/useAgencies";
+
 definePageMeta({ layout: "dashboard" });
 
 const route = useRoute();
 const agencyId = route.params.id as string;
 
-// ── Mock data (mirrors agencies.vue) ──────────────────────────────────────
-interface AgencyUser {
-  id: number;
-  name: string;
-  email: string;
-  role: "Admin Agencia" | "Vendedor";
-  status: "Activo" | "Inactivo";
-  lastLogin: string;
-}
+const { getAgencyById, approveAgency, toggleBlock, updateAgency } =
+  useAgencies();
+const agency = computed(() => getAgencyById(agencyId) ?? null);
 
-interface Agency {
-  id: string;
-  name: string;
-  country: string;
-  email: string;
-  phone: string;
-  agencyGroup: string;
-  markup: number;
-  registeredAt: string;
-  status: "Activa" | "Pendiente" | "Bloqueada";
-  users: AgencyUser[];
-}
-
-const allAgencies: Agency[] = [
-  {
-    id: "AG-1001",
-    name: "Viajes El Corte Inglés",
-    country: "España",
-    email: "b2b@elcorteingles.es",
-    phone: "+34 91 418 88 00",
-    agencyGroup: "Grupo VIP",
-    markup: 12,
-    registeredAt: "2024-03-15",
-    status: "Activa",
-    users: [
-      {
-        id: 1,
-        name: "Juan Pérez",
-        email: "juan@elcorteingles.es",
-        role: "Vendedor",
-        status: "Activo",
-        lastLogin: "2026-03-05",
-      },
-      {
-        id: 2,
-        name: "María Gómez",
-        email: "maria@elcorteingles.es",
-        role: "Admin Agencia",
-        status: "Activo",
-        lastLogin: "2026-03-04",
-      },
-      {
-        id: 3,
-        name: "Carlos López",
-        email: "carlos@elcorteingles.es",
-        role: "Vendedor",
-        status: "Inactivo",
-        lastLogin: "2026-02-10",
-      },
-    ],
-  },
-  {
-    id: "AG-1002",
-    name: "Destinia",
-    country: "España",
-    email: "b2b@destinia.com",
-    phone: "+34 91 123 45 67",
-    agencyGroup: "Grupo Mayorista",
-    markup: 10,
-    registeredAt: "2024-06-01",
-    status: "Activa",
-    users: [
-      {
-        id: 1,
-        name: "Pedro Morales",
-        email: "pedro@destinia.com",
-        role: "Admin Agencia",
-        status: "Activo",
-        lastLogin: "2026-03-05",
-      },
-      {
-        id: 2,
-        name: "María Gómez",
-        email: "mgomez@destinia.com",
-        role: "Vendedor",
-        status: "Activo",
-        lastLogin: "2026-03-03",
-      },
-    ],
-  },
-  {
-    id: "AG-1003",
-    name: "Agencia Demo B2B",
-    country: "México",
-    email: "contacto@agenciademo.mx",
-    phone: "+52 55 1234 5678",
-    agencyGroup: "Grupo Estándar",
-    markup: 15,
-    registeredAt: "2026-02-28",
-    status: "Pendiente",
-    users: [
-      {
-        id: 1,
-        name: "Ana Ruiz",
-        email: "ana@agenciademo.mx",
-        role: "Admin Agencia",
-        status: "Activo",
-        lastLogin: "—",
-      },
-    ],
-  },
-  {
-    id: "AG-1004",
-    name: "Viajes Barceló",
-    country: "España",
-    email: "b2b@barcelo.com",
-    phone: "+34 971 78 91 00",
-    agencyGroup: "Grupo VIP",
-    markup: 11,
-    registeredAt: "2023-11-10",
-    status: "Activa",
-    users: [
-      {
-        id: 1,
-        name: "Javier Serrano",
-        email: "javier@barcelo.com",
-        role: "Admin Agencia",
-        status: "Activo",
-        lastLogin: "2026-03-05",
-      },
-      {
-        id: 2,
-        name: "Nuria Campos",
-        email: "nuria@barcelo.com",
-        role: "Vendedor",
-        status: "Activo",
-        lastLogin: "2026-03-04",
-      },
-    ],
-  },
-  {
-    id: "AG-1005",
-    name: "TurMundo Colombia",
-    country: "Colombia",
-    email: "ventas@turmundo.co",
-    phone: "+57 1 745 3210",
-    agencyGroup: "Grupo Estándar",
-    markup: 14,
-    registeredAt: "2025-01-20",
-    status: "Bloqueada",
-    users: [],
-  },
-  {
-    id: "AG-1006",
-    name: "Global Travel Agency",
-    country: "Argentina",
-    email: "info@globaltravel.ar",
-    phone: "+54 11 4567 8901",
-    agencyGroup: "Grupo Estándar",
-    markup: 13,
-    registeredAt: "2026-03-01",
-    status: "Pendiente",
-    users: [],
-  },
-];
-
-const agency = ref<Agency | null>(
-  allAgencies.find((a) => a.id === agencyId) ?? null,
-);
-
-useHead({ title: `${agency.value?.name ?? "Agencia"} - TravelOTA Admin` });
+useHead({
+  title: computed(() => `${agency.value?.name ?? "Agencia"} - TravelOTA Admin`),
+});
 
 // ── Tabs ──────────────────────────────────────────────────────────────────
 const activeTab = ref("info");
@@ -190,15 +28,6 @@ const tabs = [
 // ── Status helpers ────────────────────────────────────────────────────────
 const statusColor = (s: string) =>
   s === "Activa" ? "success" : s === "Pendiente" ? "warning" : "error";
-
-function approveAgency() {
-  if (agency.value) agency.value.status = "Activa";
-}
-function toggleBlock() {
-  if (!agency.value) return;
-  agency.value.status =
-    agency.value.status === "Bloqueada" ? "Activa" : "Bloqueada";
-}
 
 const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
 const groupNames = computed(() => agencyGroups.value.map((g) => g.name));
@@ -229,20 +58,21 @@ function saveEdit() {
   if (!agency.value) return;
 
   const oldGroup = agency.value.agencyGroup;
-  Object.assign(agency.value, editForm.value);
+  let markup = agency.value.markup;
 
-  // If group changed, update the display markup and the global counters (mock logic)
+  // If group changed, update markup and global counters (mock logic)
   if (oldGroup !== editForm.value.agencyGroup) {
     const selectedGroup = agencyGroups.value.find(
       (g) => g.name === editForm.value.agencyGroup,
     );
     if (selectedGroup) {
-      agency.value.markup = selectedGroup.baseMarkup;
+      markup = selectedGroup.baseMarkup;
       incrementAgencyCount(selectedGroup.name);
       // Normally we would also decrement the old group here, but keeping it simple for mock
     }
   }
 
+  updateAgency(agencyId, { ...editForm.value, markup });
   isEditOpen.value = false;
 }
 
@@ -353,7 +183,7 @@ const userColumns = [
               color="success"
               size="sm"
               label="Aprobar"
-              @click="approveAgency"
+              @click="approveAgency(agencyId)"
             />
             <UButton
               :icon="
@@ -365,7 +195,7 @@ const userColumns = [
               variant="soft"
               size="sm"
               :label="agency.status === 'Bloqueada' ? 'Activar' : 'Bloquear'"
-              @click="toggleBlock"
+              @click="toggleBlock(agencyId)"
             />
             <UButton
               icon="i-heroicons-pencil-square"
