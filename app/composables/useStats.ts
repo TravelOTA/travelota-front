@@ -33,5 +33,20 @@ export function useStats() {
     };
   });
 
-  return { adminStats };
+  const b2bStats = computed(() => {
+    // These would ideally come from an API or filtered bookings
+    const activeBookings = bookings.value.filter(
+      (b) => b.status === "Confirmada",
+    ).length;
+    const monthlyBookings = bookings.value.length; // Simplified mock logic
+
+    return {
+      activeBookings,
+      availableHotels: "500k+",
+      activeDestinations: 180,
+      monthlyBookings,
+    };
+  });
+
+  return { adminStats, b2bStats };
 }

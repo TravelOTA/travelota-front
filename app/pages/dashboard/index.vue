@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router";
 import HotelSearchForm from "~/components/b2b/hotel/HotelSearchForm.vue";
 import B2bLandingPromotionCard from "~/components/b2b/landing/PromotionCard.vue";
+import { useStats } from "~/composables/useStats";
 
 definePageMeta({
   layout: "dashboard",
@@ -13,6 +14,7 @@ useHead({
 
 const router = useRouter();
 const { promotions } = usePromotions();
+const { b2bStats } = useStats();
 
 const handleSearch = (data: Record<string, unknown>) => {
   // TODO: Pass searchForm data to Pinia store or via query params
@@ -25,36 +27,36 @@ const handlePromotionSearch = (destination: string) => {
   router.push("/dashboard/hotels/results");
 };
 
-const quickStats = [
+const processedStats = computed(() => [
   {
     label: "Reservas activas",
-    value: "24",
+    value: b2bStats.value.activeBookings.toString(),
     icon: "i-heroicons-briefcase",
     iconBg: "bg-primary-50 dark:bg-primary-950",
     iconColor: "text-primary-500",
   },
   {
     label: "Hoteles disponibles",
-    value: "500k+",
+    value: b2bStats.value.availableHotels,
     icon: "i-heroicons-building-office-2",
     iconBg: "bg-blue-50 dark:bg-blue-950",
     iconColor: "text-blue-500",
   },
   {
     label: "Destinos activos",
-    value: "180",
+    value: b2bStats.value.activeDestinations.toString(),
     icon: "i-heroicons-map-pin",
     iconBg: "bg-amber-50 dark:bg-amber-950",
     iconColor: "text-amber-500",
   },
   {
     label: "Reservas este mes",
-    value: "8",
+    value: b2bStats.value.monthlyBookings.toString(),
     icon: "i-heroicons-calendar-days",
     iconBg: "bg-green-50 dark:bg-green-950",
     iconColor: "text-green-500",
   },
-];
+]);
 </script>
 
 <template>
@@ -72,7 +74,7 @@ const quickStats = [
     <!-- Quick Stats -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <UCard
-        v-for="stat in quickStats"
+        v-for="stat in processedStats"
         :key="stat.label"
         class="border border-gray-100 dark:border-gray-800"
       >

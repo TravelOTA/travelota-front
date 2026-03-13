@@ -39,28 +39,7 @@ const select = (key: string) => {
   emit("update:modelValue", key);
 };
 
-const baseMethods = [
-  {
-    key: "credit_card",
-    label: "Pago con tarjeta",
-    description: "El importe será cargado inmediatamente en tu tarjeta.",
-    icon: "i-heroicons-credit-card",
-  },
-  {
-    key: "bank_transfer",
-    label: "Transferencia bancaria",
-    description:
-      "Se generarán los datos bancarios para realizar la transferencia.",
-    icon: "i-heroicons-building-library",
-  },
-  {
-    key: "credit",
-    label: "Crédito de agencia",
-    description:
-      "Se descontará del saldo disponible en tu línea de crédito con TravelOTA.",
-    icon: "i-heroicons-banknotes",
-  },
-];
+const { paymentMethods: baseMethods } = useConfig();
 
 const formatPrice = (price: number) => {
   return price.toLocaleString("en-US", {

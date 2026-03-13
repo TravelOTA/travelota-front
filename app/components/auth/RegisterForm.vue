@@ -15,15 +15,7 @@ const form = reactive<RegisterInput>({
   aceptaPrivacidad: false,
 });
 
-const paises = [
-  "Estados Unidos",
-  "España",
-  "México",
-  "Colombia",
-  "Argentina",
-  "Chile",
-  "Perú",
-];
+const { countries: paises } = useConfig();
 
 async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
   console.log("Registrando empresa con", event.data);
