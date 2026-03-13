@@ -9,6 +9,13 @@ export default defineNuxtConfig({
 
   css: ["~/assets/css/main.css"],
 
+  runtimeConfig: {
+    public: {
+      // Override with NUXT_PUBLIC_API_BASE_URL env var in production
+      apiBaseUrl: "",
+    },
+  },
+
   routeRules: {
     "/": { prerender: true },
   },

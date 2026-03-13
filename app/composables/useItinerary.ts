@@ -178,6 +178,22 @@ export const useItinerary = () => {
     isAddOptionModalOpen.value = true;
   };
 
+  const fetchItinerary = async (id: string) => {
+    const { data } = await useApi<Itinerary>(`/api/itineraries/${id}`, {
+      key: `itinerary-${id}`,
+    });
+    if (data.value) {
+      itinerary.value = data.value;
+    }
+  };
+
+  const saveItinerary = () => {
+    return useApi<Itinerary>("/api/itineraries", {
+      method: "POST",
+      body: itinerary.value,
+    });
+  };
+
   return {
     itinerary,
     totalPax,
@@ -193,5 +209,7 @@ export const useItinerary = () => {
     minItineraryPrice,
     clearItinerary,
     triggerAddOption,
+    fetchItinerary,
+    saveItinerary,
   };
 };

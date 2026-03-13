@@ -1,5 +1,62 @@
 import { z } from "zod";
 
+// --- Domain schemas ---
+
+export const agencySchema = z.object({
+  name: z.string(),
+  rut: z.string(),
+  country: z.string(),
+  email: z.string().email(),
+  phone: z.string(),
+  address: z.string(),
+  logo: z.string().optional(),
+  primaryColor: z.string(),
+  registeredAt: z.string(),
+  status: z.string(),
+  usersCount: z.number(),
+  bookingsCount: z.number(),
+  nextSettlement: z.string(),
+});
+
+export type Agency = z.infer<typeof agencySchema>;
+
+const itineraryOptionSchema = z.object({
+  id: z.string(),
+  providerId: z.string(),
+  name: z.string(),
+  image: z.string(),
+  description: z.string(),
+  netPrice: z.number(),
+  isSelected: z.boolean().optional(),
+});
+
+const itineraryBlockSchema = z.object({
+  id: z.string(),
+  type: z.enum(["hotel", "flight", "transfer", "activity"]),
+  title: z.string(),
+  date: z.string(),
+  options: z.array(itineraryOptionSchema),
+});
+
+export const itinerarySchema = z.object({
+  id: z.string().optional(),
+  title: z.string(),
+  clientName: z.string(),
+  rooms: z.array(
+    z.object({
+      adults: z.number(),
+      children: z.array(z.object({ age: z.number() })),
+    }),
+  ),
+  origin: z.string(),
+  markupPercentage: z.number(),
+  blocks: z.array(itineraryBlockSchema),
+});
+
+export type ItineraryPayload = z.infer<typeof itinerarySchema>;
+
+// --- Auth schemas ---
+
 export const loginSchema = z.object({
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
