@@ -17,6 +17,37 @@ const handleSearch = (data: Record<string, unknown>) => {
   console.log("Starting search with payload:", data);
   router.push("/dashboard/hotels/results");
 };
+
+const quickStats = [
+  {
+    label: "Reservas activas",
+    value: "24",
+    icon: "i-heroicons-briefcase",
+    iconBg: "bg-primary-50 dark:bg-primary-950",
+    iconColor: "text-primary-500",
+  },
+  {
+    label: "Hoteles disponibles",
+    value: "500k+",
+    icon: "i-heroicons-building-office-2",
+    iconBg: "bg-blue-50 dark:bg-blue-950",
+    iconColor: "text-blue-500",
+  },
+  {
+    label: "Destinos activos",
+    value: "180",
+    icon: "i-heroicons-map-pin",
+    iconBg: "bg-amber-50 dark:bg-amber-950",
+    iconColor: "text-amber-500",
+  },
+  {
+    label: "Comisión media",
+    value: "14%",
+    icon: "i-heroicons-currency-euro",
+    iconBg: "bg-green-50 dark:bg-green-950",
+    iconColor: "text-green-500",
+  },
+];
 </script>
 
 <template>
@@ -29,6 +60,34 @@ const handleSearch = (data: Record<string, unknown>) => {
         Encuentra y reserva el alojamiento perfecto para tus clientes al mejor
         precio neto B2B.
       </p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <UCard
+        v-for="stat in quickStats"
+        :key="stat.label"
+        class="border border-gray-100 dark:border-gray-800"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            :class="stat.iconBg"
+          >
+            <UIcon :name="stat.icon" class="w-5 h-5" :class="stat.iconColor" />
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+              {{ stat.value }}
+            </p>
+            <p
+              class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+            >
+              {{ stat.label }}
+            </p>
+          </div>
+        </div>
+      </UCard>
     </div>
 
     <!-- Buscador Principal -->
