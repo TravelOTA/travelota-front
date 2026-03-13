@@ -26,7 +26,7 @@ El sistema opera bajo un modelo RBAC (Role-Based Access Control) con los siguien
 
 | Rol | Descripción | Permisos Principales |
 | :--- | :--- | :--- |
-| **USER** | Agente de viajes estándar. | Búsqueda de hoteles, creación de cotizaciones, gestión de sus propias reservas. |
+| **USER** | Agente de viajes estándar. | Búsqueda de hoteles, creación de cotizaciones, gestión de sus reservas de su agencia. |
 | **AGENCY_ADMIN** | Administrador de la agencia. | Todo lo anterior + Gestión de usuarios de su agencia, edición de perfil de agencia (branding), visualización de márgenes y liquidaciones. |
 | **SUPPORT** | Personal de TravelOTA (Staff). | Visualización de todas las reservas del sistema, soporte técnico, gestión de plantillas B2B. |
 | **SUPER_ADMIN** | Administrador de plataforma. | Gestión total: aprobación de agencias, gestión de personal staff, configuración global del sistema, acceso a logs. |
