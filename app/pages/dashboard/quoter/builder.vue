@@ -347,7 +347,7 @@ const nationalityOptions = [
                     </div>
                     <UButton
                       icon="i-heroicons-x-mark"
-                      color="red"
+                      color="error"
                       variant="ghost"
                       size="xs"
                       class="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -463,7 +463,7 @@ const nationalityOptions = [
           <UFormGroup label="Fechas / Referencia">
             <UPopover class="w-full">
               <UButton
-                color="white"
+                color="neutral"
                 icon="i-lucide-calendar"
                 class="w-full justify-start font-normal text-gray-700 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700"
               >

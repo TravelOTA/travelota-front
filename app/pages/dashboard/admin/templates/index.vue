@@ -127,7 +127,7 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
 
       <div class="relative z-10">
         <UBadge
-          color="white"
+          color="neutral"
           variant="solid"
           class="mb-4 text-primary-900 font-bold uppercase tracking-wider"
         >
@@ -141,7 +141,7 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
         </p>
 
         <UButton
-          color="white"
+          color="neutral"
           variant="solid"
           size="lg"
           icon="i-heroicons-plus"

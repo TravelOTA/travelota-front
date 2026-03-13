@@ -1,18 +1,34 @@
+<script setup lang="ts">
+import { Motion } from "motion-v";
+</script>
+
 <template>
   <section id="dmc" class="py-24 bg-white dark:bg-gray-950">
     <div class="px-4 lg:px-8 mx-auto max-w-7xl">
-      <div class="text-center mb-16">
+      <Motion
+        as="div"
+        class="text-center mb-16"
+        :initial="{ opacity: 0, y: -20 }"
+        :while-in-view="{ opacity: 1, y: 0 }"
+        :viewport="{ once: true }"
+        :transition="{ duration: 0.5 }"
+      >
         <h2
           class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white uppercase"
         >
           TravelOTA - Incoming Service
         </h2>
         <div class="mt-4 w-24 h-1 bg-primary mx-auto rounded-full"></div>
-      </div>
+      </Motion>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div
+        <Motion
+          as="div"
           class="flex flex-col items-center text-center p-8 bg-gray-50 dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 hover:border-primary-500/50 transition-colors hover:shadow-lg dark:hover:shadow-primary/5"
+          :initial="{ opacity: 0, y: 40 }"
+          :while-in-view="{ opacity: 1, y: 0 }"
+          :viewport="{ once: true }"
+          :transition="{ duration: 0.5, delay: 0 }"
         >
           <div
             class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6"
@@ -27,10 +43,15 @@
             <strong>Reservas de hoteles, traslados, coches de alquiler</strong>
             y excursiones.
           </p>
-        </div>
+        </Motion>
 
-        <div
+        <Motion
+          as="div"
           class="flex flex-col items-center text-center p-8 bg-gray-50 dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 hover:border-primary-500/50 transition-colors hover:shadow-lg dark:hover:shadow-primary/5"
+          :initial="{ opacity: 0, y: 40 }"
+          :while-in-view="{ opacity: 1, y: 0 }"
+          :viewport="{ once: true }"
+          :transition="{ duration: 0.5, delay: 0.15 }"
         >
           <div
             class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6"
@@ -45,10 +66,15 @@
             <strong>conocimiento profundo</strong> de la oferta en cada destino
             para ofrecer respuestas ágiles y ventajosas.
           </p>
-        </div>
+        </Motion>
 
-        <div
+        <Motion
+          as="div"
           class="flex flex-col items-center text-center p-8 bg-gray-50 dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 hover:border-primary-500/50 transition-colors hover:shadow-lg dark:hover:shadow-primary/5"
+          :initial="{ opacity: 0, y: 40 }"
+          :while-in-view="{ opacity: 1, y: 0 }"
+          :viewport="{ once: true }"
+          :transition="{ duration: 0.5, delay: 0.3 }"
         >
           <div
             class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6"
@@ -63,7 +89,7 @@
             <strong>grupos de incentivos y circuitos</strong>, junto con
             representación profesional en el destino.
           </p>
-        </div>
+        </Motion>
       </div>
     </div>
   </section>

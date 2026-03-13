@@ -208,7 +208,7 @@ const handleConfirm = () => {
           <UFormGroup label="Fechas de Estancia (Opcional)">
             <UPopover class="w-full">
               <UButton
-                color="white"
+                color="neutral"
                 icon="i-lucide-calendar"
                 class="w-full justify-start font-normal text-gray-700 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700"
               >

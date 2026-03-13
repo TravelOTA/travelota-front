@@ -1,8 +1,19 @@
+<script setup lang="ts">
+import { Motion } from "motion-v";
+</script>
+
 <template>
   <section class="py-24 bg-white dark:bg-gray-950">
     <div class="px-4 lg:px-8 mx-auto max-w-7xl">
       <div class="flex flex-col lg:flex-row items-center gap-16">
-        <div class="flex-1 space-y-8">
+        <Motion
+          as="div"
+          class="flex-1 space-y-8"
+          :initial="{ opacity: 0, x: -40 }"
+          :while-in-view="{ opacity: 1, x: 0 }"
+          :viewport="{ once: true }"
+          :transition="{ duration: 0.7, ease: 'easeOut' }"
+        >
           <h2
             class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white uppercase"
           >
@@ -62,8 +73,16 @@
               </template>
             </UButton>
           </div>
-        </div>
-        <div class="flex-1 relative">
+        </Motion>
+
+        <Motion
+          as="div"
+          class="flex-1 relative"
+          :initial="{ opacity: 0, x: 40 }"
+          :while-in-view="{ opacity: 1, x: 0 }"
+          :viewport="{ once: true }"
+          :transition="{ duration: 0.7, delay: 0.15, ease: 'easeOut' }"
+        >
           <div class="aspect-square max-w-md mx-auto relative">
             <div
               class="absolute inset-0 bg-primary/20 rounded-full blur-3xl mix-blend-multiply dark:mix-blend-screen opacity-70"
@@ -74,7 +93,7 @@
               alt="Bed Bank Hotels"
             />
           </div>
-        </div>
+        </Motion>
       </div>
     </div>
   </section>
