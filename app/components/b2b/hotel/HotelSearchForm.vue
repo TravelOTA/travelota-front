@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
 import type { DateValue } from "@internationalized/date";
+import type { Room } from "~/composables/useItinerary";
 
 // Format date as dd/MM/yy (e.g. 25/05/26)
 const formatDate = (date: DateValue): string => {
@@ -18,7 +19,7 @@ const props = defineProps({
       destination: "",
       checkIn: "",
       checkOut: "",
-      distribution: "1 Habitación",
+      distribution: "1 Habitación, 2 Adultos",
       nationality: "Estados Unidos",
     }),
   },
@@ -27,6 +28,11 @@ const props = defineProps({
 const { initialData } = props;
 const emit = defineEmits(["search"]);
 const form = ref({ ...initialData });
+
+// Local room distribution state (Array) to sync with component
+const rooms = ref<Room[]>(initialData.rooms || [{ adults: 2, children: [] }]);
+
+// Simple parser removed because we now pass rich data via useHotelSearch
 
 // Default date range: today + 2 nights
 const todayCalDate = todayDate(getLocalTimeZone());
@@ -37,13 +43,34 @@ const dateRange = ref({
   end: defaultEnd,
 });
 
-// Sync dates back to form when submitting
+// Format rooms array back to a descriptive string for search services
+const formatDistributionLabel = (roomsArray: Room[]) => {
+  const totalRooms = roomsArray.length;
+  const totalAdults = roomsArray.reduce((sum, r) => sum + r.adults, 0);
+  const totalChildren = roomsArray.reduce(
+    (sum, r) => sum + r.children.length,
+    0,
+  );
+
+  let label = `${totalRooms} Habitación${totalRooms > 1 ? "es" : ""}`;
+  label += `, ${totalAdults} Adulto${totalAdults > 1 ? "s" : ""}`;
+  if (totalChildren > 0) {
+    label += `, ${totalChildren} Niño${totalChildren > 1 ? "s" : ""}`;
+  }
+  return label;
+};
+
+// Sync dates and distribution back to form when submitting
 const submitSearch = () => {
   if (dateRange.value.start && dateRange.value.end) {
     form.value.checkIn = dateRange.value.start.toString();
     form.value.checkOut = dateRange.value.end.toString();
   }
-  emit("search", form.value);
+  form.value.distribution = formatDistributionLabel(rooms.value);
+  emit("search", {
+    ...form.value,
+    rooms: rooms.value,
+  });
 };
 
 const { nationalities: nationalityOptions } = useConfig();
@@ -115,7 +142,7 @@ const { nationalities: nationalityOptions } = useConfig();
       <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
         Distribución
       </label>
-      <B2bHotelRoomDistribution />
+      <B2bHotelRoomDistribution v-model="rooms" />
     </div>
 
     <!-- Origin (Nationality) -->
