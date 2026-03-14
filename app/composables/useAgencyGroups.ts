@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { useState } from "#imports";
 
 export interface AgencyGroup {
   id: string;
@@ -8,8 +8,7 @@ export interface AgencyGroup {
   agenciesCount: number;
 }
 
-// Global state for mocking API calls
-const groups = ref<AgencyGroup[]>([
+const MOCK_GROUPS: AgencyGroup[] = [
   {
     id: "GRP-001",
     name: "Grupo VIP",
@@ -38,15 +37,14 @@ const groups = ref<AgencyGroup[]>([
     baseMarkup: 8,
     agenciesCount: 0,
   },
-]);
+];
 
 export function useAgencyGroups() {
+  const groups = useState<AgencyGroup[]>("agency-groups", () => MOCK_GROUPS);
+
   function addGroup(group: Omit<AgencyGroup, "id" | "agenciesCount">) {
-    groups.value.push({
-      id: `GRP-00${groups.value.length + 1}`,
-      ...group,
-      agenciesCount: 0,
-    });
+    const nextId = `GRP-${String(groups.value.length + 1).padStart(3, "0")}`;
+    groups.value.push({ id: nextId, ...group, agenciesCount: 0 });
   }
 
   function updateGroup(
@@ -73,11 +71,5 @@ export function useAgencyGroups() {
     }
   }
 
-  return {
-    groups,
-    addGroup,
-    updateGroup,
-    deleteGroup,
-    incrementAgencyCount,
-  };
+  return { groups, addGroup, updateGroup, deleteGroup, incrementAgencyCount };
 }
