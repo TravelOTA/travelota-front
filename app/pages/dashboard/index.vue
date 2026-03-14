@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import HotelSearchForm from "~/components/b2b/hotel/HotelSearchForm.vue";
 import B2bLandingPromotionCard from "~/components/b2b/landing/PromotionCard.vue";
 import { useStats } from "~/composables/useStats";
+import {
+  useHotelSearch,
+  type HotelSearchParams,
+} from "~/composables/useHotelSearch";
 
 definePageMeta({
   layout: "dashboard",
@@ -12,16 +15,22 @@ useHead({
   title: "Buscador de Hoteles - Portal B2B",
 });
 
-const router = useRouter();
 const { promotions } = usePromotions();
 const { b2bStats } = useStats();
+const { navigateToResults } = useHotelSearch();
 
-const handleSearch = (_data: Record<string, unknown>) => {
-  router.push("/dashboard/hotels/results");
+const handleSearch = async (data: HotelSearchParams) => {
+  await navigateToResults(data);
 };
 
-const handlePromotionSearch = (_destination: string) => {
-  router.push("/dashboard/hotels/results");
+const handlePromotionSearch = async (destination: string) => {
+  await navigateToResults({
+    destination,
+    checkIn: "",
+    checkOut: "",
+    nationality: "Estados Unidos",
+    distribution: "1 Habitación, 2 Adultos",
+  });
 };
 
 const processedStats = computed(() => [
