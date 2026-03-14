@@ -123,33 +123,34 @@ Las fechas se muestran formateadas con `date-fns` (ya en el proyecto) y locale `
 
 ```ts
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { getLocalTimeZone } from '@internationalized/date';
 import type { CalendarDate } from '@internationalized/date';
 
-// Ejemplo de salida: "14 mar"
+// Ejemplo de salida: "14/03/26"
 const formattedDate = (d: CalendarDate) =>
-  format(d.toDate(getLocalTimeZone()), 'd MMM', { locale: es });
+  format(d.toDate(getLocalTimeZone()), 'dd/MM/yy');
 
-// Uso en template: "14 mar – 16 mar"
-// formattedDate(dateRange.start) + ' – ' + formattedDate(dateRange.end)
+// Uso en template: "14/03/26 - 16/03/26"
+// formattedDate(dateRange.start) + ' - ' + formattedDate(dateRange.end)
 ```
 
 **En `SearchSummaryBar.vue`:** `searchParams.checkIn` y `searchParams.checkOut` son strings ISO (`"2026-03-14"`). Aplicar el mismo formateador usando `new Date()`:
 
 ```ts
+import { format } from 'date-fns';
+
 const formattedSearchDate = (iso: string) =>
-  format(new Date(iso), 'd MMM', { locale: es });
+  format(new Date(iso), 'dd/MM/yy');
 ```
 
-Si el rango no está definido, mostrar placeholder `"Entrada – Salida"`.
+Si el rango no está definido, mostrar placeholder `"dd/mm/yy - dd/mm/yy"`.
 
 ### Estados vacíos y fallbacks
 
 | Campo | Estado vacío |
 |---|---|
 | Destino | Placeholder `"¿A dónde vas?"` |
-| Fechas | Placeholder `"Entrada – Salida"` |
+| Fechas | Placeholder `"dd/mm/yy - dd/mm/yy"` |
 | Distribución | Valor inicial por defecto del composable |
 | `SearchSummaryBar` sin destino | Preservar fallback existente: `hotelName \|\| searchParams.destination \|\| "Sin destino"` |
 
