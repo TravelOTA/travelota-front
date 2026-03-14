@@ -63,7 +63,7 @@ export const useHotelSearch = () => {
     const q = route.query;
 
     if (q.destination) {
-      let rooms: Room[] | undefined;
+      let rooms: SearchRoomDistribution[] | undefined;
       if (q.rooms) {
         try {
           rooms = JSON.parse(String(q.rooms));
