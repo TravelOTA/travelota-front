@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, computed } from "vue";
 import type { SearchRoomDistribution } from "~/composables/useItinerary";
 
 const rooms = defineModel<SearchRoomDistribution[]>({
@@ -86,18 +87,20 @@ const toggleRoom = (idx: number) => {
 <!-- REFACTOR: Room Distribution could be displayed via UModal. -->
 <template>
   <UPopover v-model:open="isOpen" class="w-full">
-    <!-- Trigger Button -->
-    <UButton
-      color="neutral"
-      variant="outline"
-      icon="i-heroicons-users"
-      size="md"
-      class="w-full justify-start font-normal"
-    >
-      {{ summaryLabel }}
-    </UButton>
+    <!-- Trigger: slot con fallback para compatibilidad con consumidores existentes -->
+    <slot name="trigger" :label="summaryLabel" :open="isOpen">
+      <UButton
+        color="neutral"
+        variant="outline"
+        icon="i-heroicons-users"
+        size="md"
+        class="w-full justify-start font-normal"
+      >
+        {{ summaryLabel }}
+      </UButton>
+    </slot>
 
-    <!-- Popover Content -->
+    <!-- Popover Content — sin cambios -->
     <template #content>
       <div class="w-80 p-4">
         <!-- Number of rooms -->
