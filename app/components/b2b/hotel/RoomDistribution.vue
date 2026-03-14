@@ -87,7 +87,9 @@ const toggleRoom = (idx: number) => {
 <!-- REFACTOR: Room Distribution could be displayed via UModal. -->
 <template>
   <UPopover v-model:open="isOpen" class="w-full">
-    <!-- Trigger: slot con fallback para compatibilidad con consumidores existentes -->
+    <!-- Trigger: slot con fallback para compatibilidad con consumidores existentes.
+         IMPORTANTE: los consumidores deben usar #trigger (no v-slot/#default),
+         ya que #default es el slot de trigger del UPopover padre. -->
     <slot name="trigger" :label="summaryLabel" :open="isOpen">
       <UButton
         color="neutral"

@@ -50,7 +50,9 @@ describe("RoomDistribution trigger slot", () => {
           h("span", { "data-testid": "label" }, label),
       },
     });
-    // Default composable state: 1 habitación, 2 adultos → summaryLabel incluye "1 Hab"
-    expect(wrapper.find('[data-testid="label"]').text()).toContain("1 Hab");
+    // Default composable state: 1 habitación, 2 adultos
+    expect(wrapper.find('[data-testid="label"]').text()).toContain(
+      "1 Hab · 2 Adultos",
+    );
   });
 });
