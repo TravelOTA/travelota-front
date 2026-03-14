@@ -60,7 +60,7 @@ export const useWallet = () => {
   const addTransaction = (txn: Omit<WalletTransaction, "id" | "date">) => {
     const newTxn: WalletTransaction = {
       ...txn,
-      id: `TXN-${Math.floor(Math.random() * 10000)}`,
+      id: crypto.randomUUID(),
       date: new Date().toISOString(),
     };
 

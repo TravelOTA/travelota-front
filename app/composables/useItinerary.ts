@@ -69,7 +69,7 @@ export const useItinerary = () => {
     date: string,
   ) => {
     const newBlock: ItineraryBlock = {
-      id: `BLK-${Math.random().toString(36).substr(2, 9)}`,
+      id: crypto.randomUUID(),
       type,
       title,
       date,
@@ -96,7 +96,7 @@ export const useItinerary = () => {
 
     block.options.push({
       ...option,
-      id: `OPT-${Math.random().toString(36).substr(2, 9)}`,
+      id: crypto.randomUUID(),
     });
   };
 

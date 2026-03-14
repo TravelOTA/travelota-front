@@ -23,7 +23,7 @@ export const useQuoter = () => {
   ) => {
     const newItem: QuoteItem = {
       ...item,
-      id: `QT-${Math.random().toString(36).substr(2, 9)}`,
+      id: crypto.randomUUID(),
       markupPercentage: globalMarkupPercentage.value,
       markupFixed: 0,
     };
