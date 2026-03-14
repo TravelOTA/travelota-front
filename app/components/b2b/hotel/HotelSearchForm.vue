@@ -86,7 +86,7 @@ const { nationalities: nationalityOptions } = useConfig();
        no sean recortados por el borde redondeado.
        focus-within:ring: el anillo aparece al enfocar cualquier campo interno -->
   <div
-    class="relative z-10 w-full flex flex-col md:flex-row rounded-2xl overflow-visible bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md focus-within:ring-2 focus-within:ring-green-600 dark:focus-within:ring-green-500"
+    class="relative z-10 w-full rounded-2xl overflow-visible bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md focus-within:ring-2 focus-within:ring-green-600 dark:focus-within:ring-green-500"
   >
     <form
       class="flex flex-col md:flex-row w-full"
@@ -127,12 +127,10 @@ const { nationalities: nationalityOptions } = useConfig();
 
       <!-- ── Fechas ── -->
       <div
-        class="flex-[2] border-b border-gray-200 dark:border-gray-700 last:border-b-0 md:border-b-0"
+        class="flex-[2] border-b border-gray-200 dark:border-gray-700 last:border-b-0 md:border-b-0 hover:bg-green-50 dark:hover:bg-green-900 transition-colors"
       >
         <UPopover class="w-full h-full">
-          <div
-            class="flex items-center gap-3 px-4 py-3 h-full cursor-pointer hover:bg-green-50 dark:hover:bg-green-900 transition-colors"
-          >
+          <div class="flex items-center gap-3 px-4 py-3 h-full cursor-pointer">
             <UIcon
               name="i-heroicons-calendar-days-solid"
               class="w-5 h-5 shrink-0 text-green-700 dark:text-green-600"
@@ -171,12 +169,12 @@ const { nationalities: nationalityOptions } = useConfig();
 
       <!-- ── Distribución ── -->
       <div
-        class="flex-[2] border-b border-gray-200 dark:border-gray-700 last:border-b-0 md:border-b-0"
+        class="flex-[2] border-b border-gray-200 dark:border-gray-700 last:border-b-0 md:border-b-0 hover:bg-green-50 dark:hover:bg-green-900 transition-colors"
       >
         <B2bHotelRoomDistribution v-model="rooms">
           <template #trigger="{ label }">
             <div
-              class="flex items-center gap-3 px-4 py-3 h-full cursor-pointer hover:bg-green-50 dark:hover:bg-green-900 transition-colors"
+              class="flex items-center gap-3 px-4 py-3 h-full cursor-pointer"
             >
               <UIcon
                 name="i-heroicons-users-solid"
