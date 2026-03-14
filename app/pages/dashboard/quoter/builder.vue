@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useItinerary } from "~/composables/useItinerary";
+import { useConfig } from "~/composables/useConfig";
 import ItineraryPreviewModal from "~/components/b2b/quoter/ItineraryPreviewModal.vue";
 import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
 import type { DateValue } from "@internationalized/date";
