@@ -1,5 +1,5 @@
-import { computed } from 'vue';
-import { useState } from '#imports';
+import { computed } from "vue";
+import { useState } from "#imports";
 
 export interface QuoteItem {
   id: string;
@@ -14,10 +14,15 @@ export interface QuoteItem {
 }
 
 export const useQuoter = () => {
-  const items = useState<QuoteItem[]>('quoter-items', () => []);
-  const globalMarkupPercentage = useState<number>('quoter-global-markup', () => 15);
+  const items = useState<QuoteItem[]>("quoter-items", () => []);
+  const globalMarkupPercentage = useState<number>(
+    "quoter-global-markup",
+    () => 15,
+  );
 
-  const addItem = (item: Omit<QuoteItem, 'id' | 'markupPercentage' | 'markupFixed'>) => {
+  const addItem = (
+    item: Omit<QuoteItem, "id" | "markupPercentage" | "markupFixed">,
+  ) => {
     const newItem: QuoteItem = {
       ...item,
       id: crypto.randomUUID(),
@@ -40,13 +45,17 @@ export const useQuoter = () => {
     return item.netPrice + percentageMarkup + item.markupFixed;
   };
 
-  const totalNetPrice = computed(() => items.value.reduce((sum, item) => sum + item.netPrice, 0));
+  const totalNetPrice = computed(() =>
+    items.value.reduce((sum, item) => sum + item.netPrice, 0),
+  );
 
   const totalSellPrice = computed(() =>
     items.value.reduce((sum, item) => sum + calculateItemSellPrice(item), 0),
   );
 
-  const totalProfit = computed(() => totalSellPrice.value - totalNetPrice.value);
+  const totalProfit = computed(
+    () => totalSellPrice.value - totalNetPrice.value,
+  );
 
   return {
     items,
