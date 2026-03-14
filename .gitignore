@@ -29,3 +29,5 @@ logs
 CLAUDE.md
 artifacts/superpowers/execution.md
 artifacts/superpowers/plan.md
+/.claude
+/docs/superpowers

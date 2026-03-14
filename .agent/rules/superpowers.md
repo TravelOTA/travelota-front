@@ -1,1 +1,0 @@
-/Users/ferrera/Git/gemini-superpowers-antigravity/.agent/rules/superpowers.md
