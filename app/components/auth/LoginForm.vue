@@ -12,9 +12,7 @@ const form = reactive<LoginInput>({
 
 const { loginAs } = useAuth();
 
-async function onSubmit(event: FormSubmitEvent<LoginInput>) {
-  console.log("Login attempt:", event.data);
-}
+async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
 </script>
 
 <template>

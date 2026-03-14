@@ -16,14 +16,11 @@ const router = useRouter();
 const { promotions } = usePromotions();
 const { b2bStats } = useStats();
 
-const handleSearch = (data: Record<string, unknown>) => {
-  // TODO: Pass searchForm data to Pinia store or via query params
-  console.log("Starting search with payload:", data);
+const handleSearch = (_data: Record<string, unknown>) => {
   router.push("/dashboard/hotels/results");
 };
 
-const handlePromotionSearch = (destination: string) => {
-  console.log("Promotion search for:", destination);
+const handlePromotionSearch = (_destination: string) => {
   router.push("/dashboard/hotels/results");
 };
 

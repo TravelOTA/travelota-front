@@ -17,9 +17,7 @@ const form = reactive<RegisterInput>({
 
 const { countries: paises } = useConfig();
 
-async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
-  console.log("Registrando empresa con", event.data);
-}
+async function onSubmit(_event: FormSubmitEvent<RegisterInput>) {}
 </script>
 
 <template>

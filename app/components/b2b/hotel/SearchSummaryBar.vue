@@ -17,7 +17,6 @@ const mockSearchData = ref({
 });
 
 const handleSearchUpdate = (newData: typeof mockSearchData.value) => {
-  console.log("Renewing results for:", newData);
   mockSearchData.value = { ...newData };
   isEditing.value = false;
   // Emit or regenerate search here
