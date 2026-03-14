@@ -1,4 +1,5 @@
-import { ref, computed } from "vue";
+import { computed } from "vue";
+import { useState } from "#imports";
 
 export interface WalletTransaction {
   id: string;
@@ -9,11 +10,7 @@ export interface WalletTransaction {
   reference?: string;
 }
 
-// Global mock state for the Agency Wallet
-const creditLimit = ref(15000); // 15,000 USD limit
-const currentBalance = ref(4250); // 4,250 USD currently owed (consumed)
-
-const transactions = ref<WalletTransaction[]>([
+const MOCK_TRANSACTIONS: WalletTransaction[] = [
   {
     id: "TXN-001",
     date: "2026-03-01T10:30:00Z",
@@ -46,9 +43,16 @@ const transactions = ref<WalletTransaction[]>([
     description: "Reserva de Hotel - W Paris",
     reference: "BKG-102940",
   },
-]);
+];
 
 export const useWallet = () => {
+  const creditLimit = useState<number>("wallet-credit-limit", () => 15000);
+  const currentBalance = useState<number>("wallet-current-balance", () => 4250);
+  const transactions = useState<WalletTransaction[]>(
+    "wallet-transactions",
+    () => MOCK_TRANSACTIONS,
+  );
+
   const availableCredit = computed(
     () => creditLimit.value - currentBalance.value,
   );
@@ -63,22 +67,17 @@ export const useWallet = () => {
       id: crypto.randomUUID(),
       date: new Date().toISOString(),
     };
-
     transactions.value.unshift(newTxn);
 
-    // Update balances
     if (txn.type === "charge") {
       currentBalance.value += txn.amount;
     } else if (txn.type === "payment" || txn.type === "refund") {
-      currentBalance.value -= txn.amount;
-      // Prevent negative owed balance (optional, but realistic)
-      if (currentBalance.value < 0) currentBalance.value = 0;
+      currentBalance.value = Math.max(0, currentBalance.value - txn.amount);
     }
   };
 
-  const hasSufficientCredit = (amount: number) => {
-    return availableCredit.value >= amount;
-  };
+  const hasSufficientCredit = (amount: number) =>
+    availableCredit.value >= amount;
 
   return {
     creditLimit,
