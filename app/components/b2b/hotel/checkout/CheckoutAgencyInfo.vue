@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from "vue";
+
 const agencyName = ref("ONE CLICK ADVENTURES INC");
 const email = ref("sales@oneclickadventures.com");
 const reference = ref("");
@@ -13,21 +15,21 @@ const reference = ref("");
     </h3>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <UFormGroup label="Nombre">
+      <UFormField label="Nombre">
         <UInput
           v-model="agencyName"
           disabled
           class="opacity-70 bg-gray-100 dark:bg-gray-800 pointer-events-none"
         />
-      </UFormGroup>
+      </UFormField>
 
-      <UFormGroup label="Email *" required>
+      <UFormField label="Email *" required>
         <UInput v-model="email" />
-      </UFormGroup>
+      </UFormField>
 
-      <UFormGroup label="Ref. agencia*" required>
+      <UFormField label="Ref. agencia*" required>
         <UInput v-model="reference" placeholder="Referencia agencia..." />
-      </UFormGroup>
+      </UFormField>
     </div>
   </div>
 </template>

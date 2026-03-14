@@ -272,7 +272,7 @@ function saveAgency() {
     <UModal v-model:open="isEditModalOpen" title="Configuración White-Label">
       <template #body>
         <div class="space-y-4">
-          <UFormGroup
+          <UFormField
             label="Logo de la Agencia"
             name="logo"
             description="Sube una imagen para mostrar en la plataforma y documentos."
@@ -292,9 +292,9 @@ function saveAgency() {
                 />
               </div>
             </div>
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup
+          <UFormField
             label="Color Principal del Sistema"
             name="primaryColor"
             description="Personaliza el color de botones y acentos visuales B2B."
@@ -334,19 +334,19 @@ function saveAgency() {
                 </div>
               </div>
             </div>
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup label="Correo de Contacto Público" name="email">
+          <UFormField label="Correo de Contacto Público" name="email">
             <UInput
               v-model="formAgency.email"
               type="email"
               icon="i-heroicons-envelope"
             />
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup label="Teléfono de Contacto" name="phone">
+          <UFormField label="Teléfono de Contacto" name="phone">
             <UInput v-model="formAgency.phone" icon="i-heroicons-phone" />
-          </UFormGroup>
+          </UFormField>
         </div>
       </template>
       <template #footer>

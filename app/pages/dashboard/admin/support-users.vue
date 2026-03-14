@@ -352,15 +352,15 @@ function saveEditUser() {
             description="Este usuario verá precios netos y tendrá visión global del sistema. No podrá confirmar reservas."
           />
 
-          <UFormGroup label="Nombre completo" name="name" required>
+          <UFormField label="Nombre completo" name="name" required>
             <UInput
               v-model="newUser.name"
               placeholder="Ej: Laura Martínez"
               icon="i-heroicons-user"
             />
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup
+          <UFormField
             label="Correo electrónico (usuario de acceso)"
             name="email"
             required
@@ -378,9 +378,9 @@ function saveEditUser() {
               :color="emailTouched && !emailValid ? 'error' : undefined"
               @blur="emailTouched = true"
             />
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup
+          <UFormField
             label="Contraseña"
             name="password"
             required
@@ -405,9 +405,9 @@ function saveEditUser() {
                 />
               </template>
             </UInput>
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup label="Rol" name="role" required>
+          <UFormField label="Rol" name="role" required>
             <USelectMenu
               v-model="newUser.role"
               :items="[
@@ -417,7 +417,7 @@ function saveEditUser() {
               value-key="value"
               label-key="label"
             />
-          </UFormGroup>
+          </UFormField>
         </div>
       </template>
       <template #footer>
@@ -443,15 +443,15 @@ function saveEditUser() {
     <UModal v-model:open="isEditModalOpen" title="Editar Usuario">
       <template #body>
         <div v-if="editUser" class="space-y-4">
-          <UFormGroup label="Nombre completo" name="edit-name" required>
+          <UFormField label="Nombre completo" name="edit-name" required>
             <UInput
               v-model="editUser.name"
               placeholder="Ej: Laura Martínez"
               icon="i-heroicons-user"
             />
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup
+          <UFormField
             label="Correo electrónico (usuario de acceso)"
             name="edit-email"
             required
@@ -469,9 +469,9 @@ function saveEditUser() {
               :color="editEmailTouched && !editEmailValid ? 'error' : undefined"
               @blur="editEmailTouched = true"
             />
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup
+          <UFormField
             label="Contraseña"
             name="edit-password"
             hint="Dejar en blanco para no cambiarla. Mínimo 8 caracteres si se modifica."
@@ -502,9 +502,9 @@ function saveEditUser() {
                 />
               </template>
             </UInput>
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup label="Rol" name="edit-role" required>
+          <UFormField label="Rol" name="edit-role" required>
             <USelectMenu
               v-model="editUser.role"
               :items="[
@@ -514,9 +514,9 @@ function saveEditUser() {
               value-key="value"
               label-key="label"
             />
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup label="Estado" name="edit-status">
+          <UFormField label="Estado" name="edit-status">
             <USelectMenu
               v-model="editUser.status"
               :items="[
@@ -526,7 +526,7 @@ function saveEditUser() {
               value-key="value"
               label-key="label"
             />
-          </UFormGroup>
+          </UFormField>
         </div>
       </template>
       <template #footer>

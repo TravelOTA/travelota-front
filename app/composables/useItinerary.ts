@@ -22,7 +22,7 @@ export interface ChildAge {
   age: number;
 }
 
-export interface Room {
+export interface SearchRoomDistribution {
   adults: number;
   children: ChildAge[];
 }
@@ -31,7 +31,7 @@ export interface Itinerary {
   id?: string;
   title: string;
   clientName: string;
-  rooms: Room[];
+  rooms: SearchRoomDistribution[];
   origin: string;
   markupPercentage: number;
   blocks: ItineraryBlock[];

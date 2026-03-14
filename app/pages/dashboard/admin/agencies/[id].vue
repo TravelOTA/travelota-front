@@ -422,7 +422,7 @@ const userColumns = [
         <template #body>
           <div class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <UFormGroup
+              <UFormField
                 label="Nombre"
                 name="edit-name"
                 required
@@ -432,21 +432,21 @@ const userColumns = [
                   v-model="editForm.name"
                   icon="i-heroicons-building-storefront"
                 />
-              </UFormGroup>
-              <UFormGroup label="País" name="edit-country" required>
+              </UFormField>
+              <UFormField label="País" name="edit-country" required>
                 <UInput
                   v-model="editForm.country"
                   icon="i-heroicons-globe-alt"
                 />
-              </UFormGroup>
-              <UFormGroup label="Grupo de Agencia" name="edit-group" required>
+              </UFormField>
+              <UFormField label="Grupo de Agencia" name="edit-group" required>
                 <USelectMenu
                   v-model="editForm.agencyGroup"
                   :items="groupNames"
                   icon="i-heroicons-user-group"
                 />
-              </UFormGroup>
-              <UFormGroup
+              </UFormField>
+              <UFormField
                 label="Email"
                 name="edit-email"
                 required
@@ -457,14 +457,14 @@ const userColumns = [
                   type="email"
                   icon="i-heroicons-envelope"
                 />
-              </UFormGroup>
-              <UFormGroup
+              </UFormField>
+              <UFormField
                 label="Teléfono"
                 name="edit-phone"
                 class="sm:col-span-2"
               >
                 <UInput v-model="editForm.phone" icon="i-heroicons-phone" />
-              </UFormGroup>
+              </UFormField>
             </div>
           </div>
         </template>

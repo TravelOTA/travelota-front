@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
+import type { Hotel } from "~/composables/useHotels";
 import SearchSummaryBar from "~/components/b2b/hotel/SearchSummaryBar.vue";
 import ResultHotelSummary from "~/components/b2b/hotel/ResultHotelSummary.vue";
 import HotelGallery from "~/components/b2b/hotel/detail/HotelGallery.vue";
@@ -26,7 +27,7 @@ const hotelImages = [
 ];
 
 // Mock Data
-const hotel = ref({
+const hotel = ref<Hotel>({
   id: Number(hotelId),
   name: "Iberostar WAVES DOMINICANA", // Can be dynamic if we implement a store
   stars: 5,
@@ -35,7 +36,6 @@ const hotel = ref({
     "Carretera Arena Gorda Playa Bavaro Punta Cana, Dominican Republic, Playa Bavaro 23000",
   coordinates: [18.7035, -68.4215] as [number, number],
   image: hotelImages[0], // Agregada la foto principal
-  images: hotelImages,
   bestPrice: 1118.76,
   rooms: [
     {
@@ -98,7 +98,7 @@ useHead({
       <ResultHotelSummary :hotel="hotel" @open-map="isMapOpen = true" />
 
       <!-- 2. Middle Gallery -->
-      <HotelGallery :images="hotel.images" />
+      <HotelGallery :images="hotelImages" />
 
       <!-- 3. Bottom Room List (Reused from Results) -->
       <ResultRoomList

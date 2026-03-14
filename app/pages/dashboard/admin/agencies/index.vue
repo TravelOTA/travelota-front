@@ -337,7 +337,7 @@ const columns = [
       <template #body>
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <UFormGroup
+            <UFormField
               label="Nombre de la agencia"
               name="name"
               required
@@ -348,22 +348,22 @@ const columns = [
                 placeholder="Ej: Viajes López"
                 icon="i-heroicons-building-storefront"
               />
-            </UFormGroup>
-            <UFormGroup label="País" name="country" required>
+            </UFormField>
+            <UFormField label="País" name="country" required>
               <UInput
                 v-model="newAgency.country"
                 placeholder="España"
                 icon="i-heroicons-globe-alt"
               />
-            </UFormGroup>
-            <UFormGroup label="Grupo de Agencia" name="group" required>
+            </UFormField>
+            <UFormField label="Grupo de Agencia" name="group" required>
               <USelectMenu
                 v-model="newAgency.agencyGroup"
                 :items="groupNames"
                 icon="i-heroicons-user-group"
               />
-            </UFormGroup>
-            <UFormGroup
+            </UFormField>
+            <UFormField
               label="Email de contacto"
               name="email"
               required
@@ -375,14 +375,14 @@ const columns = [
                 placeholder="b2b@agencia.com"
                 icon="i-heroicons-envelope"
               />
-            </UFormGroup>
-            <UFormGroup label="Teléfono" name="phone" class="sm:col-span-2">
+            </UFormField>
+            <UFormField label="Teléfono" name="phone" class="sm:col-span-2">
               <UInput
                 v-model="newAgency.phone"
                 placeholder="+34 91 000 00 00"
                 icon="i-heroicons-phone"
               />
-            </UFormGroup>
+            </UFormField>
           </div>
           <UAlert
             icon="i-heroicons-information-circle"

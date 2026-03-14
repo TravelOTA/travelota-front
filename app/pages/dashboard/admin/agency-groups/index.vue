@@ -187,20 +187,20 @@ function handleDelete(id: string) {
     <UModal v-model:open="isCreateOpen" title="Nuevo Grupo de Agencia">
       <template #body>
         <div class="space-y-4">
-          <UFormGroup label="Nombre del Grupo" name="name" required>
+          <UFormField label="Nombre del Grupo" name="name" required>
             <UInput
               v-model="newGroup.name"
               placeholder="Ej: Mayoristas Latam"
               icon="i-heroicons-user-group"
             />
-          </UFormGroup>
-          <UFormGroup label="Descripción" name="desc">
+          </UFormField>
+          <UFormField label="Descripción" name="desc">
             <UInput
               v-model="newGroup.description"
               placeholder="Breve descripción del grupo..."
             />
-          </UFormGroup>
-          <UFormGroup label="Markup Base (%)" name="markup" required>
+          </UFormField>
+          <UFormField label="Markup Base (%)" name="markup" required>
             <UInput
               v-model="newGroup.baseMarkup"
               type="number"
@@ -212,7 +212,7 @@ function handleDelete(id: string) {
                 ><span class="text-gray-400 text-sm">%</span></template
               >
             </UInput>
-          </UFormGroup>
+          </UFormField>
           <UAlert
             icon="i-heroicons-information-circle"
             color="info"
@@ -244,13 +244,13 @@ function handleDelete(id: string) {
     <UModal v-model:open="isEditOpen" title="Editar Grupo">
       <template #body>
         <div v-if="editGroup" class="space-y-4">
-          <UFormGroup label="Nombre del Grupo" name="edit-name" required>
+          <UFormField label="Nombre del Grupo" name="edit-name" required>
             <UInput v-model="editGroup.name" icon="i-heroicons-user-group" />
-          </UFormGroup>
-          <UFormGroup label="Descripción" name="edit-desc">
+          </UFormField>
+          <UFormField label="Descripción" name="edit-desc">
             <UInput v-model="editGroup.description" />
-          </UFormGroup>
-          <UFormGroup label="Markup Base (%)" name="edit-markup" required>
+          </UFormField>
+          <UFormField label="Markup Base (%)" name="edit-markup" required>
             <UInput
               v-model="editGroup.baseMarkup"
               type="number"
@@ -262,7 +262,7 @@ function handleDelete(id: string) {
                 ><span class="text-gray-400 text-sm">%</span></template
               >
             </UInput>
-          </UFormGroup>
+          </UFormField>
           <UAlert
             v-if="editGroup.agenciesCount > 0"
             icon="i-heroicons-exclamation-triangle"

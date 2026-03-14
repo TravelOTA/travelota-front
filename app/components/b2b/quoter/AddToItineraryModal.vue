@@ -63,7 +63,7 @@ const handleConfirm = () => {
         toast.add({
           title: "Error",
           description: "El título del bloque es requerido.",
-          color: "red",
+          color: "error",
         });
         return;
       }
@@ -84,7 +84,7 @@ const handleConfirm = () => {
       toast.add({
         title: "Error",
         description: "Selecciona un bloque válido.",
-        color: "red",
+        color: "error",
       });
       return;
     }
@@ -106,7 +106,7 @@ const handleConfirm = () => {
       title: "Error al agregar",
       description: errorMessage,
       icon: "i-heroicons-exclamation-triangle",
-      color: "red",
+      color: "error",
     });
   }
 };
@@ -159,7 +159,7 @@ const handleConfirm = () => {
 
         <!-- Add to Existing Block -->
         <div v-if="!showNewBlockForm">
-          <UFormGroup label="Selecciona el Bloque">
+          <UFormField label="Selecciona el Bloque">
             <select
               v-model="selectedBlockId"
               class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-select rounded-md font-medium text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
@@ -180,7 +180,7 @@ const handleConfirm = () => {
               Todos tus bloques actuales ya tienen el máximo de 5 opciones. Crea
               un bloque nuevo.
             </p>
-          </UFormGroup>
+          </UFormField>
         </div>
 
         <!-- Create New Block -->
@@ -188,7 +188,7 @@ const handleConfirm = () => {
           v-if="showNewBlockForm"
           class="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border border-gray-100 dark:border-gray-700"
         >
-          <UFormGroup label="Tipo de Servicio">
+          <UFormField label="Tipo de Servicio">
             <USelect
               v-model="newBlockType"
               :options="[
@@ -198,14 +198,14 @@ const handleConfirm = () => {
                 { label: 'Actividad / Tour', value: 'activity' },
               ]"
             />
-          </UFormGroup>
-          <UFormGroup label="Título del Bloque">
+          </UFormField>
+          <UFormField label="Título del Bloque">
             <UInput
               v-model="newBlockTitle"
               placeholder="Ej: Noches en Caribe"
             />
-          </UFormGroup>
-          <UFormGroup label="Fechas de Estancia (Opcional)">
+          </UFormField>
+          <UFormField label="Fechas de Estancia (Opcional)">
             <UPopover class="w-full">
               <UButton
                 color="neutral"
@@ -239,7 +239,7 @@ const handleConfirm = () => {
                 />
               </template>
             </UPopover>
-          </UFormGroup>
+          </UFormField>
         </div>
       </div>
     </template>

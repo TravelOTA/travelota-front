@@ -1,6 +1,6 @@
 import { useState, useRouter, useRoute } from "#imports";
 
-import type { Room } from "./useItinerary";
+import type { SearchRoomDistribution } from "./useItinerary";
 
 export interface HotelSearchParams {
   destination: string;
@@ -8,7 +8,7 @@ export interface HotelSearchParams {
   checkOut: string; // ISO date string: "YYYY-MM-DD"
   nationality: string;
   distribution: string; // texto descriptivo: "2 Adultos, 1 Niño"
-  rooms?: Room[]; // Rich data for perfect state restoration
+  rooms?: SearchRoomDistribution[]; // Rich data for perfect state restoration
 }
 
 const DEFAULT_PARAMS: HotelSearchParams = {

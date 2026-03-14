@@ -205,10 +205,10 @@ const openPreview = () => {
                 Markup Global Predeterminado
               </label>
               <div class="flex items-center gap-2">
-                <URange
+                <USlider
                   v-model="globalMarkupPercentage"
-                  min="0"
-                  max="100"
+                  :min="0"
+                  :max="100"
                   class="flex-1"
                 />
                 <span
@@ -222,7 +222,7 @@ const openPreview = () => {
               </p>
             </div>
 
-            <UDivider class="my-4" />
+            <USeparator class="my-4" />
 
             <!-- Cost Breakdown -->
             <div class="flex justify-between items-center text-sm">
@@ -239,7 +239,7 @@ const openPreview = () => {
               <span class="font-mono">+ {{ formatCurrency(totalProfit) }}</span>
             </div>
 
-            <UDivider class="my-4" />
+            <USeparator class="my-4" />
 
             <div
               class="flex justify-between items-end border-t border-gray-100 dark:border-gray-800 pt-4 mt-4"

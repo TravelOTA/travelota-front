@@ -58,12 +58,12 @@ const visiblePassengers = computed(() => {
         </label>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <UFormGroup label="Nombre">
+          <UFormField label="Nombre">
             <UInput v-model="pax.name" placeholder="Nombre..." />
-          </UFormGroup>
-          <UFormGroup label="Apellidos">
+          </UFormField>
+          <UFormField label="Apellidos">
             <UInput v-model="pax.lastname" placeholder="Apellidos..." />
-          </UFormGroup>
+          </UFormField>
         </div>
       </div>
     </div>

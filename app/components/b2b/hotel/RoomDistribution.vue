@@ -1,14 +1,7 @@
 <script setup lang="ts">
-interface ChildAge {
-  age: number;
-}
+import type { SearchRoomDistribution } from "~/composables/useItinerary";
 
-interface Room {
-  adults: number;
-  children: ChildAge[];
-}
-
-const rooms = defineModel<Room[]>({
+const rooms = defineModel<SearchRoomDistribution[]>({
   default: () => [{ adults: 2, children: [] }],
 });
 

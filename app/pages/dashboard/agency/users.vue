@@ -277,7 +277,7 @@ function toggleUserStatus(user: AgencyUser) {
       <template #body>
         <form class="space-y-4" @submit.prevent="saveUser">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <UFormGroup
+            <UFormField
               label="Nombre Completo"
               name="name"
               required
@@ -288,9 +288,9 @@ function toggleUserStatus(user: AgencyUser) {
                 placeholder="Ej: Ana Martinez"
                 icon="i-heroicons-user"
               />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
               label="Correo Electrónico"
               name="email"
               required
@@ -304,9 +304,9 @@ function toggleUserStatus(user: AgencyUser) {
                 icon="i-heroicons-envelope"
                 @blur="emailTouched = true"
               />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
               :label="isEditing ? 'Nueva Contraseña (Opcional)' : 'Contraseña'"
               name="password"
               :required="!isEditing"
@@ -336,21 +336,21 @@ function toggleUserStatus(user: AgencyUser) {
                   />
                 </template>
               </UInput>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Rol en Plataforma" name="role" required>
+            <UFormField label="Rol en Plataforma" name="role" required>
               <USelectMenu
                 v-model="formUser.role"
                 :items="['Vendedor', 'Admin Agencia']"
               />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Estado Inicial" name="status">
+            <UFormField label="Estado Inicial" name="status">
               <USelectMenu
                 v-model="formUser.status"
                 :items="['Activo', 'Inactivo']"
               />
-            </UFormGroup>
+            </UFormField>
           </div>
         </form>
       </template>

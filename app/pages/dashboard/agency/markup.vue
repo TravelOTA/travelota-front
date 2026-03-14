@@ -98,7 +98,7 @@ function saveRule() {
           v-if="markupType === 'global'"
           class="flex items-end gap-4 max-w-sm"
         >
-          <UFormGroup
+          <UFormField
             label="Markup de tu Agencia (%)"
             name="percentage"
             class="flex-1"
@@ -108,7 +108,7 @@ function saveRule() {
                 ><span class="text-gray-500">%</span></template
               >
             </UInput>
-          </UFormGroup>
+          </UFormField>
           <UButton color="primary" label="Guardar Cambios" />
         </div>
 
@@ -170,14 +170,14 @@ function saveRule() {
     <UModal v-model:open="isRuleModalOpen" title="Nueva Regla de Beneficios">
       <template #body>
         <div class="space-y-4">
-          <UFormGroup label="Aplicar Regla A" name="rule-type">
+          <UFormField label="Aplicar Regla A" name="rule-type">
             <USelectMenu
               v-model="newRule.type"
               :options="['Destino', 'Hotel']"
             />
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup
+          <UFormField
             :label="
               newRule.type === 'Destino'
                 ? 'Seleccionar Destino'
@@ -198,9 +198,9 @@ function saveRule() {
               v-model="newRule.value"
               placeholder="Ej: Hard Rock Hotel"
             />
-          </UFormGroup>
+          </UFormField>
 
-          <UFormGroup
+          <UFormField
             label="Markup a Sumar al Neto (%)"
             name="rule-percentage"
             required
@@ -215,7 +215,7 @@ function saveRule() {
                 ><span class="text-gray-500">%</span></template
               >
             </UInput>
-          </UFormGroup>
+          </UFormField>
         </div>
       </template>
       <template #footer>

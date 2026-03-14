@@ -1,38 +1,42 @@
 <script setup lang="ts">
 import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
-import type { DateValue } from "@internationalized/date";
-import type { Room } from "~/composables/useItinerary";
+import type { SearchRoomDistribution } from "~/composables/useItinerary";
+import { useConfig } from "~/composables/useConfig";
 
-// Format date as dd/MM/yy (e.g. 25/05/26)
-const formatDate = (date: DateValue): string => {
-  const d = date.toDate(getLocalTimeZone());
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const yy = String(d.getFullYear()).slice(-2);
-  return `${dd}/${mm}/${yy}`;
+interface InitialSearchData {
+  destination?: string;
+  checkIn?: string;
+  checkOut?: string;
+  nationality?: string;
+  distribution?: string;
+  rooms?: SearchRoomDistribution[];
+}
+
+const props = defineProps<{
+  initialData?: InitialSearchData;
+}>();
+
+const emit = defineEmits(["search"]);
+
+// Default values if no initialData is provided
+const defaultInitial = {
+  destination: "",
+  checkIn: "",
+  checkOut: "",
+  nationality: "Estados Unidos",
+  distribution: "1 Habitación, 2 Adultos",
+  rooms: [{ adults: 2, children: [] }] as SearchRoomDistribution[],
 };
 
-const props = defineProps({
-  initialData: {
-    type: Object,
-    default: () => ({
-      destination: "",
-      checkIn: "",
-      checkOut: "",
-      distribution: "1 Habitación, 2 Adultos",
-      nationality: "Estados Unidos",
-    }),
-  },
-});
+const initialData = props.initialData || { ...defaultInitial };
 
-const { initialData } = props;
-const emit = defineEmits(["search"]);
 const form = ref({ ...initialData });
 
 // Local room distribution state (Array) to sync with component
-const rooms = ref<Room[]>(initialData.rooms || [{ adults: 2, children: [] }]);
-
-// Simple parser removed because we now pass rich data via useHotelSearch
+const rooms = ref<SearchRoomDistribution[]>(
+  initialData.rooms ||
+    ([{ adults: 2, children: [] }] as SearchRoomDistribution[]),
+);
 
 // Default date range: today + 2 nights
 const todayCalDate = todayDate(getLocalTimeZone());
@@ -44,7 +48,7 @@ const dateRange = ref({
 });
 
 // Format rooms array back to a descriptive string for search services
-const formatDistributionLabel = (roomsArray: Room[]) => {
+const formatDistributionLabel = (roomsArray: SearchRoomDistribution[]) => {
   const totalRooms = roomsArray.length;
   const totalAdults = roomsArray.reduce((sum, r) => sum + r.adults, 0);
   const totalChildren = roomsArray.reduce(
@@ -77,104 +81,88 @@ const { nationalities: nationalityOptions } = useConfig();
 </script>
 
 <template>
-  <form
-    class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-4 flex flex-col lg:flex-row gap-4 lg:items-end w-full"
-    @submit.prevent="submitSearch"
+  <div
+    class="relative z-10 w-full rounded-2xl bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-white/20 p-2 lg:p-3 shadow-2xl overflow-visible"
   >
-    <!-- Destination -->
-    <div class="flex-1 w-full min-w-0">
-      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
-        Selecciona un destino
-      </label>
-      <UInput
-        v-model="form.destination"
-        icon="i-heroicons-map-pin"
-        placeholder="Ciudad, País o Aeropuerto"
-        size="md"
-        class="w-full"
-      />
-    </div>
-
-    <!-- Date Range Picker -->
-    <div class="flex-1 w-full min-w-0">
-      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
-        Fechas
-      </label>
-      <UPopover class="w-full">
-        <UButton
-          color="neutral"
-          variant="outline"
-          icon="i-lucide-calendar"
-          size="md"
-          class="w-full justify-start font-normal"
-        >
-          <template v-if="dateRange.start">
-            <template v-if="dateRange.end">
-              {{ formatDate(dateRange.start) }}
-              &nbsp;→&nbsp;
-              {{ formatDate(dateRange.end) }}
-            </template>
-            <template v-else>
-              {{ formatDate(dateRange.start) }}
-            </template>
-          </template>
-          <template v-else> Entrada - Salida </template>
-        </UButton>
-
-        <template #content>
-          <UCalendar
-            v-model="dateRange"
-            class="p-2"
-            :number-of-months="2"
-            :fixed-weeks="false"
+    <form
+      class="grid grid-cols-1 md:grid-cols-12 gap-2 lg:gap-3 items-end"
+      @submit.prevent="submitSearch"
+    >
+      <!-- Destination -->
+      <div class="md:col-span-3">
+        <UFormField label="Destino o Hotel">
+          <UInput
+            v-model="form.destination"
+            placeholder="¿A dónde vas?"
+            icon="i-heroicons-map-pin"
+            class="w-full"
+            variant="none"
+            size="lg"
             :ui="{
-              cellTrigger:
-                'data-[outside-view]:opacity-0 data-[outside-view]:pointer-events-none',
+              base: 'bg-white/90 dark:bg-gray-900/90 border-0 focus:ring-2 focus:ring-primary-500 rounded-xl transition-all duration-300',
             }"
-            range
           />
-        </template>
-      </UPopover>
-    </div>
+        </UFormField>
+      </div>
 
-    <!-- Distribution -->
-    <div class="flex-1 w-full min-w-0">
-      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
-        Distribución
-      </label>
-      <B2bHotelRoomDistribution v-model="rooms" />
-    </div>
+      <!-- Dates -->
+      <div class="md:col-span-3">
+        <UFormField label="Fechas">
+          <UPopover class="w-full">
+            <UButton
+              variant="none"
+              icon="i-heroicons-calendar-days"
+              class="w-full justify-start text-left bg-white/90 dark:bg-gray-900/90 border-0 focus:ring-2 focus:ring-primary-500 rounded-xl h-[44px] transition-all duration-300"
+            >
+              <span class="truncate font-medium">
+                {{ dateRange.start ? dateRange.start.toString() : "Entrada" }} -
+                {{ dateRange.end ? dateRange.end.toString() : "Salida" }}
+              </span>
+            </UButton>
 
-    <!-- Origin (Nationality) -->
-    <div class="flex-1 w-full min-w-0">
-      <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
-        Origen
-      </label>
-      <USelectMenu
-        v-model="form.nationality"
-        :items="nationalityOptions"
-        size="md"
-        class="w-full"
-      >
-        <template #leading>
-          <UIcon
-            name="i-heroicons-globe-americas"
-            class="w-5 h-5 text-gray-500"
+            <template #content>
+              <div class="p-2">
+                <UCalendar v-model="dateRange" range :number-of-months="2" />
+              </div>
+            </template>
+          </UPopover>
+        </UFormField>
+      </div>
+
+      <!-- Passengers / Distribution -->
+      <div class="md:col-span-3">
+        <UFormField label="Distribución">
+          <B2bHotelRoomDistribution v-model="rooms" />
+        </UFormField>
+      </div>
+
+      <!-- Nationality -->
+      <div class="md:col-span-2">
+        <UFormField label="Nacionalidad">
+          <USelect
+            v-model="form.nationality"
+            :options="nationalityOptions"
+            variant="none"
+            size="lg"
+            class="w-full"
+            :ui="{
+              base: 'bg-white/90 dark:bg-gray-900/90 border-0 focus:ring-2 focus:ring-primary-500 rounded-xl transition-all duration-300',
+            }"
           />
-        </template>
-      </USelectMenu>
-    </div>
+        </UFormField>
+      </div>
 
-    <!-- Search Button -->
-    <div class="w-full lg:w-auto">
-      <UButton
-        type="submit"
-        color="primary"
-        size="md"
-        class="w-full lg:w-auto flex justify-center items-center transition-colors px-4"
-      >
-        <UIcon name="i-heroicons-magnifying-glass" class="w-5 h-5" />
-      </UButton>
-    </div>
-  </form>
+      <!-- Search Button -->
+      <div class="md:col-span-1">
+        <UButton
+          type="submit"
+          color="primary"
+          size="lg"
+          class="w-full h-[44px] flex justify-center items-center rounded-xl shadow-lg hover:shadow-primary-500/20 transition-all duration-300"
+        >
+          <UIcon name="i-heroicons-magnifying-glass" class="w-6 h-6" />
+        </UButton>
+      </div>
+    </form>
+  </div>
 </template>

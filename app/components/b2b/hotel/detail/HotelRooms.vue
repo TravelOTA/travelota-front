@@ -1,16 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-
-interface Room {
-  name: string;
-  regimen: string;
-  cancellation?: string;
-  price: number;
-  onRequest?: boolean;
-}
+import type { HotelRoomOffer } from "~/composables/useHotels";
 
 const props = defineProps<{
-  rooms: Room[];
+  rooms: HotelRoomOffer[];
 }>();
 
 const showAllRooms = ref(true);
@@ -26,7 +19,7 @@ const visibleRooms = computed(() => {
 const { addItem } = useQuoter();
 const toast = useToast();
 
-const addToQuote = (room: Room) => {
+const addToQuote = (room: HotelRoomOffer) => {
   addItem({
     hotelId: "HOTEL-CURRENT", // Mock ID since hotel detail is not passed down here
     hotelName: "Hotel Seleccionado", // Mock Name

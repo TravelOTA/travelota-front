@@ -1,6 +1,6 @@
 import { useState } from "#imports";
 
-export interface Room {
+export interface HotelRoomOffer {
   name: string;
   regimen: string;
   cancellation: string;
@@ -16,7 +16,7 @@ export interface Hotel {
   coordinates: [number, number];
   image: string;
   bestPrice: number;
-  rooms: Room[];
+  rooms: HotelRoomOffer[];
 }
 
 export interface HotelFilterState {

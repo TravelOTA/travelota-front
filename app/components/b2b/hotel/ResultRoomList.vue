@@ -1,19 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-
+import type { PropType } from "vue";
 import { useItinerary } from "~/composables/useItinerary";
+import type { HotelRoomOffer } from "~/composables/useHotels";
 
 const props = defineProps({
   rooms: {
-    type: Array as PropType<
-      {
-        price: number;
-        name: string;
-        pax: string;
-        options?: string[];
-        [key: string]: unknown;
-      }[]
-    >,
+    type: Array as PropType<HotelRoomOffer[]>,
     required: true,
   },
   isExpanded: {
@@ -31,8 +24,7 @@ const showAllRooms = ref(props.defaultExpandedRooms);
 const sortedRooms = computed(() => {
   if (!Array.isArray(props.rooms)) return [];
   return [...props.rooms].sort(
-    (a: { price?: number }, b: { price?: number }) =>
-      (a.price || 0) - (b.price || 0),
+    (a: HotelRoomOffer, b: HotelRoomOffer) => (a.price || 0) - (b.price || 0),
   );
 });
 
@@ -41,7 +33,7 @@ const visibleRooms = computed(() => {
 });
 const { triggerAddOption } = useItinerary();
 
-const addToItinerary = (room: Record<string, unknown>) => {
+const addToItinerary = (room: HotelRoomOffer) => {
   triggerAddOption({
     providerId: "HOTEL-CURRENT",
     name: "Alojamiento",

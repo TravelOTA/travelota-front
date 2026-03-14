@@ -84,7 +84,7 @@ const formatCurrency = (amount: number) => {
             placeholder="Nombre del Itinerario"
           />
         </div>
-        <p
+        <div
           class="text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-4"
         >
           <span class="flex items-center gap-1">
@@ -135,7 +135,7 @@ const formatCurrency = (amount: number) => {
               </option>
             </select>
           </span>
-        </p>
+        </div>
       </div>
 
       <div class="flex items-center gap-2">
@@ -371,10 +371,10 @@ const formatCurrency = (amount: number) => {
                 Markup Global
               </label>
               <div class="flex items-center gap-3">
-                <URange
+                <USlider
                   v-model="itinerary.markupPercentage"
-                  min="0"
-                  max="100"
+                  :min="0"
+                  :max="100"
                   class="flex-1"
                 />
                 <span
@@ -389,7 +389,7 @@ const formatCurrency = (amount: number) => {
               </p>
             </div>
 
-            <UDivider />
+            <USeparator />
 
             <div>
               <p
@@ -415,7 +415,7 @@ const formatCurrency = (amount: number) => {
     <UModal v-model:open="isAddBlockModalOpen" title="Añadir Nuevo Bloque">
       <template #body>
         <div class="space-y-4">
-          <UFormGroup label="Tipo de Producto">
+          <UFormField label="Tipo de Producto">
             <USelect
               v-model="newBlockType"
               :options="[
@@ -425,14 +425,14 @@ const formatCurrency = (amount: number) => {
                 { label: 'Actividad', value: 'activity' },
               ]"
             />
-          </UFormGroup>
-          <UFormGroup label="Título del Bloque">
+          </UFormField>
+          <UFormField label="Título del Bloque">
             <UInput
               v-model="newBlockTitle"
               placeholder="Ej: 3 Noches en Punta Cana"
             />
-          </UFormGroup>
-          <UFormGroup label="Fechas / Referencia">
+          </UFormField>
+          <UFormField label="Fechas / Referencia">
             <UPopover class="w-full">
               <UButton
                 color="neutral"
@@ -466,7 +466,7 @@ const formatCurrency = (amount: number) => {
                 />
               </template>
             </UPopover>
-          </UFormGroup>
+          </UFormField>
         </div>
       </template>
 
