@@ -4,16 +4,23 @@ import FiltersSidebar from "~/components/b2b/hotel/FiltersSidebar.vue";
 import ResultCard from "~/components/b2b/hotel/ResultCard.vue";
 import HotelMap from "~/components/b2b/hotel/HotelMap.vue";
 import { useHotels, type HotelFilterState } from "~/composables/useHotels";
+import { useHotelSearch } from "~/composables/useHotelSearch";
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const { hotels: mockHotels, filterHotels } = useHotels();
+const { searchParams, hydrateFromRoute } = useHotelSearch();
+hydrateFromRoute();
 
-useHead({
-  title: "Resultados: Punta Cana - TravelOTA B2B",
-});
+useHead(
+  computed(() => ({
+    title: searchParams.value.destination
+      ? `Resultados: ${searchParams.value.destination} - TravelOTA B2B`
+      : "Resultados de búsqueda - TravelOTA B2B",
+  })),
+);
 
 // Mobile filter panel toggle
 const showMobileFilters = ref(false);
@@ -124,7 +131,7 @@ watch(
 </script>
 
 <template>
-  <div class="max-w-[1400px] mx-auto pb-12">
+  <div class="pb-12">
     <!-- Header Resumen -->
     <SearchSummaryBar />
 
