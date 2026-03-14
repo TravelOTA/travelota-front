@@ -27,6 +27,8 @@ const {
   clearItinerary,
 } = useItinerary();
 
+const { nationalities: nationalityOptions } = useConfig();
+
 // For adding new blocks
 const isAddBlockModalOpen = ref(false);
 const newBlockType = ref<"hotel" | "flight" | "transfer" | "activity">("hotel");
@@ -62,37 +64,6 @@ const formatCurrency = (amount: number) => {
     currency: "USD",
   }).format(amount);
 };
-
-const nationalityOptions = [
-  "Estados Unidos",
-  "Canadá",
-  "México",
-  "Guatemala",
-  "Honduras",
-  "El Salvador",
-  "Nicaragua",
-  "Costa Rica",
-  "Panamá",
-  "Cuba",
-  "República Dominicana",
-  "Puerto Rico",
-  "Colombia",
-  "Venezuela",
-  "Ecuador",
-  "Perú",
-  "Bolivia",
-  "Chile",
-  "Argentina",
-  "Uruguay",
-  "Paraguay",
-  "Brasil",
-  "España",
-  "Portugal",
-  "Francia",
-  "Italia",
-  "Alemania",
-  "Reino Unido",
-];
 </script>
 
 <template>
