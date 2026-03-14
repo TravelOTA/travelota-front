@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAgencies, type AgencyUser } from "~/composables/useAgencies";
+import { useAgencies, type AdminAgencyUser } from "~/composables/useAgencies";
 
 definePageMeta({ layout: "dashboard" });
 
@@ -87,7 +87,7 @@ const filteredUsers = computed(() =>
   ),
 );
 
-function toggleUserStatus(user: AgencyUser) {
+function toggleUserStatus(user: AdminAgencyUser) {
   user.status = user.status === "Activo" ? "Inactivo" : "Activo";
 }
 

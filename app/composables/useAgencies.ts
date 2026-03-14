@@ -1,6 +1,6 @@
 import { useState, computed } from "#imports";
 
-export interface AgencyUser {
+export interface AdminAgencyUser {
   id: number;
   name: string;
   email: string;
@@ -9,7 +9,7 @@ export interface AgencyUser {
   lastLogin: string;
 }
 
-export interface Agency {
+export interface AdminAgency {
   id: string;
   name: string;
   country: string;
@@ -20,10 +20,10 @@ export interface Agency {
   bookingsCount: number;
   registeredAt: string;
   status: "Activa" | "Pendiente" | "Bloqueada";
-  users: AgencyUser[];
+  users: AdminAgencyUser[];
 }
 
-const MOCK_AGENCIES: Agency[] = [
+const MOCK_AGENCIES: AdminAgency[] = [
   {
     id: "AG-1001",
     name: "Viajes El Corte Inglés",
@@ -173,7 +173,7 @@ const MOCK_AGENCIES: Agency[] = [
 ];
 
 export function useAgencies() {
-  const agencies = useState<Agency[]>("agencies", () => MOCK_AGENCIES);
+  const agencies = useState<AdminAgency[]>("agencies", () => MOCK_AGENCIES);
 
   const agencyStats = computed(() => ({
     total: agencies.value.length,
@@ -182,7 +182,7 @@ export function useAgencies() {
     blocked: agencies.value.filter((a) => a.status === "Bloqueada").length,
   }));
 
-  function getAgencyById(id: string): Agency | undefined {
+  function getAgencyById(id: string): AdminAgency | undefined {
     return agencies.value.find((a) => a.id === id);
   }
 
@@ -199,7 +199,7 @@ export function useAgencies() {
   }
 
   function addAgency(
-    data: Omit<Agency, "id" | "bookingsCount" | "status" | "users">,
+    data: Omit<AdminAgency, "id" | "bookingsCount" | "status" | "users">,
   ) {
     agencies.value.push({
       id: `AG-${1000 + agencies.value.length + 1}`,
@@ -214,7 +214,7 @@ export function useAgencies() {
     id: string,
     data: Partial<
       Pick<
-        Agency,
+        AdminAgency,
         "name" | "country" | "email" | "phone" | "agencyGroup" | "markup"
       >
     >,
