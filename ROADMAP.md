@@ -1,264 +1,177 @@
-# Travelota Front — Development Roadmap
+# travelota-front — Frontend Roadmap
 
-> This document tracks the current state of the platform, pending work, and recommended future features.
-
----
-
-## Current State — What's Implemented
-
-The application is a **fully polished UI prototype** with complete client-side flows backed by mock data. The `useApi()` wrapper is in place, so connecting composables to real backend endpoints is straightforward.
-
-### ✅ Implemented (UI + Mock Data)
-
-#### Authentication & Access Control
-- Role-based access control via `travelota-role` cookie (USER, AGENCY_ADMIN, SUPPORT, SUPER_ADMIN)
-- Auth middleware protecting all `/dashboard/**` routes
-- Role-aware `DashboardNavbar` — nav items show/hide based on role
-- Login and registration forms (UI + Zod validation)
-- Magic login panel on landing page (dev/demo tool)
-
-#### Hotel Search & Results
-- Hotel search form with destination, dates, nationality, and room distribution
-- Search params persisted in URL query string
-- Results page with grid/list view
-- Advanced filtering: price range, star category, meal regime, cancellation policy, on-request availability
-- Hotel detail page with gallery, rooms, and price box
-- Interactive Leaflet map with hotel pins
-
-#### Quoter
-- Add hotels to quote cart
-- Per-item and global markup slider with real-time recalculation
-- Profit margin visualization (net cost, markup, sell price)
-- Quote preview modal
-- `QuoterDocument.vue` print-ready component
-
-#### Itinerary Builder
-- Multiday block structure: hotel, flight, transfer, activity
-- Up to 5 options per block with selection
-- Adult/child pricing split (child = 50% of adult rate)
-- Global markup applied to all blocks
-- `ItineraryDocument.vue` print-ready component
-- Print-to-PDF architecture via `localStorage` → `window.open('/print/itinerary')`
-
-#### Checkout & Bookings
-- Full checkout flow (reservation details, passenger form, cancellation policies, payment selector)
-- Payment method selector: credit card, bank transfer, agency credit, pay later
-- Agency credit availability check (`hasSufficientCredit()`)
-- Booking confirmation page
-- Booking list with filters: PNR, titular, destination, status, date range
-- Client-side pagination (10 items/page)
-- Mass booking selection and bulk payment UI
-- Voucher preview modal
-
-#### Wallet & Finance
-- Credit limit display with usage percentage
-- Transaction history (charge, payment, refund)
-- `AgencyTransactions` and `WalletWidgets` components
-
-#### Agency Management
-- Agency profile editor (name, contact, address, logo)
-- Logo upload with image preview (FileReader)
-- Agency primary color picker with dynamic dashboard theming
-- Markup configuration page
-- Agency user list page
-
-#### Admin Panel
-- Admin dashboard with aggregate stats
-- Agency CRUD (approve, block, edit)
-- Agency group tier management (VIP, Mayorista, Estándar, Corpo)
-- Support user CRUD
-- Document/email template management page
-
-#### UI Foundation
-- Nuxt UI v4 component library (Reka UI + Tailwind v4)
-- Custom green color palette via CSS `@theme static` tokens
-- Dynamic hex-color theming per agency
-- `print` layout for bare PDF rendering
-- Fully responsive (mobile + desktop)
-- Spanish UI language throughout
+> Tracks frontend-specific work: UI state, composable integration, and client-side features.
+> For backend tasks see `travelota-api/ROADMAP.md`. For the full-stack view see `project-management/ROADMAP.md`.
 
 ---
 
-## Phase 1 — Backend Integration (Critical Path)
+## Current State — UI Prototype (Phase 0 Complete ✅)
 
-Connect the existing UI to a real backend. The `useApi()` composable already injects auth headers — composables only need their mock data replaced with `useApi<T>()` calls.
+All flows are built and polished with mock data. `useApi()` is wired and injects `Authorization: Bearer` headers — composables only need their mock arrays replaced with real calls.
+
+### Implemented (UI + Mock Data)
+
+| Module | What's built |
+|---|---|
+| **Auth** | Login/register forms (Zod), role cookie simulation, auth middleware on `/dashboard/**`, magic dev panel |
+| **Hotel Search** | Search form, URL-persisted params, results grid/list, advanced filters, hotel detail, Leaflet map |
+| **Quoter** | Cart, markup slider, profit margin visualization, print-ready `QuoterDocument.vue` |
+| **Itinerary Builder** | Multiday blocks (hotel/flight/transfer/activity), 5 options per block, child pricing, print-ready `ItineraryDocument.vue` |
+| **Checkout** | Full flow, payment method selector (card/transfer/credit/pay-later), credit availability check, booking confirmation |
+| **Bookings** | List with filters, client-side pagination, bulk selection, voucher modal |
+| **Wallet** | Credit limit widget, transaction history, `AgencyTransactions` + `WalletWidgets` |
+| **Agency Profile** | Editor, logo upload + preview, color picker with dynamic theming, markup config, user list |
+| **Admin Panel** | Stats dashboard, agency CRUD (approve/block/edit), group tiers, support user CRUD, templates page |
+| **UI Foundation** | Nuxt UI v4 + Tailwind v4, green palette, `print` layout, fully responsive, Spanish |
+
+---
+
+## Phase 1 — Backend Integration
 
 ### 1.1 Authentication
 
-- [ ] Real login endpoint — validate credentials, return JWT
-- [ ] Real registration endpoint — create agency account with status `pending`
-- [ ] JWT storage and refresh — replace cookie role simulation
-- [ ] Logout — invalidate server-side session
-- [ ] Password reset flow — email link + reset form
-- [ ] Email verification on registration
+- [ ] Call `POST /auth/token` on login — store access token in memory, refresh token in `httpOnly` cookie
+- [ ] Implement silent token refresh before the 5-min access token expires
+- [ ] Replace `travelota-role` cookie with role decoded from JWT claims
+- [ ] Connect logout to clear tokens client-side
+- [ ] Wire registration form to real endpoint (when backend exposes it)
+- [ ] Password reset form — link from login page to `POST /auth/password-reset`
 
-### 1.2 Hotel Search
+### 1.2 User Profile
 
-- [ ] Connect `useHotels` to real hotel inventory API or GDS/OTA provider
-- [ ] Live availability check per search query
-- [ ] Real-time pricing (net rates from supplier)
-- [ ] Hotel detail endpoint — rooms, amenities, policies
+- [ ] `GET /auth/me` → populate user name/email/phone in navbar and profile page
+- [ ] `PATCH /auth/me` → save profile changes
+- [ ] `POST /auth/me/change-password` → connect password change form
 
-### 1.3 Booking Engine
+### 1.3 Agency Management
 
-- [ ] `POST /api/bookings` — create booking, generate PNR
-- [ ] `GET /api/bookings` — paginated booking list for agency
-- [ ] `GET /api/bookings/:id` — booking detail
-- [ ] `PATCH /api/bookings/:id` — cancel or modify booking
-- [ ] Booking status lifecycle: Pending → Confirmed → Cancelled / Expired
+- [ ] `GET /agencies/{id}/` → load agency profile form
+- [ ] `PATCH /agencies/{id}/` → save agency profile changes
+- [ ] `POST /agencies/{id}/logo` → upload logo (replace FileReader preview with real upload)
+- [ ] `GET/PATCH /agencies/{id}/markup` → connect markup config page
+- [ ] `GET /agencies/{id}/users` → connect user list page
 
-### 1.4 Agency & User Management
+> **Field alignment needed:** frontend uses `rut`, backend uses `fiscal_id`. Align before integration.
 
-- [ ] `GET/PUT /api/agency` — fetch and update agency profile
-- [ ] `POST /api/agency/logo` — upload logo to cloud storage (S3/R2)
-- [ ] `GET/POST/PUT/DELETE /api/agency/users` — manage agency users
-- [ ] `GET/PUT /api/agency/markup` — markup configuration
+### 1.4 Hotel Search
 
-### 1.5 Wallet & Payments
+- [ ] Replace `MOCK_HOTELS` in `useHotels` with `GET /api/hotels?destination=&checkIn=&checkOut=...`
+- [ ] Replace `MOCK_HOTEL_DETAIL` with `GET /api/hotels/{id}`
+- [ ] Pass real search params (destination, dates, nationality, rooms) as query string
+- [ ] Handle loading/empty/error states in results page
 
-- [ ] `GET /api/wallet` — real balance and credit limit per agency
-- [ ] `GET /api/wallet/transactions` — real transaction history
-- [ ] `POST /api/payments` — charge payment method (credit card or bank transfer)
-- [ ] Agency credit deduction on booking confirmation
-- [ ] Payment gateway integration (Stripe or equivalent)
+### 1.5 Booking Engine
 
-### 1.6 Admin Endpoints
+- [ ] `POST /api/bookings` → connect checkout confirmation step
+- [ ] `GET /api/bookings` → replace mock list in `useBookings`
+- [ ] `GET /api/bookings/{id}` → booking detail / voucher modal
+- [ ] `PATCH /api/bookings/{id}/cancel` → connect cancellation action
 
-- [ ] `GET/POST/PUT/DELETE /api/admin/agencies` — full agency CRUD
-- [ ] `POST /api/admin/agencies/:id/approve` — approve pending registration
-- [ ] `POST /api/admin/agencies/:id/block` — block agency
-- [ ] `GET/POST/PUT/DELETE /api/admin/agency-groups` — tier management
-- [ ] `GET/POST/PUT/DELETE /api/admin/support-users` — support user CRUD
-- [ ] `GET /api/admin/bookings` — global booking view with cross-agency filters
+### 1.6 Wallet & Payments
 
-### 1.7 Itinerary & Quoter Persistence
+- [ ] `GET /api/wallet` → real balance and credit limit in `useWallet`
+- [ ] `GET /api/wallet/transactions` → real transaction history
+- [ ] `POST /api/payments` → connect payment form on checkout
 
-- [ ] `POST /api/itineraries` — save itinerary to database
-- [ ] `GET /api/itineraries` — list saved itineraries
-- [ ] `GET/PUT/DELETE /api/itineraries/:id` — load, update, delete
-- [ ] `POST /api/quotes` — save quote
-- [ ] `GET /api/quotes` — list saved quotes
-- [ ] Share itinerary/quote via unique URL
+### 1.7 Admin Endpoints
+
+- [ ] `GET/POST/PATCH/DELETE /api/admin/agencies` → connect agency CRUD in admin panel
+- [ ] `POST /api/admin/agencies/{id}/approve` and `/block` → connect action buttons
+- [ ] Agency groups CRUD → connect tier management page
+- [ ] Support user CRUD → connect support user page
+- [ ] `GET /api/admin/bookings` → global booking list view
+
+### 1.8 Itinerary & Quoter Persistence
+
+- [ ] `POST /api/itineraries` → save itinerary (connect `useItinerary.saveItinerary()`)
+- [ ] `GET /api/itineraries` → list saved itineraries
+- [ ] `GET/PUT/DELETE /api/itineraries/{id}` → load, edit, delete
+- [ ] Same pattern for `useQuoter` → `/api/quotes`
+- [ ] Shareable URL for itinerary/quote via unique token
 
 ---
 
-## Phase 2 — Core Production Features
+## Phase 2 — Frontend Production Features
 
-### 2.1 PDF & Document Generation
+### 2.1 Error Handling
 
-- [ ] Server-side PDF generation for vouchers (Puppeteer / WeasyPrint / wkhtmltopdf)
-- [ ] Downloadable booking voucher PDF
-- [ ] Downloadable itinerary PDF
-- [ ] Downloadable quote PDF
-- [ ] Invoice generation per booking or per settlement period
+- [ ] Global error handler in `useApi` — map HTTP status codes to Spanish messages
+- [ ] 401 → redirect to login and clear tokens
+- [ ] 403 → "No tienes permiso para esta acción"
+- [ ] 422/400 → map validation errors to form fields
+- [ ] 500/network → toast with retry option
+- [ ] Offline detection banner
 
-### 2.2 Email Notifications
+### 2.2 PDF (Client-side)
 
-- [ ] Booking confirmation email to agency and end customer
-- [ ] Payment receipt email
-- [ ] Booking cancellation email with policy details
-- [ ] Agency registration approval email
-- [ ] Payment reminder before deadline (pay-later bookings)
-- [ ] Monthly settlement summary email
+The `print` layout and `*Document.vue` components are already built. Needed:
 
-### 2.3 Real Markup & Pricing Rules
+- [ ] Voucher PDF — call server-generated PDF endpoint or trigger client-side print
+- [ ] Ensure `QuoterDocument.vue` and `ItineraryDocument.vue` render correctly in headless print
+- [ ] Logo and custom agency color applied in PDF output
 
-- [ ] Markup rules enforced server-side (prevent client-side tampering)
-- [ ] Group-based markup floors/ceilings per agency tier
-- [ ] Net rate vs sell rate audit log
+### 2.3 Form UX
 
-### 2.4 Settlement & Billing
+- [ ] Form draft autosave on checkout (prevent data loss on back navigation)
+- [ ] Dirty-state warnings on profile/markup forms before navigating away
 
-- [ ] Monthly settlement calculation per agency
-- [ ] Settlement statement PDF
-- [ ] Invoice generation for agency payments
-- [ ] Payment reconciliation dashboard for admin
+### 2.4 Accessibility
+
+- [ ] Keyboard navigation audit on modals and dropdowns
+- [ ] ARIA labels on icon-only buttons
+- [ ] Color contrast check on custom agency theme colors
 
 ---
 
 ## Phase 3 — Operational Improvements
 
-### 3.1 Notifications & Messaging
+### 3.1 Search & Export
 
-- [ ] In-app notification center (booking changes, wallet alerts)
-- [ ] SMS notifications for booking confirmation and cancellation
-- [ ] Admin broadcast messaging to all agencies
-- [ ] Support ticket / chat between agency and operations team
+- [ ] Server-side booking search (PNR, guest name, destination) — remove client-side filter from `useBookings`
+- [ ] Export booking list to CSV (`GET /api/bookings/export.csv`)
+- [ ] Saved search filters persisted per user
 
-### 3.2 Search & Filtering at Scale
+### 3.2 Notifications
 
-- [ ] Server-side booking search with full-text (PNR, guest name, destination)
-- [ ] Saved search filters per user
-- [ ] Export booking list to CSV / Excel
+- [ ] In-app notification center (booking updates, wallet alerts) — SSE or WebSocket
+- [ ] Toast notifications for background events
 
-### 3.3 Error Handling & Reliability
+### 3.3 Security
 
-- [ ] Global API error boundary with user-friendly messages
-- [ ] Retry logic for transient network errors in `useApi`
-- [ ] Offline detection banner
-- [ ] Form draft autosave (prevent data loss on navigation)
+- [ ] Replace cookie role simulation with JWT-derived roles
+- [ ] Ensure `X-CSRFToken` header is sent on all non-GET requests to Django
+- [ ] Sanitize user-generated content before rendering (agency description, template fields)
 
-### 3.4 Security Hardening
+### 3.4 Testing
 
-- [ ] Replace cookie role simulation with signed JWT claims
-- [ ] CSRF protection on all state-changing endpoints
-- [ ] Rate limiting on login and registration endpoints
-- [ ] Audit log for admin actions (agency block, user creation, etc.)
-- [ ] GDPR-compliant data deletion for agency accounts
+- [ ] Unit tests for all composables (`useAuth`, `useBookings`, `useWallet`, `useAgency`)
+- [ ] Component tests for checkout flow and markup calculator
+- [ ] E2E tests for critical paths: login → search → book → view booking
 
 ---
 
-## Phase 4 — Suggested New Features
+## Phase 4 — Suggested Frontend Features
 
-These features are not in the current codebase but would add significant value to the platform.
-
-### 💡 Multi-Currency Support
-Display net and sell prices in the agency's preferred currency with live exchange rates. Essential for agencies operating in multiple markets.
+### 💡 Multi-Currency Display
+Show net/sell prices in the agency's preferred currency. Pair with a backend exchange-rate endpoint.
 
 ### 💡 Availability Calendar
-A calendar view on the hotel detail page showing available dates and price variation. Reduces back-and-forth for agencies planning trips.
+Calendar view on hotel detail page — price variation by date. Reduces back-and-forth.
 
 ### 💡 Client Portal
-A separate read-only portal where end customers (travelers) can view their booking details, download vouchers, and see itinerary status — without accessing the B2B dashboard.
+Read-only public route (`/booking/{token}`) for travelers to view their booking and download voucher without logging in.
 
 ### 💡 Advanced Analytics Dashboard
-Replace the current static stats with real metrics: conversion rate (search → booking), average booking value per agency, top-selling destinations, monthly revenue trends. Use charts (e.g., Chart.js or D3).
-
-### 💡 GDS / Channel Manager Integration
-Connect to a real hotel inventory source (Amadeus, Sabre, Hotelbeds API, or similar) to replace mock hotel data with live availability and pricing.
-
-### 💡 Markup Rules Engine
-Allow admins to define complex markup rules: per destination, per hotel category, per date range, per agency group. Currently markup is a flat percentage with no rules.
+Real-time charts (Chart.js or D3) on admin dashboard — conversion rate, revenue trends, top destinations.
 
 ### 💡 Booking Modification Flow
-Allow agencies to modify passenger names, room types, or dates post-booking (subject to hotel policy). Currently there is no modification flow — only cancellation.
-
-### 💡 Promotions & Deals Engine
-Let the operations team publish time-limited promotions (early bird, last minute, contracted blocks). Agencies see highlighted deals in search results. The `usePromotions` composable is already stubbed.
+Allow agencies to edit passenger names and room types post-booking. Currently only cancellation exists.
 
 ### 💡 B2C White-Label Mode
-A simplified public-facing version of the search and booking flow that agencies can embed on their own website under their branding. Reuses existing components with a different layout.
-
-### 💡 Automated Payment Reminders
-Proactive reminders for pay-later bookings approaching their payment deadline. Currently the deadline is displayed in the UI but there is no notification mechanism.
+A configurable public-facing search/booking flow embeddable on agency websites. Reuse existing components with a different layout.
 
 ### 💡 Document Template Editor
-Allow admins to customize the content and branding of vouchers, quotes, and itinerary PDFs per agency or globally. The `templates` admin page exists but has no editor.
+Rich-text editor on the admin templates page to customize voucher/quote branding per agency.
 
-### 💡 Two-Factor Authentication (2FA)
-Optional TOTP-based 2FA for AGENCY_ADMIN and SUPER_ADMIN accounts. Critical for accounts with payment authorization and booking cancellation access.
-
-### 💡 API Access for Agencies
-A REST API key system allowing tech-savvy agencies to integrate travelota search and booking into their own systems or CRM.
-
----
-
-## Summary
-
-| Phase | Scope | Status |
-|---|---|---|
-| **Phase 0** | UI prototype with mock data | ✅ Complete |
-| **Phase 1** | Backend integration (auth, booking engine, payments) | 🔲 Not started |
-| **Phase 2** | PDF generation, email notifications, billing | 🔲 Not started |
-| **Phase 3** | Operational improvements (search scale, error handling, security) | 🔲 Not started |
-| **Phase 4** | New features (analytics, GDS, white-label, 2FA) | 🔲 Planned |
+### 💡 Two-Factor Authentication UI
+TOTP setup flow for AGENCY_ADMIN and SUPER_ADMIN accounts.
