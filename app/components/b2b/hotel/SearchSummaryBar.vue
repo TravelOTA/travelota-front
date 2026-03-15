@@ -168,7 +168,7 @@ const handleSearchUpdate = async (newData: HotelSearchParams) => {
         <div class="flex-none">
           <UButton
             color="primary"
-            class="w-full md:w-[110px] h-full flex items-center justify-center gap-2 rounded-none rounded-b-2xl md:rounded-bl-none md:rounded-r-2xl bg-green-700 hover:bg-green-800 text-white font-bold px-5 py-3"
+            class="w-full md:w-[110px] h-full flex items-center justify-center gap-2 rounded-none rounded-b-2xl md:rounded-bl-none md:rounded-tr-2xl md:rounded-br-none bg-green-700 hover:bg-green-800 text-white font-bold px-5 py-3"
             @click="isEditing = true"
           >
             <UIcon name="i-heroicons-pencil-solid" class="w-4 h-4" />
