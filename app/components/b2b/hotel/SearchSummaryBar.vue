@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import HotelSearchForm from "~/components/b2b/hotel/HotelSearchForm.vue";
 import {
   useHotelSearch,
