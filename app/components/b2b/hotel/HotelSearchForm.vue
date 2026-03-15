@@ -78,7 +78,8 @@ const submitSearch = () => {
   });
 };
 
-const { nationalities: nationalityOptions } = useConfig();
+const { nationalities: nationalityOptions, destinations: destinationOptions } =
+  useConfig();
 </script>
 
 <template>
@@ -107,12 +108,14 @@ const { nationalities: nationalityOptions } = useConfig();
           >
             Destino
           </span>
-          <UInput
+          <USelectMenu
             v-model="form.destination"
+            :items="destinationOptions"
             placeholder="¿A dónde vas?"
+            searchable
+            class="w-full"
             variant="none"
             size="sm"
-            class="w-full p-0"
             :ui="{
               base: 'bg-transparent border-0 ring-0 shadow-none p-0 text-sm font-medium text-gray-900 dark:text-gray-50 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-0',
             }"
@@ -218,12 +221,13 @@ const { nationalities: nationalityOptions } = useConfig();
           >
             Nacionalidad
           </span>
-          <USelect
+          <USelectMenu
             v-model="form.nationality"
-            :options="nationalityOptions"
+            :items="nationalityOptions"
+            searchable
+            class="w-full"
             variant="none"
             size="sm"
-            class="w-full p-0"
             :ui="{
               base: 'bg-transparent border-0 ring-0 shadow-none p-0 text-sm font-medium text-gray-900 dark:text-gray-50 focus:ring-0',
             }"

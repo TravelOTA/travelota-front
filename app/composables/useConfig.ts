@@ -17,6 +17,21 @@ const COUNTRIES = [
   "Perú",
 ];
 
+const DESTINATIONS = [
+  "Punta Cana, República Dominicana",
+  "Playa Bavaro, República Dominicana",
+  "Cap Cana, República Dominicana",
+  "Uvero Alto, República Dominicana",
+  "Santo Domingo, República Dominicana",
+  "Cancún, México",
+  "Riviera Maya, México",
+  "Madrid, España",
+  "Barcelona, España",
+  "Miami, Estados Unidos",
+  "Orlando, Estados Unidos",
+  "Nueva York, Estados Unidos",
+];
+
 const NATIONALITIES = [
   "Alemania",
   "Argentina",
@@ -73,6 +88,10 @@ const PAYMENT_METHODS: PaymentMethod[] = [
 
 export function useConfig() {
   const countries = useState<string[]>("config-countries", () => COUNTRIES);
+  const destinations = useState<string[]>(
+    "config-destinations",
+    () => DESTINATIONS,
+  );
   const nationalities = useState<string[]>(
     "config-nationalities",
     () => NATIONALITIES,
@@ -84,6 +103,7 @@ export function useConfig() {
 
   return {
     countries,
+    destinations,
     nationalities,
     paymentMethods,
   };
