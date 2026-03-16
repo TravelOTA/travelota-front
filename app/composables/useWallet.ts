@@ -1,91 +1,50 @@
-import { computed } from "vue";
+// app/composables/useWallet.ts
 import { useState } from "#imports";
+import { computed } from "vue";
+import { apiFetch } from "~/composables/useApi";
+import type { IWallet } from "#shared/types/wallet";
 
-export interface WalletTransaction {
-  id: string;
-  date: string;
-  type: "charge" | "payment" | "refund";
-  amount: number;
-  description: string;
-  reference?: string;
-}
+export function useWallet() {
+  const wallet = useState<IWallet | null>("wallet:data", () => null);
+  const loading = useState<boolean>("wallet:loading", () => false);
+  const error = useState<string | null>("wallet:error", () => null);
 
-const MOCK_TRANSACTIONS: WalletTransaction[] = [
-  {
-    id: "TXN-001",
-    date: "2026-03-01T10:30:00Z",
-    type: "payment",
-    amount: 5000,
-    description: "Pago de liquidación mes anterior",
-    reference: "TRF-987654321",
-  },
-  {
-    id: "TXN-002",
-    date: "2026-03-02T14:15:00Z",
-    type: "charge",
-    amount: 1250,
-    description: "Reserva de Hotel - Hilton Madrid",
-    reference: "BKG-102938",
-  },
-  {
-    id: "TXN-003",
-    date: "2026-03-03T09:45:00Z",
-    type: "charge",
-    amount: 800,
-    description: "Reserva de Hotel - Meliá Barcelona",
-    reference: "BKG-102939",
-  },
-  {
-    id: "TXN-004",
-    date: "2026-03-05T16:20:00Z",
-    type: "charge",
-    amount: 2200,
-    description: "Reserva de Hotel - W Paris",
-    reference: "BKG-102940",
-  },
-];
-
-export const useWallet = () => {
-  const creditLimit = useState<number>("wallet-credit-limit", () => 15000);
-  const currentBalance = useState<number>("wallet-current-balance", () => 4250);
-  const transactions = useState<WalletTransaction[]>(
-    "wallet-transactions",
-    () => MOCK_TRANSACTIONS,
-  );
-
-  const availableCredit = computed(
-    () => creditLimit.value - currentBalance.value,
-  );
-  const creditUsagePercentage = computed(() => {
-    if (creditLimit.value === 0) return 0;
-    return Math.round((currentBalance.value / creditLimit.value) * 100);
-  });
-
-  const addTransaction = (txn: Omit<WalletTransaction, "id" | "date">) => {
-    const newTxn: WalletTransaction = {
-      ...txn,
-      id: crypto.randomUUID(),
-      date: new Date().toISOString(),
-    };
-    transactions.value.unshift(newTxn);
-
-    if (txn.type === "charge") {
-      currentBalance.value += txn.amount;
-    } else if (txn.type === "payment" || txn.type === "refund") {
-      currentBalance.value = Math.max(0, currentBalance.value - txn.amount);
+  async function fetchWallet() {
+    loading.value = true;
+    error.value = null;
+    try {
+      wallet.value = await apiFetch<IWallet>("/api/wallet");
+    } catch (err) {
+      error.value =
+        err instanceof Error ? err.message : "Error al cargar el wallet";
+    } finally {
+      loading.value = false;
     }
-  };
+  }
 
-  const hasSufficientCredit = (amount: number) =>
-    availableCredit.value >= amount;
+  function hasSufficientCredit(amount: number): boolean {
+    if (!wallet.value) return false;
+    return wallet.value.availableCredit >= amount;
+  }
+
+  const availableCredit = computed(() => wallet.value?.availableCredit ?? 0);
+  const creditLimit = computed(() => wallet.value?.creditLimit ?? 0);
+  const currentBalance = computed(() => wallet.value?.currentBalance ?? 0);
+  const creditUsagePercentage = computed(() =>
+    creditLimit.value > 0
+      ? (currentBalance.value / creditLimit.value) * 100
+      : 0,
+  );
 
   return {
+    wallet,
+    loading,
+    error,
+    availableCredit,
     creditLimit,
     currentBalance,
-    availableCredit,
     creditUsagePercentage,
-    transactions,
-    addTransaction,
+    fetchWallet,
     hasSufficientCredit,
   };
-};
+}
