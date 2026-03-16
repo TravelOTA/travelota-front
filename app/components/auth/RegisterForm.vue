@@ -3,6 +3,10 @@ import { reactive } from "vue";
 import { registerSchema, type RegisterInput } from "~/utils/schemas";
 import type { FormSubmitEvent } from "@nuxt/ui";
 
+const emit = defineEmits<{ success: [] }>();
+
+const { registerAgency } = useAgencies();
+
 const form = reactive<RegisterInput>({
   nombreComercial: "",
   razonSocial: "",
@@ -17,7 +21,10 @@ const form = reactive<RegisterInput>({
 
 const { countries: paises } = useConfig();
 
-async function onSubmit(_event: FormSubmitEvent<RegisterInput>) {}
+async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
+  registerAgency(event.data);
+  emit("success");
+}
 </script>
 
 <template>
