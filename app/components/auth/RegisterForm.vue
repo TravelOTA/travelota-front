@@ -253,7 +253,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
         variant="solid"
         size="lg"
         :disabled="!isFormValid"
-        class="px-8 py-2.5 uppercase tracking-wider font-bold text-sm rounded-sm shadow-sm"
+        :class="[
+          'px-8 py-2.5 uppercase tracking-wider font-bold text-sm rounded-sm shadow-sm',
+          !isFormValid && 'btn-registro-disabled',
+        ]"
       >
         Regístrame
       </UButton>
@@ -288,5 +291,9 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
   font-size: 0.75rem;
   letter-spacing: 0.05em;
   color: #94a3b8;
+}
+
+:deep(.btn-registro-disabled) {
+  opacity: 0.3 !important;
 }
 </style>
