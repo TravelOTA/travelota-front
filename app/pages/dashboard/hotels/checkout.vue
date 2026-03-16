@@ -15,7 +15,10 @@ definePageMeta({
 
 const router = useRouter();
 
-const { selectedHotel, selectedRoom, searchParams, isReady } = useCheckout();
+const { selectedHotel, selectedRoom, searchParams, isReady, clearCheckout } =
+  useCheckout();
+
+const checkoutError = ref<string | null>(null);
 
 // Redirect to search if no room selected
 onMounted(() => {
@@ -111,8 +114,13 @@ useHead({
 });
 
 // Handle booking confirmed
-function onConfirmed(pnr: string) {
-  navigateTo(`/dashboard/hotels/booking/${pnr}?from=confirmation`);
+async function onConfirmed(pnr: string) {
+  await navigateTo(`/dashboard/hotels/booking/${pnr}?from=confirmation`);
+  clearCheckout();
+}
+
+function onBookingError(msg: string) {
+  checkoutError.value = msg;
 }
 </script>
 
@@ -167,12 +175,19 @@ function onConfirmed(pnr: string) {
         <CheckoutTitularForm ref="titularFormRef" />
 
         <!-- 4. Payment Options & Checks -->
+        <UAlert
+          v-if="checkoutError"
+          color="error"
+          icon="i-heroicons-exclamation-circle"
+          :description="checkoutError"
+          class="mb-3"
+        />
         <CheckoutPaymentOptions
           :total-price="totalPrice"
           :titular="titular"
           :cancellation-policy="selectedRoom?.cancellationPolicy"
           @confirmed="onConfirmed"
-          @error="(msg) => console.error('[checkout]', msg)"
+          @error="onBookingError"
         />
       </div>
     </div>

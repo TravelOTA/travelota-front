@@ -120,7 +120,6 @@ export function useCheckout() {
         },
       });
 
-      clearCheckout();
       return booking.id;
     } catch (err) {
       submitError.value =
