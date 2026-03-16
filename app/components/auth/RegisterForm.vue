@@ -21,6 +21,18 @@ const form = reactive<RegisterInput>({
 
 const { countries: paises } = useConfig();
 
+const isFormValid = computed(
+  () =>
+    form.nombreComercial.trim().length >= 2 &&
+    form.razonSocial.trim().length >= 2 &&
+    form.nif.trim().length >= 5 &&
+    form.telefono.trim().length >= 9 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
+    form.pais.trim().length >= 1 &&
+    form.nombreContacto.trim().length >= 2 &&
+    form.aceptaPrivacidad === true,
+);
+
 async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
   registerAgency(event.data);
   emit("success");
@@ -240,6 +252,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
         color="primary"
         variant="solid"
         size="lg"
+        :disabled="!isFormValid"
         class="px-8 py-2.5 uppercase tracking-wider font-bold text-sm btn-registro rounded-sm shadow-sm"
       >
         Regístrame
