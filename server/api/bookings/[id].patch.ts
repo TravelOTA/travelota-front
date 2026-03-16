@@ -18,15 +18,15 @@ export default defineEventHandler(async (event) => {
   }
 
   if (body.action === "cancel") {
-    if (bookings[idx].status === "cancelled") {
+    if (bookings[idx]!.status === "cancelled") {
       throw createError({
         statusCode: 409,
         message: "La reserva ya está cancelada",
       });
     }
-    bookings[idx].status = "cancelled";
+    bookings[idx]!.status = "cancelled";
     await writeBookings(bookings);
-    return bookings[idx];
+    return bookings[idx]!;
   }
 
   throw createError({ statusCode: 400, message: "Acción no reconocida" });

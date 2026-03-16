@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     throw createError({
       statusCode: 422,
-      message: parsed.error.errors.map((e) => e.message).join(", "),
+      message: parsed.error.issues.map((issue) => issue.message).join(", "),
     });
   }
 
@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: "Reserva no encontrada" });
   }
 
-  const booking = bookings[idx];
+  const booking = bookings[idx]!;
 
   if (booking.status === "cancelled") {
     throw createError({
@@ -108,7 +108,7 @@ export default defineEventHandler(async (event) => {
         statusCode: 400,
         message: "Datos de tarjeta requeridos",
       });
-    const [mm, yy] = cardData.expiry.split("/").map(Number);
+    const [mm = 0, yy = 0] = cardData.expiry.split("/").map(Number);
     const expDate = new Date(2000 + yy, mm, 1);
     if (expDate < new Date()) {
       throw createError({
@@ -116,10 +116,10 @@ export default defineEventHandler(async (event) => {
         message: "La tarjeta está vencida",
       });
     }
-    bookings[idx].paymentStatus = "paid";
-    bookings[idx].paymentMethod = "card";
-    bookings[idx].paidAt = new Date().toISOString();
-    response = { status: "paid", paidAt: bookings[idx].paidAt };
+    bookings[idx]!.paymentStatus = "paid";
+    bookings[idx]!.paymentMethod = "card";
+    bookings[idx]!.paidAt = new Date().toISOString();
+    response = { status: "paid", paidAt: bookings[idx]!.paidAt };
   } else if (method === "agency_credit") {
     const wallet = await readWallet();
     if (wallet.availableCredit < booking.totalPrice) {
@@ -135,19 +135,19 @@ export default defineEventHandler(async (event) => {
       date: new Date().toISOString(),
     });
     await writeWallet(wallet);
-    bookings[idx].paymentStatus = "paid";
-    bookings[idx].paymentMethod = "agency_credit";
-    bookings[idx].paidAt = new Date().toISOString();
-    response = { status: "paid", paidAt: bookings[idx].paidAt };
+    bookings[idx]!.paymentStatus = "paid";
+    bookings[idx]!.paymentMethod = "agency_credit";
+    bookings[idx]!.paidAt = new Date().toISOString();
+    response = { status: "paid", paidAt: bookings[idx]!.paidAt };
   } else if (method === "deferred") {
-    bookings[idx].paymentStatus = "deferred";
-    bookings[idx].paymentMethod = "deferred";
+    bookings[idx]!.paymentStatus = "deferred";
+    bookings[idx]!.paymentMethod = "deferred";
     response = { status: "deferred" };
   } else {
     // transfer
-    bookings[idx].paymentStatus = "pending_transfer";
-    bookings[idx].paymentMethod = "transfer";
-    bookings[idx].transferDeadline = transferDeadline;
+    bookings[idx]!.paymentStatus = "pending_transfer";
+    bookings[idx]!.paymentMethod = "transfer";
+    bookings[idx]!.transferDeadline = transferDeadline;
     response = {
       status: "pending_transfer",
       transferDeadline,

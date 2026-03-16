@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     throw createError({
       statusCode: 422,
-      message: parsed.error.errors.map((e) => e.message).join(", "),
+      message: parsed.error.issues.map((issue) => issue.message).join(", "),
     });
   }
 
