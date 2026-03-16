@@ -1,12 +1,26 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import type { ICancellationPolicy } from "#shared/types/booking";
+import type { PaymentMethod } from "#shared/types/payment";
+import { useCheckout } from "~/composables/useCheckout";
 import PaymentMethodSelector from "~/components/b2b/hotel/checkout/PaymentMethodSelector.vue";
 
-defineProps<{
-  totalPrice: number;
-  paymentDeadline: string;
-  cancellationDeadline: string;
+const props = defineProps<{
+  totalPrice?: number;
+  paymentDeadline?: string;
+  cancellationDeadline?: string;
+  cancellationPolicy?: ICancellationPolicy;
+  titular?: {
+    nombre: string;
+    apellido: string;
+    refAgencia?: string;
+    notas?: string;
+  };
+}>();
+
+const emit = defineEmits<{
+  confirmed: [pnr: string];
+  error: [message: string];
 }>();
 
 const selectedMethod = ref<string>("deferred");
@@ -18,19 +32,37 @@ const isBookEnabled = computed(() => {
   return acceptConditions.value && acceptPrivacy.value;
 });
 
-const isProcessing = ref(false);
+const { confirmBooking, isSubmitting, submitError } = useCheckout();
 
-const router = useRouter();
+// Card data state (only shown when method === 'card')
+const cardNumber = ref("");
+const cardExpiry = ref("");
+const cardCvv = ref("");
 
-const submitBooking = () => {
+async function submitBooking() {
   if (!isBookEnabled.value) return;
-  isProcessing.value = true;
-  // TODO: Emulate booking call
-  setTimeout(() => {
-    isProcessing.value = false;
-    router.push("/dashboard/hotels/booking/TRV-987654321?from=confirmation");
-  }, 1500);
-};
+
+  try {
+    const cardData =
+      selectedMethod.value === "card"
+        ? {
+            number: cardNumber.value,
+            expiry: cardExpiry.value,
+            cvv: cardCvv.value,
+          }
+        : undefined;
+
+    const titular = props.titular ?? { nombre: "", apellido: "" };
+    const pnr = await confirmBooking(
+      titular,
+      selectedMethod.value as PaymentMethod,
+      cardData,
+    );
+    emit("confirmed", pnr);
+  } catch (err) {
+    emit("error", err instanceof Error ? err.message : "Error al confirmar");
+  }
+}
 </script>
 
 <template>
@@ -52,7 +84,35 @@ const submitBooking = () => {
         :total-price="totalPrice"
         :payment-deadline="paymentDeadline"
         :cancellation-deadline="cancellationDeadline"
+        :cancellation-policy="props.cancellationPolicy"
       />
+    </div>
+
+    <!-- Card fields (shown when method = 'card') -->
+    <div
+      v-if="selectedMethod === 'card'"
+      class="mt-4 space-y-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+    >
+      <UFormField label="Número de tarjeta">
+        <UInput
+          v-model="cardNumber"
+          placeholder="1234 5678 9012 3456"
+          maxlength="16"
+        />
+      </UFormField>
+      <div class="grid grid-cols-2 gap-3">
+        <UFormField label="Vencimiento">
+          <UInput v-model="cardExpiry" placeholder="MM/AA" maxlength="5" />
+        </UFormField>
+        <UFormField label="CVV">
+          <UInput
+            v-model="cardCvv"
+            placeholder="123"
+            maxlength="4"
+            type="password"
+          />
+        </UFormField>
+      </div>
     </div>
 
     <!-- Legal Terms & Checks -->
@@ -86,14 +146,22 @@ const submitBooking = () => {
       </div>
     </div>
 
+    <!-- Submit Error -->
+    <UAlert
+      v-if="submitError"
+      color="error"
+      :description="submitError"
+      class="mb-3"
+    />
+
     <!-- Submit Button -->
     <UButton
       block
       size="xl"
       color="primary"
       class="font-black text-lg py-3 shadow-lg hover:shadow-xl transition-shadow uppercase tracking-wider disabled:opacity-50"
-      :loading="isProcessing"
-      :disabled="!isBookEnabled"
+      :loading="isSubmitting"
+      :disabled="!isBookEnabled || isSubmitting"
       @click="submitBooking"
     >
       Confirmar Reserva
