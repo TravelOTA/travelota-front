@@ -305,17 +305,9 @@ useHead({
             :paid-date="paidDate"
           />
 
-          <!-- Cancellation Component (hidden for already cancelled or expired) -->
+          <!-- Cancellation Component (hidden for expired bookings) -->
           <BookingCancellation
-            v-if="showCancellation"
-            :booking-status="bookingStatusLabel"
-            :total-price="booking.totalPrice"
-            :policies="cancellationPolicies"
-          />
-
-          <!-- Already cancelled info -->
-          <BookingCancellation
-            v-if="bookingStatusLabel === 'Cancelada'"
+            v-if="showCancellation || bookingStatusLabel === 'Cancelada'"
             :booking-status="bookingStatusLabel"
             :total-price="booking.totalPrice"
             :policies="cancellationPolicies"
