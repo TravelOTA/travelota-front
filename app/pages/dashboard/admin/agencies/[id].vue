@@ -14,7 +14,7 @@ useHead({
   title: computed(() => `${agency.value?.name ?? "Agencia"} - TravelOTA Admin`),
 });
 
-// ── Tabs ──────────────────────────────────────────────────────────────────
+// ── Tabs ───────────────────────────────────────────────────────────────────
 const activeTab = ref("info");
 const tabs = [
   {
@@ -25,14 +25,39 @@ const tabs = [
   { key: "users", label: "Usuarios", icon: "i-heroicons-users" },
 ];
 
-// ── Status helpers ────────────────────────────────────────────────────────
-const statusColor = (s: string) =>
-  s === "Activa" ? "success" : s === "Pendiente" ? "warning" : "error";
+// ── Status helpers ─────────────────────────────────────────────────────────
+function statusColor(s: string) {
+  if (s === "Activa") return "success";
+  if (s === "Pendiente") return "warning";
+  if (s === "Bloqueada") return "error";
+  if (s === "Denegada") return "neutral";
+  return "neutral";
+}
 
 const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
 const groupNames = computed(() => agencyGroups.value.map((g) => g.name));
 
-// ── Edit Info modal ───────────────────────────────────────────────────────
+// ── Aprobar modal ──────────────────────────────────────────────────────────
+const isApproveOpen = ref(false);
+const selectedGroupName = ref<string>("");
+const selectedGroup = computed(
+  () =>
+    agencyGroups.value.find((g) => g.name === selectedGroupName.value) ?? null,
+);
+
+function openApprove() {
+  selectedGroupName.value = "";
+  isApproveOpen.value = true;
+}
+
+function confirmApprove() {
+  if (!selectedGroup.value) return;
+  approveAgency(agencyId, selectedGroup.value);
+  incrementAgencyCount(selectedGroup.value.name);
+  isApproveOpen.value = false;
+}
+
+// ── Edit Info modal ────────────────────────────────────────────────────────
 const isEditOpen = ref(false);
 const editForm = ref({
   name: "",
@@ -56,11 +81,8 @@ function openEdit() {
 
 function saveEdit() {
   if (!agency.value) return;
-
   const oldGroup = agency.value.agencyGroup;
   let markup = agency.value.markup;
-
-  // If group changed, update markup and global counters (mock logic)
   if (oldGroup !== editForm.value.agencyGroup) {
     const selectedGroup = agencyGroups.value.find(
       (g) => g.name === editForm.value.agencyGroup,
@@ -68,15 +90,13 @@ function saveEdit() {
     if (selectedGroup) {
       markup = selectedGroup.baseMarkup;
       incrementAgencyCount(selectedGroup.name);
-      // Normally we would also decrement the old group here, but keeping it simple for mock
     }
   }
-
   updateAgency(agencyId, { ...editForm.value, markup });
   isEditOpen.value = false;
 }
 
-// ── Users tab ─────────────────────────────────────────────────────────────
+// ── Users tab ──────────────────────────────────────────────────────────────
 const userSearch = ref("");
 const filteredUsers = computed(() =>
   (agency.value?.users ?? []).filter(
@@ -99,8 +119,6 @@ const userColumns = [
   { accessorKey: "status", header: "Estado" },
   { accessorKey: "userActions", header: "" },
 ];
-
-// ── Users tab ─────────────────────────────────────────────────────────────
 </script>
 
 <template>
@@ -177,13 +195,14 @@ const userColumns = [
 
           <!-- Header actions -->
           <div class="flex items-center gap-2 flex-shrink-0">
+            <!-- approveAgency modal wired in Task 4 -->
             <UButton
               v-if="agency.status === 'Pendiente'"
               icon="i-heroicons-check-circle"
               color="success"
               size="sm"
               label="Aprobar"
-              @click="approveAgency(agencyId)"
+              @click="openApprove"
             />
             <UButton
               :icon="
@@ -306,6 +325,54 @@ const userColumns = [
                 </dt>
                 <dd class="text-sm text-gray-900 dark:text-white">
                   {{ agency.registeredAt }}
+                </dd>
+              </div>
+              <div>
+                <dt
+                  class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
+                >
+                  NIF / Identificador Fiscal
+                </dt>
+                <dd class="text-sm font-medium text-gray-900 dark:text-white">
+                  {{ agency.rut || "—" }}
+                </dd>
+              </div>
+              <div>
+                <dt
+                  class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
+                >
+                  Razón Social
+                </dt>
+                <dd class="text-sm font-medium text-gray-900 dark:text-white">
+                  {{ agency.razonSocial || "—" }}
+                </dd>
+              </div>
+              <div>
+                <dt
+                  class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
+                >
+                  Nombre de Contacto
+                </dt>
+                <dd class="text-sm font-medium text-gray-900 dark:text-white">
+                  {{ agency.nombreContacto || "—" }}
+                </dd>
+              </div>
+              <div>
+                <dt
+                  class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
+                >
+                  Sitio Web
+                </dt>
+                <dd class="text-sm text-gray-900 dark:text-white">
+                  <a
+                    v-if="agency.web"
+                    :href="agency.web"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-primary-500 hover:underline"
+                    >{{ agency.web }}</a
+                  >
+                  <span v-else>—</span>
                 </dd>
               </div>
             </dl>
@@ -481,6 +548,52 @@ const userColumns = [
               label="Guardar cambios"
               icon="i-heroicons-check"
               @click="saveEdit"
+            />
+          </div>
+        </template>
+      </UModal>
+
+      <!-- Aprobar modal -->
+      <UModal v-model:open="isApproveOpen" title="Aprobar Agencia">
+        <template #body>
+          <div class="space-y-4">
+            <p class="text-sm text-gray-600 dark:text-gray-300">
+              Selecciona el grupo al que pertenecerá
+              <strong>{{ agency?.name }}</strong
+              >.
+            </p>
+            <UFormField label="Grupo de Agencia" name="approveGroup" required>
+              <USelectMenu
+                v-model="selectedGroupName"
+                :items="groupNames"
+                placeholder="Selecciona un grupo"
+                icon="i-heroicons-user-group"
+                class="w-full"
+              />
+            </UFormField>
+            <UAlert
+              v-if="selectedGroup"
+              icon="i-heroicons-information-circle"
+              color="info"
+              variant="soft"
+              :description="`Markup aplicado: ${selectedGroup.baseMarkup}%`"
+            />
+          </div>
+        </template>
+        <template #footer>
+          <div class="flex justify-end gap-2">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              label="Cancelar"
+              @click="isApproveOpen = false"
+            />
+            <UButton
+              color="success"
+              label="Aprobar"
+              icon="i-heroicons-check-circle"
+              :disabled="!selectedGroup"
+              @click="confirmApprove"
             />
           </div>
         </template>
