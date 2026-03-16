@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import BookingSearchFilters from "~/components/b2b/hotel/checkout/BookingSearchFilters.vue";
 import BookingMassPayment from "~/components/b2b/hotel/checkout/BookingMassPayment.vue";
 import VoucherPreviewModal from "~/components/b2b/hotel/checkout/VoucherPreviewModal.vue";
+import { useBookings } from "~/composables/useBookings";
+import type { BookingRow } from "~/composables/useBookings";
 
 definePageMeta({
   layout: "dashboard",
@@ -27,327 +29,15 @@ interface SearchFilters {
   [key: string]: string | string[];
 }
 
-// Types
-interface BookingRow {
-  id: string;
-  createdAt: string;
-  createdAtISO: string;
-  titular: string;
-  destination: string;
-  checkIn: string;
-  checkInISO: string;
-  checkOut: string;
-  total: number;
-  salePrice: number;
-  seller: string;
-  paymentStatus: string;
-  status: string;
-  [key: string]: string | number;
-}
+const {
+  bookings,
+  fetchBookings,
+  sellerOptions: composableSellerOptions,
+} = useBookings();
 
-// Expanded Mock Data
-const allBookings = ref<BookingRow[]>([
-  {
-    id: "TRV-987654321",
-    createdAt: "02/03/2026 15:30",
-    createdAtISO: "2026-03-02",
-    titular: "Juan Pérez",
-    destination: "Punta Cana, DO",
-    checkIn: "03/03/2026",
-    checkInISO: "2026-03-03",
-    checkOut: "10/03/2026",
-    total: 6281.41,
-    salePrice: 7035.0,
-    seller: "Juan Pérez Vendedor",
-    paymentStatus: "Pagada",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-123456789",
-    createdAt: "28/02/2026 09:15",
-    createdAtISO: "2026-02-28",
-    titular: "María López",
-    destination: "Cancún, MX",
-    checkIn: "15/05/2026",
-    checkInISO: "2026-05-15",
-    checkOut: "22/05/2026",
-    total: 3150.0,
-    salePrice: 3530.0,
-    seller: "María Gómez",
-    paymentStatus: "Pendiente Pago",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-456789123",
-    createdAt: "15/01/2026 11:20",
-    createdAtISO: "2026-01-15",
-    titular: "Carlos Gómez",
-    destination: "Miami, US",
-    checkIn: "20/02/2026",
-    checkInISO: "2026-02-20",
-    checkOut: "25/02/2026",
-    total: 1840.5,
-    salePrice: 2060.0,
-    seller: "Juan Pérez Vendedor",
-    paymentStatus: "Pendiente Pago",
-    status: "Vencida",
-  },
-  {
-    id: "TRV-789123456",
-    createdAt: "05/12/2025 16:45",
-    createdAtISO: "2025-12-05",
-    titular: "Ana Martínez",
-    destination: "Orlando, US",
-    checkIn: "10/01/2026",
-    checkInISO: "2026-01-10",
-    checkOut: "17/01/2026",
-    total: 4200.75,
-    salePrice: 4705.0,
-    seller: "María Gómez",
-    paymentStatus: "Pagada",
-    status: "Cancelada",
-  },
-  {
-    id: "TRV-111222333",
-    createdAt: "01/03/2026 10:00",
-    createdAtISO: "2026-03-01",
-    titular: "Laura Fernández",
-    destination: "Barcelona, ES",
-    checkIn: "20/04/2026",
-    checkInISO: "2026-04-20",
-    checkOut: "27/04/2026",
-    total: 2890.0,
-    salePrice: 3240.0,
-    seller: "Carlos López",
-    paymentStatus: "Pendiente Pago",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-444555666",
-    createdAt: "25/02/2026 14:20",
-    createdAtISO: "2026-02-25",
-    titular: "Pedro Sánchez Ruiz",
-    destination: "Madrid, ES",
-    checkIn: "01/04/2026",
-    checkInISO: "2026-04-01",
-    checkOut: "05/04/2026",
-    total: 1520.0,
-    salePrice: 1700.0,
-    seller: "Carlos López",
-    paymentStatus: "Pagada",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-777888999",
-    createdAt: "20/02/2026 08:45",
-    createdAtISO: "2026-02-20",
-    titular: "Sofia Torres",
-    destination: "Dubai, AE",
-    checkIn: "10/06/2026",
-    checkInISO: "2026-06-10",
-    checkOut: "17/06/2026",
-    total: 8450.25,
-    salePrice: 9465.0,
-    seller: "Juan Pérez Vendedor",
-    paymentStatus: "Pendiente Pago",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-333444555",
-    createdAt: "10/02/2026 12:30",
-    createdAtISO: "2026-02-10",
-    titular: "Miguel Ángel Rodríguez",
-    destination: "Riviera Maya, MX",
-    checkIn: "15/03/2026",
-    checkInISO: "2026-03-15",
-    checkOut: "22/03/2026",
-    total: 5100.0,
-    salePrice: 5710.0,
-    seller: "María Gómez",
-    paymentStatus: "Pagada",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-666777888",
-    createdAt: "18/02/2026 16:00",
-    createdAtISO: "2026-02-18",
-    titular: "Elena García",
-    destination: "Roma, IT",
-    checkIn: "05/04/2026",
-    checkInISO: "2026-04-05",
-    checkOut: "10/04/2026",
-    total: 2340.6,
-    salePrice: 2620.0,
-    seller: "Carlos López",
-    paymentStatus: "Pendiente Pago",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-999000111",
-    createdAt: "12/01/2026 09:00",
-    createdAtISO: "2026-01-12",
-    titular: "Roberto Díaz",
-    destination: "Tokio, JP",
-    checkIn: "01/02/2026",
-    checkInISO: "2026-02-01",
-    checkOut: "08/02/2026",
-    total: 6750.0,
-    salePrice: 7560.0,
-    seller: "Juan Pérez Vendedor",
-    paymentStatus: "Pagada",
-    status: "Cancelada",
-  },
-  {
-    id: "TRV-101010101",
-    createdAt: "14/02/2026 10:00",
-    createdAtISO: "2026-02-14",
-    titular: "Isabel Herrera",
-    destination: "Los Cabos, MX",
-    checkIn: "01/05/2026",
-    checkInISO: "2026-05-01",
-    checkOut: "08/05/2026",
-    total: 3780.0,
-    salePrice: 4235.0,
-    seller: "María Gómez",
-    paymentStatus: "Pagada",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-202020202",
-    createdAt: "10/02/2026 15:30",
-    createdAtISO: "2026-02-10",
-    titular: "Andres Vidal",
-    destination: "Cartagena, CO",
-    checkIn: "12/04/2026",
-    checkInISO: "2026-04-12",
-    checkOut: "19/04/2026",
-    total: 2100.5,
-    salePrice: 2355.0,
-    seller: "Carlos López",
-    paymentStatus: "Pendiente Pago",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-303030303",
-    createdAt: "05/02/2026 09:45",
-    createdAtISO: "2026-02-05",
-    titular: "Nuria Campos",
-    destination: "Tenerife, ES",
-    checkIn: "25/05/2026",
-    checkInISO: "2026-05-25",
-    checkOut: "01/06/2026",
-    total: 1650.0,
-    salePrice: 1850.0,
-    seller: "Juan Pérez Vendedor",
-    paymentStatus: "Pagada",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-404040404",
-    createdAt: "22/01/2026 11:00",
-    createdAtISO: "2026-01-22",
-    titular: "Fernando Blanco",
-    destination: "Playa del Carmen, MX",
-    checkIn: "10/03/2026",
-    checkInISO: "2026-03-10",
-    checkOut: "17/03/2026",
-    total: 4320.75,
-    salePrice: 4840.0,
-    seller: "María Gómez",
-    paymentStatus: "Pagada",
-    status: "Cancelada",
-  },
-  {
-    id: "TRV-505050505",
-    createdAt: "18/01/2026 14:20",
-    createdAtISO: "2026-01-18",
-    titular: "Carmen Reyes",
-    destination: "Maldivas",
-    checkIn: "20/07/2026",
-    checkInISO: "2026-07-20",
-    checkOut: "30/07/2026",
-    total: 12400.0,
-    salePrice: 13890.0,
-    seller: "Carlos López",
-    paymentStatus: "Pendiente Pago",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-606060606",
-    createdAt: "15/01/2026 08:30",
-    createdAtISO: "2026-01-15",
-    titular: "Diego Fuentes",
-    destination: "Nueva York, US",
-    checkIn: "14/04/2026",
-    checkInISO: "2026-04-14",
-    checkOut: "20/04/2026",
-    total: 3200.0,
-    salePrice: 3585.0,
-    seller: "Juan Pérez Vendedor",
-    paymentStatus: "Pagada",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-707070707",
-    createdAt: "08/01/2026 16:00",
-    createdAtISO: "2026-01-08",
-    titular: "Patricia Gil",
-    destination: "Lisboa, PT",
-    checkIn: "03/06/2026",
-    checkInISO: "2026-06-03",
-    checkOut: "10/06/2026",
-    total: 1980.0,
-    salePrice: 2220.0,
-    seller: "María Gómez",
-    paymentStatus: "Pendiente Pago",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-808080808",
-    createdAt: "03/01/2026 12:15",
-    createdAtISO: "2026-01-03",
-    titular: "Ricardo Mora",
-    destination: "Seychelles",
-    checkIn: "15/08/2026",
-    checkInISO: "2026-08-15",
-    checkOut: "22/08/2026",
-    total: 9850.0,
-    salePrice: 11030.0,
-    seller: "Carlos López",
-    paymentStatus: "Pagada",
-    status: "Confirmada",
-  },
-  {
-    id: "TRV-909090909",
-    createdAt: "28/12/2025 10:00",
-    createdAtISO: "2025-12-28",
-    titular: "Silvia Montoya",
-    destination: "Amésterdam, NL",
-    checkIn: "25/04/2026",
-    checkInISO: "2026-04-25",
-    checkOut: "30/04/2026",
-    total: 2750.0,
-    salePrice: 3080.0,
-    seller: "Juan Pérez Vendedor",
-    paymentStatus: "Pendiente Pago",
-    status: "Vencida",
-  },
-  {
-    id: "TRV-010101010",
-    createdAt: "20/12/2025 09:30",
-    createdAtISO: "2025-12-20",
-    titular: "Javier Serrano",
-    destination: "Bangkok, TH",
-    checkIn: "10/05/2026",
-    checkInISO: "2026-05-10",
-    checkOut: "20/05/2026",
-    total: 5600.0,
-    salePrice: 6275.0,
-    seller: "María Gómez",
-    paymentStatus: "Pagada",
-    status: "Confirmada",
-  },
-]);
+onMounted(() => {
+  fetchBookings();
+});
 
 // Search state
 const hasSearched = ref(false);
@@ -385,15 +75,13 @@ watch(filteredBookings, () => {
 // Mass payment selection
 const selectedIds = ref<Set<string>>(new Set());
 
-// Seller options derived from data
-const sellerOptions = computed(() => [
-  ...new Set(allBookings.value.map((b) => b.seller)),
-]);
+// Seller options derived from composable
+const sellerOptions = computed(() => composableSellerOptions.value);
 
 // Filter logic
 const handleSearch = (filters: SearchFilters) => {
   activeFilters.value = filters;
-  let results = [...allBookings.value];
+  let results = [...bookings.value];
 
   // PNR filter
   if (filters.pnr) {
@@ -474,7 +162,7 @@ const handleClear = () => {
 // Pending payment bookings in current results
 const pendingPaymentBookings = computed(() => {
   return filteredBookings.value.filter(
-    (b) => b.paymentStatus === "Pendiente Pago",
+    (b) => b.paymentStatus === "Pendiente de Pago",
   );
 });
 
@@ -508,14 +196,8 @@ const deselectAllPending = () => {
 
 const handleMassPay = () => {
   // TODO: After real API call, refresh the data
-  selectedIds.value.forEach((id) => {
-    const booking = allBookings.value.find((b) => b.id === id);
-    if (booking) {
-      booking.paymentStatus = "Pagada";
-    }
-  });
   selectedIds.value = new Set();
-  handleSearch(activeFilters.value);
+  fetchBookings().then(() => handleSearch(activeFilters.value));
 };
 
 // Voucher Modal State
@@ -546,7 +228,7 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case "Confirmada":
       return "success";
-    case "Pendiente Pago":
+    case "Pendiente de Pago":
       return "warning";
     case "Cancelada":
       return "error";
@@ -745,7 +427,9 @@ const resultStats = computed(() => {
           <template #select-cell="{ row }">
             <div class="flex items-center justify-center">
               <UCheckbox
-                v-if="(row as any).original.paymentStatus === 'Pendiente Pago'"
+                v-if="
+                  (row as any).original.paymentStatus === 'Pendiente de Pago'
+                "
                 :model-value="selectedIds.has((row as any).original.id)"
                 @update:model-value="toggleSelection((row as any).original.id)"
               />
