@@ -65,7 +65,7 @@ export const loginSchema = z.object({
 
 export const registerSchema = z.object({
   nombreComercial: z.string().min(2, "Nombre comercial requerido"),
-  razonSocial: z.string().min(2, "Razón social requerida"),
+  direccionRegistrada: z.string().min(2, "Dirección registrada requerida"),
   nif: z.string().min(5, "NIF/CIF inválido"),
   telefono: z.string().min(9, "Teléfono inválido"),
   email: z.string().email("Email inválido"),

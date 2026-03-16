@@ -11,6 +11,7 @@ const {
   approveAgency,
   toggleBlock,
   updateAgency,
+  updateWhitelabel,
   updateUserStatus,
 } = useAgencies();
 const agency = computed(() => getAgencyById(agencyId) ?? null);
@@ -99,6 +100,63 @@ function saveEdit() {
   }
   updateAgency(agencyId, { ...editForm.value, markup });
   isEditOpen.value = false;
+}
+
+// ── Whitelabel modal ───────────────────────────────────────────────────────
+const isWhitelabelOpen = ref(false);
+const whitelabelForm = ref({
+  logo: "",
+  colorPrimario: "",
+  email: "",
+  phone: "",
+});
+
+const colorMap: Record<string, string> = {
+  red: "#ef4444",
+  orange: "#f97316",
+  amber: "#f59e0b",
+  yellow: "#eab308",
+  lime: "#84cc16",
+  green: "#22c55e",
+  emerald: "#10b981",
+  teal: "#14b8a6",
+  cyan: "#06b6d4",
+  sky: "#0ea5e9",
+  blue: "#3b82f6",
+  indigo: "#6366f1",
+  violet: "#8b5cf6",
+  purple: "#a855f7",
+  fuchsia: "#d946ef",
+  pink: "#ec4899",
+  rose: "#f43f5e",
+};
+const themeColors = Object.keys(colorMap);
+
+function openWhitelabel() {
+  if (!agency.value) return;
+  whitelabelForm.value = {
+    logo: agency.value.logo,
+    colorPrimario: agency.value.colorPrimario,
+    email: agency.value.email,
+    phone: agency.value.phone,
+  };
+  isWhitelabelOpen.value = true;
+}
+
+function handleLogoUpload(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      whitelabelForm.value.logo = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function saveWhitelabel() {
+  updateWhitelabel(agencyId, whitelabelForm.value);
+  isWhitelabelOpen.value = false;
 }
 
 // ── Users tab ──────────────────────────────────────────────────────────────
@@ -223,6 +281,14 @@ const userColumns = [
               @click="toggleBlock(agencyId)"
             />
             <UButton
+              icon="i-heroicons-swatch"
+              color="neutral"
+              variant="soft"
+              size="sm"
+              label="White-Label"
+              @click="openWhitelabel"
+            />
+            <UButton
               icon="i-heroicons-pencil-square"
               color="neutral"
               variant="soft"
@@ -282,7 +348,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  País
+                  País Operativo
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
                   {{ agency.country }}
@@ -302,7 +368,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  Teléfono
+                  Teléfono Principal
                 </dt>
                 <dd class="text-sm text-gray-900 dark:text-white">
                   {{ agency.phone }}
@@ -347,10 +413,10 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  Razón Social
+                  Dirección Registrada
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ agency.razonSocial || "—" }}
+                  {{ agency.direccionRegistrada || "—" }}
                 </dd>
               </div>
               <div>
@@ -397,6 +463,36 @@ const userColumns = [
                   <p class="text-2xl font-bold">
                     {{ agency.users?.length ?? 0 }}
                   </p>
+                </div>
+              </div>
+            </UCard>
+
+            <!-- Perfil Corporativo White-Label -->
+            <UCard>
+              <template #header>
+                <div class="flex items-center gap-2">
+                  <UIcon
+                    name="i-heroicons-swatch"
+                    class="w-4 h-4 text-primary-500"
+                  />
+                  <h3 class="text-sm font-bold">White-Label</h3>
+                </div>
+              </template>
+              <div class="flex flex-col items-center gap-3">
+                <UAvatar
+                  :src="agency.logo || undefined"
+                  :alt="agency.name"
+                  size="xl"
+                  class="bg-gray-100 dark:bg-gray-800"
+                />
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-5 h-5 rounded-full border border-gray-200 shadow-sm"
+                    :style="`background-color: ${colorMap[agency.colorPrimario] ?? agency.colorPrimario}`"
+                  />
+                  <span class="text-xs text-gray-500 capitalize">{{
+                    agency.colorPrimario
+                  }}</span>
                 </div>
               </div>
             </UCard>
@@ -601,6 +697,97 @@ const userColumns = [
               icon="i-heroicons-check-circle"
               :disabled="!selectedGroup"
               @click="confirmApprove"
+            />
+          </div>
+        </template>
+      </UModal>
+      <!-- Whitelabel modal -->
+      <UModal v-model:open="isWhitelabelOpen" title="Configuración White-Label">
+        <template #body>
+          <div class="space-y-4">
+            <UFormField
+              label="Logo de la Agencia"
+              name="wl-logo"
+              description="Sube una imagen para mostrar en la plataforma y documentos."
+            >
+              <div class="flex items-center gap-4 mt-1">
+                <UAvatar
+                  :src="whitelabelForm.logo || undefined"
+                  size="lg"
+                  class="bg-white border border-gray-200 p-0.5"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 dark:file:bg-primary-900/20 dark:file:text-primary-400 cursor-pointer"
+                  @change="handleLogoUpload"
+                />
+              </div>
+            </UFormField>
+
+            <UFormField
+              label="Color Principal"
+              name="wl-color"
+              description="Personaliza el color de botones y acentos visuales B2B."
+            >
+              <div class="flex flex-col gap-3 mt-2">
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    v-for="color in themeColors"
+                    :key="color"
+                    type="button"
+                    :class="[
+                      'w-7 h-7 rounded-full border-2 focus:outline-none transition-transform hover:scale-110 shadow-sm',
+                      whitelabelForm.colorPrimario === color
+                        ? 'border-gray-900 dark:border-white scale-110'
+                        : 'border-transparent',
+                    ]"
+                    :style="`background-color: ${colorMap[color]}`"
+                    :title="color"
+                    @click="whitelabelForm.colorPrimario = color"
+                  />
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    v-model="whitelabelForm.colorPrimario"
+                    type="color"
+                    class="w-8 h-8 rounded cursor-pointer border-0 p-0 overflow-hidden"
+                  />
+                  <UInput
+                    v-model="whitelabelForm.colorPrimario"
+                    placeholder="#000000"
+                    class="w-32"
+                  />
+                </div>
+              </div>
+            </UFormField>
+
+            <UFormField label="Correo de Contacto Público" name="wl-email">
+              <UInput
+                v-model="whitelabelForm.email"
+                type="email"
+                icon="i-heroicons-envelope"
+              />
+            </UFormField>
+
+            <UFormField label="Teléfono de Contacto Público" name="wl-phone">
+              <UInput v-model="whitelabelForm.phone" icon="i-heroicons-phone" />
+            </UFormField>
+          </div>
+        </template>
+        <template #footer>
+          <div class="flex justify-end gap-2">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              label="Cancelar"
+              @click="isWhitelabelOpen = false"
+            />
+            <UButton
+              color="primary"
+              label="Guardar"
+              icon="i-heroicons-check"
+              @click="saveWhitelabel"
             />
           </div>
         </template>

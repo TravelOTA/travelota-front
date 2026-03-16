@@ -7,9 +7,11 @@ describe("useAgencies — data model", () => {
     const { agencies } = useAgencies();
     for (const a of agencies.value) {
       expect(typeof a.rut).toBe("string");
-      expect(typeof a.razonSocial).toBe("string");
+      expect(typeof a.direccionRegistrada).toBe("string");
       expect(typeof a.web).toBe("string");
       expect(typeof a.nombreContacto).toBe("string");
+      expect(typeof a.logo).toBe("string");
+      expect(typeof a.colorPrimario).toBe("string");
       expect(a.agencyGroup === null || typeof a.agencyGroup === "string").toBe(
         true,
       );
@@ -40,7 +42,7 @@ describe("useAgencies — registerAgency", () => {
 
     registerAgency({
       nombreComercial: "Test Agency",
-      razonSocial: "Test Agency S.L.",
+      direccionRegistrada: "Calle Test 1, Madrid",
       nif: "B12345678",
       telefono: "+34 900 000 000",
       email: "test@agency.com",
@@ -55,7 +57,7 @@ describe("useAgencies — registerAgency", () => {
     expect(created.status).toBe("Pendiente");
     expect(created.name).toBe("Test Agency");
     expect(created.rut).toBe("B12345678");
-    expect(created.razonSocial).toBe("Test Agency S.L.");
+    expect(created.direccionRegistrada).toBe("Calle Test 1, Madrid");
     expect(created.web).toBe("https://testagency.com");
     expect(created.nombreContacto).toBe("Ana Test");
     expect(created.email).toBe("test@agency.com");
@@ -65,6 +67,8 @@ describe("useAgencies — registerAgency", () => {
     expect(created.markup).toBe(0);
     expect(created.bookingsCount).toBe(0);
     expect(created.users).toHaveLength(0);
+    expect(created.logo).toBe("");
+    expect(created.colorPrimario).toBe("teal");
     expect(typeof created.id).toBe("string");
     expect(created.id.length).toBeGreaterThan(0);
   });
@@ -73,7 +77,7 @@ describe("useAgencies — registerAgency", () => {
     const { agencies, registerAgency } = useAgencies();
     registerAgency({
       nombreComercial: "No Web Agency",
-      razonSocial: "No Web S.L.",
+      direccionRegistrada: "Calle Sin Web 0",
       nif: "C99999999",
       telefono: "+34 900 111 222",
       email: "noweb@agency.com",
@@ -94,7 +98,7 @@ describe("useAgencies — approveAgency", () => {
 
     registerAgency({
       nombreComercial: "Aprobar Agency",
-      razonSocial: "Aprobar S.L.",
+      direccionRegistrada: "Av. Aprobar 100",
       nif: "A11111111",
       telefono: "+34 900 222 333",
       email: "aprobar@agency.com",
@@ -128,7 +132,7 @@ describe("useAgencies — denyAgency", () => {
 
     registerAgency({
       nombreComercial: "Deny Agency",
-      razonSocial: "Deny S.L.",
+      direccionRegistrada: "Calle Deny 0",
       nif: "D22222222",
       telefono: "+34 900 444 555",
       email: "deny@agency.com",
@@ -159,7 +163,7 @@ describe("useAgencies — deleteAgency", () => {
 
     registerAgency({
       nombreComercial: "Delete Agency",
-      razonSocial: "Delete S.L.",
+      direccionRegistrada: "Calle Delete 0",
       nif: "E33333333",
       telefono: "+34 900 666 777",
       email: "delete@agency.com",

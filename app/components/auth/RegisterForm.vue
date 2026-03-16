@@ -9,7 +9,7 @@ const { registerAgency } = useAgencies();
 
 const form = reactive<RegisterInput>({
   nombreComercial: "",
-  razonSocial: "",
+  direccionRegistrada: "",
   nif: "",
   telefono: "",
   email: "",
@@ -24,7 +24,7 @@ const { countries: paises } = useConfig();
 const isFormValid = computed(
   () =>
     form.nombreComercial.trim().length >= 2 &&
-    form.razonSocial.trim().length >= 2 &&
+    form.direccionRegistrada.trim().length >= 2 &&
     form.nif.trim().length >= 5 &&
     form.telefono.trim().length >= 9 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
@@ -64,10 +64,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
           />
         </UFormField>
 
-        <UFormField name="razonSocial">
+        <UFormField name="direccionRegistrada">
           <UInput
-            v-model="form.razonSocial"
-            placeholder="RAZÓN SOCIAL"
+            v-model="form.direccionRegistrada"
+            placeholder="DIRECCIÓN REGISTRADA"
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"
@@ -108,7 +108,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
           <UInput
             v-model="form.telefono"
             type="tel"
-            placeholder="TELÉFONO"
+            placeholder="TELÉFONO PRINCIPAL"
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"
@@ -175,7 +175,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             v-model="form.pais"
             :items="paises"
             size="xl"
-            placeholder="PAÍS"
+            placeholder="PAÍS OPERATIVO"
             variant="outline"
             class="uppercase-placeholder-select w-full"
             :ui="{

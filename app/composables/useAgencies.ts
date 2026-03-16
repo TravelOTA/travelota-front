@@ -15,7 +15,7 @@ export interface AdminAgency {
   id: string;
   name: string;
   rut: string;
-  razonSocial: string;
+  direccionRegistrada: string;
   web: string;
   nombreContacto: string;
   country: string;
@@ -27,6 +27,8 @@ export interface AdminAgency {
   registeredAt: string;
   status: "Activa" | "Pendiente" | "Bloqueada" | "Denegada";
   users: AdminAgencyUser[];
+  logo: string;
+  colorPrimario: string;
 }
 
 const MOCK_AGENCIES: AdminAgency[] = [
@@ -34,7 +36,7 @@ const MOCK_AGENCIES: AdminAgency[] = [
     id: "AG-1001",
     name: "Viajes El Corte Inglés",
     rut: "A28010615",
-    razonSocial: "El Corte Inglés Viajes S.A.",
+    direccionRegistrada: "Calle de Hermosilla 112, 28009 Madrid",
     web: "https://www.elcorteingles.es/viajes",
     nombreContacto: "María Gómez",
     country: "España",
@@ -45,6 +47,8 @@ const MOCK_AGENCIES: AdminAgency[] = [
     bookingsCount: 312,
     registeredAt: "2024-03-15",
     status: "Activa",
+    logo: "",
+    colorPrimario: "teal",
     users: [
       {
         id: "1",
@@ -76,7 +80,7 @@ const MOCK_AGENCIES: AdminAgency[] = [
     id: "AG-1002",
     name: "Destinia",
     rut: "B86361884",
-    razonSocial: "Destinia.com S.L.",
+    direccionRegistrada: "Calle de Alcalá 40, 28014 Madrid",
     web: "https://www.destinia.com",
     nombreContacto: "Pedro Morales",
     country: "España",
@@ -87,6 +91,8 @@ const MOCK_AGENCIES: AdminAgency[] = [
     bookingsCount: 187,
     registeredAt: "2024-06-01",
     status: "Activa",
+    logo: "",
+    colorPrimario: "blue",
     users: [
       {
         id: "1",
@@ -110,7 +116,7 @@ const MOCK_AGENCIES: AdminAgency[] = [
     id: "AG-1003",
     name: "Agencia Demo B2B",
     rut: "RFC123456MX0",
-    razonSocial: "Agencia Demo B2B S. de R.L.",
+    direccionRegistrada: "Av. Insurgentes Sur 1602, Ciudad de México",
     web: "",
     nombreContacto: "Ana Ruiz",
     country: "México",
@@ -121,13 +127,15 @@ const MOCK_AGENCIES: AdminAgency[] = [
     bookingsCount: 0,
     registeredAt: "2026-02-28",
     status: "Pendiente",
+    logo: "",
+    colorPrimario: "green",
     users: [],
   },
   {
     id: "AG-1004",
     name: "Viajes Barceló",
     rut: "A07001851",
-    razonSocial: "Barceló Viajes S.A.",
+    direccionRegistrada: "Passeig de Gràcia 75, 08008 Barcelona",
     web: "https://www.barcelo.com",
     nombreContacto: "Javier Serrano",
     country: "España",
@@ -138,6 +146,8 @@ const MOCK_AGENCIES: AdminAgency[] = [
     bookingsCount: 534,
     registeredAt: "2023-11-10",
     status: "Activa",
+    logo: "",
+    colorPrimario: "indigo",
     users: [
       {
         id: "1",
@@ -161,7 +171,7 @@ const MOCK_AGENCIES: AdminAgency[] = [
     id: "AG-1005",
     name: "TurMundo Colombia",
     rut: "900123456-1",
-    razonSocial: "TurMundo Colombia S.A.S.",
+    direccionRegistrada: "Carrera 7 #71-21, Bogotá D.C.",
     web: "https://www.turmundo.co",
     nombreContacto: "Catalina Ríos",
     country: "Colombia",
@@ -172,13 +182,15 @@ const MOCK_AGENCIES: AdminAgency[] = [
     bookingsCount: 91,
     registeredAt: "2025-01-20",
     status: "Bloqueada",
+    logo: "",
+    colorPrimario: "orange",
     users: [],
   },
   {
     id: "AG-1006",
     name: "Global Travel Agency",
     rut: "30-71234567-9",
-    razonSocial: "Global Travel Agency S.R.L.",
+    direccionRegistrada: "Av. Corrientes 1234, Buenos Aires",
     web: "",
     nombreContacto: "Ricardo Vega",
     country: "Argentina",
@@ -189,6 +201,8 @@ const MOCK_AGENCIES: AdminAgency[] = [
     bookingsCount: 0,
     registeredAt: "2026-03-01",
     status: "Pendiente",
+    logo: "",
+    colorPrimario: "green",
     users: [],
   },
 ];
@@ -213,7 +227,7 @@ export function useAgencies() {
       id: crypto.randomUUID(),
       name: data.nombreComercial,
       rut: data.nif,
-      razonSocial: data.razonSocial,
+      direccionRegistrada: data.direccionRegistrada,
       web: data.web ?? "",
       nombreContacto: data.nombreContacto,
       country: data.pais,
@@ -224,6 +238,8 @@ export function useAgencies() {
       bookingsCount: 0,
       registeredAt: new Date().toISOString(),
       status: "Pendiente",
+      logo: "",
+      colorPrimario: "teal",
       users: [],
     });
   }
@@ -268,9 +284,11 @@ export function useAgencies() {
       | "status"
       | "users"
       | "rut"
-      | "razonSocial"
+      | "direccionRegistrada"
       | "web"
       | "nombreContacto"
+      | "logo"
+      | "colorPrimario"
     >,
   ) {
     agencies.value.push({
@@ -279,9 +297,11 @@ export function useAgencies() {
       status: "Pendiente",
       users: [],
       rut: "",
-      razonSocial: "",
+      direccionRegistrada: "",
       web: "",
       nombreContacto: "",
+      logo: "",
+      colorPrimario: "teal",
       ...data,
     });
   }
@@ -310,6 +330,16 @@ export function useAgencies() {
     if (agency) Object.assign(agency, data);
   }
 
+  function updateWhitelabel(
+    id: string,
+    data: Partial<
+      Pick<AdminAgency, "logo" | "colorPrimario" | "email" | "phone">
+    >,
+  ) {
+    const agency = agencies.value.find((a) => a.id === id);
+    if (agency) Object.assign(agency, data);
+  }
+
   return {
     agencies,
     agencyStats,
@@ -321,6 +351,7 @@ export function useAgencies() {
     toggleBlock,
     addAgency,
     updateAgency,
+    updateWhitelabel,
     updateUserStatus,
   };
 }
