@@ -46,7 +46,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Punta Cana, DO",
     coordinates: [18.6631, -68.397],
-    image: hotelImages[0],
+    image: hotelImages[0 % hotelImages.length]!,
     bestPrice: 1041.33,
     rooms: [
       {
@@ -83,7 +83,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Punta Cana, DO",
     coordinates: [18.705, -68.423],
-    image: hotelImages[1],
+    image: hotelImages[1 % hotelImages.length]!,
     bestPrice: 2454.66,
     rooms: [
       {
@@ -117,7 +117,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Playa Bavaro, DO",
     coordinates: [18.7035, -68.4215],
-    image: hotelImages[2],
+    image: hotelImages[2 % hotelImages.length]!,
     bestPrice: 1118.76,
     rooms: [
       {
@@ -151,7 +151,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Punta Cana, DO",
     coordinates: [18.686, -68.411],
-    image: hotelImages[3],
+    image: hotelImages[3 % hotelImages.length]!,
     bestPrice: 1350.0,
     rooms: [
       {
@@ -184,7 +184,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Playa Bavaro, DO",
     coordinates: [18.6655, -68.3955],
-    image: hotelImages[4],
+    image: hotelImages[4 % hotelImages.length]!,
     bestPrice: 985.4,
     rooms: [
       {
@@ -217,7 +217,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Punta Cana, DO",
     coordinates: [18.724, -68.435],
-    image: hotelImages[0],
+    image: hotelImages[0 % hotelImages.length]!,
     bestPrice: 1425.9,
     rooms: [
       {
@@ -250,7 +250,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Playa Bavaro, DO",
     coordinates: [18.667, -68.399],
-    image: hotelImages[1],
+    image: hotelImages[1 % hotelImages.length]!,
     bestPrice: 1289.0,
     rooms: [
       {
@@ -272,7 +272,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Punta Cana, DO",
     coordinates: [18.675, -68.405],
-    image: hotelImages[2],
+    image: hotelImages[2 % hotelImages.length]!,
     bestPrice: 2100.5,
     rooms: [
       {
@@ -305,7 +305,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 3,
     location: "Playa Bavaro, DO",
     coordinates: [18.68, -68.41],
-    image: hotelImages[3],
+    image: hotelImages[3 % hotelImages.length]!,
     bestPrice: 420.0,
     rooms: [
       {
@@ -338,7 +338,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 4,
     location: "Punta Cana, DO",
     coordinates: [18.685, -68.42],
-    image: hotelImages[4],
+    image: hotelImages[4 % hotelImages.length]!,
     bestPrice: 780.25,
     rooms: [
       {
@@ -371,7 +371,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Punta Cana, DO",
     coordinates: [18.73, -68.46],
-    image: hotelImages[0],
+    image: hotelImages[0 % hotelImages.length]!,
     bestPrice: 2800.0,
     rooms: [
       {
@@ -404,7 +404,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Playa Bavaro, DO",
     coordinates: [18.72, -68.445],
-    image: hotelImages[1],
+    image: hotelImages[1 % hotelImages.length]!,
     bestPrice: 1550.75,
     rooms: [
       {
@@ -426,7 +426,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 4,
     location: "Punta Cana, DO",
     coordinates: [18.718, -68.44],
-    image: hotelImages[2],
+    image: hotelImages[2 % hotelImages.length]!,
     bestPrice: 850.5,
     rooms: [
       {
@@ -448,7 +448,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Cap Cana, DO",
     coordinates: [18.52, -68.39],
-    image: hotelImages[3],
+    image: hotelImages[3 % hotelImages.length]!,
     bestPrice: 3500.0,
     rooms: [
       {
@@ -481,7 +481,7 @@ const MOCK_HOTELS: Hotel[] = [
     stars: 5,
     location: "Uvero Alto, DO",
     coordinates: [18.81, -68.58],
-    image: hotelImages[4],
+    image: hotelImages[4 % hotelImages.length]!,
     bestPrice: 2100.25,
     rooms: [
       {

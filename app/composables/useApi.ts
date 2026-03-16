@@ -1,5 +1,6 @@
 import { useRuntimeConfig, useCookie, useFetch } from "#imports";
-import type { UseFetchOptions, FetchError } from "nuxt/app";
+import type { FetchError } from "ofetch";
+import type { UseFetchOptions } from "nuxt/app";
 
 const ERROR_MESSAGES: Record<number, string> = {
   400: "Datos de reserva incorrectos",
@@ -27,7 +28,10 @@ export const useApi = <T>(path: string, options?: UseFetchOptions<T>) => {
       ...(token.value ? { Authorization: `Bearer ${token.value}` } : {}),
     },
     onResponseError({ response }) {
-      const msg = resolveError(response._data ?? { status: response.status });
+      const msg = resolveError({
+        status: response.status,
+        data: response._data,
+      } as FetchError);
       console.error(`[useApi] ${response.status}: ${msg}`);
     },
     ...options,

@@ -54,23 +54,20 @@ const formatPrice = (price: number) => {
     <!-- Pay Later option (only at checkout) -->
     <div
       v-if="props.showPayLater"
-      class="border rounded-lg p-4 transition-all"
+      class="border rounded-lg p-4 transition-all cursor-pointer"
       :class="[
-        !isCreditSufficient
-          ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800'
-          : 'cursor-pointer',
-        modelValue === 'pay_later'
+        modelValue === 'deferred'
           ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10 shadow-sm'
           : 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-gray-600',
       ]"
-      @click="select('pay_later')"
+      @click="select('deferred')"
     >
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div
             class="w-9 h-9 rounded-lg flex items-center justify-center"
             :class="
-              modelValue === 'pay_later'
+              modelValue === 'deferred'
                 ? 'bg-primary-100 dark:bg-primary-800/30'
                 : 'bg-gray-100 dark:bg-gray-800'
             "
@@ -79,7 +76,7 @@ const formatPrice = (price: number) => {
               name="i-heroicons-clock"
               class="w-5 h-5"
               :class="
-                modelValue === 'pay_later'
+                modelValue === 'deferred'
                   ? 'text-primary-600 dark:text-primary-400'
                   : 'text-gray-500'
               "
@@ -89,20 +86,12 @@ const formatPrice = (price: number) => {
             <p
               class="font-bold text-sm"
               :class="
-                modelValue === 'pay_later'
+                modelValue === 'deferred'
                   ? 'text-primary-700 dark:text-primary-300'
                   : 'text-gray-900 dark:text-white'
               "
             >
               Reservar y no Pagar Ahora
-              <UBadge
-                v-if="!isCreditSufficient"
-                color="error"
-                variant="soft"
-                size="xs"
-                class="ml-2"
-                >Crédito Insuficiente</UBadge
-              >
             </p>
             <p class="text-xs text-gray-500 dark:text-gray-400">
               <template v-if="totalPrice">
@@ -131,13 +120,13 @@ const formatPrice = (price: number) => {
         <div
           class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
           :class="
-            modelValue === 'pay_later'
+            modelValue === 'deferred'
               ? 'border-primary-500'
               : 'border-gray-300 dark:border-gray-600'
           "
         >
           <div
-            v-show="modelValue === 'pay_later'"
+            v-show="modelValue === 'deferred'"
             class="w-2.5 h-2.5 bg-primary-500 rounded-full"
           ></div>
         </div>
