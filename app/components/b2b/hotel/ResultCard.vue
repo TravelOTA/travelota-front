@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import type { PropType } from "vue";
+import type { Hotel } from "~/composables/useHotels";
 import ResultHotelSummary from "./ResultHotelSummary.vue";
 import ResultRoomList from "./ResultRoomList.vue";
 
 defineProps({
   hotel: {
-    type: Object, // REFACTOR: This should be a corresponding hotel type
+    type: Object as PropType<Hotel>,
     required: true,
   },
 });
@@ -26,6 +28,7 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
     <ResultRoomList
       v-if="hotel?.rooms?.length"
       :rooms="hotel.rooms"
+      :hotel="hotel"
       :is-expanded="isExpanded"
     />
   </div>

@@ -99,7 +99,12 @@ export function useCheckout() {
           },
           checkIn: params.checkIn,
           checkOut: params.checkOut,
-          guests: params.rooms ?? [{ adults: 2, children: [] }],
+          guests: (params.rooms ?? [{ adults: 2, children: [] }]).map((r) => ({
+            adults: r.adults,
+            children: r.children.map((c) =>
+              typeof c === "number" ? c : (c as { age: number }).age,
+            ),
+          })),
           totalPrice: room.price,
           currency: "USD",
         },

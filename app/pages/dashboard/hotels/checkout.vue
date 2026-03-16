@@ -63,7 +63,14 @@ const reservation = computed(() => {
         id: 1,
         name: selectedRoom.value.name,
         pax: buildPax(
-          searchParams.value.rooms ?? [{ adults: 2, children: [] }],
+          (searchParams.value.rooms ?? [{ adults: 2, children: [] }]).map(
+            (r) => ({
+              adults: r.adults,
+              children: r.children.map((c) =>
+                typeof c === "number" ? c : c.age,
+              ),
+            }),
+          ),
         ),
         price: selectedRoom.value.price,
       },
