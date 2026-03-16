@@ -10,6 +10,7 @@
  *     :total-price="6281.41" payment-deadline="01/03/2026" cancellation-deadline="25/02/2026" />
  */
 import { computed } from "vue";
+import type { ICancellationPolicy } from "#shared/types/booking";
 
 const props = defineProps<{
   modelValue: string;
@@ -19,6 +20,7 @@ const props = defineProps<{
   totalPrice?: number;
   paymentDeadline?: string;
   cancellationDeadline?: string;
+  cancellationPolicy?: ICancellationPolicy;
 }>();
 
 const emit = defineEmits<{
@@ -32,10 +34,35 @@ const isCreditSufficient = computed(() => {
   return hasSufficientCredit(props.totalPrice);
 });
 
+function todayStr(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function addDaysStr(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+const isDeferredDisabled = computed(() => {
+  const p = props.cancellationPolicy;
+  if (!p) return false;
+  return !p.refundable || p.penaltyFrom === null || p.penaltyFrom <= todayStr();
+});
+
+const isTransferDisabled = computed(() => {
+  const p = props.cancellationPolicy;
+  if (!p) return false;
+  return (
+    !p.refundable || p.penaltyFrom === null || p.penaltyFrom <= addDaysStr(3)
+  );
+});
+
 const select = (key: string) => {
-  if (!isCreditSufficient.value && key === "agency_credit") {
-    return;
-  }
+  if (!isCreditSufficient.value && key === "agency_credit") return;
+  if (isDeferredDisabled.value && key === "deferred") return;
+  if (isTransferDisabled.value && key === "transfer") return;
   emit("update:modelValue", key);
 };
 
@@ -54,11 +81,16 @@ const formatPrice = (price: number) => {
     <!-- Pay Later option (only at checkout) -->
     <div
       v-if="props.showPayLater"
-      class="border rounded-lg p-4 transition-all cursor-pointer"
+      class="border rounded-lg p-4 transition-all"
       :class="[
-        modelValue === 'deferred'
+        isDeferredDisabled
+          ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800'
+          : 'cursor-pointer',
+        !isDeferredDisabled && modelValue === 'deferred'
           ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10 shadow-sm'
-          : 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-gray-600',
+          : !isDeferredDisabled
+            ? 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-gray-600'
+            : '',
       ]"
       @click="select('deferred')"
     >
@@ -139,7 +171,8 @@ const formatPrice = (price: number) => {
       :key="method.key"
       class="border rounded-lg p-4 transition-all"
       :class="[
-        !isCreditSufficient && method.key === 'agency_credit'
+        (!isCreditSufficient && method.key === 'agency_credit') ||
+        (method.key === 'transfer' && isTransferDisabled)
           ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800'
           : 'cursor-pointer',
         modelValue === method.key
