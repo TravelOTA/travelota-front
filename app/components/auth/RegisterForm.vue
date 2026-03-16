@@ -161,7 +161,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
         <UFormField name="pais">
           <USelectMenu
             v-model="form.pais"
-            :options="paises"
+            :items="paises"
             size="xl"
             placeholder="PAÍS"
             variant="outline"
