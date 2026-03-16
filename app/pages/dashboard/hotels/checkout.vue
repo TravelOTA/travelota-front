@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { computed, onMounted, ref } from "vue";
+import { navigateTo } from "#imports";
 import { useRouter } from "vue-router";
+import { useCheckout } from "~/composables/useCheckout";
 import CheckoutSidebarSummary from "~/components/b2b/hotel/checkout/CheckoutSidebarSummary.vue";
 import CheckoutImportantInfo from "~/components/b2b/hotel/checkout/CheckoutImportantInfo.vue";
 import CheckoutCancellationPolicy from "~/components/b2b/hotel/checkout/CheckoutCancellationPolicy.vue";
 import CheckoutTitularForm from "~/components/b2b/hotel/checkout/CheckoutTitularForm.vue";
 import CheckoutPaymentOptions from "~/components/b2b/hotel/checkout/CheckoutPaymentOptions.vue";
-import { computed } from "vue";
 
 definePageMeta({
   layout: "dashboard",
@@ -13,75 +15,98 @@ definePageMeta({
 
 const router = useRouter();
 
-// Mock Data
-const hotel = ref({
-  name: "Iberostar WAVES DOMINICANA",
-  stars: 5,
-  address:
-    "Carretera Arena Gorda Playa Bavaro Punta Cana, Dominican Republic, Playa Bavaro 23000",
-  image:
-    "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+const { selectedHotel, selectedRoom, searchParams, isReady } = useCheckout();
+
+// Redirect to search if no room selected
+onMounted(() => {
+  if (!isReady.value) {
+    navigateTo("/dashboard/hotels");
+  }
 });
 
-const reservation = ref({
-  checkIn: "2026-03-03",
-  checkOut: "2026-03-10",
-  rooms: [
-    {
-      id: 1,
-      name: "Twin/double room - premium - with lateral sea view - Todo Incluido",
-      pax: "2 Adultos",
-      price: 3027.93,
-    },
-    {
-      id: 2,
-      name: "Premium double room (full double bed) - Todo Incluido",
-      pax: "2 Adultos",
-      price: 3253.48,
-    },
-    {
-      id: 3,
-      name: "Suite - family - Todo Incluido",
-      pax: "2 Adultos, 1 Niño",
-      price: 4181.59,
-    },
-  ],
-  infoText:
-    "Las tarifas no reembolsables no permiten cambios ni cancelaciones. Cualquier modificación o cancelación incurrirá en una penalización del 100% sobre el valor total. Se requiere presentar pasaporte o documento de identidad oficial al realizar el check-in. Es posible que el hotel cobre tasas locales directamente al cliente en destino.",
-  policies: [
-    {
-      status: "Sin gastos",
-      fromDate: "03/03/26",
-      toDate: "06/04/26",
-      time: "23:59",
-      price: 0,
-    },
-    {
-      status: "Con gastos",
-      fromDate: "07/04/26",
-      toDate: "09/04/26",
-      time: "00:00:00",
-      price: 161.79,
-    },
-    {
-      status: "Con gastos",
-      fromDate: "10/04/26",
-      toDate: "15/04/26",
-      time: "00:00:00",
-      price: 809.0,
-    },
-  ],
-  paymentDeadline: "06/04/26",
-  cancellationDeadline: "06/04/26",
+// Template ref to access titular form data
+const titularFormRef = ref();
+
+// Map form fields (CheckoutTitularForm uses name/lastName/reference/observations)
+// to the titular shape expected by the API
+const titular = computed(() => ({
+  nombre: titularFormRef.value?.form?.name ?? "",
+  apellido: titularFormRef.value?.form?.lastName ?? "",
+  refAgencia: titularFormRef.value?.form?.reference ?? undefined,
+  notas: titularFormRef.value?.form?.observations ?? undefined,
+}));
+
+// Build the hotel shape expected by CheckoutSidebarSummary
+const hotel = computed(() => selectedHotel.value);
+
+// Build a pax string from guest data
+function buildPax(guests: { adults: number; children: number[] }[]): string {
+  if (!guests || guests.length === 0) return "2 Adultos";
+  const totalAdults = guests.reduce((acc, g) => acc + g.adults, 0);
+  const totalChildren = guests.reduce((acc, g) => acc + g.children.length, 0);
+  const parts: string[] = [];
+  if (totalAdults > 0)
+    parts.push(`${totalAdults} Adulto${totalAdults !== 1 ? "s" : ""}`);
+  if (totalChildren > 0)
+    parts.push(`${totalChildren} Niño${totalChildren !== 1 ? "s" : ""}`);
+  return parts.join(", ") || "2 Adultos";
+}
+
+// Build the reservation shape expected by CheckoutSidebarSummary
+const reservation = computed(() => {
+  if (!selectedRoom.value || !searchParams.value) return null;
+  return {
+    checkIn: searchParams.value.checkIn,
+    checkOut: searchParams.value.checkOut,
+    rooms: [
+      {
+        id: 1,
+        name: selectedRoom.value.name,
+        pax: buildPax(
+          searchParams.value.rooms ?? [{ adults: 2, children: [] }],
+        ),
+        price: selectedRoom.value.price,
+      },
+    ],
+  };
 });
 
-const totalPrice = computed(() => {
-  return reservation.value.rooms.reduce((acc, room) => acc + room.price, 0);
+const totalPrice = computed(() => selectedRoom.value?.price ?? 0);
+
+// Derive cancellation policies in the flat format expected by CheckoutCancellationPolicy
+const cancellationPolicies = computed(() => {
+  const policy = selectedRoom.value?.cancellationPolicy;
+  if (!policy) return [];
+  if (!policy.refundable) {
+    return [
+      {
+        status: "Sin reembolso",
+        fromDate: "-",
+        toDate: "-",
+        time: "-",
+        price: totalPrice.value,
+      },
+    ];
+  }
+  return policy.penalties.map((p) => ({
+    status: "Con gastos",
+    fromDate: p.from,
+    toDate: policy.penaltyFrom ?? p.from,
+    time: "00:00:00",
+    price: p.amount,
+  }));
 });
 
 useHead({
-  title: `Checkout - ${hotel.value.name} - TravelOTA B2B`,
+  title: computed(
+    () => `Checkout - ${selectedHotel.value?.name ?? "Hotel"} - TravelOTA B2B`,
+  ),
 });
+
+// Handle booking confirmed
+function onConfirmed(pnr: string) {
+  navigateTo(`/dashboard/hotels/booking/${pnr}?from=confirmation`);
+}
 </script>
 
 <template>
@@ -105,7 +130,10 @@ useHead({
     </div>
 
     <!-- Layout Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div
+      v-if="reservation && hotel"
+      class="grid grid-cols-1 lg:grid-cols-3 gap-8"
+    >
       <!-- Left Column: Summary Reservation Data -->
       <div class="lg:col-span-1">
         <div class="sticky top-24">
@@ -120,24 +148,34 @@ useHead({
       <!-- Right Column: Passenger & Payment -->
       <div class="lg:col-span-2 flex flex-col gap-6">
         <!-- 1. Important Info -->
-        <CheckoutImportantInfo :info-text="reservation.infoText" />
+        <CheckoutImportantInfo :info-text="selectedRoom?.cancellation ?? ''" />
 
         <!-- 2. Cancellation Policy -->
         <CheckoutCancellationPolicy
           :total="totalPrice"
-          :policies="reservation.policies"
+          :policies="cancellationPolicies"
         />
 
         <!-- 3. Titular Form & Observations -->
-        <CheckoutTitularForm />
+        <CheckoutTitularForm ref="titularFormRef" />
 
         <!-- 4. Payment Options & Checks -->
         <CheckoutPaymentOptions
           :total-price="totalPrice"
-          :payment-deadline="reservation.paymentDeadline"
-          :cancellation-deadline="reservation.cancellationDeadline"
+          :titular="titular"
+          :cancellation-policy="selectedRoom?.cancellationPolicy"
+          @confirmed="onConfirmed"
+          @error="(msg) => console.error('[checkout]', msg)"
         />
       </div>
+    </div>
+
+    <!-- Loading / redirect state -->
+    <div v-else class="flex items-center justify-center py-24">
+      <UIcon
+        name="i-heroicons-arrow-path"
+        class="w-8 h-8 animate-spin text-primary-500"
+      />
     </div>
   </div>
 </template>

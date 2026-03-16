@@ -7,6 +7,8 @@ const form = ref({
   reference: "",
   observations: "",
 });
+
+defineExpose({ form });
 </script>
 
 <template>
