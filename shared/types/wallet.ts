@@ -11,6 +11,7 @@ export interface ITransaction {
 export interface IWallet {
   creditLimit: number;
   currentBalance: number; // accumulated debt
-  availableCredit: number; // creditLimit - currentBalance
+  /** Always kept in sync: creditLimit - currentBalance. Never set manually. */
+  availableCredit: number;
   transactions: ITransaction[];
 }
