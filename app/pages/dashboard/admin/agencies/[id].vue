@@ -6,8 +6,13 @@ definePageMeta({ layout: "dashboard" });
 const route = useRoute();
 const agencyId = route.params.id as string;
 
-const { getAgencyById, approveAgency, toggleBlock, updateAgency } =
-  useAgencies();
+const {
+  getAgencyById,
+  approveAgency,
+  toggleBlock,
+  updateAgency,
+  updateUserStatus,
+} = useAgencies();
 const agency = computed(() => getAgencyById(agencyId) ?? null);
 
 useHead({
@@ -108,7 +113,8 @@ const filteredUsers = computed(() =>
 );
 
 function toggleUserStatus(user: AdminAgencyUser) {
-  user.status = user.status === "Activo" ? "Inactivo" : "Activo";
+  const newStatus = user.status === "Activo" ? "Inactivo" : "Activo";
+  updateUserStatus(agencyId, user.id, newStatus);
 }
 
 const userColumns = [
@@ -195,7 +201,6 @@ const userColumns = [
 
           <!-- Header actions -->
           <div class="flex items-center gap-2 flex-shrink-0">
-            <!-- approveAgency modal wired in Task 4 -->
             <UButton
               v-if="agency.status === 'Pendiente'"
               icon="i-heroicons-check-circle"
@@ -205,6 +210,7 @@ const userColumns = [
               @click="openApprove"
             />
             <UButton
+              v-if="agency.status === 'Activa' || agency.status === 'Bloqueada'"
               :icon="
                 agency.status === 'Bloqueada'
                   ? 'i-heroicons-lock-open'
@@ -415,6 +421,7 @@ const userColumns = [
                 size="sm"
                 color="primary"
                 label="Invitar usuario"
+                disabled
               />
             </div>
           </template>

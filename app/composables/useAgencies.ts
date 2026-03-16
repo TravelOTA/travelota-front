@@ -286,6 +286,17 @@ export function useAgencies() {
     });
   }
 
+  function updateUserStatus(
+    agencyId: string,
+    userId: string,
+    status: "Activo" | "Inactivo",
+  ): void {
+    const agency = agencies.value.find((a) => a.id === agencyId);
+    if (!agency) return;
+    const user = agency.users.find((u) => u.id === userId);
+    if (user) user.status = status;
+  }
+
   function updateAgency(
     id: string,
     data: Partial<
@@ -310,5 +321,6 @@ export function useAgencies() {
     toggleBlock,
     addAgency,
     updateAgency,
+    updateUserStatus,
   };
 }
