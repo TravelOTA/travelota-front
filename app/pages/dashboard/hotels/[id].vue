@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
+import { ref } from "vue";
 import { navigateTo } from "#imports";
 import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
 import { useCheckout } from "~/composables/useCheckout";
