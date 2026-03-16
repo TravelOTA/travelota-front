@@ -2,11 +2,15 @@
 import { ref, computed } from "vue";
 import type { PropType } from "vue";
 import { useItinerary } from "~/composables/useItinerary";
-import type { HotelRoomOffer } from "~/composables/useHotels";
+import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
 
 const props = defineProps({
   rooms: {
     type: Array as PropType<HotelRoomOffer[]>,
+    required: true,
+  },
+  hotel: {
+    type: Object as PropType<Hotel>,
     required: true,
   },
   isExpanded: {
@@ -18,6 +22,10 @@ const props = defineProps({
     default: false,
   },
 });
+
+const emit = defineEmits<{
+  (e: "reserve", room: HotelRoomOffer): void;
+}>();
 
 const showAllRooms = ref(props.defaultExpandedRooms);
 
@@ -138,7 +146,7 @@ const addToItinerary = (room: HotelRoomOffer) => {
         <UButton
           color="primary"
           class="font-bold w-24 justify-center"
-          to="/dashboard/hotels/checkout"
+          @click="emit('reserve', room)"
         >
           Reservar
         </UButton>

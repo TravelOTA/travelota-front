@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
-import type { Hotel } from "~/composables/useHotels";
+import { navigateTo } from "#imports";
+import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
+import { useCheckout } from "~/composables/useCheckout";
+import { useHotelSearch } from "~/composables/useHotelSearch";
 import SearchSummaryBar from "~/components/b2b/hotel/SearchSummaryBar.vue";
 import ResultHotelSummary from "~/components/b2b/hotel/ResultHotelSummary.vue";
 import HotelGallery from "~/components/b2b/hotel/detail/HotelGallery.vue";
@@ -17,6 +20,18 @@ const router = useRouter();
 const isMapOpen = ref(false);
 const hotelId = route.params.id as string;
 
+const { selectRoom } = useCheckout();
+const { searchParams } = useHotelSearch();
+
+function handleReserve(room: HotelRoomOffer) {
+  selectRoom(
+    { ...hotel.value, address: hotel.value.location },
+    room,
+    searchParams.value,
+  );
+  navigateTo("/dashboard/hotels/checkout");
+}
+
 // Mock images
 const hotelImages = [
   "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
@@ -32,34 +47,52 @@ const hotel = ref<Hotel>({
   name: "Iberostar WAVES DOMINICANA", // Can be dynamic if we implement a store
   stars: 5,
   location: "Playa Bavaro, DO",
-  address:
-    "Carretera Arena Gorda Playa Bavaro Punta Cana, Dominican Republic, Playa Bavaro 23000",
   coordinates: [18.7035, -68.4215] as [number, number],
-  image: hotelImages[0], // Agregada la foto principal
+  image: hotelImages[0]!, // Agregada la foto principal
   bestPrice: 1118.76,
   rooms: [
     {
       name: "Twin/double room - premium - with lateral sea view",
       regimen: "TI",
       cancellation: "Gastos de cancelación",
+      cancellationPolicy: {
+        refundable: true,
+        penaltyFrom: "2026-04-15",
+        penalties: [{ from: "2026-04-15", percentage: 100, amount: 3027.93 }],
+      },
       price: 3027.93,
     },
     {
       name: "Twin/double room - premium",
       regimen: "TI",
       cancellation: "Gastos de cancelación",
+      cancellationPolicy: {
+        refundable: true,
+        penaltyFrom: "2026-04-15",
+        penalties: [{ from: "2026-04-15", percentage: 100, amount: 3186.43 }],
+      },
       price: 3186.43,
     },
     {
       name: "Premium double room (full double bed)",
       regimen: "TI",
       cancellation: "No reembolsable",
+      cancellationPolicy: {
+        refundable: false,
+        penaltyFrom: null,
+        penalties: [{ from: "2026-03-16", percentage: 100, amount: 3253.48 }],
+      },
       price: 3253.48,
     },
     {
       name: "Premium room with tropical view",
       regimen: "TI",
       cancellation: "Bajo petición",
+      cancellationPolicy: {
+        refundable: true,
+        penaltyFrom: "2026-04-15",
+        penalties: [{ from: "2026-04-15", percentage: 100, amount: 3433.94 }],
+      },
       price: 3433.94,
       onRequest: true,
     },
@@ -67,6 +100,11 @@ const hotel = ref<Hotel>({
       name: "Suite - family",
       regimen: "TI",
       cancellation: "Gastos de cancelación",
+      cancellationPolicy: {
+        refundable: true,
+        penaltyFrom: "2026-04-15",
+        penalties: [{ from: "2026-04-15", percentage: 100, amount: 4181.59 }],
+      },
       price: 4181.59,
     },
   ],
@@ -103,8 +141,10 @@ useHead({
       <!-- 3. Bottom Room List (Reused from Results) -->
       <ResultRoomList
         :rooms="hotel.rooms"
+        :hotel="hotel"
         :is-expanded="true"
         :default-expanded-rooms="true"
+        @reserve="handleReserve"
       />
 
       <!-- Info Section -->
