@@ -49,7 +49,7 @@ function openEdit() {
     country: agency.value.country,
     email: agency.value.email,
     phone: agency.value.phone,
-    agencyGroup: agency.value.agencyGroup,
+    agencyGroup: agency.value.agencyGroup ?? "",
   };
   isEditOpen.value = true;
 }

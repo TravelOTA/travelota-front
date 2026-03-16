@@ -80,7 +80,7 @@ function saveAgency() {
       newAgency.value.agencyGroup || groupNames.value[0] || "Grupo Estándar",
     ),
     markup: appliedMarkup,
-    registeredAt: new Date().toISOString().split("T")[0],
+    registeredAt: new Date().toISOString().split("T")[0]!,
   });
 
   if (selectedGroup) {
