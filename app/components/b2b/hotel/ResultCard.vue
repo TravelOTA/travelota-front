@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import type { PropType } from "vue";
 import type { Hotel } from "~/composables/useHotels";
 import ResultHotelSummary from "./ResultHotelSummary.vue";
 import ResultRoomList from "./ResultRoomList.vue";
 
-defineProps({
-  hotel: {
-    type: Object as PropType<Hotel>,
-    required: true,
-  },
-});
+defineProps<{ hotel: Hotel }>();
 
 const emit = defineEmits<{
   (e: "open-map", hotel: Record<string, unknown>): void;
