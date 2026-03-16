@@ -1,5 +1,6 @@
 import { useState, computed } from "#imports";
 import type { RegisterInput } from "~/utils/schemas";
+import type { AgencyGroup } from "~/composables/useAgencyGroups";
 
 export interface AdminAgencyUser {
   id: string;
@@ -26,14 +27,6 @@ export interface AdminAgency {
   registeredAt: string;
   status: "Activa" | "Pendiente" | "Bloqueada" | "Denegada";
   users: AdminAgencyUser[];
-}
-
-export interface AgencyGroup {
-  id: string;
-  name: string;
-  description: string;
-  baseMarkup: number;
-  agenciesCount: number;
 }
 
 const MOCK_AGENCIES: AdminAgency[] = [

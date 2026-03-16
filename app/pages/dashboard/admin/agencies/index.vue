@@ -4,13 +4,7 @@ import { useAgencies } from "~/composables/useAgencies";
 definePageMeta({ layout: "dashboard" });
 useHead({ title: "Gestor de Agencias B2B - TravelOTA" });
 
-const {
-  agencies,
-  agencyStats: stats,
-  approveAgency,
-  toggleBlock,
-  addAgency,
-} = useAgencies();
+const { agencies, agencyStats: stats, toggleBlock, addAgency } = useAgencies();
 const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
 
 // Filters
@@ -298,7 +292,6 @@ const columns = [
                 color="success"
                 variant="ghost"
                 size="xs"
-                @click="approveAgency(row.original.id)"
               />
             </UTooltip>
             <UTooltip
