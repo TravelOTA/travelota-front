@@ -7,7 +7,7 @@ export function generatePNR(): string {
   const day = String(d.getDate()).padStart(2, "0");
   const suffix = Array.from(
     { length: 4 },
-    () => CHARS[Math.floor(Math.random() * CHARS.length)],
+    () => CHARS[crypto.getRandomValues(new Uint8Array(1))[0] % CHARS.length],
   ).join("");
   return `TRV-${year}${month}${day}-${suffix}`;
 }

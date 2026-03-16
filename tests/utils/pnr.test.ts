@@ -18,6 +18,6 @@ describe("generatePNR", () => {
 
   it("generates unique PNRs across 100 calls", () => {
     const pnrs = new Set(Array.from({ length: 100 }, () => generatePNR()));
-    expect(pnrs.size).toBeGreaterThan(95);
+    expect(pnrs.size).toBe(100);
   });
 });
