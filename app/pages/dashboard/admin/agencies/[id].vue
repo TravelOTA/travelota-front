@@ -107,8 +107,8 @@ const isWhitelabelOpen = ref(false);
 const whitelabelForm = ref({
   logo: "",
   colorPrimario: "",
-  email: "",
-  phone: "",
+  publicEmail: "",
+  publicPhone: "",
 });
 
 const colorMap: Record<string, string> = {
@@ -137,8 +137,8 @@ function openWhitelabel() {
   whitelabelForm.value = {
     logo: agency.value.logo,
     colorPrimario: agency.value.colorPrimario,
-    email: agency.value.email,
-    phone: agency.value.phone,
+    publicEmail: agency.value.publicEmail,
+    publicPhone: agency.value.publicPhone,
   };
   isWhitelabelOpen.value = true;
 }
@@ -762,16 +762,27 @@ const userColumns = [
               </div>
             </UFormField>
 
-            <UFormField label="Correo de Contacto Público" name="wl-email">
+            <UFormField
+              label="Correo de Contacto Público"
+              name="wl-publicEmail"
+              description="Visible para clientes. Distinto del correo corporativo de registro."
+            >
               <UInput
-                v-model="whitelabelForm.email"
+                v-model="whitelabelForm.publicEmail"
                 type="email"
                 icon="i-heroicons-envelope"
               />
             </UFormField>
 
-            <UFormField label="Teléfono de Contacto Público" name="wl-phone">
-              <UInput v-model="whitelabelForm.phone" icon="i-heroicons-phone" />
+            <UFormField
+              label="Teléfono de Contacto Público"
+              name="wl-publicPhone"
+              description="Visible para clientes. Distinto del teléfono corporativo de registro."
+            >
+              <UInput
+                v-model="whitelabelForm.publicPhone"
+                icon="i-heroicons-phone"
+              />
             </UFormField>
           </div>
         </template>

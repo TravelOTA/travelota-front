@@ -69,6 +69,8 @@ describe("useAgencies — registerAgency", () => {
     expect(created.users).toHaveLength(0);
     expect(created.logo).toBe("");
     expect(created.colorPrimario).toBe("teal");
+    expect(created.publicEmail).toBe("");
+    expect(created.publicPhone).toBe("");
     expect(typeof created.id).toBe("string");
     expect(created.id.length).toBeGreaterThan(0);
   });
@@ -123,6 +125,8 @@ describe("useAgencies — approveAgency", () => {
     expect(agency.users[0].status).toBe("Activo");
     expect(agency.users[0].lastLogin).toBe("—");
     expect(typeof agency.users[0].id).toBe("string");
+    expect(agency.publicEmail).toBe("aprobar@agency.com");
+    expect(agency.publicPhone).toBe("+34 900 222 333");
   });
 });
 

@@ -19,8 +19,14 @@ export interface AdminAgency {
   web: string;
   nombreContacto: string;
   country: string;
+  /** Corporate registration email — read-only, only editable by SuperAdmin */
   email: string;
+  /** Corporate registration phone — read-only, only editable by SuperAdmin */
   phone: string;
+  /** Public contact email shown to clients — editable via whitelabel config */
+  publicEmail: string;
+  /** Public contact phone shown to clients — editable via whitelabel config */
+  publicPhone: string;
   agencyGroup: string | null;
   markup: number;
   bookingsCount: number;
@@ -42,6 +48,8 @@ const MOCK_AGENCIES: AdminAgency[] = [
     country: "España",
     email: "b2b@elcorteingles.es",
     phone: "+34 91 418 88 00",
+    publicEmail: "atencion@elcorteingles.es",
+    publicPhone: "+34 900 100 100",
     agencyGroup: "Grupo VIP",
     markup: 12,
     bookingsCount: 312,
@@ -86,6 +94,8 @@ const MOCK_AGENCIES: AdminAgency[] = [
     country: "España",
     email: "b2b@destinia.com",
     phone: "+34 91 123 45 67",
+    publicEmail: "clientes@destinia.com",
+    publicPhone: "+34 91 123 45 67",
     agencyGroup: "Grupo Mayorista",
     markup: 10,
     bookingsCount: 187,
@@ -122,6 +132,8 @@ const MOCK_AGENCIES: AdminAgency[] = [
     country: "México",
     email: "contacto@agenciademo.mx",
     phone: "+52 55 1234 5678",
+    publicEmail: "",
+    publicPhone: "",
     agencyGroup: null,
     markup: 0,
     bookingsCount: 0,
@@ -141,6 +153,8 @@ const MOCK_AGENCIES: AdminAgency[] = [
     country: "España",
     email: "b2b@barcelo.com",
     phone: "+34 971 78 91 00",
+    publicEmail: "reservas@barcelo.com",
+    publicPhone: "+34 900 200 200",
     agencyGroup: "Grupo VIP",
     markup: 11,
     bookingsCount: 534,
@@ -177,6 +191,8 @@ const MOCK_AGENCIES: AdminAgency[] = [
     country: "Colombia",
     email: "ventas@turmundo.co",
     phone: "+57 1 745 3210",
+    publicEmail: "ventas@turmundo.co",
+    publicPhone: "+57 1 745 3210",
     agencyGroup: "Grupo Estándar",
     markup: 14,
     bookingsCount: 91,
@@ -196,6 +212,8 @@ const MOCK_AGENCIES: AdminAgency[] = [
     country: "Argentina",
     email: "info@globaltravel.ar",
     phone: "+54 11 4567 8901",
+    publicEmail: "",
+    publicPhone: "",
     agencyGroup: null,
     markup: 0,
     bookingsCount: 0,
@@ -233,6 +251,8 @@ export function useAgencies() {
       country: data.pais,
       email: data.email,
       phone: data.telefono,
+      publicEmail: "",
+      publicPhone: "",
       agencyGroup: null,
       markup: 0,
       bookingsCount: 0,
@@ -250,6 +270,8 @@ export function useAgencies() {
     agency.status = "Activa";
     agency.agencyGroup = group.name;
     agency.markup = group.baseMarkup;
+    agency.publicEmail = agency.email;
+    agency.publicPhone = agency.phone;
     agency.users.push({
       id: crypto.randomUUID(),
       name: agency.nombreContacto,
@@ -289,6 +311,8 @@ export function useAgencies() {
       | "nombreContacto"
       | "logo"
       | "colorPrimario"
+      | "publicEmail"
+      | "publicPhone"
     >,
   ) {
     agencies.value.push({
@@ -302,6 +326,8 @@ export function useAgencies() {
       nombreContacto: "",
       logo: "",
       colorPrimario: "teal",
+      publicEmail: "",
+      publicPhone: "",
       ...data,
     });
   }
@@ -333,7 +359,10 @@ export function useAgencies() {
   function updateWhitelabel(
     id: string,
     data: Partial<
-      Pick<AdminAgency, "logo" | "colorPrimario" | "email" | "phone">
+      Pick<
+        AdminAgency,
+        "logo" | "colorPrimario" | "publicEmail" | "publicPhone"
+      >
     >,
   ) {
     const agency = agencies.value.find((a) => a.id === id);
