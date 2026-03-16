@@ -1,7 +1,8 @@
 import { useState } from "#imports";
+import type { PaymentMethod as PaymentMethodKey } from "#shared/types/payment";
 
-export interface PaymentMethod {
-  key: string;
+export interface PaymentMethodConfig {
+  key: PaymentMethodKey;
   label: string;
   description: string;
   icon: string;
@@ -63,22 +64,22 @@ const NATIONALITIES = [
   "Venezuela",
 ];
 
-const PAYMENT_METHODS: PaymentMethod[] = [
+const PAYMENT_METHODS: PaymentMethodConfig[] = [
   {
-    key: "credit_card",
+    key: "card",
     label: "Pago con tarjeta",
     description: "El importe será cargado inmediatamente en tu tarjeta.",
     icon: "i-heroicons-credit-card",
   },
   {
-    key: "bank_transfer",
+    key: "transfer",
     label: "Transferencia bancaria",
     description:
       "Se generarán los datos bancarios para realizar la transferencia.",
     icon: "i-heroicons-building-library",
   },
   {
-    key: "credit",
+    key: "agency_credit",
     label: "Crédito de agencia",
     description:
       "Se descontará del saldo disponible en tu línea de crédito con TravelOTA.",
@@ -96,7 +97,7 @@ export function useConfig() {
     "config-nationalities",
     () => NATIONALITIES,
   );
-  const paymentMethods = useState<PaymentMethod[]>(
+  const paymentMethods = useState<PaymentMethodConfig[]>(
     "config-payment-methods",
     () => PAYMENT_METHODS,
   );

@@ -9,7 +9,7 @@ defineProps<{
   cancellationDeadline: string;
 }>();
 
-const selectedMethod = ref("pay_later");
+const selectedMethod = ref<string>("deferred");
 
 const acceptConditions = ref(false);
 const acceptPrivacy = ref(false);

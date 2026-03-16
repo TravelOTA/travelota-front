@@ -33,8 +33,8 @@ const isCreditSufficient = computed(() => {
 });
 
 const select = (key: string) => {
-  if (!isCreditSufficient.value && (key === "pay_later" || key === "credit")) {
-    return; // Block selection
+  if (!isCreditSufficient.value && key === "agency_credit") {
+    return;
   }
   emit("update:modelValue", key);
 };
@@ -150,7 +150,7 @@ const formatPrice = (price: number) => {
       :key="method.key"
       class="border rounded-lg p-4 transition-all"
       :class="[
-        !isCreditSufficient && method.key === 'credit'
+        !isCreditSufficient && method.key === 'agency_credit'
           ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800'
           : 'cursor-pointer',
         modelValue === method.key
@@ -190,7 +190,7 @@ const formatPrice = (price: number) => {
             >
               {{ method.label }}
               <UBadge
-                v-if="!isCreditSufficient && method.key === 'credit'"
+                v-if="!isCreditSufficient && method.key === 'agency_credit'"
                 color="error"
                 variant="soft"
                 size="xs"
