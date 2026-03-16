@@ -24,6 +24,7 @@ export default defineConfig({
       "@": resolve(__dirname, "app"),
       "#imports": resolve(__dirname, "tests/__mocks__/imports.ts"),
       "#app": resolve(__dirname, "tests/__mocks__/app.ts"),
+      "#shared": resolve(__dirname, "shared"),
     },
   },
 });
