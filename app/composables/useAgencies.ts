@@ -235,22 +235,20 @@ export function useAgencies() {
     });
   }
 
-  function approveAgency(id: string, group?: AgencyGroup): void {
+  function approveAgency(id: string, group: AgencyGroup): void {
     const agency = agencies.value.find((a) => a.id === id);
     if (!agency) return;
     agency.status = "Activa";
-    if (group) {
-      agency.agencyGroup = group.name;
-      agency.markup = group.baseMarkup;
-      agency.users.push({
-        id: crypto.randomUUID(),
-        name: agency.nombreContacto,
-        email: agency.email,
-        role: "Admin Agencia",
-        status: "Activo",
-        lastLogin: "—",
-      });
-    }
+    agency.agencyGroup = group.name;
+    agency.markup = group.baseMarkup;
+    agency.users.push({
+      id: crypto.randomUUID(),
+      name: agency.nombreContacto,
+      email: agency.email,
+      role: "Admin Agencia",
+      status: "Activo",
+      lastLogin: "—",
+    });
   }
 
   function denyAgency(id: string): void {
