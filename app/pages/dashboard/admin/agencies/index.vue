@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { useAgencies } from "~/composables/useAgencies";
+import { useAgencies, type AdminAgency } from "~/composables/useAgencies";
 
 definePageMeta({ layout: "dashboard" });
 useHead({ title: "Gestor de Agencias B2B - TravelOTA" });
 
-const { agencies, agencyStats: stats, toggleBlock, addAgency } = useAgencies();
+const {
+  agencies,
+  agencyStats: stats,
+  approveAgency,
+  denyAgency,
+  deleteAgency,
+  toggleBlock,
+  addAgency,
+} = useAgencies();
 const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
 
-// Filters
+// ── Filters ────────────────────────────────────────────────────────────────
 const searchQuery = ref("");
 const statusFilter = ref("Todas");
 
@@ -24,10 +32,16 @@ const filteredAgencies = computed(() => {
   });
 });
 
-// Status helpers
-const statusColor = (s: string) =>
-  s === "Activa" ? "success" : s === "Pendiente" ? "warning" : "error";
+// ── Status helpers ─────────────────────────────────────────────────────────
+function statusColor(s: string) {
+  if (s === "Activa") return "success";
+  if (s === "Pendiente") return "warning";
+  if (s === "Bloqueada") return "error";
+  if (s === "Denegada") return "neutral";
+  return "neutral";
+}
 
+// ── Nueva Agencia modal ────────────────────────────────────────────────────
 const isCreateOpen = ref(false);
 const newAgency = ref({
   name: "",
@@ -59,12 +73,10 @@ function openCreate() {
 
 function saveAgency() {
   if (!isCreateValid.value) return;
-
   const selectedGroup = agencyGroups.value.find(
     (g) => g.name === newAgency.value.agencyGroup,
   );
   const appliedMarkup = selectedGroup?.baseMarkup || 10;
-
   addAgency({
     name: newAgency.value.name,
     country: newAgency.value.country,
@@ -76,15 +88,67 @@ function saveAgency() {
     markup: appliedMarkup,
     registeredAt: new Date().toISOString().split("T")[0]!,
   });
-
-  if (selectedGroup) {
-    incrementAgencyCount(selectedGroup.name);
-  }
-
+  if (selectedGroup) incrementAgencyCount(selectedGroup.name);
   isCreateOpen.value = false;
 }
 
-// Table columns
+// ── Aprobar modal ──────────────────────────────────────────────────────────
+const isApproveOpen = ref(false);
+const agencyToApprove = ref<AdminAgency | null>(null);
+const selectedGroupName = ref<string>("");
+
+const selectedGroup = computed(
+  () =>
+    agencyGroups.value.find((g) => g.name === selectedGroupName.value) ?? null,
+);
+
+function openApprove(agency: AdminAgency) {
+  agencyToApprove.value = agency;
+  selectedGroupName.value = "";
+  isApproveOpen.value = true;
+}
+
+function confirmApprove() {
+  if (!agencyToApprove.value || !selectedGroup.value) return;
+  approveAgency(agencyToApprove.value.id, selectedGroup.value);
+  incrementAgencyCount(selectedGroup.value.name);
+  isApproveOpen.value = false;
+  agencyToApprove.value = null;
+}
+
+// ── Denegar modal ──────────────────────────────────────────────────────────
+const isDenyOpen = ref(false);
+const agencyToDeny = ref<AdminAgency | null>(null);
+
+function openDeny(agency: AdminAgency) {
+  agencyToDeny.value = agency;
+  isDenyOpen.value = true;
+}
+
+function confirmDeny() {
+  if (!agencyToDeny.value) return;
+  denyAgency(agencyToDeny.value.id);
+  isDenyOpen.value = false;
+  agencyToDeny.value = null;
+}
+
+// ── Eliminar modal ─────────────────────────────────────────────────────────
+const isDeleteOpen = ref(false);
+const agencyToDelete = ref<AdminAgency | null>(null);
+
+function openDelete(agency: AdminAgency) {
+  agencyToDelete.value = agency;
+  isDeleteOpen.value = true;
+}
+
+function confirmDelete() {
+  if (!agencyToDelete.value) return;
+  deleteAgency(agencyToDelete.value.id);
+  isDeleteOpen.value = false;
+  agencyToDelete.value = null;
+}
+
+// ── Table columns ──────────────────────────────────────────────────────────
 const columns = [
   { accessorKey: "name", header: "Agencia" },
   { accessorKey: "country", header: "País" },
@@ -207,7 +271,7 @@ const columns = [
         />
         <USelectMenu
           v-model="statusFilter"
-          :items="['Todas', 'Activa', 'Pendiente', 'Bloqueada']"
+          :items="['Todas', 'Pendiente', 'Activa', 'Bloqueada', 'Denegada']"
           placeholder="Filtrar estado"
           class="w-40"
         />
@@ -236,9 +300,9 @@ const columns = [
 
         <!-- Contenedor agencyGroup -->
         <template #agencyGroup-cell="{ row }">
-          <span class="font-medium text-gray-900 dark:text-gray-100">{{
-            row.original.agencyGroup
-          }}</span>
+          <span class="font-medium text-gray-900 dark:text-gray-100">
+            {{ row.original.agencyGroup ?? "—" }}
+          </span>
         </template>
 
         <!-- Users -->
@@ -283,6 +347,8 @@ const columns = [
                 :to="`/dashboard/admin/agencies/${row.original.id}`"
               />
             </UTooltip>
+
+            <!-- Pendiente: Aprobar + Denegar -->
             <UTooltip
               v-if="row.original.status === 'Pendiente'"
               text="Aprobar acceso"
@@ -292,9 +358,28 @@ const columns = [
                 color="success"
                 variant="ghost"
                 size="xs"
+                @click="openApprove(row.original)"
               />
             </UTooltip>
             <UTooltip
+              v-if="row.original.status === 'Pendiente'"
+              text="Denegar acceso"
+            >
+              <UButton
+                icon="i-heroicons-x-circle"
+                color="error"
+                variant="ghost"
+                size="xs"
+                @click="openDeny(row.original)"
+              />
+            </UTooltip>
+
+            <!-- Activa / Bloqueada: toggleBlock -->
+            <UTooltip
+              v-if="
+                row.original.status === 'Activa' ||
+                row.original.status === 'Bloqueada'
+              "
               :text="
                 row.original.status === 'Bloqueada' ? 'Activar' : 'Bloquear'
               "
@@ -311,6 +396,20 @@ const columns = [
                 variant="ghost"
                 size="xs"
                 @click="toggleBlock(row.original.id)"
+              />
+            </UTooltip>
+
+            <!-- Denegada: Eliminar -->
+            <UTooltip
+              v-if="row.original.status === 'Denegada'"
+              text="Eliminar registro"
+            >
+              <UButton
+                icon="i-heroicons-trash"
+                color="error"
+                variant="ghost"
+                size="xs"
+                @click="openDelete(row.original)"
               />
             </UTooltip>
           </div>
@@ -399,6 +498,106 @@ const columns = [
             icon="i-heroicons-plus"
             :disabled="!isCreateValid"
             @click="saveAgency"
+          />
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Aprobar modal -->
+    <UModal v-model:open="isApproveOpen" title="Aprobar Agencia">
+      <template #body>
+        <div class="space-y-4">
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Selecciona el grupo al que pertenecerá
+            <strong>{{ agencyToApprove?.name }}</strong
+            >.
+          </p>
+          <UFormField label="Grupo de Agencia" name="approveGroup" required>
+            <USelectMenu
+              v-model="selectedGroupName"
+              :items="groupNames"
+              placeholder="Selecciona un grupo"
+              icon="i-heroicons-user-group"
+              class="w-full"
+            />
+          </UFormField>
+          <UAlert
+            v-if="selectedGroup"
+            icon="i-heroicons-information-circle"
+            color="info"
+            variant="soft"
+            :description="`Markup aplicado: ${selectedGroup.baseMarkup}%`"
+          />
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            label="Cancelar"
+            @click="isApproveOpen = false"
+          />
+          <UButton
+            color="success"
+            label="Aprobar"
+            icon="i-heroicons-check-circle"
+            :disabled="!selectedGroup"
+            @click="confirmApprove"
+          />
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Denegar modal -->
+    <UModal v-model:open="isDenyOpen" title="Denegar Agencia">
+      <template #body>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          ¿Estás seguro de que deseas denegar el acceso a
+          <strong>{{ agencyToDeny?.name }}</strong
+          >?
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            label="Cancelar"
+            @click="isDenyOpen = false"
+          />
+          <UButton
+            color="error"
+            label="Denegar"
+            icon="i-heroicons-x-circle"
+            @click="confirmDeny"
+          />
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Eliminar modal -->
+    <UModal v-model:open="isDeleteOpen" title="Eliminar Agencia">
+      <template #body>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          Esta acción eliminará permanentemente el registro de
+          <strong>{{ agencyToDelete?.name }}</strong
+          >. ¿Deseas continuar?
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            label="Cancelar"
+            @click="isDeleteOpen = false"
+          />
+          <UButton
+            color="error"
+            label="Eliminar"
+            icon="i-heroicons-trash"
+            @click="confirmDelete"
           />
         </div>
       </template>
