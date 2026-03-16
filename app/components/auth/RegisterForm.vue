@@ -253,10 +253,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
         variant="solid"
         size="lg"
         :disabled="!isFormValid"
-        :class="[
-          'px-8 py-2.5 uppercase tracking-wider font-bold text-sm rounded-sm shadow-sm',
-          isFormValid ? 'btn-registro-active' : 'btn-registro-disabled',
-        ]"
+        class="px-8 py-2.5 uppercase tracking-wider font-bold text-sm rounded-sm shadow-sm"
       >
         Regístrame
       </UButton>
@@ -291,20 +288,5 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
   font-size: 0.75rem;
   letter-spacing: 0.05em;
   color: #94a3b8;
-}
-
-:deep(.btn-registro-disabled) {
-  background-color: #bbe0e3;
-  color: white;
-  cursor: not-allowed;
-}
-
-:deep(.btn-registro-active) {
-  background-color: #00a1a1;
-  color: white;
-  transition: background-color 0.2s ease;
-}
-:deep(.btn-registro-active:hover) {
-  background-color: #008181;
 }
 </style>
