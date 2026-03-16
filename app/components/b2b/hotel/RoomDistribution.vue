@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import type { SearchRoomDistribution } from "~/composables/useItinerary";
 
 const rooms = defineModel<SearchRoomDistribution[]>({
@@ -8,6 +8,13 @@ const rooms = defineModel<SearchRoomDistribution[]>({
 
 const isOpen = ref(false);
 const expandedRooms = ref<number[]>([0]);
+
+// Al abrir el popover, expandir todas las habitaciones existentes
+watch(isOpen, (val) => {
+  if (val) {
+    expandedRooms.value = rooms.value.map((_, i) => i);
+  }
+});
 
 // Summary label for the trigger button
 const summaryLabel = computed(() => {
