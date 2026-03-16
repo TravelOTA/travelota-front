@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import type { ITransaction } from "#shared/types/wallet";
 
 const { transactions } = useWallet();
 
@@ -81,34 +82,36 @@ const getBadgeProps = (type: string) => {
     >
       <template #date-cell="{ row }">
         <span class="text-gray-500 text-sm">{{
-          formatDate(row.original.date)
+          formatDate((row.original as ITransaction).date)
         }}</span>
       </template>
 
       <template #description-cell="{ row }">
         <span class="font-medium text-gray-900 dark:text-white">{{
-          row.original.description
+          (row.original as ITransaction).description
         }}</span>
       </template>
 
       <template #reference-cell="{ row }">
         <span class="font-mono text-xs text-gray-500">{{
-          row.original.reference || "—"
+          (row.original as ITransaction).bookingId || "—"
         }}</span>
       </template>
 
       <template #type-cell="{ row }">
         <UBadge
-          :color="getBadgeProps(row.original.type).color as any"
+          :color="
+            getBadgeProps((row.original as ITransaction).type).color as any
+          "
           variant="subtle"
           size="xs"
           class="font-medium"
         >
           <UIcon
-            :name="getBadgeProps(row.original.type).icon"
+            :name="getBadgeProps((row.original as ITransaction).type).icon"
             class="mr-1 w-3 h-3"
           />
-          {{ getBadgeProps(row.original.type).label }}
+          {{ getBadgeProps((row.original as ITransaction).type).label }}
         </UBadge>
       </template>
 
@@ -117,12 +120,18 @@ const getBadgeProps = (type: string) => {
           class="font-mono font-bold"
           :class="{
             'text-orange-600 dark:text-orange-400':
-              row.original.type === 'charge',
+              (row.original as ITransaction).type === 'charge',
             'text-green-600 dark:text-green-400':
-              row.original.type === 'payment' || row.original.type === 'refund',
+              (row.original as ITransaction).type === 'payment' ||
+              (row.original as ITransaction).type === 'refund',
           }"
         >
-          {{ formatAmount(row.original.amount, row.original.type) }}
+          {{
+            formatAmount(
+              (row.original as ITransaction).amount,
+              (row.original as ITransaction).type,
+            )
+          }}
         </span>
       </template>
 

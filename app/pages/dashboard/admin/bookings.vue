@@ -2,6 +2,21 @@
 import BookingSearchFilters from "~/components/b2b/hotel/checkout/BookingSearchFilters.vue";
 import { useBookings, type SearchFilters } from "~/composables/useBookings";
 
+interface FilterPayload {
+  pnr: string;
+  titular: string;
+  destination: string;
+  statuses: string[];
+  paymentStatuses: string[];
+  createdFrom: string;
+  createdTo: string;
+  checkInFrom: string;
+  checkInTo: string;
+  agency: string;
+  seller: string;
+  [key: string]: string | string[];
+}
+
 definePageMeta({
   layout: "dashboard",
 });
@@ -31,8 +46,8 @@ watch(filteredBookings, () => {
 });
 
 // Filter logic
-const handleSearch = (filters: SearchFilters) => {
-  filteredBookings.value = filterBookings(filters);
+const handleSearch = (filters: FilterPayload) => {
+  filteredBookings.value = filterBookings(filters as unknown as SearchFilters);
   hasSearched.value = true;
 };
 

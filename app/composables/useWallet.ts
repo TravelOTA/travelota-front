@@ -35,6 +35,7 @@ export function useWallet() {
       ? (currentBalance.value / creditLimit.value) * 100
       : 0,
   );
+  const transactions = computed(() => wallet.value?.transactions ?? []);
 
   return {
     wallet,
@@ -44,6 +45,7 @@ export function useWallet() {
     creditLimit,
     currentBalance,
     creditUsagePercentage,
+    transactions,
     fetchWallet,
     hasSufficientCredit,
   };

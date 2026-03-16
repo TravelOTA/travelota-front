@@ -23,19 +23,12 @@ export const useApi = <T>(path: string, options?: UseFetchOptions<T>) => {
   const config = useRuntimeConfig();
   const token = useCookie("travelota-token");
 
-  return useFetch<T>(`${config.public.apiBaseUrl}${path}`, {
+  return useFetch(`${config.public.apiBaseUrl}${path}`, {
     headers: {
       ...(token.value ? { Authorization: `Bearer ${token.value}` } : {}),
     },
-    onResponseError({ response }) {
-      const msg = resolveError({
-        status: response.status,
-        data: response._data,
-      } as FetchError);
-      console.error(`[useApi] ${response.status}: ${msg}`);
-    },
     ...options,
-  });
+  } as Parameters<typeof useFetch>[1]);
 };
 
 /** Imperative wrapper — use in event handlers and composable methods */
@@ -53,5 +46,5 @@ export const apiFetch = <T>(
     ...options,
   }).catch((err: FetchError) => {
     throw new Error(resolveError(err));
-  });
+  }) as Promise<T>;
 };
