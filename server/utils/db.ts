@@ -43,7 +43,10 @@ export async function readWallet(): Promise<IWallet> {
   const stored = await storage.getItem<IWallet>("wallet");
   if (!stored) {
     await storage.setItem("wallet", WALLET_SEED);
-    return WALLET_SEED;
+    return {
+      ...WALLET_SEED,
+      availableCredit: WALLET_SEED.creditLimit - WALLET_SEED.currentBalance,
+    };
   }
   return {
     ...stored,
