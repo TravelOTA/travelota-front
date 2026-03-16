@@ -4,6 +4,12 @@ import { readBookings, writeBookings } from "../../utils/db";
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, "id");
   const body = await readBody(event);
+  if (!body || typeof body.action !== "string") {
+    throw createError({
+      statusCode: 400,
+      message: "Cuerpo de la petición inválido",
+    });
+  }
   const bookings = await readBookings();
   const idx = bookings.findIndex((b) => b.id === id);
 

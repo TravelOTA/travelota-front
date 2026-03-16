@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
 
   if (!parsed.success) {
     throw createError({
-      statusCode: 400,
+      statusCode: 422,
       message: parsed.error.errors.map((e) => e.message).join(", "),
     });
   }
@@ -56,6 +56,20 @@ export default defineEventHandler(async (event) => {
   }
 
   const booking = bookings[idx];
+
+  if (booking.status === "cancelled") {
+    throw createError({
+      statusCode: 409,
+      message: "No se puede pagar una reserva cancelada",
+    });
+  }
+  if (booking.paymentStatus === "paid") {
+    throw createError({
+      statusCode: 409,
+      message: "Esta reserva ya fue pagada",
+    });
+  }
+
   const policy = booking.room.cancellationPolicy;
   const today = todayLocal();
   const transferDeadline = addCalendarDays(3);
@@ -95,7 +109,7 @@ export default defineEventHandler(async (event) => {
         message: "Datos de tarjeta requeridos",
       });
     const [mm, yy] = cardData.expiry.split("/").map(Number);
-    const expDate = new Date(2000 + yy, mm - 1, 1);
+    const expDate = new Date(2000 + yy, mm, 1);
     if (expDate < new Date()) {
       throw createError({
         statusCode: 422,
