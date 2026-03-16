@@ -1,9 +1,11 @@
 import { useState } from "#imports";
+import type { ICancellationPolicy } from "#shared/types/booking";
 
 export interface HotelRoomOffer {
   name: string;
   regimen: string;
-  cancellation: string;
+  cancellation: string; // display label (kept for UI)
+  cancellationPolicy: ICancellationPolicy; // structured data for logic
   price: number;
   onRequest?: boolean;
 }
@@ -51,12 +53,26 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Luxury tropical garden view",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-03-10",
+          penalties: [
+            { from: "2026-03-10", percentage: 50, amount: 1041.33 * 0.5 },
+          ],
+        },
         price: 1041.33,
       },
       {
         name: "Luxury master suite",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-03-10",
+          penalties: [
+            { from: "2026-03-10", percentage: 50, amount: 1228.82 * 0.5 },
+          ],
+        },
         price: 1228.82,
       },
     ],
@@ -74,12 +90,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Suite Premium",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 2454.66 }],
+        },
         price: 2454.66,
       },
       {
         name: "Suite Deluxe",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 2749.2 }],
+        },
         price: 2749.2,
         onRequest: true,
       },
@@ -98,12 +124,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Premium vista tropical",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 1118.76 }],
+        },
         price: 1118.76,
       },
       {
         name: "Premium cerca de la playa",
         regimen: "TI",
         cancellation: "No reembolsable",
+        cancellationPolicy: {
+          refundable: false,
+          penaltyFrom: null,
+          penalties: [{ from: "2026-03-16", percentage: 100, amount: 1171.68 }],
+        },
         price: 1171.68,
         onRequest: true,
       },
@@ -122,12 +158,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Junior Suite",
         regimen: "TI",
         cancellation: "No reembolsable",
+        cancellationPolicy: {
+          refundable: false,
+          penaltyFrom: null,
+          penalties: [{ from: "2026-03-16", percentage: 100, amount: 1350.0 }],
+        },
         price: 1350.0,
       },
       {
         name: "Suite familiar",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 1580.5 }],
+        },
         price: 1580.5,
       },
     ],
@@ -145,12 +191,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Superior",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 985.4 }],
+        },
         price: 985.4,
       },
       {
         name: "Premium",
         regimen: "TI",
         cancellation: "No reembolsable",
+        cancellationPolicy: {
+          refundable: false,
+          penaltyFrom: null,
+          penalties: [{ from: "2026-03-16", percentage: 100, amount: 1120.0 }],
+        },
         price: 1120.0,
       },
     ],
@@ -168,12 +224,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Doble estándar",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 1425.9 }],
+        },
         price: 1425.9,
       },
       {
         name: "Junior Suite",
         regimen: "TI",
         cancellation: "No reembolsable",
+        cancellationPolicy: {
+          refundable: false,
+          penaltyFrom: null,
+          penalties: [{ from: "2026-03-16", percentage: 100, amount: 1650.0 }],
+        },
         price: 1650.0,
       },
     ],
@@ -191,6 +257,11 @@ const MOCK_HOTELS: Hotel[] = [
         name: "The Level Suite",
         regimen: "TI",
         cancellation: "Cancelación gratuita",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 1289.0 }],
+        },
         price: 1289.0,
       },
     ],
@@ -208,12 +279,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Junior Suite Tropical",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 2100.5 }],
+        },
         price: 2100.5,
       },
       {
         name: "Preferred Club Suite",
         regimen: "TI",
         cancellation: "Cancelación gratuita",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 2450.0 }],
+        },
         price: 2450.0,
       },
     ],
@@ -231,12 +312,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Habitación estándar",
         regimen: "SA",
         cancellation: "No reembolsable",
+        cancellationPolicy: {
+          refundable: false,
+          penaltyFrom: null,
+          penalties: [{ from: "2026-03-16", percentage: 100, amount: 420.0 }],
+        },
         price: 420.0,
       },
       {
         name: "Habitación superior",
         regimen: "CP",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 510.75 }],
+        },
         price: 510.75,
       },
     ],
@@ -254,12 +345,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Doble estándar",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 780.25 }],
+        },
         price: 780.25,
       },
       {
         name: "Suite",
         regimen: "TI",
         cancellation: "No reembolsable",
+        cancellationPolicy: {
+          refundable: false,
+          penaltyFrom: null,
+          penalties: [{ from: "2026-03-16", percentage: 100, amount: 920.0 }],
+        },
         price: 920.0,
       },
     ],
@@ -277,12 +378,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Rock Royalty Suite",
         regimen: "TI",
         cancellation: "Cancelación gratuita",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 3200.0 }],
+        },
         price: 3200.0,
       },
       {
         name: "Islander Junior Suite",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 2800.0 }],
+        },
         price: 2800.0,
       },
     ],
@@ -300,6 +411,11 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Elegance Club Suite",
         regimen: "TI",
         cancellation: "No reembolsable",
+        cancellationPolicy: {
+          refundable: false,
+          penaltyFrom: null,
+          penalties: [{ from: "2026-03-16", percentage: 100, amount: 1550.75 }],
+        },
         price: 1550.75,
       },
     ],
@@ -317,6 +433,11 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Superior Junior Suite",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 850.5 }],
+        },
         price: 850.5,
       },
     ],
@@ -334,12 +455,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Monarch Villa",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 4200.0 }],
+        },
         price: 4200.0,
       },
       {
         name: "Castle Suite",
         regimen: "TI",
         cancellation: "Cancelación gratuita",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 3500.0 }],
+        },
         price: 3500.0,
       },
     ],
@@ -357,12 +488,22 @@ const MOCK_HOTELS: Hotel[] = [
         name: "Pad Suite",
         regimen: "TI",
         cancellation: "Gastos de cancelación",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 2100.25 }],
+        },
         price: 2100.25,
       },
       {
         name: "Pineapple Villa",
         regimen: "TI",
         cancellation: "Cancelación gratuita",
+        cancellationPolicy: {
+          refundable: true,
+          penaltyFrom: "2026-04-15",
+          penalties: [{ from: "2026-04-15", percentage: 100, amount: 5500.0 }],
+        },
         price: 5500.0,
       },
     ],
