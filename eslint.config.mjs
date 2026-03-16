@@ -12,5 +12,6 @@ export default withNuxt(eslintPluginPrettierRecommended, {
         endOfLine: "auto",
       },
     ],
+    "vue/no-multiple-template-root": "off",
   },
 });
