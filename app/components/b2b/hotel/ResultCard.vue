@@ -1,16 +1,37 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import type { Hotel } from "~/composables/useHotels";
+import { navigateTo } from "#imports";
+import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
+import { useCheckout } from "~/composables/useCheckout";
+import { useHotelSearch } from "~/composables/useHotelSearch";
 import ResultHotelSummary from "./ResultHotelSummary.vue";
 import ResultRoomList from "./ResultRoomList.vue";
 
-defineProps<{ hotel: Hotel }>();
+const props = defineProps<{ hotel: Hotel }>();
 
 const emit = defineEmits<{
   (e: "open-map", hotel: Record<string, unknown>): void;
 }>();
 
 const isExpanded = ref(true); // Simulate that by default the first 2 are shown expanded
+
+const { selectRoom } = useCheckout();
+const { searchParams } = useHotelSearch();
+
+async function handleReserve(room: HotelRoomOffer) {
+  selectRoom(
+    {
+      id: props.hotel.id,
+      name: props.hotel.name,
+      stars: props.hotel.stars,
+      image: props.hotel.image,
+      address: props.hotel.location,
+    },
+    room,
+    searchParams.value,
+  );
+  await navigateTo("/dashboard/hotels/checkout");
+}
 </script>
 
 <template>
@@ -24,6 +45,7 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
       :rooms="hotel.rooms"
       :hotel="hotel"
       :is-expanded="isExpanded"
+      @reserve="handleReserve"
     />
   </div>
 </template>
