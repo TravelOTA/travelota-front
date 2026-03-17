@@ -15,6 +15,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -41,6 +43,7 @@
   "devDependencies": {
     "@iconify-json/heroicons": "^1.2.3",
     "@nuxt/eslint": "^1.15.1",
+    "@playwright/test": "^1.58.2",
     "@types/leaflet": "^1.9.21",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vitest/coverage-v8": "^4.1.0",
