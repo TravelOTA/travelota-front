@@ -315,7 +315,7 @@ Pre-commit hooks (Husky + lint-staged) run ESLint + Prettier automatically on `*
 
 ### UI Language
 
-All UI strings are currently hardcoded in **Spanish**. i18n is planned for future phases — avoid architectural decisions that would make adding it harder (e.g. deeply nested hardcoded strings in non-extractable positions).
+i18n is a **MVP requirement**. All UI strings must go through the i18n system — do not hardcode text directly in templates or components. Default language is Spanish.
 
 ---
 
