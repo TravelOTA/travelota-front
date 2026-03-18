@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+const { t } = useI18n();
+
 defineProps<{
   bookingStatus: string;
   totalPrice: number;
@@ -67,7 +69,7 @@ const handleCancel = () => {
     <template v-else>
       <!-- Tabla de gastos de cancelación -->
       <div class="mb-4">
-        <span class="text-sm text-gray-600 dark:text-gray-400">Total: </span>
+        <span class="text-sm text-gray-600 dark:text-gray-400">{{ t('hotels.cancellationPolicy.total') }} </span>
         <span class="font-bold text-gray-900 dark:text-white"
           >${{
             totalPrice.toLocaleString("en-US", {
@@ -84,11 +86,11 @@ const handleCancel = () => {
             <tr
               class="border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white"
             >
-              <th class="py-2 pr-4 font-bold">Gastos</th>
-              <th class="py-2 pr-4 font-bold">Desde</th>
-              <th class="py-2 pr-4 font-bold">Hasta</th>
-              <th class="py-2 pr-4 font-bold">Hora</th>
-              <th class="py-2 font-bold">Precio</th>
+              <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.costsHeader') }}</th>
+              <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.fromDate') }}</th>
+              <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.toDate') }}</th>
+              <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.time') }}</th>
+              <th class="py-2 font-bold">{{ t('hotels.cancellationPolicy.price') }}</th>
             </tr>
           </thead>
           <tbody

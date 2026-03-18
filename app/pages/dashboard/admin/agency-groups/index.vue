@@ -2,6 +2,7 @@
 definePageMeta({ layout: "dashboard" });
 useHead({ title: "Grupos de Agencia - TravelOTA Admin" });
 
+const { t } = useI18n();
 const { groups, addGroup, updateGroup, deleteGroup } = useAgencyGroups();
 
 // ── Search & Filter ──
@@ -17,13 +18,13 @@ const filteredGroups = computed(() => {
 });
 
 // ── Columns ──
-const columns = [
-  { accessorKey: "name", header: "Grupo" },
-  { accessorKey: "description", header: "Descripción" },
-  { accessorKey: "baseMarkup", header: "Markup Base" },
-  { accessorKey: "agenciesCount", header: "Agencias Asignadas" },
+const columns = computed(() => [
+  { accessorKey: "name", header: t('admin.agencyGroups.tableHeaders.group') },
+  { accessorKey: "description", header: t('admin.agencyGroups.tableHeaders.description') },
+  { accessorKey: "baseMarkup", header: t('admin.agencyGroups.tableHeaders.baseMarkup') },
+  { accessorKey: "agenciesCount", header: t('admin.agencyGroups.tableHeaders.assignedAgencies') },
   { accessorKey: "actions", header: "" },
-];
+]);
 
 // ── Create Modal ──
 const isCreateOpen = ref(false);
@@ -81,21 +82,19 @@ function handleDelete(id: string) {
           to="/dashboard/admin"
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> Volver al
-          Panel
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('admin.agencyGroups.backToPanel') }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-          Grupos de Agencia
+          {{ t('admin.agencyGroups.title') }}
         </h1>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          Gestiona los grupos para definir esquemas comerciales compartidos
-          (Markup).
+          {{ t('admin.agencyGroups.subtitle') }}
         </p>
       </div>
       <UButton
         icon="i-heroicons-plus"
         color="primary"
-        label="Nuevo Grupo"
+        :label="t('admin.agencyGroups.newGroup')"
         @click="openCreate"
       />
     </div>
@@ -106,7 +105,7 @@ function handleDelete(id: string) {
         <UInput
           v-model="searchQuery"
           icon="i-heroicons-magnifying-glass"
-          placeholder="Buscar grupos..."
+          :placeholder="t('admin.agencyGroups.search')"
           class="w-full sm:w-80"
         />
       </div>
@@ -125,7 +124,7 @@ function handleDelete(id: string) {
         <!-- Description cell -->
         <template #description-cell="{ row }">
           <span class="text-sm text-gray-500">{{
-            row.original.description || "Sin descripción"
+            row.original.description || t('admin.agencyGroups.noDescription')
           }}</span>
         </template>
 
@@ -152,7 +151,7 @@ function handleDelete(id: string) {
         <!-- Actions -->
         <template #actions-cell="{ row }">
           <div class="flex items-center justify-end gap-1 pr-2">
-            <UTooltip text="Editar Grupo">
+            <UTooltip :text="t('admin.agencyGroups.tooltips.edit')">
               <UButton
                 icon="i-heroicons-pencil-square"
                 color="neutral"
@@ -161,7 +160,7 @@ function handleDelete(id: string) {
                 @click="openEdit(row.original)"
               />
             </UTooltip>
-            <UTooltip text="Eliminar Grupo">
+            <UTooltip :text="t('admin.agencyGroups.tooltips.delete')">
               <UButton
                 icon="i-heroicons-trash"
                 color="error"
@@ -179,28 +178,28 @@ function handleDelete(id: string) {
         v-if="filteredGroups.length === 0"
         class="py-16 text-center text-sm text-gray-500"
       >
-        No se encontraron grupos de agencia.
+        {{ t('admin.agencyGroups.noResults') }}
       </div>
     </UCard>
 
     <!-- Create Modal -->
-    <UModal v-model:open="isCreateOpen" title="Nuevo Grupo de Agencia">
+    <UModal v-model:open="isCreateOpen" :title="t('admin.agencyGroups.modals.create.title')">
       <template #body>
         <div class="space-y-4">
-          <UFormField label="Nombre del Grupo" name="name" required>
+          <UFormField :label="t('admin.agencyGroups.modals.create.groupName')" name="name" required>
             <UInput
               v-model="newGroup.name"
-              placeholder="Ej: Mayoristas Latam"
+              :placeholder="t('admin.agencyGroups.modals.create.groupExample')"
               icon="i-heroicons-user-group"
             />
           </UFormField>
-          <UFormField label="Descripción" name="desc">
+          <UFormField :label="t('admin.agencyGroups.modals.create.description')" name="desc">
             <UInput
               v-model="newGroup.description"
-              placeholder="Breve descripción del grupo..."
+              :placeholder="t('admin.agencyGroups.modals.create.descriptionExample')"
             />
           </UFormField>
-          <UFormField label="Markup Base (%)" name="markup" required>
+          <UFormField :label="t('admin.agencyGroups.modals.create.baseMarkup')" name="markup" required>
             <UInput
               v-model="newGroup.baseMarkup"
               type="number"
@@ -217,7 +216,7 @@ function handleDelete(id: string) {
             icon="i-heroicons-information-circle"
             color="info"
             variant="soft"
-            description="Este markup se aplicará a todas las agencias que pertenezcan a este grupo de manera heredada."
+            :description="t('admin.agencyGroups.modals.create.alert')"
           />
         </div>
       </template>
@@ -226,12 +225,12 @@ function handleDelete(id: string) {
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('admin.agencyGroups.modals.create.cancel')"
             @click="isCreateOpen = false"
           />
           <UButton
             color="primary"
-            label="Crear Grupo"
+            :label="t('admin.agencyGroups.modals.create.create')"
             icon="i-heroicons-plus"
             :disabled="!isCreateValid"
             @click="saveGroup"
@@ -241,16 +240,16 @@ function handleDelete(id: string) {
     </UModal>
 
     <!-- Edit Modal -->
-    <UModal v-model:open="isEditOpen" title="Editar Grupo">
+    <UModal v-model:open="isEditOpen" :title="t('admin.agencyGroups.modals.edit.title')">
       <template #body>
         <div v-if="editGroup" class="space-y-4">
-          <UFormField label="Nombre del Grupo" name="edit-name" required>
+          <UFormField :label="t('admin.agencyGroups.modals.edit.groupName')" name="edit-name" required>
             <UInput v-model="editGroup.name" icon="i-heroicons-user-group" />
           </UFormField>
-          <UFormField label="Descripción" name="edit-desc">
+          <UFormField :label="t('admin.agencyGroups.modals.edit.description')" name="edit-desc">
             <UInput v-model="editGroup.description" />
           </UFormField>
-          <UFormField label="Markup Base (%)" name="edit-markup" required>
+          <UFormField :label="t('admin.agencyGroups.modals.edit.baseMarkup')" name="edit-markup" required>
             <UInput
               v-model="editGroup.baseMarkup"
               type="number"
@@ -277,12 +276,12 @@ function handleDelete(id: string) {
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('admin.agencyGroups.modals.edit.cancel')"
             @click="isEditOpen = false"
           />
           <UButton
             color="primary"
-            label="Guardar cambios"
+            :label="t('admin.agencyGroups.modals.edit.save')"
             icon="i-heroicons-check"
             @click="saveEdit"
           />

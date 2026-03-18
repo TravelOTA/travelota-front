@@ -57,25 +57,31 @@ export type ItineraryPayload = z.infer<typeof itinerarySchema>;
 
 // --- Auth schemas ---
 
-export const loginSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
-  rememberMe: z.boolean().optional(),
-});
+type T = (key: string, params?: Record<string, unknown>) => string;
 
-export const registerSchema = z.object({
-  nombreComercial: z.string().min(2, "Nombre comercial requerido"),
-  direccionRegistrada: z.string().min(2, "Dirección registrada requerida"),
-  nif: z.string().min(5, "NIF/CIF inválido"),
-  telefono: z.string().min(9, "Teléfono inválido"),
-  email: z.string().email("Email inválido"),
-  web: z.string().url("URL inválida").optional().or(z.literal("")),
-  pais: z.string().min(1, "Selecciona un país"),
-  nombreContacto: z.string().min(2, "Nombre de contacto requerido"),
-  aceptaPrivacidad: z.boolean().refine((val) => val === true, {
-    message: "Debes aceptar la política de privacidad",
-  }),
-});
+export const createLoginSchema = (t: T) =>
+  z.object({
+    email: z.string().email(t("validation.emailInvalid")),
+    password: z.string().min(6, t("validation.passwordMinLength", { min: 6 })),
+    rememberMe: z.boolean().optional(),
+  });
 
-export type LoginInput = z.infer<typeof loginSchema>;
-export type RegisterInput = z.infer<typeof registerSchema>;
+export const createRegisterSchema = (t: T) =>
+  z.object({
+    nombreComercial: z.string().min(2, t("validation.commercialNameRequired")),
+    direccionRegistrada: z
+      .string()
+      .min(2, t("validation.addressRequired")),
+    nif: z.string().min(5, t("validation.nifInvalid")),
+    telefono: z.string().min(9, t("validation.phoneInvalid")),
+    email: z.string().email(t("validation.emailInvalid")),
+    web: z.string().url(t("validation.urlInvalid")).optional().or(z.literal("")),
+    pais: z.string().min(1, t("validation.countryRequired")),
+    nombreContacto: z.string().min(2, t("validation.contactNameRequired")),
+    aceptaPrivacidad: z.boolean().refine((val) => val === true, {
+      message: t("validation.privacyRequired"),
+    }),
+  });
+
+export type LoginInput = z.infer<ReturnType<typeof createLoginSchema>>;
+export type RegisterInput = z.infer<ReturnType<typeof createRegisterSchema>>;

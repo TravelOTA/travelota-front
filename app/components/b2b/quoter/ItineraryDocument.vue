@@ -5,7 +5,7 @@ import { es } from "date-fns/locale";
 import { useItinerary } from "~/composables/useItinerary";
 import type {
   ItineraryBlock,
-  Room,
+  SearchRoomDistribution,
   ItineraryOption,
 } from "~/composables/useItinerary";
 import { useAgency } from "~/composables/useAgency";
@@ -18,6 +18,7 @@ const {
   minItineraryPrice,
 } = useItinerary();
 const { agency } = useAgency();
+const { t } = useI18n();
 
 const currentDate = computed(() => {
   return format(new Date(), "dd 'de' MMMM, yyyy", { locale: es });
@@ -42,7 +43,7 @@ const formatCurrency = (amount: number) => {
     >
       <div>
         <p class="text-sm font-bold text-gray-500 mb-2">
-          Fecha de Emisión: {{ currentDate }}
+          {{ t("itinerary.documentDateIssued") }}: {{ currentDate }}
         </p>
         <h1 class="text-3xl font-black text-primary-600 mb-4 tracking-tight">
           {{ itinerary.title }}
@@ -50,40 +51,38 @@ const formatCurrency = (amount: number) => {
 
         <!-- Cliente, Pax, Origen -->
         <p class="text-sm text-gray-700 font-medium mb-3">
-          Cliente:
+          {{ t("itinerary.documentClient") }}:
           <span class="font-bold text-gray-900">{{
-            itinerary.clientName || "No Especificado"
+            itinerary.clientName || t("itinerary.documentNotSpecified")
           }}</span>
-          &nbsp;—&nbsp; Pax:
+          &nbsp;—&nbsp; {{ t("itinerary.documentPax") }}:
           <span class="font-bold text-gray-900">{{ totalPax }}</span>
           <template v-if="itinerary.origin">
-            &nbsp;—&nbsp; Origen:
+            &nbsp;—&nbsp; {{ t("itinerary.documentOrigin") }}:
             <span class="font-bold text-gray-900">{{ itinerary.origin }}</span>
           </template>
         </p>
 
         <!-- Enumeración de Habitaciones -->
         <div>
-          <p class="text-sm text-gray-700 font-medium mb-1">Habitaciones:</p>
+          <p class="text-sm text-gray-700 font-medium mb-1">{{ t("itinerary.documentRoomsHeader") }}:</p>
           <ul class="text-sm text-gray-600 space-y-1 pl-1">
             <li
-              v-for="(room, rIdx) in itinerary.rooms as Room[]"
+              v-for="(room, rIdx) in itinerary.rooms as SearchRoomDistribution[]"
               :key="rIdx"
               class="flex items-center gap-2"
             >
               <span class="font-bold text-gray-800"
-                >Habitación {{ rIdx + 1 }}:</span
+                >{{ t("itinerary.documentRoomNumber") }} {{ rIdx + 1 }}:</span
               >
-              <span>{{ room.adults }} Adultos</span>
+              <span>{{ room.adults }} {{ t("itinerary.documentAdults") }}</span>
 
               <template v-if="room.children.length > 0">
                 <span class="text-gray-400">•</span>
                 <span>
-                  {{ room.children.length }} Niño{{
-                    room.children.length > 1 ? "s" : ""
-                  }}
+                  {{ room.children.length }} {{ room.children.length > 1 ? t("itinerary.documentChildrenPlural") : t("itinerary.documentChildren") }}
                   <span class="text-xs text-gray-500">
-                    (Edades:
+                    ({{ t("itinerary.documentChildrenAges") }}:
                     {{ room.children.map((c) => c.age).join(", ") }})
                   </span>
                 </span>
@@ -115,10 +114,7 @@ const formatCurrency = (amount: number) => {
         class="w-5 h-5 text-primary-500 mt-0.5 shrink-0"
       />
       <p class="text-sm text-gray-700 leading-relaxed">
-        Estimado {{ itinerary.clientName || "Cliente" }}, a continuación le
-        presentamos las opciones disponibles para su viaje. Las tarifas están
-        sujetas a disponibilidad y podrían variar. Le sugerimos confirmar su
-        elección a la brevedad.
+        {{ t("itinerary.documentWarning", { clientName: itinerary.clientName || t("itinerary.documentNotSpecified") }) }}
       </p>
     </div>
 
@@ -128,7 +124,7 @@ const formatCurrency = (amount: number) => {
         v-if="itinerary.blocks.length === 0"
         class="text-center text-gray-500 py-10"
       >
-        Este itinerario aún no tiene bloques configurados.
+        {{ t("itinerary.documentNoBlocks") }}
       </div>
 
       <div
@@ -148,7 +144,7 @@ const formatCurrency = (amount: number) => {
               {{ block.title }}
             </h2>
             <p class="text-sm text-gray-500 font-semibold">
-              {{ block.date || "Fechas por confirmar" }}
+              {{ block.date || t("itinerary.documentDatesPending") }}
             </p>
           </div>
         </div>
@@ -159,7 +155,7 @@ const formatCurrency = (amount: number) => {
             v-if="block.options.length === 0"
             class="text-sm text-gray-400 italic"
           >
-            Opciones pendientes por confirmar para este bloque.
+            {{ t("itinerary.documentNoOptions") }}
           </div>
           <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div
@@ -172,7 +168,7 @@ const formatCurrency = (amount: number) => {
                 <div
                   class="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider backdrop-blur-sm"
                 >
-                  Opción {{ oIndex + 1 }}
+                  {{ t("itinerary.documentOptionLabel") }} {{ oIndex + 1 }}
                 </div>
               </div>
               <div class="p-4 flex-1 flex flex-col justify-between bg-white">
@@ -190,7 +186,7 @@ const formatCurrency = (amount: number) => {
                   <p
                     class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-0.5"
                   >
-                    Precio de Venta
+                    {{ t("itinerary.documentSellPrice") }}
                   </p>
                   <p
                     class="text-lg font-black text-primary-600 font-mono tracking-tight"
@@ -213,7 +209,7 @@ const formatCurrency = (amount: number) => {
       <h3
         class="text-xl font-bold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2"
       >
-        Resumen de Cotización por Opción
+        {{ t("itinerary.documentSummaryTitle") }}
       </h3>
       <div class="overflow-hidden border border-gray-200 rounded-lg">
         <table class="min-w-full text-sm text-left">
@@ -222,25 +218,25 @@ const formatCurrency = (amount: number) => {
           >
             <tr>
               <th scope="col" class="px-6 py-3 border-b border-gray-200">
-                Servicio / Opción
+                {{ t("itinerary.documentService") }}
               </th>
               <th
                 scope="col"
                 class="px-6 py-3 border-b border-gray-200 text-right"
               >
-                Precio Adulto
+                {{ t("itinerary.documentAdultPrice") }}
               </th>
               <th
                 scope="col"
                 class="px-6 py-3 border-b border-gray-200 text-right"
               >
-                Precio Niño
+                {{ t("itinerary.documentChildPrice") }}
               </th>
               <th
                 scope="col"
                 class="px-6 py-3 border-b border-gray-200 text-right"
               >
-                Precio Total
+                {{ t("itinerary.documentTotalPrice") }}
               </th>
             </tr>
           </thead>
@@ -258,7 +254,7 @@ const formatCurrency = (amount: number) => {
                 >
                   {{ bIndex + 1 }}. {{ block.title }}
                   <span class="font-normal text-xs text-gray-500 ml-2"
-                    >({{ block.date || "Fechas por definir" }})</span
+                    >({{ block.date || t("itinerary.documentDatesPending") }})</span
                   >
                 </td>
               </tr>
@@ -269,7 +265,7 @@ const formatCurrency = (amount: number) => {
                   colspan="4"
                   class="px-6 py-3 text-gray-400 italic text-center"
                 >
-                  Sin opciones configuradas
+                  {{ t("itinerary.documentNoOptions") }}
                 </td>
               </tr>
               <tr
@@ -280,7 +276,7 @@ const formatCurrency = (amount: number) => {
                 <td class="px-6 py-3">
                   <div class="flex flex-col">
                     <span class="font-semibold text-gray-800"
-                      >Opción {{ oIndex + 1 }}: {{ opt.name }}</span
+                      >{{ t("itinerary.documentOptionLabel") }} {{ oIndex + 1 }}: {{ opt.name }}</span
                     >
                   </div>
                 </td>
@@ -321,7 +317,7 @@ const formatCurrency = (amount: number) => {
         <p
           class="text-sm text-gray-500 font-bold uppercase tracking-widest mb-1"
         >
-          Paquete base estimado desde:
+          {{ t("itinerary.documentMinimumEstimate") }}
         </p>
         <p class="text-4xl font-black text-gray-900 font-mono tracking-tighter">
           {{ formatCurrency(minItineraryPrice) }}
@@ -334,12 +330,10 @@ const formatCurrency = (amount: number) => {
       class="border-t border-gray-200 pt-6 mt-12 text-center text-xs text-gray-400"
     >
       <p class="mb-1">
-        Itinerario interactivo generado para {{ agency.name }}.
+        {{ t("itinerary.documentFooter1") }} {{ agency.name }}.
       </p>
       <p>
-        Los precios cotizados toman como referencia la configuración de
-        habitaciones y ocupantes detallada. Para cualquier cambio, contacte a su
-        agente.
+        {{ t("itinerary.documentFooter2") }}
       </p>
     </div>
   </div>

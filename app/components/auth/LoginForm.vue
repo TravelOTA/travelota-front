@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { loginSchema, type LoginInput } from "~/utils/schemas";
+import { createLoginSchema, type LoginInput } from "~/utils/schemas";
 import { useAuth } from "~/composables/useAuth";
 import type { FormSubmitEvent } from "@nuxt/ui";
+
+const { t } = useI18n();
+const loginSchema = createLoginSchema(t);
 
 const form = reactive<LoginInput>({
   email: "",
@@ -24,7 +27,7 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
       <h2
         class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wider text-center"
       >
-        Login para Agencias
+        {{ t('auth.login.title') }}
       </h2>
     </template>
 
@@ -34,22 +37,22 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
       class="space-y-5"
       @submit="onSubmit"
     >
-      <UFormField label="Usuario" name="email">
+      <UFormField :label="t('auth.login.emailLabel')" name="email">
         <UInput
           v-model="form.email"
-          placeholder="Ingresa tu usuario"
+          :placeholder="t('auth.login.emailPlaceholder')"
           icon="i-lucide-user"
           class="w-full"
           size="xl"
         />
       </UFormField>
 
-      <UFormField label="Contraseña" name="password">
+      <UFormField :label="t('auth.login.passwordLabel')" name="password">
         <template #help>
           <div class="text-right w-full mt-1">
             <NuxtLink
               class="text-xs text-primary-500 hover:text-primary-600 transition-colors"
-              >Recuperar contraseña</NuxtLink
+              >{{ t('auth.login.forgotPassword') }}</NuxtLink
             >
           </div>
         </template>
@@ -76,11 +79,11 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
         >
           <template #label>
             <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">
-              Acepto la
+              {{ t('auth.login.privacyLabel') }}
               <NuxtLink
                 to="/privacy"
                 class="text-[#00A1A1] hover:text-[#008181] underline underline-offset-2 decoration-[#00A1A1]"
-                >política de privacidad</NuxtLink
+                >{{ t('auth.login.privacyLink') }}</NuxtLink
               >
             </span>
           </template>
@@ -94,7 +97,7 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
         size="xl"
         class="mt-6 font-bold tracking-wide uppercase"
       >
-        Entrar
+        {{ t('auth.login.submitButton') }}
       </UButton>
     </UForm>
 
@@ -102,7 +105,7 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
       <p
         class="text-xs text-center text-gray-500 font-bold uppercase tracking-wider mb-4"
       >
-        Simulador de Roles de Prueba
+        {{ t('auth.login.testSimulatorTitle') }}
       </p>
       <div class="grid grid-cols-2 gap-2">
         <UButton
@@ -113,7 +116,7 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
           class="justify-center text-xs"
           @click="loginAs('USER')"
         >
-          Usuario
+          {{ t('auth.login.roleUser') }}
         </UButton>
         <UButton
           color="primary"
@@ -123,7 +126,7 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
           class="justify-center text-xs"
           @click="loginAs('AGENCY_ADMIN')"
         >
-          Admin Agencia
+          {{ t('auth.login.roleAgencyAdmin') }}
         </UButton>
         <UButton
           color="warning"
@@ -133,7 +136,7 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
           class="justify-center text-xs"
           @click="loginAs('SUPPORT')"
         >
-          Soporte
+          {{ t('auth.login.roleSupport') }}
         </UButton>
         <UButton
           color="error"
@@ -143,7 +146,7 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
           class="justify-center text-xs"
           @click="loginAs('SUPER_ADMIN')"
         >
-          Super Admin
+          {{ t('auth.login.roleSuperAdmin') }}
         </UButton>
       </div>
     </div>
@@ -152,11 +155,11 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
       <div
         class="text-center text-sm text-gray-500 dark:text-gray-400 flex flex-col items-center"
       >
-        <span class="mb-1">¿Necesitas una cuenta?</span>
+        <span class="mb-1">{{ t('auth.login.noAccountText') }}</span>
         <NuxtLink
           to="/register"
           class="text-primary-500 hover:underline font-medium"
-          >Regístrate ahora</NuxtLink
+          >{{ t('auth.login.registerLink') }}</NuxtLink
         >
       </div>
     </template>

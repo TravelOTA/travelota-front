@@ -4,6 +4,8 @@ import type { PropType } from "vue";
 import { useItinerary } from "~/composables/useItinerary";
 import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
 
+const { t } = useI18n();
+
 const props = defineProps({
   rooms: {
     type: Array as PropType<HotelRoomOffer[]>,
@@ -89,12 +91,12 @@ const addToItinerary = (room: HotelRoomOffer) => {
           <span
             class="text-xs text-gray-500 underline underline-offset-2 cursor-pointer hover:text-gray-700 block"
           >
-            Gastos de cancelación
+            {{ t('hotels.rooms.cancellationCosts') }}
           </span>
           <template #content>
             <div class="p-3 w-64 text-sm z-50">
               <p class="font-bold text-gray-900 dark:text-white mb-1">
-                Política de Cancelación
+                {{ t('hotels.rooms.cancellationPolicy') }}
               </p>
               <p class="text-gray-600 dark:text-gray-300 text-xs">
                 {{ room.cancellation }}. (Texto de ejemplo, será devuelto por el
@@ -148,7 +150,7 @@ const addToItinerary = (room: HotelRoomOffer) => {
           class="font-bold w-24 justify-center"
           @click="emit('reserve', room)"
         >
-          Reservar
+          {{ t('hotels.rooms.reserve') }}
         </UButton>
       </div>
     </div>
@@ -170,7 +172,7 @@ const addToItinerary = (room: HotelRoomOffer) => {
           "
           class="w-5 h-5 mr-2"
         />
-        {{ showAllRooms ? "Ver menos opciones" : "Ver más opciones" }}
+        {{ showAllRooms ? t('hotels.rooms.seeLessOptions') : t('hotels.rooms.seeMoreOptions') }}
       </button>
     </div>
   </div>

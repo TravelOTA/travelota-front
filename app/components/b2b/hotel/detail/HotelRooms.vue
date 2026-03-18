@@ -2,6 +2,8 @@
 import { ref, computed } from "vue";
 import type { HotelRoomOffer } from "~/composables/useHotels";
 
+const { t } = useI18n();
+
 const props = defineProps<{
   rooms: HotelRoomOffer[];
 }>();
@@ -31,8 +33,8 @@ const addToQuote = (room: HotelRoomOffer) => {
   });
 
   toast.add({
-    title: "Habitación Añadida",
-    description: `La habitación ${room.name} se agregó a la cotización B2B.`,
+    title: t('hotels.rooms.roomAddedTitle'),
+    description: t('hotels.rooms.roomAddedDescription', { roomName: room.name }),
     icon: "i-heroicons-check-circle",
     color: "primary",
   });
@@ -85,12 +87,12 @@ const addToQuote = (room: HotelRoomOffer) => {
             <span
               class="text-xs text-gray-500 underline underline-offset-2 cursor-pointer hover:text-gray-700 block"
             >
-              Gastos de cancelación
+              {{ t('hotels.rooms.cancellationCosts') }}
             </span>
             <template #content>
               <div class="p-3 w-64 text-sm z-50">
                 <p class="font-bold text-gray-900 dark:text-white mb-1">
-                  Política de Cancelación
+                  {{ t('hotels.rooms.cancellationPolicy') }}
                 </p>
                 <p class="text-gray-600 dark:text-gray-300 text-xs">
                   {{ room.cancellation || "Gastos de cancelación" }}. (Texto de
@@ -148,7 +150,7 @@ const addToQuote = (room: HotelRoomOffer) => {
             class="font-bold w-24 justify-center"
             to="/dashboard/hotels/checkout"
           >
-            Reservar
+            {{ t('hotels.rooms.reserve') }}
           </UButton>
         </div>
       </div>
@@ -170,7 +172,7 @@ const addToQuote = (room: HotelRoomOffer) => {
             "
             class="w-5 h-5 mr-2"
           />
-          {{ showAllRooms ? "Ver menos opciones" : "Ver más opciones" }}
+          {{ showAllRooms ? t('hotels.rooms.seeLessOptions') : t('hotels.rooms.seeMoreOptions') }}
         </button>
       </div>
     </div>

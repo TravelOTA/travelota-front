@@ -20,6 +20,8 @@ const {
   addOptionToBlock,
 } = useItinerary();
 
+const { t } = useI18n();
+
 // Local state for modal flow
 const selectedBlockId = ref("");
 const showNewBlockForm = ref(false);
@@ -62,7 +64,7 @@ const handleConfirm = () => {
       if (!newBlockTitle.value) {
         toast.add({
           title: "Error",
-          description: "El título del bloque es requerido.",
+          description: t("itinerary.errorBlockTitleRequired"),
           color: "error",
         });
         return;
@@ -83,7 +85,7 @@ const handleConfirm = () => {
     if (!targetBlockId) {
       toast.add({
         title: "Error",
-        description: "Selecciona un bloque válido.",
+        description: t("itinerary.errorSelectValidBlock"),
         color: "error",
       });
       return;
@@ -92,8 +94,8 @@ const handleConfirm = () => {
     addOptionToBlock(targetBlockId, pendingOption.value);
 
     toast.add({
-      title: "Agregado al Itinerario",
-      description: `La opción ha sido añadida correctamente a tu itinerario.`,
+      title: t("itinerary.toastAddedTitle"),
+      description: t("itinerary.successAddedToItinerary"),
       icon: "i-heroicons-check-circle",
       color: "primary",
     });
@@ -101,7 +103,7 @@ const handleConfirm = () => {
     isAddOptionModalOpen.value = false;
   } catch (err: unknown) {
     const errorMessage =
-      err instanceof Error ? err.message : "No se pudo añadir al itinerario.";
+      err instanceof Error ? err.message : t("itinerary.errorAddingToItinerary");
     toast.add({
       title: "Error al agregar",
       description: errorMessage,
@@ -115,12 +117,12 @@ const handleConfirm = () => {
 <template>
   <UModal
     v-model:open="isAddOptionModalOpen"
-    title="Añadir opción al Itinerario"
+    :title="t('itinerary.addOptionModalTitle')"
   >
     <template #body>
       <div v-if="pendingOption" class="mb-4">
         <p class="text-sm text-gray-500">
-          Vas a añadir:
+          {{ t("itinerary.addOptionIntro") }}:
           <strong class="text-gray-900 dark:text-white">{{
             pendingOption.name
           }}</strong>
@@ -142,7 +144,7 @@ const handleConfirm = () => {
             "
             @click="showNewBlockForm = false"
           >
-            Bloque Existente
+            {{ t("itinerary.existingBlockTab") }}
           </button>
           <button
             class="flex-1 py-1.5 text-sm font-medium rounded-md transition-colors"
@@ -153,18 +155,18 @@ const handleConfirm = () => {
             "
             @click="showNewBlockForm = true"
           >
-            Nuevo Bloque
+            {{ t("itinerary.newBlockTab") }}
           </button>
         </div>
 
         <!-- Add to Existing Block -->
         <div v-if="!showNewBlockForm">
-          <UFormField label="Selecciona el Bloque">
+          <UFormField :label="t('itinerary.selectBlockLabel')">
             <select
               v-model="selectedBlockId"
               class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-select rounded-md font-medium text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
             >
-              <option value="" disabled selected>Escoge de la lista</option>
+              <option value="" disabled selected>{{ t("itinerary.selectBlockPlaceholder") }}</option>
               <option
                 v-for="block in availableBlocks"
                 :key="block.id"
@@ -177,8 +179,7 @@ const handleConfirm = () => {
               v-if="availableBlocks.length === 0"
               class="text-xs text-red-500 mt-2"
             >
-              Todos tus bloques actuales ya tienen el máximo de 5 opciones. Crea
-              un bloque nuevo.
+              {{ t("itinerary.blockMaxOptionsWarning") }}
             </p>
           </UFormField>
         </div>
@@ -188,24 +189,24 @@ const handleConfirm = () => {
           v-if="showNewBlockForm"
           class="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border border-gray-100 dark:border-gray-700"
         >
-          <UFormField label="Tipo de Servicio">
+          <UFormField :label="t('itinerary.serviceTypeLabel')">
             <USelect
               v-model="newBlockType"
               :options="[
-                { label: 'Alojamiento', value: 'hotel' },
-                { label: 'Vuelo', value: 'flight' },
-                { label: 'Traslado', value: 'transfer' },
-                { label: 'Actividad / Tour', value: 'activity' },
+                { label: t('itinerary.serviceTypeAccommodation'), value: 'hotel' },
+                { label: t('itinerary.serviceTypeFlight'), value: 'flight' },
+                { label: t('itinerary.serviceTypeTransfer'), value: 'transfer' },
+                { label: t('itinerary.serviceTypeActivityTour'), value: 'activity' },
               ]"
             />
           </UFormField>
-          <UFormField label="Título del Bloque">
+          <UFormField :label="t('itinerary.blockTitleLabel')">
             <UInput
               v-model="newBlockTitle"
               placeholder="Ej: Noches en Caribe"
             />
           </UFormField>
-          <UFormField label="Fechas de Estancia (Opcional)">
+          <UFormField :label="t('itinerary.stayDatesLabel')">
             <UPopover class="w-full">
               <UButton
                 color="neutral"
@@ -222,7 +223,7 @@ const handleConfirm = () => {
                     {{ formatDate(dateRange.start) }}
                   </template>
                 </template>
-                <template v-else> Fechas del Bloque </template>
+                <template v-else> {{ t("itinerary.stayDatesPlaceholder") }} </template>
               </UButton>
 
               <template #content>
@@ -250,10 +251,10 @@ const handleConfirm = () => {
           color="neutral"
           variant="ghost"
           @click="isAddOptionModalOpen = false"
-          >Cancelar</UButton
+          >{{ t("itinerary.cancelButton") }}</UButton
         >
         <UButton color="primary" @click="handleConfirm">
-          Añadir a Itinerario
+          {{ t("itinerary.addToItineraryButton") }}
         </UButton>
       </div>
     </template>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n();
+
 // Mock data structure expected from parent
 defineProps<{
   checkIn: string;
@@ -22,14 +24,14 @@ defineProps<{
     >
       <div>
         <h3 class="font-bold text-gray-900 dark:text-white text-lg">
-          Detalles de la Reserva
+          {{ t('hotels.checkout.reservationDetails') }}
         </h3>
       </div>
       <div class="flex gap-6 text-sm">
         <div>
           <span
             class="block text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider font-bold"
-            >Entrada</span
+            >{{ t('hotels.checkout.entry') }}</span
           >
           <span class="font-medium text-gray-900 dark:text-white">{{
             checkIn
@@ -38,7 +40,7 @@ defineProps<{
         <div>
           <span
             class="block text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider font-bold"
-            >Salida</span
+            >{{ t('hotels.checkout.exit') }}</span
           >
           <span class="font-medium text-gray-900 dark:text-white">{{
             checkOut
@@ -68,7 +70,7 @@ defineProps<{
 
         <div class="w-full sm:w-auto text-right mt-2 sm:mt-0">
           <span class="block text-xs text-gray-500 dark:text-gray-400 mb-0.5"
-            >Precio por habitación</span
+            >{{ t('hotels.checkout.pricePerRoom') }}</span
           >
           <span
             class="font-bold text-lg text-primary-600 dark:text-primary-400"

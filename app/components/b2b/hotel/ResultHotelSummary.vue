@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useItinerary } from "~/composables/useItinerary";
 
+const { t } = useI18n();
+
 const props = defineProps({
   hotel: {
     type: Object, // REFACTOR: This should be a corresponding hotel type
@@ -67,7 +69,7 @@ const addToItinerary = () => {
         >
           <UIcon name="i-heroicons-map-pin" class="w-4 h-4 mr-1" />
           <span>{{ hotel.location }}</span>
-          <span class="ml-2 underline underline-offset-2">Ver el mapa</span>
+          <span class="ml-2 underline underline-offset-2">{{ t('hotels.results.seeOnMap') }}</span>
         </div>
       </div>
     </div>
@@ -79,7 +81,7 @@ const addToItinerary = () => {
       <p
         class="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1 leading-tight text-right w-full"
       >
-        Mejor Precio<br />Por Estancia
+        {{ t('hotels.results.bestPrice') }}<br />{{ t('hotels.results.perStay') }}
       </p>
       <p
         class="text-3xl font-light text-gray-900 dark:text-white tracking-tight mb-2"
@@ -101,7 +103,7 @@ const addToItinerary = () => {
         size="sm"
         @click.prevent="addToItinerary"
       >
-        Cotizar / Itinerario
+        {{ t('hotels.results.quoteItinerary') }}
       </UButton>
     </div>
   </div>

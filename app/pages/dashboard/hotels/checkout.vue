@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
+
+const { t } = useI18n();
 import { navigateTo } from "#imports";
 import { useRouter } from "vue-router";
 import { useCheckout } from "~/composables/useCheckout";
@@ -90,7 +92,7 @@ const cancellationPolicies = computed(() => {
   if (!policy.refundable) {
     return [
       {
-        status: "Sin reembolso",
+        status: t('hotels.cancellationPolicy.noRefund'),
         fromDate: "-",
         toDate: "-",
         time: "-",

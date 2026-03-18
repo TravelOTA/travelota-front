@@ -9,6 +9,7 @@ defineProps<{
 
 const emit = defineEmits(["update:isOpen"]);
 
+const { t } = useI18n();
 const { itinerary } = useItinerary();
 
 const downloadImage = async () => {
@@ -46,13 +47,13 @@ const downloadImage = async () => {
             @click="emit('update:isOpen', false)"
           />
           <h3 class="text-lg font-bold text-gray-900 dark:text-white">
-            Previsualización de Itinerario
+            {{ t("itinerary.previewModalTitle") }}
           </h3>
         </div>
         <UButton
           color="primary"
           icon="i-heroicons-photo"
-          label="Descargar Itinerario"
+          :label="t('itinerary.previewDownloadButton')"
           @click="downloadImage"
         />
       </div>

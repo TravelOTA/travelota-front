@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import QuoterPreviewModal from "~/components/b2b/quoter/QuoterPreviewModal.vue";
 
 definePageMeta({ layout: "dashboard" });
+
+const { t } = useI18n();
 
 const {
   items,
@@ -22,20 +24,19 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-const tableColumns = [
-  { accessorKey: "hotel", header: "Servicio Seleccionado" },
-  { accessorKey: "netPrice", header: "Precio Neto" },
-  { accessorKey: "markup", header: "Markup / Ganancia" },
-  { accessorKey: "sellPrice", header: "PVP (Venta Final)" },
+const tableColumns = computed(() => [
+  { accessorKey: "hotel", header: t("quoter.tableSelectedService") },
+  { accessorKey: "netPrice", header: t("quoter.tableNetPrice") },
+  { accessorKey: "markup", header: t("quoter.tableMarkup") },
+  { accessorKey: "sellPrice", header: t("quoter.tableSellPrice") },
   { accessorKey: "actions", header: "" },
-];
+]);
 
 const checkoutSelected = () => {
   const toast = useToast();
   toast.add({
-    title: "Reserva Múltiple",
-    description:
-      "La funcionalidad de checkout de cotizaciones completas en lote se encuentra en desarrollo.",
+    title: t("quoter.checkoutToastTitle"),
+    description: t("quoter.checkoutToastDescription"),
     icon: "i-heroicons-information-circle",
     color: "primary",
   });
@@ -61,11 +62,10 @@ const openPreview = () => {
             name="i-heroicons-calculator"
             class="w-8 h-8 text-primary-500"
           />
-          Cotizador B2B
+          {{ t("quoter.title") }}
         </h1>
         <p class="text-gray-500 dark:text-gray-400 mt-1">
-          Arma presupuestos personalizados, ajusta tus márgenes y compártelos
-          fácilmente con tus clientes.
+          {{ t("quoter.description") }}
         </p>
       </div>
 
@@ -75,7 +75,7 @@ const openPreview = () => {
           color="error"
           variant="ghost"
           icon="i-heroicons-trash"
-          label="Vaciar Cotizador"
+          :label="t('quoter.clearQuote')"
           size="sm"
           @click="clearQuote"
         />
@@ -84,7 +84,7 @@ const openPreview = () => {
           color="primary"
           variant="solid"
           icon="i-heroicons-document-magnifying-glass"
-          label="Previsualizar PDF"
+          :label="t('quoter.previewPdf')"
           size="sm"
           @click="openPreview"
         />
@@ -98,18 +98,17 @@ const openPreview = () => {
         class="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4"
       />
       <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-        Tu cotizador está vacío
+        {{ t("quoter.emptyTitle") }}
       </h3>
       <p class="text-gray-500 mb-6 max-w-sm mx-auto">
-        Selecciona "Añadir a Cotización" desde cualquier hotel o habitación en
-        nuestros resultados de búsqueda para empezar a armar tu presupuesto.
+        {{ t("quoter.emptyDescription") }}
       </p>
       <UButton
         color="primary"
         to="/dashboard/hotels/results"
         icon="i-heroicons-magnifying-glass"
       >
-        Buscar Hoteles
+        {{ t("quoter.searchHotels") }}
       </UButton>
     </UCard>
 
@@ -120,10 +119,10 @@ const openPreview = () => {
           <template #header>
             <div class="flex items-center justify-between px-2">
               <h2 class="font-bold text-gray-900 dark:text-white">
-                Servicios en el Presupuesto
+                {{ t("quoter.servicesHeader") }}
               </h2>
               <UBadge color="primary" variant="subtle"
-                >{{ items.length }} items</UBadge
+                >{{ items.length }} {{ t("quoter.itemsBadge") }}</UBadge
               >
             </div>
           </template>
@@ -190,7 +189,7 @@ const openPreview = () => {
         <UCard class="shadow-sm sticky top-6">
           <template #header>
             <h2 class="font-bold text-gray-900 dark:text-white">
-              Resumen de Cotización
+              {{ t("quoter.summaryHeader") }}
             </h2>
           </template>
 
@@ -202,7 +201,7 @@ const openPreview = () => {
               <label
                 class="text-xs font-bold text-primary-700 dark:text-primary-400 block mb-2 uppercase tracking-wide"
               >
-                Markup Global Predeterminado
+                {{ t("quoter.globalMarkupLabel") }}
               </label>
               <div class="flex items-center gap-2">
                 <USlider
@@ -217,8 +216,7 @@ const openPreview = () => {
                 >
               </div>
               <p class="text-[10px] text-gray-500 mt-2 leading-tight">
-                Mueve este slider para ajustar el rendimiento de todos los
-                nuevos ítems de inmediato.
+                {{ t("quoter.globalMarkupHint") }}
               </p>
             </div>
 
@@ -226,7 +224,7 @@ const openPreview = () => {
 
             <!-- Cost Breakdown -->
             <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-500">Costo Neto (Total OTA)</span>
+              <span class="text-gray-500">{{ t("quoter.costNet") }}</span>
               <span class="font-mono text-gray-700 dark:text-gray-300">{{
                 formatCurrency(totalNetPrice)
               }}</span>
@@ -235,7 +233,7 @@ const openPreview = () => {
             <div
               class="flex justify-between items-center text-sm font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/10 p-2 rounded"
             >
-              <span>Tu Ganancia (Markup)</span>
+              <span>{{ t("quoter.profitLabel") }}</span>
               <span class="font-mono">+ {{ formatCurrency(totalProfit) }}</span>
             </div>
 
@@ -245,9 +243,9 @@ const openPreview = () => {
               class="flex justify-between items-end border-t border-gray-100 dark:border-gray-800 pt-4 mt-4"
             >
               <span class="text-gray-900 dark:text-white font-bold"
-                >Precio de Venta<br /><span
+                >{{ t("quoter.sellPriceLabel") }}<br /><span
                   class="text-xs text-gray-500 font-normal"
-                  >PVP al Cliente</span
+                  >{{ t("quoter.sellPriceSublabel") }}</span
                 ></span
               >
               <span
@@ -267,7 +265,7 @@ const openPreview = () => {
                 icon="i-heroicons-credit-card"
                 @click="checkoutSelected"
               >
-                Reservar Todo
+                {{ t("quoter.checkoutButton") }}
               </UButton>
               <UButton
                 block
@@ -276,7 +274,7 @@ const openPreview = () => {
                 class="font-medium"
                 icon="i-heroicons-user-plus"
               >
-                Guardar Cliente
+                {{ t("quoter.saveCustomer") }}
               </UButton>
             </div>
           </template>

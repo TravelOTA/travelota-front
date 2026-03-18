@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n();
+
 interface Hotel {
   id: number;
   name: string;
@@ -165,11 +167,11 @@ const selectedCategories = ref<string[]>([]);
 // Board/regime filters
 const regimes = computed(() => {
   const baseRegimes = [
-    { label: "Solo Alojamiento", value: "SA" },
-    { label: "Alojamiento y Desayuno", value: "CP" },
-    { label: "Media Pensión", value: "MP" },
-    { label: "Pensión Completa", value: "PC" },
-    { label: "Todo Incluido", value: "TI" },
+    { label: t('hotels.results.soleLodging'), value: "SA" },
+    { label: t('hotels.results.lodgingAndBreakfast'), value: "CP" },
+    { label: t('hotels.results.halfBoard'), value: "MP" },
+    { label: t('hotels.results.fullBoard'), value: "PC" },
+    { label: t('hotels.results.allInclusive'), value: "TI" },
   ];
 
   return baseRegimes.map((reg) => {
@@ -228,7 +230,7 @@ watch(
             class="uppercase tracking-wider text-xs font-bold px-4"
             @click="emit('open-map')"
           >
-            Ver hoteles en el mapa
+            {{ t('hotels.results.seeOnMap') }}
           </UButton>
         </div>
       </div>
@@ -243,11 +245,11 @@ watch(
         <label
           class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2"
         >
-          Nombre de Hotel
+          {{ t('hotels.results.hotelNameLabel') }}
         </label>
         <UInput
           v-model="hotelName"
-          placeholder="Nombre de hotel"
+          :placeholder="t('hotels.results.hotelNameLabel')"
           icon="i-heroicons-magnifying-glass"
           size="md"
           class="w-full"
@@ -260,7 +262,7 @@ watch(
         <label
           class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3"
         >
-          Precio total
+          {{ t('hotels.results.priceTotal') }}
         </label>
 
         <!-- Editable Min / Max inputs -->
@@ -271,7 +273,7 @@ watch(
             <label
               class="block text-xs text-primary-600 dark:text-primary-400 font-medium mb-0.5"
             >
-              Mínimo
+              {{ t('hotels.results.minimum') }}
             </label>
             <div class="flex items-center">
               <span class="text-sm font-bold text-gray-900 dark:text-white"
@@ -293,7 +295,7 @@ watch(
             <label
               class="block text-xs text-primary-600 dark:text-primary-400 font-medium mb-0.5"
             >
-              Máximo
+              {{ t('hotels.results.maximum') }}
             </label>
             <div class="flex items-center">
               <span class="text-sm font-bold text-gray-900 dark:text-white"
@@ -367,7 +369,7 @@ watch(
         <label
           class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3"
         >
-          Categoría
+          {{ t('hotels.results.category') }}
         </label>
         <div class="space-y-2">
           <label
@@ -392,7 +394,7 @@ watch(
         <label
           class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3"
         >
-          Régimen
+          {{ t('hotels.results.regime') }}
         </label>
         <div class="space-y-2">
           <label
@@ -419,7 +421,7 @@ watch(
         <label
           class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3"
         >
-          Tarifas
+          {{ t('hotels.results.rates') }}
         </label>
         <div class="space-y-2">
           <label
@@ -430,7 +432,7 @@ watch(
               type="checkbox"
               class="w-4 h-4 rounded border-gray-300 accent-green-600 focus:ring-primary-500"
             />
-            <span>Ocultar Ofertas No Reembolsables</span>
+            <span>{{ t('hotels.results.hideNonRefundable') }}</span>
           </label>
           <label
             class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 dark:text-gray-300"
@@ -440,7 +442,7 @@ watch(
               type="checkbox"
               class="w-4 h-4 rounded border-gray-300 accent-green-600 focus:ring-primary-500"
             />
-            <span>Ocultar Ofertas Bajo Petición</span>
+            <span>{{ t('hotels.results.hideOnRequest') }}</span>
           </label>
         </div>
       </div>

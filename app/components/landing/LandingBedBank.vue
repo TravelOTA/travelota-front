@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Motion } from "motion-v";
+const { t } = useI18n();
 </script>
 
 <template>
@@ -17,7 +18,7 @@ import { Motion } from "motion-v";
           <h2
             class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white uppercase"
           >
-            TravelOTA - Bed Bank
+            {{ t('auth.landing.bedBankTitle') }}
           </h2>
           <div class="w-16 h-1 bg-primary rounded-full"></div>
 
@@ -27,33 +28,29 @@ import { Motion } from "motion-v";
                 name="i-lucide-check-circle-2"
                 class="w-6 h-6 text-primary shrink-0 mt-1"
               />
-              <span
-                >Uno de los bancos de camas líderes del mercado. Ofrecemos la
-                posibilidad de reservar en
-                <strong>más de 500.000 hoteles</strong> de todo el mundo de
-                forma fácil e intuitiva.</span
-              >
+              <span>
+                {{ t('auth.landing.bedBankBullet1Prefix') }}
+                <strong>{{ t('auth.landing.bedBankBullet1Highlight') }}</strong>
+                {{ t('auth.landing.bedBankBullet1Suffix') }}
+              </span>
             </li>
             <li class="flex items-start gap-4">
               <UIcon
                 name="i-lucide-check-circle-2"
                 class="w-6 h-6 text-primary shrink-0 mt-1"
               />
-              <span
-                >Líderes en destinos nacionales e internacionales. Contratación
-                directa de más de <strong>25.000 alojamientos</strong> alrededor
-                del mundo y mucho más a través de asociados.</span
-              >
+              <span>
+                {{ t('auth.landing.bedBankBullet2Prefix') }}
+                <strong>{{ t('auth.landing.bedBankBullet2Highlight') }}</strong>
+                {{ t('auth.landing.bedBankBullet2Suffix') }}
+              </span>
             </li>
             <li class="flex items-start gap-4">
               <UIcon
                 name="i-lucide-check-circle-2"
                 class="w-6 h-6 text-primary shrink-0 mt-1"
               />
-              <span
-                >Además, ofrecemos la contratación de traslados, excursiones y
-                entradas en todo el mundo en un par de clics.</span
-              >
+              <span>{{ t('auth.landing.bedBankBullet3') }}</span>
             </li>
           </ul>
 
@@ -64,7 +61,7 @@ import { Motion } from "motion-v";
               variant="solid"
               class="group shadow-lg shadow-primary/30"
             >
-              Explorar Alojamiento
+              {{ t('auth.landing.bedBankCta') }}
               <template #trailing>
                 <UIcon
                   name="i-lucide-arrow-right"
@@ -90,7 +87,7 @@ import { Motion } from "motion-v";
             <img
               src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2670&auto=format&fit=crop"
               class="rounded-3xl shadow-2xl ring-1 ring-gray-900/10 dark:ring-white/10 relative z-10 object-cover w-full h-full"
-              alt="Bed Bank Hotels"
+              :alt="t('auth.landing.bedBankImageAlt')"
             />
           </div>
         </Motion>

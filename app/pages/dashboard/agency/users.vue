@@ -1,5 +1,6 @@
 <script setup lang="ts">
 useHead({ title: "Equipo de Ventas - TravelOTA" });
+const { t } = useI18n();
 
 interface AgencyUser {
   id: string;
@@ -38,13 +39,13 @@ const users = ref<AgencyUser[]>([
 ]);
 
 // ── Table config ──
-const columns = [
-  { accessorKey: "name", header: "Usuario" },
-  { accessorKey: "role", header: "Rol B2B" },
-  { accessorKey: "status", header: "Estado" },
-  { accessorKey: "lastLogin", header: "Último Acceso" },
+const columns = computed(() => [
+  { accessorKey: "name", header: t('agency.users.tableHeaders.user') },
+  { accessorKey: "role", header: t('agency.users.tableHeaders.role') },
+  { accessorKey: "status", header: t('agency.users.tableHeaders.status') },
+  { accessorKey: "lastLogin", header: t('agency.users.tableHeaders.lastLogin') },
   { id: "actions" },
-];
+]);
 
 const searchQuery = ref("");
 const statusFilter = ref("Todos");
@@ -138,20 +139,19 @@ function toggleUserStatus(user: AgencyUser) {
           to="/dashboard/agency"
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> Volver a Mi
-          Agencia
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('agency.users.backToAgency') }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-          Equipo de Ventas
+          {{ t('agency.users.title') }}
         </h1>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          Gestiona los accesos de tus vendedores a la plataforma TravelOTA.
+          {{ t('agency.users.subtitle') }}
         </p>
       </div>
       <UButton
         icon="i-heroicons-user-plus"
         color="primary"
-        label="Invitar Vendedor"
+        :label="t('agency.users.inviteSeller')"
         @click="openCreateModal"
       />
     </div>
@@ -167,7 +167,7 @@ function toggleUserStatus(user: AgencyUser) {
         <UInput
           v-model="searchQuery"
           icon="i-heroicons-magnifying-glass"
-          placeholder="Buscar por nombre o email..."
+          :placeholder="t('agency.users.search')"
           class="flex-1 max-w-sm"
         />
         <USelectMenu
@@ -183,7 +183,7 @@ function toggleUserStatus(user: AgencyUser) {
         :columns="columns"
         :empty-state="{
           icon: 'i-heroicons-users',
-          label: 'No se encontraron usuarios.',
+          label: t('agency.users.tableEmpty'),
         }"
       >
         <template #name-cell="{ row }">
@@ -211,7 +211,7 @@ function toggleUserStatus(user: AgencyUser) {
               "
               class="mr-1 w-3 h-3"
             />
-            {{ row.original.role }}
+            {{ row.original.role === 'Admin Agencia' ? t('agency.users.roles.adminAgency') : t('agency.users.roles.seller') }}
           </UBadge>
         </template>
 
@@ -230,7 +230,7 @@ function toggleUserStatus(user: AgencyUser) {
               v-else
               class="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1.5"
             ></span>
-            {{ row.original.status }}
+            {{ row.original.status === 'Activo' ? t('agency.users.statuses.active') : t('agency.users.statuses.inactive') }}
           </UBadge>
         </template>
 
@@ -239,8 +239,8 @@ function toggleUserStatus(user: AgencyUser) {
             <UTooltip
               :text="
                 row.original.status === 'Activo'
-                  ? 'Desactivar acceso'
-                  : 'Reactivar acceso'
+                  ? t('agency.users.tooltips.deactivate')
+                  : t('agency.users.tooltips.reactivate')
               "
             >
               <UButton
@@ -255,7 +255,7 @@ function toggleUserStatus(user: AgencyUser) {
                 @click="toggleUserStatus(row.original)"
               />
             </UTooltip>
-            <UTooltip text="Editar usuario">
+            <UTooltip :text="t('agency.users.tooltips.edit')">
               <UButton
                 icon="i-heroicons-pencil-square"
                 size="sm"
@@ -272,49 +272,49 @@ function toggleUserStatus(user: AgencyUser) {
     <!-- Modal Formulario -->
     <UModal
       v-model:open="isUserModalOpen"
-      :title="isEditing ? 'Editar Usuario' : 'Invitar Nuevo Vendedor'"
+      :title="isEditing ? t('agency.users.modal.edit') : t('agency.users.modal.create')"
     >
       <template #body>
         <form class="space-y-4" @submit.prevent="saveUser">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <UFormField
-              label="Nombre Completo"
+              :label="t('agency.users.modal.fullName')"
               name="name"
               required
               class="sm:col-span-2"
             >
               <UInput
                 v-model="formUser.name"
-                placeholder="Ej: Ana Martinez"
+                :placeholder="t('agency.users.modal.fullNameExample')"
                 icon="i-heroicons-user"
               />
             </UFormField>
 
             <UFormField
-              label="Correo Electrónico"
+              :label="t('agency.users.modal.email')"
               name="email"
               required
               class="sm:col-span-2"
-              :error="emailTouched && !emailValid && 'Ingresa un correo válido'"
+              :error="emailTouched && !emailValid && t('agency.users.modal.emailError')"
             >
               <UInput
                 v-model="formUser.email"
                 type="email"
-                placeholder="ana@miagencia.com"
+                :placeholder="t('agency.users.modal.emailExample')"
                 icon="i-heroicons-envelope"
                 @blur="emailTouched = true"
               />
             </UFormField>
 
             <UFormField
-              :label="isEditing ? 'Nueva Contraseña (Opcional)' : 'Contraseña'"
+              :label="isEditing ? t('agency.users.modal.newPassword') : t('agency.users.modal.password')"
               name="password"
               :required="!isEditing"
               class="sm:col-span-2"
               :description="
                 isEditing
-                  ? 'Déjalo en blanco para mantener la contraseña actual.'
-                  : 'Mínimo 8 caracteres.'
+                  ? t('agency.users.modal.passwordHint')
+                  : t('agency.users.modal.passwordRequirement')
               "
             >
               <UInput
@@ -338,14 +338,14 @@ function toggleUserStatus(user: AgencyUser) {
               </UInput>
             </UFormField>
 
-            <UFormField label="Rol en Plataforma" name="role" required>
+            <UFormField :label="t('agency.users.modal.role')" name="role" required>
               <USelectMenu
                 v-model="formUser.role"
                 :items="['Vendedor', 'Admin Agencia']"
               />
             </UFormField>
 
-            <UFormField label="Estado Inicial" name="status">
+            <UFormField :label="t('agency.users.modal.initialStatus')" name="status">
               <USelectMenu
                 v-model="formUser.status"
                 :items="['Activo', 'Inactivo']"
@@ -360,12 +360,12 @@ function toggleUserStatus(user: AgencyUser) {
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('agency.users.modal.cancel')"
             @click="isUserModalOpen = false"
           />
           <UButton
             color="primary"
-            :label="isEditing ? 'Guardar Cambios' : 'Enviar Invitación'"
+            :label="isEditing ? t('agency.users.modal.saveChanges') : t('agency.users.modal.sendInvitation')"
             :disabled="!isFormValid"
             @click="saveUser"
           />

@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "about": "Conócenos",
+    "register": "Registro",
+    "login": "Login",
+    "hotels": "Hoteles",
+    "quoterB2B": "Cotizador B2B",
+    "transfers": "Traslados",
+    "myBookings": "Mis Reservas",
+    "myAgency": "Mi Agencia",
+    "administration": "Administración",
+    "b2bTemplates": "Plantillas B2B",
+    "comingSoon": "Prónto"
+  },
+  "footer": {
+    "contactTitle": "Contacta con Nosotros",
+    "headOffice": "Oficina Central",
+    "scheduleTitle": "Horario de Atención al Cliente",
+    "weekdays": "De Lunes a Viernes",
+    "saturday": "Sábados",
+    "followUs": "Síguenos",
+    "privacyPolicy": "Políticas de privacidad",
+    "termsOfUse": "Aviso legal y condiciones de uso",
+    "rights": "© {year} TRAVELOTA GLOBAL SERVICES."
+  }
+}

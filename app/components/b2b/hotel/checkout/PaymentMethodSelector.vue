@@ -68,6 +68,8 @@ const select = (key: string) => {
 
 const { paymentMethods: baseMethods } = useConfig();
 
+const { t } = useI18n();
+
 const formatPrice = (price: number) => {
   return price.toLocaleString("en-US", {
     minimumFractionDigits: 2,
@@ -123,24 +125,24 @@ const formatPrice = (price: number) => {
                   : 'text-gray-900 dark:text-white'
               "
             >
-              Reservar y no Pagar Ahora
+              {{ t('hotels.checkout.payLater') }}
             </p>
             <p class="text-xs text-gray-500 dark:text-gray-400">
               <template v-if="totalPrice">
-                Importe total:
+                {{ t('hotels.checkout.totalAmount') }}
                 <strong class="text-gray-900 dark:text-white"
                   >${{ formatPrice(totalPrice) }}</strong
                 >.
               </template>
               <template v-if="paymentDeadline">
-                Límite de pago:
+                {{ t('hotels.checkout.paymentDeadline') }}
                 <strong class="text-gray-900 dark:text-white">{{
                   paymentDeadline
                 }}</strong
                 >.
               </template>
               <template v-if="cancellationDeadline">
-                Cancelar sin gastos hasta:
+                {{ t('hotels.checkout.freeCancellationUntil') }}
                 <strong class="text-gray-900 dark:text-white">{{
                   cancellationDeadline
                 }}</strong
@@ -217,7 +219,7 @@ const formatPrice = (price: number) => {
                 variant="soft"
                 size="xs"
                 class="ml-2"
-                >Crédito Insuficiente</UBadge
+                >{{ t('hotels.checkout.insufficientCredit') }}</UBadge
               >
             </p>
             <p class="text-xs text-gray-500 dark:text-gray-400">

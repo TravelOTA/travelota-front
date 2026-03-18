@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+
+const { t } = useI18n();
 import type { ICancellationPolicy } from "#shared/types/booking";
 import type { PaymentMethod } from "#shared/types/payment";
 import { useCheckout } from "~/composables/useCheckout";
@@ -73,7 +75,7 @@ async function submitBooking() {
       class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2"
     >
       <UIcon name="i-heroicons-credit-card" class="w-5 h-5 text-primary-500" />
-      Métodos de Pago
+      {{ t('hotels.checkout.paymentMethods') }}
     </h3>
 
     <!-- Payment Options (shared component with pay-later option) -->
@@ -93,21 +95,21 @@ async function submitBooking() {
       v-if="selectedMethod === 'card'"
       class="mt-4 space-y-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
     >
-      <UFormField label="Número de tarjeta">
+      <UFormField :label="t('hotels.checkout.cardNumber')">
         <UInput
           v-model="cardNumber"
-          placeholder="1234 5678 9012 3456"
+          :placeholder="t('hotels.checkout.cardNumberPlaceholder')"
           maxlength="16"
         />
       </UFormField>
       <div class="grid grid-cols-2 gap-3">
-        <UFormField label="Vencimiento">
-          <UInput v-model="cardExpiry" placeholder="MM/AA" maxlength="5" />
+        <UFormField :label="t('hotels.checkout.expiry')">
+          <UInput v-model="cardExpiry" :placeholder="t('hotels.checkout.expiryPlaceholder')" maxlength="5" />
         </UFormField>
-        <UFormField label="CVV">
+        <UFormField :label="t('hotels.checkout.cvv')">
           <UInput
             v-model="cardCvv"
-            placeholder="123"
+            :placeholder="t('hotels.checkout.cvvPlaceholder')"
             maxlength="4"
             type="password"
           />
@@ -137,11 +139,11 @@ async function submitBooking() {
       <div class="flex flex-col gap-2">
         <UCheckbox
           v-model="acceptConditions"
-          label="He leído y acepto las Condiciones Generales y Gastos de Cancelación"
+          :label="t('hotels.checkout.acceptConditions')"
         />
         <UCheckbox
           v-model="acceptPrivacy"
-          label="He leído y acepto las Políticas de Privacidad"
+          :label="t('hotels.checkout.acceptPrivacy')"
         />
       </div>
     </div>
@@ -164,7 +166,7 @@ async function submitBooking() {
       :disabled="!isBookEnabled || isSubmitting"
       @click="submitBooking"
     >
-      Confirmar Reserva
+      {{ t('hotels.checkout.confirmReservation') }}
     </UButton>
   </div>
 </template>

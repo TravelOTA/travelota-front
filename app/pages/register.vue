@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n();
 const showConfirmation = ref(false);
 
 function onRegistrationSuccess() {
@@ -22,7 +23,7 @@ function onConfirm() {
         <h2
           class="text-[26px] font-normal text-slate-500 dark:text-gray-300 tracking-normal uppercase"
         >
-          Datos Empresa
+          {{ t('auth.register.sectionTitle') }}
         </h2>
       </div>
 
@@ -38,19 +39,18 @@ function onConfirm() {
           class="w-5 h-5 text-success-500"
         />
         <h3 class="font-semibold text-gray-900 dark:text-white">
-          Solicitud recibida
+          {{ t('auth.register.successTitle') }}
         </h3>
       </div>
     </template>
     <template #body>
       <p class="text-sm text-gray-600 dark:text-gray-300">
-        Su solicitud está en revisión, le contactaremos mediante el email
-        proporcionado.
+        {{ t('auth.register.successMessage') }}
       </p>
     </template>
     <template #footer>
       <div class="flex justify-end">
-        <UButton color="primary" label="Entendido" @click="onConfirm" />
+        <UButton color="primary" :label="t('auth.register.successButton')" @click="onConfirm" />
       </div>
     </template>
   </UModal>

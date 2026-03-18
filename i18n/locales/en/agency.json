@@ -1,0 +1,115 @@
+{
+  "dashboard": {
+    "title": "My Agency",
+    "subtitle": "Operational summary and corporate data of your company on TravelOTA.",
+    "quickStats": {
+      "salesTeam": "Sales Team",
+      "manageTeam": "Manage Team",
+      "totalBookings": "Total Bookings",
+      "goToMyBookings": "Go to My Bookings",
+      "benefitsAndMarkup": "Benefits and Markup",
+      "configureMarkup": "Configure Markup",
+      "active": "Active"
+    },
+    "profile": {
+      "corporateProfile": "Corporate Profile",
+      "configureWhiteLabel": "Configure White-Label",
+      "registered": "Registered on",
+      "businessName": "Business Name",
+      "taxId": "Tax ID / RUT",
+      "registeredAddress": "Registered Address",
+      "operatingCountry": "Operating Country",
+      "adminEmail": "Administrator Email",
+      "mainPhone": "Main Phone",
+      "disclaimer": "* To modify the corporate, legal or tax data of your agency, please contact your assigned support at TravelOTA. Branding and logos can be freely edited."
+    },
+    "finance": {
+      "creditAndFinance": "Credit and Finance"
+    },
+    "whiteLabelModal": {
+      "title": "White-Label Configuration",
+      "agencyLogo": "Agency Logo",
+      "logoDescription": "Upload an image to display on the platform and documents.",
+      "primaryColor": "Primary System Color",
+      "primaryColorDescription": "Customize the color of buttons and visual accents for B2B.",
+      "hexCode": "Or use a custom HEX code:",
+      "publicEmail": "Public Contact Email",
+      "publicPhone": "Contact Phone",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes"
+    }
+  },
+  "markup": {
+    "title": "Benefits Model",
+    "subtitle": "Define your profit. The percentage you configure here will be your",
+    "markupAgency": "Agency Markup",
+    "description": "and will be automatically added to the Net Price offered by the system. Your sellers and end customers will only see the final selling price.",
+    "backToAgency": "Back to My Agency",
+    "scheme": "Profit Scheme",
+    "globalPercentage": "Fixed Percentage on all inventory",
+    "dynamicRules": "Dynamic Rules by Destination/Hotel",
+    "markupPercentage": "Your Agency Markup (%)",
+    "saveChanges": "Save Changes",
+    "configuredRules": "Configured Rules",
+    "addRule": "Add Rule",
+    "noRules": "You haven't configured rules yet. The system won't charge additional markup to the net price.",
+    "modalTitle": "New Benefit Rule",
+    "applyRuleTo": "Apply Rule To",
+    "selectDestination": "Select Destination",
+    "hotelName": "Hotel Name",
+    "exampleHotel": "Ex: Hard Rock Hotel",
+    "markupToAdd": "Markup to Add to Net (%)",
+    "saveRule": "Save Rule"
+  },
+  "users": {
+    "title": "Sales Team",
+    "backToAgency": "Back to My Agency",
+    "subtitle": "Manage your sellers' access to the TravelOTA platform.",
+    "inviteSeller": "Invite Seller",
+    "search": "Search by name or email...",
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "tableHeaders": {
+      "user": "User",
+      "role": "B2B Role",
+      "status": "Status",
+      "lastLogin": "Last Login"
+    },
+    "tableEmpty": "No users found.",
+    "roles": {
+      "seller": "Seller",
+      "adminAgency": "Agency Admin"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "never": "Never"
+    },
+    "tooltips": {
+      "deactivate": "Deactivate access",
+      "reactivate": "Reactivate access",
+      "edit": "Edit user"
+    },
+    "modal": {
+      "create": "Invite New Seller",
+      "edit": "Edit User",
+      "fullName": "Full Name",
+      "fullNameExample": "Ex: Ana Martinez",
+      "email": "Email Address",
+      "emailExample": "ana{'@'}myagency.com",
+      "password": "Password",
+      "newPassword": "New Password (Optional)",
+      "passwordRequirement": "Minimum 8 characters.",
+      "passwordHint": "Leave blank to keep current password.",
+      "role": "Platform Role",
+      "initialStatus": "Initial Status",
+      "cancel": "Cancel",
+      "sendInvitation": "Send Invitation",
+      "saveChanges": "Save Changes",
+      "emailError": "Enter a valid email"
+    }
+  }
+}

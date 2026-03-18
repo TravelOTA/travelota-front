@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n();
+
 const hotelComments = ref(
   "Estimado cliente, las habitaciones estándar están sujetas a disponibilidad y asignadas al momento del Check-in. No se garantizan peticiones especiales previas a la llegada.",
 );
@@ -12,7 +14,7 @@ const userComments = ref("");
     <!-- Comentarios del hotel -->
     <div>
       <h3 class="font-bold text-gray-900 dark:text-white mb-2 text-sm">
-        Comentarios del hotel
+        {{ t('hotels.checkout.hotelComments') }}
       </h3>
       <div
         class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-md border border-gray-100 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-300"
@@ -24,17 +26,16 @@ const userComments = ref("");
     <!-- Observaciones del cliente -->
     <div>
       <h3 class="font-bold text-gray-900 dark:text-white mb-2 text-sm">
-        Observaciones al hotel (opcional)
+        {{ t('hotels.checkout.customerObservations') }}
       </h3>
       <UTextarea
         v-model="userComments"
-        placeholder="Indique si requiere camas separadas, cuna, o alguna observación especial..."
+        :placeholder="t('hotels.checkout.observationsInputPlaceholder')"
         :rows="3"
         class="w-full"
       />
       <p class="text-xs text-gray-500 mt-1">
-        Estas peticiones no están garantizadas y podrían incurrir en gastos
-        adicionales en destino.
+        {{ t('hotels.checkout.observationsNoteAdditional') }}
       </p>
     </div>
   </div>

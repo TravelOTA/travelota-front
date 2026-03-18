@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+const { t } = useI18n();
+
 const props = defineProps<{
   hotel: {
     name: string;
@@ -72,7 +74,7 @@ const nights = computed(() => {
         <div>
           <span
             class="block text-xs text-gray-500 uppercase font-bold tracking-wider mb-0.5"
-            >Check-in</span
+            >{{ t('hotels.detail.checkIn') }}</span
           >
           <span class="font-medium text-gray-900 dark:text-gray-100">{{
             reservation.checkIn
@@ -81,7 +83,7 @@ const nights = computed(() => {
         <div>
           <span
             class="block text-xs text-gray-500 uppercase font-bold tracking-wider mb-0.5"
-            >Check-out</span
+            >{{ t('hotels.detail.checkOut') }}</span
           >
           <span class="font-medium text-gray-900 dark:text-gray-100">{{
             reservation.checkOut
@@ -90,7 +92,7 @@ const nights = computed(() => {
         <div
           class="col-span-2 bg-gray-50 dark:bg-gray-800/50 rounded p-2 text-center text-xs font-bold text-gray-600 dark:text-gray-400"
         >
-          {{ nights }} Noches
+          {{ nights }} {{ t('hotels.detail.nights') }}
         </div>
       </div>
 
@@ -99,7 +101,7 @@ const nights = computed(() => {
       <!-- Room Breakdown -->
       <div class="flex flex-col gap-3">
         <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest">
-          Habitaciones Seleccionadas
+          {{ t('hotels.detail.selectedRooms') }}
         </h4>
         <div
           v-for="(room, index) in reservation.rooms"
@@ -132,7 +134,7 @@ const nights = computed(() => {
       <!-- Total -->
       <div class="flex flex-col items-end gap-1 pt-1">
         <span class="text-sm font-bold text-gray-500 uppercase tracking-wider"
-          >Total de la reserva</span
+          >{{ t('hotels.detail.totalReservation') }}</span
         >
         <span
           class="text-3xl font-black text-primary-600 dark:text-primary-400"
@@ -147,7 +149,7 @@ const nights = computed(() => {
         <span
           class="text-[10px] text-gray-400 font-medium text-right leading-tight mt-1"
         >
-          * Los precios son mostrados en USD ($)
+          {{ t('hotels.detail.pricesInUsd') }}
         </span>
       </div>
     </div>

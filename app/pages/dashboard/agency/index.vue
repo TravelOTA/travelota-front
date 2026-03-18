@@ -3,6 +3,7 @@ import WalletWidgets from "~/components/b2b/finance/WalletWidgets.vue";
 import AgencyTransactions from "~/components/b2b/finance/AgencyTransactions.vue";
 
 definePageMeta({ layout: "dashboard" });
+const { t } = useI18n();
 const appConfig = useAppConfig();
 const { agency, updateAgency } = useAgency();
 
@@ -63,10 +64,10 @@ function saveAgency() {
   <div class="max-w-6xl mx-auto pb-16">
     <div class="mb-8">
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-        Mi Agencia
+        {{ t('agency.dashboard.title') }}
       </h1>
       <p class="text-sm text-gray-500 dark:text-gray-400">
-        Resumen operativo y datos corporativos de tu empresa en TravelOTA.
+        {{ t('agency.dashboard.subtitle') }}
       </p>
     </div>
 
@@ -81,7 +82,7 @@ function saveAgency() {
           </div>
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              Equipo de Ventas
+              {{ t('agency.dashboard.quickStats.salesTeam') }}
             </p>
             <p class="text-2xl font-bold">{{ agency.usersCount }}</p>
           </div>
@@ -91,7 +92,7 @@ function saveAgency() {
             to="/dashboard/agency/users"
             class="text-primary-500 hover:text-primary-600 text-sm font-medium flex items-center gap-1"
           >
-            Gestionar Equipo
+            {{ t('agency.dashboard.quickStats.manageTeam') }}
             <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </NuxtLink>
         </template>
@@ -106,7 +107,7 @@ function saveAgency() {
           </div>
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              Reservas Totales
+              {{ t('agency.dashboard.quickStats.totalBookings') }}
             </p>
             <p class="text-2xl font-bold">{{ agency.bookingsCount }}</p>
           </div>
@@ -116,7 +117,7 @@ function saveAgency() {
             to="/dashboard/bookings"
             class="text-primary-500 hover:text-primary-600 text-sm font-medium flex items-center gap-1"
           >
-            Ir a Mis Reservas
+            {{ t('agency.dashboard.quickStats.goToMyBookings') }}
             <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </NuxtLink>
         </template>
@@ -131,9 +132,9 @@ function saveAgency() {
           </div>
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              Beneficios y Markup
+              {{ t('agency.dashboard.quickStats.benefitsAndMarkup') }}
             </p>
-            <p class="text-2xl font-bold">Activo</p>
+            <p class="text-2xl font-bold">{{ t('agency.dashboard.quickStats.active') }}</p>
           </div>
         </div>
         <template #footer>
@@ -141,7 +142,7 @@ function saveAgency() {
             to="/dashboard/agency/markup"
             class="text-primary-500 hover:text-primary-600 text-sm font-medium flex items-center gap-1"
           >
-            Configurar Markup
+            {{ t('agency.dashboard.quickStats.configureMarkup') }}
             <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </NuxtLink>
         </template>
@@ -158,14 +159,14 @@ function saveAgency() {
               class="w-5 h-5 text-gray-500"
             />
             <h2 class="text-lg font-bold text-gray-900 dark:text-white">
-              Perfil Corporativo
+              {{ t('agency.dashboard.profile.corporateProfile') }}
             </h2>
           </div>
           <UButton
             color="primary"
             variant="ghost"
             icon="i-heroicons-pencil-square"
-            label="Configurar White-Label"
+            :label="t('agency.dashboard.profile.configureWhiteLabel')"
             @click="openEditModal"
           />
         </div>
@@ -188,7 +189,7 @@ function saveAgency() {
             {{ agency.status }}
           </UBadge>
           <p class="text-xs text-gray-500 mt-2 text-center">
-            Registrada el {{ agency.registeredAt }}
+            {{ t('agency.dashboard.profile.registered') }} {{ agency.registeredAt }}
           </p>
         </div>
 
@@ -196,7 +197,7 @@ function saveAgency() {
         <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              Nombre Comercial
+              {{ t('agency.dashboard.profile.businessName') }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.name }}
@@ -204,7 +205,7 @@ function saveAgency() {
           </div>
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              DNI / RUT Fiscal
+              {{ t('agency.dashboard.profile.taxId') }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.rut }}
@@ -212,7 +213,7 @@ function saveAgency() {
           </div>
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              Dirección Registrada
+              {{ t('agency.dashboard.profile.registeredAddress') }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.address }}
@@ -220,7 +221,7 @@ function saveAgency() {
           </div>
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              País Operativo
+              {{ t('agency.dashboard.profile.operatingCountry') }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.country }}
@@ -228,7 +229,7 @@ function saveAgency() {
           </div>
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              Correo Administrador
+              {{ t('agency.dashboard.profile.adminEmail') }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.email }}
@@ -236,7 +237,7 @@ function saveAgency() {
           </div>
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              Teléfono Principal
+              {{ t('agency.dashboard.profile.mainPhone') }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.phone }}
@@ -248,9 +249,7 @@ function saveAgency() {
       <!-- Support Footer Note -->
       <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800">
         <p class="text-sm text-gray-500">
-          * Para modificar los datos corporativos, legales o fiscales de tu
-          agencia, por favor contacta con tu soporte asignado en TravelOTA. El
-          branding y logos pueden editarse libremente.
+          {{ t('agency.dashboard.profile.disclaimer') }}
         </p>
       </div>
     </UCard>
@@ -258,7 +257,7 @@ function saveAgency() {
     <!-- Wallet Finances -->
     <div class="mt-8 mb-6">
       <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
-        Crédito y Finanzas
+        {{ t('agency.dashboard.finance.creditAndFinance') }}
       </h2>
       <WalletWidgets />
     </div>
@@ -269,13 +268,13 @@ function saveAgency() {
     </div>
 
     <!-- Modal Formulario de Branding -->
-    <UModal v-model:open="isEditModalOpen" title="Configuración White-Label">
+    <UModal v-model:open="isEditModalOpen" :title="t('agency.dashboard.whiteLabelModal.title')">
       <template #body>
         <div class="space-y-4">
           <UFormField
-            label="Logo de la Agencia"
+            :label="t('agency.dashboard.whiteLabelModal.agencyLogo')"
             name="logo"
-            description="Sube una imagen para mostrar en la plataforma y documentos."
+            :description="t('agency.dashboard.whiteLabelModal.logoDescription')"
           >
             <div class="flex items-center gap-4 mt-1">
               <UAvatar
@@ -295,9 +294,9 @@ function saveAgency() {
           </UFormField>
 
           <UFormField
-            label="Color Principal del Sistema"
+            :label="t('agency.dashboard.whiteLabelModal.primaryColor')"
             name="primaryColor"
-            description="Personaliza el color de botones y acentos visuales B2B."
+            :description="t('agency.dashboard.whiteLabelModal.primaryColorDescription')"
           >
             <div class="flex flex-col gap-4 mt-2">
               <div class="flex flex-wrap gap-2">
@@ -318,7 +317,7 @@ function saveAgency() {
               </div>
               <div class="flex items-center gap-3">
                 <div class="text-sm text-gray-500 font-medium">
-                  O usa un código HEX personalizado:
+                  {{ t('agency.dashboard.whiteLabelModal.hexCode') }}
                 </div>
                 <div class="flex items-center gap-2">
                   <input
@@ -336,7 +335,7 @@ function saveAgency() {
             </div>
           </UFormField>
 
-          <UFormField label="Correo de Contacto Público" name="email">
+          <UFormField :label="t('agency.dashboard.whiteLabelModal.publicEmail')" name="email">
             <UInput
               v-model="formAgency.email"
               type="email"
@@ -344,7 +343,7 @@ function saveAgency() {
             />
           </UFormField>
 
-          <UFormField label="Teléfono de Contacto" name="phone">
+          <UFormField :label="t('agency.dashboard.whiteLabelModal.publicPhone')" name="phone">
             <UInput v-model="formAgency.phone" icon="i-heroicons-phone" />
           </UFormField>
         </div>
@@ -354,12 +353,12 @@ function saveAgency() {
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('agency.dashboard.whiteLabelModal.cancel')"
             @click="isEditModalOpen = false"
           />
           <UButton
             color="primary"
-            label="Guardar Cambios"
+            :label="t('agency.dashboard.whiteLabelModal.saveChanges')"
             @click="saveAgency"
           />
         </div>

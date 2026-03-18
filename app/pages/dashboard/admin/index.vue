@@ -9,6 +9,7 @@ useHead({
   title: "Portal de Administración - TravelOTA",
 });
 
+const { t } = useI18n();
 const { adminStats } = useStats();
 
 const fmtCurrency = (v: number) =>
@@ -26,10 +27,10 @@ const fmtCurrency = (v: number) =>
       <UIcon name="i-heroicons-shield-check" class="w-8 h-8 text-primary" />
       <div>
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-          Administrador del Sistema
+          {{ t('admin.dashboard.title') }}
         </h1>
         <p class="text-gray-500 dark:text-gray-400">
-          Visión global e indicadores de rendimiento de TravelOTA B2B.
+          {{ t('admin.dashboard.subtitle') }}
         </p>
       </div>
     </div>
@@ -45,7 +46,7 @@ const fmtCurrency = (v: number) =>
           </div>
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              Agencias Activas
+              {{ t('admin.dashboard.stats.activeAgencies') }}
             </p>
             <p class="text-2xl font-bold">{{ adminStats.activeAgencies }}</p>
           </div>
@@ -61,7 +62,7 @@ const fmtCurrency = (v: number) =>
           </div>
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              Reservas del Mes
+              {{ t('admin.dashboard.stats.monthlyBookings') }}
             </p>
             <p class="text-2xl font-bold">{{ adminStats.totalBookings }}</p>
           </div>
@@ -77,7 +78,7 @@ const fmtCurrency = (v: number) =>
           </div>
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              Volumen Neto
+              {{ t('admin.dashboard.stats.netVolume') }}
             </p>
             <p class="text-2xl font-bold">
               {{ fmtCurrency(adminStats.totalNetVolume) }}
@@ -95,7 +96,7 @@ const fmtCurrency = (v: number) =>
           </div>
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              Agentes de Soporte
+              {{ t('admin.dashboard.stats.supportAgents') }}
             </p>
             <p class="text-2xl font-bold">{{ adminStats.totalSupportUsers }}</p>
           </div>
@@ -105,7 +106,7 @@ const fmtCurrency = (v: number) =>
 
     <!-- Accesos Rápidos Admin -->
     <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
-      Gestor de Plataforma
+      {{ t('admin.dashboard.platformManager') }}
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <UCard
@@ -118,17 +119,16 @@ const fmtCurrency = (v: number) =>
           >
             <UIcon name="i-heroicons-building-storefront" class="w-6 h-6" />
           </div>
-          <h3 class="font-bold text-lg mb-1">Empresas (Agencias B2B)</h3>
+          <h3 class="font-bold text-lg mb-1">{{ t('admin.dashboard.agencies.title') }}</h3>
           <p class="text-sm text-gray-500">
-            Aprobar registros, listar agencias activas y gestionar sus MarkUps
-            Base.
+            {{ t('admin.dashboard.agencies.description') }}
           </p>
         </div>
         <template #footer>
           <div
             class="flex items-center justify-between text-primary text-sm font-semibold"
           >
-            Gestionar Agencias
+            {{ t('admin.dashboard.agencies.manage') }}
             <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </div>
         </template>
@@ -144,17 +144,16 @@ const fmtCurrency = (v: number) =>
           >
             <UIcon name="i-heroicons-user-group" class="w-6 h-6" />
           </div>
-          <h3 class="font-bold text-lg mb-1">Usuarios de Soporte</h3>
+          <h3 class="font-bold text-lg mb-1">{{ t('admin.dashboard.supportUsers.title') }}</h3>
           <p class="text-sm text-gray-500">
-            Crear agentes TravelOTA con vista NETA y acceso a todas las
-            reservas.
+            {{ t('admin.dashboard.supportUsers.description') }}
           </p>
         </div>
         <template #footer>
           <div
             class="flex items-center justify-between text-primary text-sm font-semibold"
           >
-            Gestionar Soporte
+            {{ t('admin.dashboard.supportUsers.manage') }}
             <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </div>
         </template>
@@ -170,17 +169,16 @@ const fmtCurrency = (v: number) =>
           >
             <UIcon name="i-heroicons-briefcase" class="w-6 h-6" />
           </div>
-          <h3 class="font-bold text-lg mb-1">Todas las Reservas</h3>
+          <h3 class="font-bold text-lg mb-1">{{ t('admin.dashboard.allBookings.title') }}</h3>
           <p class="text-sm text-gray-500">
-            Monitor multiproveedor de operaciones cerradas y cancelaciones a
-            nivel global.
+            {{ t('admin.dashboard.allBookings.description') }}
           </p>
         </div>
         <template #footer>
           <div
             class="flex items-center justify-between text-primary text-sm font-semibold"
           >
-            Ver todas <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
+            {{ t('admin.dashboard.allBookings.manage') }} <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </div>
         </template>
       </UCard>
@@ -194,17 +192,16 @@ const fmtCurrency = (v: number) =>
           >
             <UIcon name="i-heroicons-user-group" class="w-6 h-6" />
           </div>
-          <h3 class="font-bold text-lg mb-1">Grupos de Agencia</h3>
+          <h3 class="font-bold text-lg mb-1">{{ t('admin.dashboard.agencyGroups.title') }}</h3>
           <p class="text-sm text-gray-500">
-            Define conjuntos de reglas comerciales compartidas (Markup Base,
-            condiciones) para las distintas agencias.
+            {{ t('admin.dashboard.agencyGroups.description') }}
           </p>
         </div>
         <template #footer>
           <div
             class="flex items-center justify-between text-primary text-sm font-semibold"
           >
-            Gestionar Grupos
+            {{ t('admin.dashboard.agencyGroups.manage') }}
             <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </div>
         </template>

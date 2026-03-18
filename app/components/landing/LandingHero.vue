@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Motion } from "motion-v";
+const { t } = useI18n();
 </script>
 
 <template>
@@ -8,7 +9,7 @@ import { Motion } from "motion-v";
       <img
         src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2674&auto=format&fit=crop"
         class="w-full h-full object-cover opacity-60 mix-blend-overlay"
-        alt="Viajes"
+        :alt="t('auth.landing.heroImageAlt')"
       />
       <div
         class="absolute inset-0 bg-gradient-to-r from-gray-900/90 to-gray-900/40"
@@ -28,9 +29,9 @@ import { Motion } from "motion-v";
           <h1
             class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl drop-shadow-md uppercase"
           >
-            <span class="block">Somos tu</span>
-            <span class="block text-primary-400">Mayorista</span>
-            <span class="block">De Viajes</span>
+            <span class="block">{{ t('auth.landing.heroLine1') }}</span>
+            <span class="block text-primary-400">{{ t('auth.landing.heroLine2') }}</span>
+            <span class="block">{{ t('auth.landing.heroLine3') }}</span>
           </h1>
           <div
             class="mt-4 w-16 h-1 bg-primary mx-auto lg:mx-0 rounded-full"
@@ -38,7 +39,7 @@ import { Motion } from "motion-v";
           <p
             class="mt-6 text-xl text-gray-200 font-medium drop-shadow max-w-3xl mx-auto lg:mx-0"
           >
-            Operador turístico líder para Agencias de Viaje
+            {{ t('auth.landing.heroSubtitle') }}
           </p>
         </Motion>
 

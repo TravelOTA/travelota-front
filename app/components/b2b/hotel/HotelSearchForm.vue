@@ -4,6 +4,8 @@ import type { SearchRoomDistribution } from "~/composables/useItinerary";
 import { useConfig } from "~/composables/useConfig";
 import { formatCalendarDate } from "~/utils/formatDate";
 
+const { t } = useI18n();
+
 interface InitialSearchData {
   destination?: string;
   checkIn?: string;
@@ -106,12 +108,12 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
           <span
             class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
           >
-            Destino
+            {{ t('hotels.search.destination') }}
           </span>
           <USelectMenu
             v-model="form.destination"
             :items="destinationOptions"
-            placeholder="¿A dónde vas?"
+            :placeholder="t('hotels.search.destinationPlaceholder')"
             searchable
             class="w-full"
             variant="none"
@@ -142,7 +144,7 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
               <span
                 class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
               >
-                Fechas
+                {{ t('hotels.search.dates') }}
               </span>
               <span
                 class="text-sm font-medium text-gray-900 dark:text-gray-50 truncate"
@@ -187,7 +189,7 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
                 <span
                   class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
                 >
-                  Distribución
+                  {{ t('hotels.search.distribution') }}
                 </span>
                 <span
                   class="text-sm font-medium text-gray-900 dark:text-gray-50 truncate"
@@ -219,7 +221,7 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
           <span
             class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
           >
-            Nacionalidad
+            {{ t('hotels.search.nationality') }}
           </span>
           <USelectMenu
             v-model="form.nationality"
@@ -248,7 +250,7 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
           class="w-full md:w-[110px] h-full flex items-center justify-center gap-2 rounded-none rounded-b-2xl md:rounded-bl-none md:rounded-r-2xl bg-green-700 hover:bg-green-800 text-white font-bold px-5 py-3"
         >
           <UIcon name="i-heroicons-magnifying-glass-solid" class="w-5 h-5" />
-          <span>Buscar</span>
+          <span>{{ t('hotels.search.searchButton') }}</span>
         </UButton>
       </div>
     </form>

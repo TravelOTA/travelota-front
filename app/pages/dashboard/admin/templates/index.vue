@@ -5,6 +5,7 @@ import { useItinerary, type Itinerary } from "~/composables/useItinerary";
 
 definePageMeta({ layout: "dashboard" });
 
+const { t } = useI18n();
 const router = useRouter();
 const { itinerary, clearItinerary } = useItinerary();
 const toast = useToast();
@@ -103,9 +104,8 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
   );
 
   toast.add({
-    title: "Plantilla Cargada",
-    description:
-      "La plantilla fue inyectada en tu Constructor de Itinerarios. Dirígete allí para editarla.",
+    title: t('admin.templates.toastMessage.title'),
+    description: t('admin.templates.toastMessage.description'),
     color: "primary",
     icon: "i-heroicons-check-circle",
   });
@@ -131,13 +131,11 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
           variant="solid"
           class="mb-4 text-primary-900 font-bold uppercase tracking-wider"
         >
-          Panel de Administración
+          {{ t('admin.templates.panelAdmin') }}
         </UBadge>
-        <h1 class="text-3xl font-black mb-2">Plantillas de Itinerarios B2B</h1>
+        <h1 class="text-3xl font-black mb-2">{{ t('admin.templates.title') }}</h1>
         <p class="text-primary-200 max-w-2xl text-lg mb-6">
-          Gestiona los "Itinerarios Promocionales" base. Estas plantillas
-          aparecerán en la plataforma de las agencias de viajes para que puedan
-          clonarlas y ajustarlas a sus clientes con un solo clic.
+          {{ t('admin.templates.subtitle') }}
         </p>
 
         <UButton
@@ -146,7 +144,7 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
           size="lg"
           icon="i-heroicons-plus"
         >
-          Crear Nueva Plantilla
+          {{ t('admin.templates.createTemplate') }}
         </UButton>
       </div>
     </div>
@@ -154,13 +152,13 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
     <!-- Template Directory -->
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-xl font-bold text-gray-900 dark:text-white">
-        Directorio de Plantillas Activas
+        {{ t('admin.templates.directory') }}
       </h2>
       <div class="w-64">
         <UInput
           v-model="search"
           icon="i-heroicons-magnifying-glass"
-          placeholder="Buscar por título..."
+          :placeholder="t('admin.templates.searchPlaceholder')"
         />
       </div>
     </div>
@@ -172,12 +170,12 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
         class="flex flex-col h-full hover:border-primary-500 transition-colors"
       >
         <div class="flex justify-between items-start mb-4">
-          <UBadge color="neutral" variant="soft">{{ tpl.id }}</UBadge>
+          <UBadge color="neutral" variant="soft">{{ t('admin.templates.ref') }} {{ tpl.id }}</UBadge>
           <UDropdown
             :items="[
               [
-                { label: 'Editar Plantilla', icon: 'i-heroicons-pencil' },
-                { label: 'Desactivar', icon: 'i-heroicons-archive-box' },
+                { label: t('admin.templates.dropdownMenu.edit'), icon: 'i-heroicons-pencil' },
+                { label: t('admin.templates.dropdownMenu.deactivate'), icon: 'i-heroicons-archive-box' },
               ],
             ]"
           >
@@ -198,12 +196,12 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
         <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
           <span class="flex items-center gap-1"
             ><UIcon name="i-heroicons-squares-2x2" class="w-4 h-4" />
-            {{ tpl.blocks.length }} Bloques</span
+            {{ tpl.blocks.length }} {{ t('admin.templates.blocks') }}</span
           >
           <span>•</span>
           <span class="flex items-center gap-1"
-            ><UIcon name="i-heroicons-users" class="w-4 h-4" /> Ref:
-            {{ tpl.pax }} PAX</span
+            ><UIcon name="i-heroicons-users" class="w-4 h-4" /> {{ t('admin.templates.pax') }}
+            {{ tpl.pax }}</span
           >
         </div>
 
@@ -217,7 +215,7 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
             class="flex-1"
             @click="loadTemplateIntoBuilder(tpl)"
           >
-            Probar / Clonar
+            {{ t('admin.templates.testClone') }}
           </UButton>
         </div>
       </UCard>
@@ -226,7 +224,7 @@ const loadTemplateIntoBuilder = (template: Itinerary) => {
         v-if="filteredTemplates.length === 0"
         class="col-span-full py-12 text-center text-gray-500"
       >
-        No se encontraron plantillas con ese criterio.
+        {{ t('admin.templates.noResults') }}
       </div>
     </div>
   </div>

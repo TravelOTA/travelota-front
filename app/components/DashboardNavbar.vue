@@ -29,6 +29,7 @@ useHead(() => ({
   style: hexThemeStyles.value ? [{ innerHTML: hexThemeStyles.value }] : [],
 }));
 
+const { t } = useI18n();
 const { role: userRole, logout } = useAuth();
 const { agency } = useAgency();
 
@@ -39,26 +40,26 @@ const isInternalRole = computed(() =>
 const userLinks = computed(() => {
   const baseLinks = [
     {
-      label: "Hoteles",
+      label: t("nav.hotels"),
       icon: "i-heroicons-building-office-2",
       to: "/dashboard",
     },
     {
-      label: "Cotizador B2B",
+      label: t("nav.quoterB2B"),
       icon: "i-heroicons-calculator",
       to: "/dashboard/quoter/builder",
     },
     {
-      label: "Traslados",
+      label: t("nav.transfers"),
       icon: "i-heroicons-truck",
       to: "#",
-      badge: "Prónto",
+      badge: t("nav.comingSoon"),
     },
   ];
 
   if (!isInternalRole.value) {
     baseLinks.push({
-      label: "Mis Reservas",
+      label: t("nav.myBookings"),
       icon: "i-heroicons-briefcase",
       to: "/dashboard/bookings",
     });
@@ -66,7 +67,7 @@ const userLinks = computed(() => {
 
   if (userRole.value === "AGENCY_ADMIN") {
     baseLinks.push({
-      label: "Mi Agencia",
+      label: t("nav.myAgency"),
       icon: "i-heroicons-building-storefront",
       to: "/dashboard/agency",
     });
@@ -74,7 +75,7 @@ const userLinks = computed(() => {
 
   if (userRole.value === "SUPER_ADMIN") {
     baseLinks.push({
-      label: "Administración",
+      label: t("nav.administration"),
       icon: "i-heroicons-shield-check",
       to: "/dashboard/admin",
     });
@@ -82,7 +83,7 @@ const userLinks = computed(() => {
 
   if (userRole.value === "SUPPORT") {
     baseLinks.push({
-      label: "Administración",
+      label: t("nav.administration"),
       icon: "i-heroicons-shield-check",
       to: "/dashboard/admin/bookings",
     });
@@ -90,7 +91,7 @@ const userLinks = computed(() => {
 
   if (isInternalRole.value) {
     baseLinks.push({
-      label: "Plantillas B2B",
+      label: t("nav.b2bTemplates"),
       icon: "i-heroicons-document-duplicate",
       to: "/dashboard/admin/templates",
     });
@@ -99,7 +100,6 @@ const userLinks = computed(() => {
   return baseLinks;
 });
 
-const langItems = [[{ label: "ES" }, { label: "EN" }]];
 </script>
 
 <template>
@@ -158,14 +158,7 @@ const langItems = [[{ label: "ES" }, { label: "EN" }]];
 
       <!-- Right Side Actions -->
       <div class="flex items-center gap-4">
-        <UDropdownMenu :items="langItems">
-          <UButton
-            variant="ghost"
-            color="neutral"
-            label="ES"
-            trailing-icon="i-lucide-chevron-down"
-          />
-        </UDropdownMenu>
+        <AppLocaleSwitcher />
 
         <UColorModeButton />
 

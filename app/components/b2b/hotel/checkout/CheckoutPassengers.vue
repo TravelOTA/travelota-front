@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 
+const { t } = useI18n();
+
 const props = defineProps<{
   totalPax: number;
 }>();
@@ -26,7 +28,7 @@ const visiblePassengers = computed(() => {
     class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 shadow-sm flex flex-col gap-5"
   >
     <h3 class="font-bold text-gray-900 dark:text-white text-lg">
-      Datos de los pasajeros
+      {{ t('hotels.checkout.passengerData') }}
     </h3>
 
     <!-- Toggles -->
@@ -34,12 +36,12 @@ const visiblePassengers = computed(() => {
       <URadio
         v-model="includeMode"
         :value="1"
-        label="Incluir solo los detalles del pasajero principal"
+        :label="t('hotels.checkout.mainPassengerOnly')"
       />
       <URadio
         v-model="includeMode"
         :value="2"
-        label="Incluir los datos de todos los pasajeros"
+        :label="t('hotels.checkout.allPassengers')"
       />
     </div>
 
@@ -54,15 +56,15 @@ const visiblePassengers = computed(() => {
           class="text-xs font-bold text-gray-600 dark:text-gray-300 flex items-center gap-2"
         >
           <UIcon name="i-heroicons-user-solid" class="w-4 h-4" />
-          Pasajero principal Adulto {{ pax.id }}
+          {{ t('hotels.checkout.mainAdultPassenger') }} {{ pax.id }}
         </label>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <UFormField label="Nombre">
-            <UInput v-model="pax.name" placeholder="Nombre..." />
+          <UFormField :label="t('hotels.checkout.name')">
+            <UInput v-model="pax.name" :placeholder="t('hotels.checkout.namePlaceholder')" />
           </UFormField>
-          <UFormField label="Apellidos">
-            <UInput v-model="pax.lastname" placeholder="Apellidos..." />
+          <UFormField :label="t('hotels.checkout.lastName')">
+            <UInput v-model="pax.lastname" :placeholder="t('hotels.checkout.lastNamePlaceholder')" />
           </UFormField>
         </div>
       </div>

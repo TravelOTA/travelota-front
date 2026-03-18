@@ -1,8 +1,8 @@
 <script setup lang="ts">
+const { t } = useI18n();
 useSeoMeta({
-  title: "TravelOTA - Inicio",
-  description:
-    "Somos tu mayorista de viajes. Operador turístico líder para Agencias de Viaje.",
+  title: t("auth.seo.homeTitle"),
+  description: t("auth.seo.homeDescription"),
 });
 </script>
 

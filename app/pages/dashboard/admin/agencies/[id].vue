@@ -3,6 +3,7 @@ import { useAgencies, type AdminAgencyUser } from "~/composables/useAgencies";
 
 definePageMeta({ layout: "dashboard" });
 
+const { t } = useI18n();
 const route = useRoute();
 const agencyId = route.params.id as string;
 
@@ -22,14 +23,14 @@ useHead({
 
 // ── Tabs ───────────────────────────────────────────────────────────────────
 const activeTab = ref("info");
-const tabs = [
+const tabs = computed(() => [
   {
     key: "info",
-    label: "Información General",
+    label: t('admin.agencyDetail.tabInfo'),
     icon: "i-heroicons-information-circle",
   },
-  { key: "users", label: "Usuarios", icon: "i-heroicons-users" },
-];
+  { key: "users", label: t('admin.agencyDetail.tabUsers'), icon: "i-heroicons-users" },
+]);
 
 // ── Status helpers ─────────────────────────────────────────────────────────
 function statusColor(s: string) {
@@ -194,13 +195,13 @@ const userColumns = [
         class="w-16 h-16 text-gray-300 mx-auto mb-4"
       />
       <h2 class="text-xl font-bold text-gray-700 dark:text-gray-300">
-        Agencia no encontrada
+        {{ t('admin.agencyDetail.notFound') }}
       </h2>
       <NuxtLink
         to="/dashboard/admin/agencies"
         class="text-primary-500 hover:underline text-sm mt-2 inline-block"
       >
-        ← Volver al listado
+        ← {{ t('admin.agencyDetail.backToList') }}
       </NuxtLink>
     </div>
 
@@ -264,7 +265,7 @@ const userColumns = [
               icon="i-heroicons-check-circle"
               color="success"
               size="sm"
-              label="Aprobar"
+              :label="t('admin.agencyDetail.actions.approve')"
               @click="openApprove"
             />
             <UButton
@@ -277,7 +278,7 @@ const userColumns = [
               :color="agency.status === 'Bloqueada' ? 'success' : 'error'"
               variant="soft"
               size="sm"
-              :label="agency.status === 'Bloqueada' ? 'Activar' : 'Bloquear'"
+              :label="agency.status === 'Bloqueada' ? t('admin.agencyDetail.actions.activate') : t('admin.agencyDetail.actions.block')"
               @click="toggleBlock(agencyId)"
             />
             <UButton
@@ -285,7 +286,7 @@ const userColumns = [
               color="neutral"
               variant="soft"
               size="sm"
-              label="White-Label"
+              :label="t('admin.agencyDetail.actions.whiteLabel')"
               @click="openWhitelabel"
             />
             <UButton
@@ -293,7 +294,7 @@ const userColumns = [
               color="neutral"
               variant="soft"
               size="sm"
-              label="Editar"
+              :label="t('admin.agencyDetail.actions.edit')"
               @click="openEdit"
             />
           </div>
@@ -330,7 +331,7 @@ const userColumns = [
                   name="i-heroicons-information-circle"
                   class="w-5 h-5 text-primary-500"
                 />
-                <h2 class="font-bold">Datos de la Agencia</h2>
+                <h2 class="font-bold">{{ t('admin.agencyDetail.generalInfo.title') }}</h2>
               </div>
             </template>
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
@@ -338,7 +339,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  Nombre
+                  {{ t('admin.agencyDetail.generalInfo.name') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
                   {{ agency.name }}
@@ -348,7 +349,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  País Operativo
+                  {{ t('admin.agencyDetail.generalInfo.operatingCountry') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
                   {{ agency.country }}
@@ -358,7 +359,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  Email B2B
+                  {{ t('admin.agencyDetail.generalInfo.email') }}
                 </dt>
                 <dd class="text-sm text-gray-900 dark:text-white">
                   {{ agency.email }}
@@ -368,7 +369,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  Teléfono Principal
+                  {{ t('admin.agencyDetail.generalInfo.phone') }}
                 </dt>
                 <dd class="text-sm text-gray-900 dark:text-white">
                   {{ agency.phone }}
@@ -378,7 +379,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  Grupo de Agencia
+                  {{ t('admin.agencyDetail.generalInfo.agencyGroup') }}
                 </dt>
                 <dd
                   class="text-sm font-bold text-primary-600 dark:text-primary-400 flex items-center gap-2"
@@ -393,7 +394,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  Fecha de registro
+                  {{ t('admin.agencyDetail.generalInfo.registrationDate') }}
                 </dt>
                 <dd class="text-sm text-gray-900 dark:text-white">
                   {{ agency.registeredAt }}
@@ -403,7 +404,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  NIF / Identificador Fiscal
+                  {{ t('admin.agencyDetail.generalInfo.taxId') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
                   {{ agency.rut || "—" }}
@@ -413,7 +414,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  Dirección Registrada
+                  {{ t('admin.agencyDetail.generalInfo.registeredAddress') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
                   {{ agency.direccionRegistrada || "—" }}
@@ -423,7 +424,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  Nombre de Contacto
+                  {{ t('admin.agencyDetail.generalInfo.contactName') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
                   {{ agency.nombreContacto || "—" }}
@@ -433,7 +434,7 @@ const userColumns = [
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  Sitio Web
+                  {{ t('admin.agencyDetail.generalInfo.website') }}
                 </dt>
                 <dd class="text-sm text-gray-900 dark:text-white">
                   <a
@@ -459,7 +460,7 @@ const userColumns = [
                   <UIcon name="i-heroicons-users" class="w-5 h-5" />
                 </div>
                 <div>
-                  <p class="text-xs text-gray-500">Usuarios</p>
+                  <p class="text-xs text-gray-500">{{ t('admin.agencyDetail.generalInfo.users') }}</p>
                   <p class="text-2xl font-bold">
                     {{ agency.users?.length ?? 0 }}
                   </p>
@@ -510,13 +511,13 @@ const userColumns = [
                   name="i-heroicons-users"
                   class="w-5 h-5 text-primary-500"
                 />
-                <h2 class="font-bold">Equipo de la Agencia</h2>
+                <h2 class="font-bold">{{ t('admin.agencyDetail.generalInfo.agencyTeam') }}</h2>
               </div>
               <UButton
                 icon="i-heroicons-user-plus"
                 size="sm"
                 color="primary"
-                label="Invitar usuario"
+                :label="t('admin.agencyDetail.generalInfo.inviteUser')"
                 disabled
               />
             </div>
@@ -525,7 +526,7 @@ const userColumns = [
             <UInput
               v-model="userSearch"
               icon="i-heroicons-magnifying-glass"
-              placeholder="Buscar usuario..."
+              :placeholder="t('admin.agencyDetail.generalInfo.searchUser')"
               class="w-72"
             />
           </div>
@@ -559,7 +560,9 @@ const userColumns = [
               <div class="flex justify-end gap-1 pr-2">
                 <UTooltip
                   :text="
-                    row.original.status === 'Activo' ? 'Desactivar' : 'Activar'
+                    row.original.status === 'Activo'
+                      ? t('admin.supportUsers.tooltips.deactivate')
+                      : t('admin.supportUsers.tooltips.activate')
                   "
                 >
                   <UButton
@@ -580,7 +583,7 @@ const userColumns = [
             </template>
             <template #empty-state>
               <div class="py-10 text-center text-sm text-gray-500">
-                No hay usuarios registrados en esta agencia.
+                {{ t('admin.agencyDetail.generalInfo.noUsersRegistered') }}
               </div>
             </template>
           </UTable>
@@ -588,12 +591,12 @@ const userColumns = [
       </div>
 
       <!-- ── Edit Info Modal ── -->
-      <UModal v-model:open="isEditOpen" title="Editar Agencia">
+      <UModal v-model:open="isEditOpen" :title="t('admin.agencyDetail.editModal.title')">
         <template #body>
           <div class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <UFormField
-                label="Nombre"
+                :label="t('admin.agencyDetail.editModal.name')"
                 name="edit-name"
                 required
                 class="sm:col-span-2"
@@ -603,13 +606,13 @@ const userColumns = [
                   icon="i-heroicons-building-storefront"
                 />
               </UFormField>
-              <UFormField label="País" name="edit-country" required>
+              <UFormField :label="t('admin.agencyDetail.editModal.country')" name="edit-country" required>
                 <UInput
                   v-model="editForm.country"
                   icon="i-heroicons-globe-alt"
                 />
               </UFormField>
-              <UFormField label="Grupo de Agencia" name="edit-group" required>
+              <UFormField :label="t('admin.agencyDetail.editModal.agencyGroup')" name="edit-group" required>
                 <USelectMenu
                   v-model="editForm.agencyGroup"
                   :items="groupNames"
@@ -617,7 +620,7 @@ const userColumns = [
                 />
               </UFormField>
               <UFormField
-                label="Email"
+                :label="t('admin.agencyDetail.editModal.email')"
                 name="edit-email"
                 required
                 class="sm:col-span-2"
@@ -629,7 +632,7 @@ const userColumns = [
                 />
               </UFormField>
               <UFormField
-                label="Teléfono"
+                :label="t('admin.agencyDetail.editModal.phone')"
                 name="edit-phone"
                 class="sm:col-span-2"
               >
@@ -643,12 +646,12 @@ const userColumns = [
             <UButton
               color="neutral"
               variant="ghost"
-              label="Cancelar"
+              :label="t('admin.agencyDetail.editModal.cancel')"
               @click="isEditOpen = false"
             />
             <UButton
               color="primary"
-              label="Guardar cambios"
+              :label="t('admin.agencyDetail.editModal.save')"
               icon="i-heroicons-check"
               @click="saveEdit"
             />
@@ -657,19 +660,19 @@ const userColumns = [
       </UModal>
 
       <!-- Aprobar modal -->
-      <UModal v-model:open="isApproveOpen" title="Aprobar Agencia">
+      <UModal v-model:open="isApproveOpen" :title="t('admin.agencies.modals.approve.title')">
         <template #body>
           <div class="space-y-4">
             <p class="text-sm text-gray-600 dark:text-gray-300">
-              Selecciona el grupo al que pertenecerá
+              {{ t('admin.agencies.modals.approve.selectGroup') }}
               <strong>{{ agency?.name }}</strong
               >.
             </p>
-            <UFormField label="Grupo de Agencia" name="approveGroup" required>
+            <UFormField :label="t('admin.agencies.modals.approve.groupField')" name="approveGroup" required>
               <USelectMenu
                 v-model="selectedGroupName"
                 :items="groupNames"
-                placeholder="Selecciona un grupo"
+                :placeholder="t('admin.agencies.modals.approve.groupPlaceholder')"
                 icon="i-heroicons-user-group"
                 class="w-full"
               />
@@ -679,7 +682,7 @@ const userColumns = [
               icon="i-heroicons-information-circle"
               color="info"
               variant="soft"
-              :description="`Markup aplicado: ${selectedGroup.baseMarkup}%`"
+              :description="`${t('admin.agencies.modals.approve.markupApplied')} ${selectedGroup.baseMarkup}%`"
             />
           </div>
         </template>
@@ -688,12 +691,12 @@ const userColumns = [
             <UButton
               color="neutral"
               variant="ghost"
-              label="Cancelar"
+              :label="t('admin.agencies.modals.approve.cancel')"
               @click="isApproveOpen = false"
             />
             <UButton
               color="success"
-              label="Aprobar"
+              :label="t('admin.agencies.modals.approve.approve')"
               icon="i-heroicons-check-circle"
               :disabled="!selectedGroup"
               @click="confirmApprove"

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import HotelSearchForm from "~/components/b2b/hotel/HotelSearchForm.vue";
+
+const { t } = useI18n();
 import {
   useHotelSearch,
   type HotelSearchParams,
@@ -58,12 +60,12 @@ const handleSearchUpdate = async (newData: HotelSearchParams) => {
             <span
               class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
             >
-              Destino
+              {{ t('hotels.search.destination') }}
             </span>
             <span
               class="text-sm font-medium text-gray-900 dark:text-gray-50 truncate"
             >
-              {{ props.hotelName || searchParams.destination || "Sin destino" }}
+              {{ props.hotelName || searchParams.destination || t('hotels.results.noDestination') }}
             </span>
           </div>
         </div>
@@ -86,7 +88,7 @@ const handleSearchUpdate = async (newData: HotelSearchParams) => {
             <span
               class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
             >
-              Fechas
+              {{ t('hotels.search.dates') }}
             </span>
             <span
               class="text-sm font-medium text-gray-900 dark:text-gray-50 truncate"
@@ -120,7 +122,7 @@ const handleSearchUpdate = async (newData: HotelSearchParams) => {
             <span
               class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
             >
-              Distribución
+              {{ t('hotels.search.distribution') }}
             </span>
             <span
               class="text-sm font-medium text-gray-900 dark:text-gray-50 truncate"
@@ -149,7 +151,7 @@ const handleSearchUpdate = async (newData: HotelSearchParams) => {
             <span
               class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
             >
-              Nac.
+              {{ t('hotels.search.nationality') }}
             </span>
             <span
               class="text-sm font-medium text-gray-900 dark:text-gray-50 truncate"
@@ -172,7 +174,7 @@ const handleSearchUpdate = async (newData: HotelSearchParams) => {
             @click="isEditing = true"
           >
             <UIcon name="i-heroicons-pencil-solid" class="w-4 h-4" />
-            <span>Editar</span>
+            <span>{{ t('hotels.results.edit') }}</span>
           </UButton>
         </div>
       </div>

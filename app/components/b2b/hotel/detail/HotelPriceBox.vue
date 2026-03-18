@@ -6,6 +6,8 @@ defineProps<{
 const emit = defineEmits<{
   (e: "open-map"): void;
 }>();
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -17,7 +19,7 @@ const emit = defineEmits<{
       <p
         class="text-[10px] text-gray-500 dark:text-gray-400 capitalize tracking-widest font-bold mb-1 w-full text-center"
       >
-        MEJOR PRECIO POR ESTANCIA
+        {{ t('hotels.detail.bestPricePerStay') }}
       </p>
       <p
         class="text-4xl font-light text-gray-900 dark:text-white tracking-tight mb-2"
@@ -48,7 +50,7 @@ const emit = defineEmits<{
         <div
           class="bg-gray-900/80 backdrop-blur-sm text-white px-4 py-2 rounded-md font-bold text-sm tracking-wide"
         >
-          Ver hotel en el mapa
+          {{ t('hotels.detail.seeOnMap') }}
         </div>
       </div>
     </div>

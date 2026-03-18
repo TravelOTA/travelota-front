@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import SearchSummaryBar from "~/components/b2b/hotel/SearchSummaryBar.vue";
+
+const { t } = useI18n();
 import FiltersSidebar from "~/components/b2b/hotel/FiltersSidebar.vue";
 import ResultCard from "~/components/b2b/hotel/ResultCard.vue";
 import HotelMap from "~/components/b2b/hotel/HotelMap.vue";

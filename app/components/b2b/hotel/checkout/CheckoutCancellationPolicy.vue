@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n();
+
 defineProps<{
   total: number;
   policies: {
@@ -22,11 +24,11 @@ defineProps<{
         name="i-heroicons-shield-exclamation"
         class="w-5 h-5 text-primary-500"
       />
-      Gastos de cancelación
+      {{ t('hotels.cancellationPolicy.title') }}
     </h3>
 
     <div class="mb-4">
-      <span class="text-sm text-gray-600 dark:text-gray-400">Total: </span>
+      <span class="text-sm text-gray-600 dark:text-gray-400">{{ t('hotels.cancellationPolicy.total') }} </span>
       <span class="font-bold text-gray-900 dark:text-white"
         >${{
           total.toLocaleString("en-US", {
@@ -44,11 +46,11 @@ defineProps<{
           <tr
             class="border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white"
           >
-            <th class="py-2 pr-4 font-bold">Gastos</th>
-            <th class="py-2 pr-4 font-bold">Desde fecha</th>
-            <th class="py-2 pr-4 font-bold">Hasta fecha</th>
-            <th class="py-2 pr-4 font-bold">Hora</th>
-            <th class="py-2 font-bold">Precio</th>
+            <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.costsHeader') }}</th>
+            <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.fromDate') }}</th>
+            <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.toDate') }}</th>
+            <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.time') }}</th>
+            <th class="py-2 font-bold">{{ t('hotels.cancellationPolicy.price') }}</th>
           </tr>
         </thead>
         <tbody

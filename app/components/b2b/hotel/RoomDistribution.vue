@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
+
+const { t } = useI18n();
 import type { SearchRoomDistribution } from "~/composables/useItinerary";
 
 const rooms = defineModel<SearchRoomDistribution[]>({
@@ -117,7 +119,7 @@ const toggleRoom = (idx: number) => {
           class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-700"
         >
           <span class="text-sm text-gray-600 dark:text-gray-400">
-            Número de habitaciones
+            {{ t('hotels.search.roomNumber') }}
           </span>
           <div class="flex items-center gap-2">
             <button
@@ -162,7 +164,7 @@ const toggleRoom = (idx: number) => {
                 <span
                   class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide"
                 >
-                  Habitación {{ roomIdx + 1 }}
+                  {{ t('hotels.search.roomLabel') }} {{ roomIdx + 1 }}
                 </span>
               </div>
               <UIcon
@@ -179,7 +181,7 @@ const toggleRoom = (idx: number) => {
               <!-- Adults row -->
               <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-700 dark:text-gray-300">
-                  Adultos
+                  {{ t('hotels.search.adults') }}
                 </span>
                 <div class="flex items-center gap-2">
                   <button
@@ -209,7 +211,7 @@ const toggleRoom = (idx: number) => {
               <!-- Children row -->
               <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-700 dark:text-gray-300">
-                  Niños
+                  {{ t('hotels.search.children') }}
                 </span>
                 <div class="flex items-center gap-2">
                   <button
@@ -243,7 +245,7 @@ const toggleRoom = (idx: number) => {
                 class="flex items-center justify-between pl-3 border-l-2 border-gray-200 dark:border-gray-700"
               >
                 <span class="text-sm text-gray-600 dark:text-gray-400">
-                  Edad niño {{ childIdx + 1 }}
+                  {{ t('hotels.search.childAgeLabel') }} {{ childIdx + 1 }}
                 </span>
                 <select
                   v-model.number="child.age"

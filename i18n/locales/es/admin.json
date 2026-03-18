@@ -1,0 +1,301 @@
+{
+  "dashboard": {
+    "title": "Administrador del Sistema",
+    "subtitle": "Visión global e indicadores de rendimiento de TravelOTA B2B.",
+    "stats": {
+      "activeAgencies": "Agencias Activas",
+      "monthlyBookings": "Reservas del Mes",
+      "netVolume": "Volumen Neto",
+      "supportAgents": "Agentes de Soporte"
+    },
+    "platformManager": "Gestor de Plataforma",
+    "agencies": {
+      "title": "Empresas (Agencias B2B)",
+      "description": "Aprobar registros, listar agencias activas y gestionar sus MarkUps Base.",
+      "manage": "Gestionar Agencias"
+    },
+    "supportUsers": {
+      "title": "Usuarios de Soporte",
+      "description": "Crear agentes TravelOTA con vista NETA y acceso a todas las reservas.",
+      "manage": "Gestionar Soporte"
+    },
+    "allBookings": {
+      "title": "Todas las Reservas",
+      "description": "Monitor multiproveedor de operaciones cerradas y cancelaciones a nivel global.",
+      "manage": "Ver todas"
+    },
+    "agencyGroups": {
+      "title": "Grupos de Agencia",
+      "description": "Define conjuntos de reglas comerciales compartidas (Markup Base, condiciones) para las distintas agencias.",
+      "manage": "Gestionar Grupos"
+    }
+  },
+  "agencies": {
+    "title": "Gestión de Agencias B2B",
+    "backToPanel": "Volver al Panel",
+    "subtitle": "Administra las agencias registradas, aprueba nuevos accesos y configura sus condiciones comerciales.",
+    "newAgency": "Nueva Agencia",
+    "stats": {
+      "total": "Total",
+      "active": "Activas",
+      "pending": "Pendientes",
+      "blocked": "Bloqueadas"
+    },
+    "alertDescription": "Revisa las solicitudes de registro y aprueba o rechaza el acceso al sistema.",
+    "search": "Buscar por nombre, email o país...",
+    "filterPlaceholder": "Filtrar estado",
+    "tableHeaders": {
+      "agency": "Agencia",
+      "country": "País",
+      "contact": "Contacto",
+      "group": "Grupo",
+      "users": "Usuarios",
+      "bookings": "Reservas",
+      "status": "Estado"
+    },
+    "noResults": "No se encontraron agencias con los filtros aplicados.",
+    "tooltips": {
+      "viewDetail": "Ver detalle",
+      "approve": "Aprobar acceso",
+      "deny": "Denegar acceso",
+      "unblock": "Activar",
+      "block": "Bloquear",
+      "delete": "Eliminar registro"
+    },
+    "modals": {
+      "create": {
+        "title": "Nueva Agencia",
+        "agencyName": "Nombre de la agencia",
+        "nameExample": "Ej: Viajes López",
+        "country": "País",
+        "agencyGroup": "Grupo de Agencia",
+        "email": "Email de contacto",
+        "phone": "Teléfono",
+        "alert": "La agencia se creará con estado Pendiente. Deberás aprobarla manualmente para que pueda operar.",
+        "cancel": "Cancelar",
+        "create": "Crear Agencia"
+      },
+      "approve": {
+        "title": "Aprobar Agencia",
+        "selectGroup": "Selecciona el grupo al que pertenecerá",
+        "groupField": "Grupo de Agencia",
+        "groupPlaceholder": "Selecciona un grupo",
+        "markupApplied": "Markup aplicado:",
+        "cancel": "Cancelar",
+        "approve": "Aprobar"
+      },
+      "deny": {
+        "title": "Denegar Agencia",
+        "message": "¿Estás seguro de que deseas denegar el acceso a",
+        "cancel": "Cancelar",
+        "deny": "Denegar"
+      },
+      "delete": {
+        "title": "Eliminar Agencia",
+        "message": "Esta acción eliminará permanentemente el registro de",
+        "continue": "¿Deseas continuar?",
+        "cancel": "Cancelar",
+        "delete": "Eliminar"
+      }
+    }
+  },
+  "agencyDetail": {
+    "backToList": "Volver al listado",
+    "notFound": "Agencia no encontrada",
+    "tabInfo": "Información General",
+    "tabUsers": "Usuarios",
+    "actions": {
+      "approve": "Aprobar",
+      "activate": "Activar",
+      "block": "Bloquear",
+      "whiteLabel": "White-Label",
+      "edit": "Editar"
+    },
+    "generalInfo": {
+      "title": "Datos de la Agencia",
+      "name": "Nombre",
+      "operatingCountry": "País Operativo",
+      "email": "Email B2B",
+      "phone": "Teléfono Principal",
+      "agencyGroup": "Grupo de Agencia",
+      "registrationDate": "Fecha de registro",
+      "taxId": "NIF / Identificador Fiscal",
+      "registeredAddress": "Dirección Registrada",
+      "contactName": "Nombre de Contacto",
+      "website": "Sitio Web",
+      "users": "Usuarios",
+      "agencyTeam": "Equipo de la Agencia",
+      "inviteUser": "Invitar usuario",
+      "searchUser": "Buscar usuario...",
+      "noUsersRegistered": "No hay usuarios registrados en esta agencia."
+    },
+    "editModal": {
+      "title": "Editar Agencia",
+      "name": "Nombre",
+      "country": "País",
+      "agencyGroup": "Grupo de Agencia",
+      "email": "Email",
+      "phone": "Teléfono",
+      "cancel": "Cancelar",
+      "save": "Guardar cambios"
+    }
+  },
+  "agencyGroups": {
+    "title": "Grupos de Agencia",
+    "backToPanel": "Volver al Panel",
+    "subtitle": "Gestiona los grupos para definir esquemas comerciales compartidos (Markup).",
+    "newGroup": "Nuevo Grupo",
+    "search": "Buscar grupos...",
+    "tableHeaders": {
+      "group": "Grupo",
+      "description": "Descripción",
+      "baseMarkup": "Markup Base",
+      "assignedAgencies": "Agencias Asignadas"
+    },
+    "noResults": "No se encontraron grupos de agencia.",
+    "noDescription": "Sin descripción",
+    "tooltips": {
+      "edit": "Editar Grupo",
+      "delete": "Eliminar Grupo"
+    },
+    "modals": {
+      "create": {
+        "title": "Nuevo Grupo de Agencia",
+        "groupName": "Nombre del Grupo",
+        "groupExample": "Ej: Mayoristas Latam",
+        "description": "Descripción",
+        "descriptionExample": "Breve descripción del grupo...",
+        "baseMarkup": "Markup Base (%)",
+        "alert": "Este markup se aplicará a todas las agencias que pertenezcan a este grupo de manera heredada.",
+        "cancel": "Cancelar",
+        "create": "Crear Grupo"
+      },
+      "edit": {
+        "title": "Editar Grupo",
+        "groupName": "Nombre del Grupo",
+        "description": "Descripción",
+        "baseMarkup": "Markup Base (%)",
+        "cancel": "Cancelar",
+        "save": "Guardar cambios"
+      }
+    }
+  },
+  "allBookings": {
+    "title": "Todas las Reservas",
+    "backToPanel": "Panel Admin",
+    "subtitle": "Monitor global. Precios netos visibles — solo para uso interno de TravelOTA.",
+    "netPriceAlert": "Vista de precios netos",
+    "netPriceDescription": "Estás viendo los 3 niveles de precio: Neto (coste TravelOTA), Agencia (precio de venta de la agencia) y Venta final (precio al cliente). Esta información es confidencial.",
+    "search": "Buscar reservas",
+    "confirmed": "Confirmadas",
+    "pendingPayment": "Pend. Pago",
+    "tableHeaders": {
+      "pnr": "Localizador PNR",
+      "status": "Estado",
+      "payment": "Pago",
+      "prices": "Precios (Neto / Agencia / Venta)",
+      "createdDate": "F. Creación",
+      "guestName": "Titular",
+      "destination": "Destino / Hotel",
+      "travelDates": "Fechas de Viaje",
+      "agency": "Agencia",
+      "seller": "Vendedor"
+    },
+    "priceLabels": {
+      "net": "NETO",
+      "agency": "AGENC.",
+      "sale": "VENTA"
+    },
+    "noResults": "No se encontraron reservas",
+    "noResultsDescription": "Ajusta los filtros de búsqueda e inténtalo de nuevo.",
+    "initialState": "Busca entre todas las reservas",
+    "initialStateDescription": "Utiliza los filtros para buscar por localizador, titular, destino, agencia, vendedor, estado o fechas.",
+    "pagination": {
+      "showing": "Mostrando",
+      "of": "de",
+      "bookings": "reservas"
+    },
+    "tooltips": {
+      "viewDetails": "Ver Detalles"
+    }
+  },
+  "supportUsers": {
+    "title": "Usuarios de Soporte",
+    "backToPanel": "Volver al Panel",
+    "subtitle": "Gestiona los agentes internos de TravelOTA. Tienen acceso a precios netos y todas las reservas del sistema.",
+    "newUser": "Nuevo Usuario",
+    "stats": {
+      "total": "Total",
+      "active": "Activos",
+      "admins": "Admins",
+      "support": "Soporte"
+    },
+    "permissionsAlert": "Permisos del personal interno",
+    "permissionsDescription": "Estos usuarios ven precios netos en todas sus búsquedas. No pueden confirmar reservas. No tienen acceso a 'Mis Reservas' ni 'Mi Agencia'.",
+    "search": "Buscar usuario...",
+    "tableHeaders": {
+      "name": "Nombre",
+      "email": "Correo Electrónico",
+      "role": "Rol",
+      "lastLogin": "Último Acceso",
+      "status": "Estado"
+    },
+    "roleLabels": {
+      "admin": "Admin",
+      "support": "Soporte"
+    },
+    "noResults": "No se encontraron usuarios con los filtros aplicados.",
+    "tooltips": {
+      "deactivate": "Desactivar",
+      "activate": "Activar",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "modals": {
+      "create": {
+        "title": "Nuevo Usuario Interno",
+        "warning": "Usuario interno TravelOTA",
+        "warningDescription": "Este usuario verá precios netos y tendrá visión global del sistema. No podrá confirmar reservas.",
+        "fullName": "Nombre completo",
+        "email": "Correo electrónico (usuario de acceso)",
+        "password": "Contraseña",
+        "passwordHint": "Mínimo 8 caracteres",
+        "role": "Rol",
+        "cancel": "Cancelar",
+        "create": "Crear Usuario"
+      },
+      "edit": {
+        "title": "Editar Usuario",
+        "fullName": "Nombre completo",
+        "email": "Correo electrónico (usuario de acceso)",
+        "password": "Contraseña",
+        "passwordHint": "Dejar en blanco para no cambiarla. Mínimo 8 caracteres si se modifica.",
+        "role": "Rol",
+        "status": "Estado",
+        "cancel": "Cancelar",
+        "save": "Guardar Cambios"
+      }
+    }
+  },
+  "templates": {
+    "panelAdmin": "Panel de Administración",
+    "title": "Plantillas de Itinerarios B2B",
+    "subtitle": "Gestiona los \"Itinerarios Promocionales\" base. Estas plantillas aparecerán en la plataforma de las agencias de viajes para que puedan clonarlas y ajustarlas a sus clientes con un solo clic.",
+    "createTemplate": "Crear Nueva Plantilla",
+    "directory": "Directorio de Plantillas Activas",
+    "searchPlaceholder": "Buscar por título...",
+    "blocks": "Bloques",
+    "ref": "Ref:",
+    "pax": "PAX",
+    "testClone": "Probar / Clonar",
+    "noResults": "No se encontraron plantillas con ese criterio.",
+    "dropdownMenu": {
+      "edit": "Editar Plantilla",
+      "deactivate": "Desactivar"
+    },
+    "toastMessage": {
+      "title": "Plantilla Cargada",
+      "description": "La plantilla fue inyectada en tu Constructor de Itinerarios. Dirígete allí para editarla."
+    }
+  }
+}

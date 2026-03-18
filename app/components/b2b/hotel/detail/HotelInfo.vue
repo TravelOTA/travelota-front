@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n();
+
 const description = `¿Por qué todos soñamos con ir de vacaciones al Caribe? Quizá por su verano permanente, sus playas infinitas, su gastronomía que fusiona culturas, o la amabilidad de sus gentes. Quizá para bucear y descubrir y cuidar la belleza del océano... En primera línea de Playa Bávaro, rodeado de jardines tropicales, con infinidad de actividades para los más pequeños en el Star Camp y un campo de Golf de 18 hoyos -referencia de la zona- diseñado por P.B. Dye, en Iberostar Waves Punta Cana dejarás de soñar. Cuídate, con el programa Aliveness, en el SPA Sensations, la sala Fitness o probando una oferta gastronómica amplia y saludable que incluye 6 restaurantes temáticos. Descubre el Centro de buceo y, por supuesto, nuestro laboratorio de corales, un “arca de Noé”, única en el mundo, que nos ayuda a protegerlos.`;
 
 const hotelServices = [
@@ -92,7 +94,7 @@ const observations = [
     <!-- Description -->
     <section>
       <h3 class="text-xl font-light text-gray-800 dark:text-gray-100 mb-3">
-        Descripción del hotel
+        {{ t('hotels.detail.hotelDescription') }}
       </h3>
       <p
         class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed text-justify"
@@ -106,7 +108,7 @@ const observations = [
       <h3
         class="text-xl font-light text-gray-800 dark:text-gray-100 mb-3 block border-b border-gray-100 dark:border-gray-800 pb-2"
       >
-        Servicios del hotel
+        {{ t('hotels.detail.hotelServices') }}
       </h3>
       <ul
         class="grid grid-cols-2 lg:grid-cols-4 gap-y-2 gap-x-4 text-sm text-gray-600 dark:text-gray-400"
@@ -120,7 +122,7 @@ const observations = [
           {{ svc }}
         </li>
       </ul>
-      <p class="text-xs text-gray-400 mt-2">* Servicios de pago</p>
+      <p class="text-xs text-gray-400 mt-2">* {{ t('hotels.results.paidServices') }}</p>
     </section>
 
     <!-- Room Services -->
@@ -128,7 +130,7 @@ const observations = [
       <h3
         class="text-xl font-light text-gray-800 dark:text-gray-100 mb-3 block border-b border-gray-100 dark:border-gray-800 pb-2"
       >
-        Servicio de habitaciones
+        {{ t('hotels.detail.roomServices') }}
       </h3>
       <ul
         class="grid grid-cols-2 lg:grid-cols-4 gap-y-2 gap-x-4 text-sm text-gray-600 dark:text-gray-400"
@@ -149,7 +151,7 @@ const observations = [
       <h3
         class="text-xl font-light text-gray-800 dark:text-gray-100 mb-3 block border-b border-gray-100 dark:border-gray-800 pb-2"
       >
-        Servicios de deporte
+        {{ t('hotels.detail.sportServices') }}
       </h3>
       <ul
         class="grid grid-cols-2 lg:grid-cols-4 gap-y-2 gap-x-4 text-sm text-gray-600 dark:text-gray-400"
@@ -163,7 +165,7 @@ const observations = [
           {{ svc }}
         </li>
       </ul>
-      <p class="text-xs text-gray-400 mt-2">* Servicios de pago</p>
+      <p class="text-xs text-gray-400 mt-2">* {{ t('hotels.results.paidServices') }}</p>
     </section>
 
     <!-- Distances -->
@@ -171,7 +173,7 @@ const observations = [
       <h3
         class="text-xl font-light text-gray-800 dark:text-gray-100 mb-3 block border-b border-gray-100 dark:border-gray-800 pb-2"
       >
-        Distancias
+        {{ t('hotels.detail.distances') }}
       </h3>
       <ul
         class="grid grid-cols-1 gap-y-2 gap-x-4 text-sm text-gray-600 dark:text-gray-400"
@@ -192,7 +194,7 @@ const observations = [
       <h3
         class="text-xl font-light text-gray-800 dark:text-gray-100 mb-3 block border-b border-gray-100 dark:border-gray-800 pb-2"
       >
-        Observaciones
+        {{ t('hotels.detail.observations') }}
       </h3>
       <ul
         class="grid grid-cols-1 gap-y-2 gap-x-4 text-sm text-gray-600 dark:text-gray-400"

@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const { t } = useI18n();
+</script>
+
 <template>
   <UFooter
     class="pt-8 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800"
@@ -9,9 +13,9 @@
         <h3
           class="font-bold text-gray-900 dark:text-white mb-4 uppercase text-xs tracking-wider"
         >
-          Contacta con Nosotros
+          {{ t("footer.contactTitle") }}
         </h3>
-        <p class="font-semibold text-primary mb-2">OFICINA CENTRAL</p>
+        <p class="font-semibold text-primary mb-2">{{ t("footer.headOffice").toUpperCase() }}</p>
         <address class="not-italic text-gray-500 dark:text-gray-400 space-y-2">
           <p><strong>TravelOTA</strong></p>
           <p>Calle Falsa 123</p>
@@ -25,11 +29,11 @@
         <h3
           class="font-bold text-gray-900 dark:text-white mb-4 uppercase text-xs tracking-wider"
         >
-          Horario de Atención al Cliente
+          {{ t("footer.scheduleTitle") }}
         </h3>
         <div class="text-gray-500 dark:text-gray-400 space-y-2">
-          <p><strong>De Lunes a Viernes:</strong><br />09.00 - 22.00 CET</p>
-          <p><strong>Sábados:</strong><br />10.00 - 14.00 CET</p>
+          <p><strong>{{ t("footer.weekdays") }}:</strong><br />09.00 - 22.00 CET</p>
+          <p><strong>{{ t("footer.saturday") }}:</strong><br />10.00 - 14.00 CET</p>
         </div>
       </div>
 
@@ -37,7 +41,7 @@
         <h3
           class="font-bold text-gray-900 dark:text-white mb-4 uppercase text-xs tracking-wider"
         >
-          Síguenos
+          {{ t("footer.followUs") }}
         </h3>
         <div class="flex gap-4">
           <UButton
@@ -67,14 +71,10 @@
         class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400"
       >
         <div class="flex flex-col gap-1">
-          <p>© {{ new Date().getFullYear() }} TRAVELOTA GLOBAL SERVICES.</p>
+          <p>{{ t("footer.rights", { year: new Date().getFullYear() }) }}</p>
           <div class="flex gap-4">
-            <NuxtLink to="/privacy" class="hover:text-primary transition-colors"
-              >Políticas de privacidad</NuxtLink
-            >
-            <NuxtLink to="/terms" class="hover:text-primary transition-colors"
-              >Aviso legal y condiciones de uso</NuxtLink
-            >
+            <NuxtLink to="/privacy" class="hover:text-primary transition-colors">{{ t("footer.privacyPolicy") }}</NuxtLink>
+            <NuxtLink to="/terms" class="hover:text-primary transition-colors">{{ t("footer.termsOfUse") }}</NuxtLink>
           </div>
         </div>
         <div class="flex items-center gap-4 mt-4 md:mt-0 opacity-70">

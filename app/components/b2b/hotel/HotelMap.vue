@@ -2,6 +2,8 @@
 import { ref, watch, onMounted } from "vue";
 import type { Component } from "vue";
 
+const { t } = useI18n();
+
 export interface HotelData {
   id: number | string;
   name: string;
@@ -205,7 +207,7 @@ onMounted(async () => {
                     >
                   </div>
                   <div class="flex justify-between items-center text-sm">
-                    <span class="text-gray-500 text-xs">Mejor Precio</span>
+                    <span class="text-gray-500 text-xs">{{ t('hotels.results.bestPrice') }}</span>
                     <span class="font-bold text-primary-600"
                       >${{
                         hotel.bestPrice.toLocaleString("en-US", {

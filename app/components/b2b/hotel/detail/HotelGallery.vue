@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 
+const { t } = useI18n();
+
 const props = defineProps<{
   images: string[];
 }>();
@@ -85,7 +87,7 @@ const prevImage = () => {
         }}</span>
         <span
           class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-widest"
-          >Fotos</span
+          >{{ t('hotels.detail.photos') }}</span
         >
       </button>
     </div>

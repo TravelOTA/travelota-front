@@ -49,7 +49,7 @@ describe("SearchSummaryBar — modo resumen", () => {
     const wrapper = mount(SearchSummaryBar, {
       global: { stubs: globalStubs },
     });
-    expect(wrapper.text()).toContain("Editar");
+    expect(wrapper.text()).toContain("hotels.results.edit");
   });
 
   it('muestra "Sin destino" cuando destination está vacío y no hay hotelName', () => {

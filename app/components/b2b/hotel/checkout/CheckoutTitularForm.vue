@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+const { t } = useI18n();
+
 const form = ref({
   name: "",
   lastName: "",
@@ -19,10 +21,10 @@ defineExpose({ form });
       class="text-lg font-bold text-gray-900 dark:text-white mb-1 flex items-center gap-2"
     >
       <UIcon name="i-heroicons-user" class="w-5 h-5 text-primary-500" />
-      Datos del Cliente Titular
+      {{ t('hotels.checkout.titularData') }}
     </h3>
     <p class="text-sm text-gray-500 mb-4">
-      Los datos del titular no son modificables una vez confirmada la reserva
+      {{ t('hotels.checkout.titularNote') }}
     </p>
 
     <div class="flex flex-col gap-5">
@@ -30,23 +32,23 @@ defineExpose({ form });
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-bold text-gray-700 dark:text-gray-200"
-            >Nombre <span class="text-red-500">*</span></label
+            >{{ t('hotels.checkout.name') }} <span class="text-red-500">*</span></label
           >
-          <UInput v-model="form.name" placeholder="Ej. Juan" />
+          <UInput v-model="form.name" :placeholder="t('hotels.checkout.namePlaceholder')" />
         </div>
 
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-bold text-gray-700 dark:text-gray-200"
-            >Apellido <span class="text-red-500">*</span></label
+            >{{ t('hotels.checkout.lastName') }} <span class="text-red-500">*</span></label
           >
-          <UInput v-model="form.lastName" placeholder="Ej. Pérez" />
+          <UInput v-model="form.lastName" :placeholder="t('hotels.checkout.lastNamePlaceholder')" />
         </div>
 
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-bold text-gray-700 dark:text-gray-200"
-            >Referencia Agencia</label
+            >{{ t('hotels.checkout.agencyReference') }}</label
           >
-          <UInput v-model="form.reference" placeholder="Ej. Ref-12345" />
+          <UInput v-model="form.reference" :placeholder="t('hotels.checkout.agencyReferencePlaceholder')" />
         </div>
       </div>
 
@@ -54,18 +56,18 @@ defineExpose({ form });
       <div class="w-full">
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-bold text-gray-700 dark:text-gray-200"
-            >Observaciones</label
+            >{{ t('hotels.checkout.observations') }}</label
           >
           <UTextarea
             v-model="form.observations"
-            placeholder="Escriba sus observaciones o peticiones especiales aquí..."
+            :placeholder="t('hotels.checkout.observationsPlaceholder')"
             :rows="4"
             class="w-full"
           />
           <span
             class="text-[11px] text-gray-500/80 dark:text-gray-400/80 font-medium tracking-tight mt-1"
           >
-            Nota: Las observaciones se solicitan pero no se pueden garantizar.
+            {{ t('hotels.checkout.observationsNote') }}
           </span>
         </div>
       </div>

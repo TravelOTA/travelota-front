@@ -8,6 +8,8 @@ defineProps<{
 
 const emit = defineEmits(["update:isOpen"]);
 
+const { t } = useI18n();
+
 const downloadImage = async () => {
   const node = document.getElementById("quoter-document");
   if (!node) return;
@@ -43,13 +45,13 @@ const downloadImage = async () => {
             @click="emit('update:isOpen', false)"
           />
           <h3 class="text-lg font-bold text-gray-900 dark:text-white">
-            Previsualización de Cotización
+            {{ t("quoter.previewModalTitle") }}
           </h3>
         </div>
         <UButton
           color="primary"
           icon="i-heroicons-photo"
-          label="Descargar Cotización"
+          :label="t('quoter.previewDownloadButton')"
           @click="downloadImage"
         />
       </div>

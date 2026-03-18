@@ -7,6 +7,7 @@ import { useAgency } from "~/composables/useAgency";
 
 const { items, totalSellPrice, calculateItemSellPrice } = useQuoter();
 const { agency } = useAgency();
+const { t } = useI18n();
 
 const currentDate = computed(() => {
   return format(new Date(), "dd 'de' MMMM, yyyy", { locale: es });
@@ -31,16 +32,16 @@ const formatCurrency = (amount: number) => {
     >
       <div>
         <h1 class="text-3xl font-black text-primary-600 mb-2 tracking-tight">
-          Presupuesto de Servicios
+          {{ t("quoter.documentTitle") }}
         </h1>
         <p class="text-sm text-gray-500 font-medium">
-          Referencia:
+          {{ t("quoter.documentReference") }}:
           <span class="font-mono text-gray-900"
             >COT-{{ Math.floor(Math.random() * 100000) }}</span
           >
         </p>
         <p class="text-sm text-gray-500 font-medium">
-          Fecha: {{ currentDate }}
+          {{ t("quoter.documentDate") }}: {{ currentDate }}
         </p>
       </div>
 
@@ -66,10 +67,7 @@ const formatCurrency = (amount: number) => {
         class="w-5 h-5 text-primary-500 mt-0.5 shrink-0"
       />
       <p class="text-sm text-gray-700 leading-relaxed">
-        Estimado cliente, las tarifas y disponibilidad presentadas en este
-        presupuesto están sujetas a cambios sin previo aviso por parte de los
-        proveedores. Te recomendamos confirmar los servicios a la brevedad
-        posible para garantizar el precio mostrado.
+        {{ t("quoter.documentWarning") }}
       </p>
     </div>
 
@@ -78,16 +76,16 @@ const formatCurrency = (amount: number) => {
       <h2
         class="text-xl font-bold mb-4 text-gray-900 border-b border-gray-200 pb-2"
       >
-        Detalle de Servicios
+        {{ t("quoter.documentServicesHeader") }}
       </h2>
 
       <table class="w-full text-left border-collapse">
         <thead>
           <tr class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
-            <th class="p-3 font-semibold rounded-tl-md">Servicio</th>
-            <th class="p-3 font-semibold">Ubicación</th>
+            <th class="p-3 font-semibold rounded-tl-md">{{ t("quoter.tableSelectedService") }}</th>
+            <th class="p-3 font-semibold">{{ t("quoter.documentLocation") }}</th>
             <th class="p-3 text-right font-semibold rounded-tr-md">
-              Total (PVP)
+              {{ t("quoter.documentTotalPvp") }}
             </th>
           </tr>
         </thead>
@@ -120,7 +118,7 @@ const formatCurrency = (amount: number) => {
         <p
           class="text-sm text-gray-500 font-bold uppercase tracking-widest mb-1"
         >
-          Precio Total a Pagar
+          {{ t("quoter.documentTotalPrice") }}
         </p>
         <p
           class="text-4xl font-black text-primary-600 font-mono tracking-tighter"
@@ -135,11 +133,10 @@ const formatCurrency = (amount: number) => {
       class="border-t border-gray-200 pt-6 mt-12 text-center text-xs text-gray-400"
     >
       <p class="mb-1">
-        Documento generado vía sistema automatizado para {{ agency.name }}.
+        {{ t("quoter.documentFooter1") }} {{ agency.name }}.
       </p>
       <p>
-        Para preguntas sobre este presupuesto, por favor contacte al agente a
-        cargo.
+        {{ t("quoter.documentFooter2") }}
       </p>
     </div>
   </div>

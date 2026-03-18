@@ -4,6 +4,8 @@ import { useAgencies, type AdminAgency } from "~/composables/useAgencies";
 definePageMeta({ layout: "dashboard" });
 useHead({ title: "Gestor de Agencias B2B - TravelOTA" });
 
+const { t } = useI18n();
+
 const {
   agencies,
   agencyStats: stats,
@@ -149,16 +151,16 @@ function confirmDelete() {
 }
 
 // ── Table columns ──────────────────────────────────────────────────────────
-const columns = [
-  { accessorKey: "name", header: "Agencia" },
-  { accessorKey: "country", header: "País" },
-  { accessorKey: "email", header: "Contacto" },
-  { accessorKey: "agencyGroup", header: "Grupo" },
-  { accessorKey: "usersCount", header: "Usuarios" },
-  { accessorKey: "bookingsCount", header: "Reservas" },
-  { accessorKey: "status", header: "Estado" },
+const columns = computed(() => [
+  { accessorKey: "name", header: t('admin.agencies.tableHeaders.agency') },
+  { accessorKey: "country", header: t('admin.agencies.tableHeaders.country') },
+  { accessorKey: "email", header: t('admin.agencies.tableHeaders.contact') },
+  { accessorKey: "agencyGroup", header: t('admin.agencies.tableHeaders.group') },
+  { accessorKey: "usersCount", header: t('admin.agencies.tableHeaders.users') },
+  { accessorKey: "bookingsCount", header: t('admin.agencies.tableHeaders.bookings') },
+  { accessorKey: "status", header: t('admin.agencies.tableHeaders.status') },
   { accessorKey: "actions", header: "" },
-];
+]);
 </script>
 
 <template>
@@ -172,21 +174,19 @@ const columns = [
           to="/dashboard/admin"
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> Volver al
-          Panel
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('admin.agencies.backToPanel') }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-          Gestión de Agencias B2B
+          {{ t('admin.agencies.title') }}
         </h1>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          Administra las agencias registradas, aprueba nuevos accesos y
-          configura sus condiciones comerciales.
+          {{ t('admin.agencies.subtitle') }}
         </p>
       </div>
       <UButton
         icon="i-heroicons-plus"
         color="primary"
-        label="Nueva Agencia"
+        :label="t('admin.agencies.newAgency')"
         @click="openCreate"
       />
     </div>
@@ -201,7 +201,7 @@ const columns = [
             <UIcon name="i-heroicons-building-storefront" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">Total</p>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.total') }}</p>
             <p class="text-xl font-bold">{{ stats.total }}</p>
           </div>
         </div>
@@ -214,7 +214,7 @@ const columns = [
             <UIcon name="i-heroicons-check-circle" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">Activas</p>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.active') }}</p>
             <p class="text-xl font-bold">{{ stats.active }}</p>
           </div>
         </div>
@@ -227,7 +227,7 @@ const columns = [
             <UIcon name="i-heroicons-clock" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">Pendientes</p>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.pending') }}</p>
             <p class="text-xl font-bold">{{ stats.pending }}</p>
           </div>
         </div>
@@ -240,7 +240,7 @@ const columns = [
             <UIcon name="i-heroicons-no-symbol" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">Bloqueadas</p>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.blocked') }}</p>
             <p class="text-xl font-bold">{{ stats.blocked }}</p>
           </div>
         </div>
@@ -255,7 +255,7 @@ const columns = [
       variant="soft"
       class="mb-6"
       :title="`${stats.pending} agencia${stats.pending > 1 ? 's' : ''} pendiente${stats.pending > 1 ? 's' : ''} de aprobación`"
-      description="Revisa las solicitudes de registro y aprueba o rechaza el acceso al sistema."
+      :description="t('admin.agencies.alertDescription')"
     />
 
     <!-- Table card -->
@@ -266,13 +266,13 @@ const columns = [
         <UInput
           v-model="searchQuery"
           icon="i-heroicons-magnifying-glass"
-          placeholder="Buscar por nombre, email o país..."
+          :placeholder="t('admin.agencies.search')"
           class="w-full sm:w-80"
         />
         <USelectMenu
           v-model="statusFilter"
           :items="['Todas', 'Pendiente', 'Activa', 'Bloqueada', 'Denegada']"
-          placeholder="Filtrar estado"
+          :placeholder="t('admin.agencies.filterPlaceholder')"
           class="w-40"
         />
       </div>
@@ -338,7 +338,7 @@ const columns = [
         <!-- Actions -->
         <template #actions-cell="{ row }">
           <div class="flex items-center justify-end gap-1 pr-2">
-            <UTooltip text="Ver detalle">
+            <UTooltip :text="t('admin.agencies.tooltips.viewDetail')">
               <UButton
                 icon="i-heroicons-eye"
                 color="neutral"
@@ -351,7 +351,7 @@ const columns = [
             <!-- Pendiente: Aprobar + Denegar -->
             <UTooltip
               v-if="row.original.status === 'Pendiente'"
-              text="Aprobar acceso"
+              :text="t('admin.agencies.tooltips.approve')"
             >
               <UButton
                 icon="i-heroicons-check-circle"
@@ -363,7 +363,7 @@ const columns = [
             </UTooltip>
             <UTooltip
               v-if="row.original.status === 'Pendiente'"
-              text="Denegar acceso"
+              :text="t('admin.agencies.tooltips.deny')"
             >
               <UButton
                 icon="i-heroicons-x-circle"
@@ -381,7 +381,9 @@ const columns = [
                 row.original.status === 'Bloqueada'
               "
               :text="
-                row.original.status === 'Bloqueada' ? 'Activar' : 'Bloquear'
+                row.original.status === 'Bloqueada'
+                  ? t('admin.agencies.tooltips.unblock')
+                  : t('admin.agencies.tooltips.block')
               "
             >
               <UButton
@@ -402,7 +404,7 @@ const columns = [
             <!-- Denegada: Eliminar -->
             <UTooltip
               v-if="row.original.status === 'Denegada'"
-              text="Eliminar registro"
+              :text="t('admin.agencies.tooltips.delete')"
             >
               <UButton
                 icon="i-heroicons-trash"
@@ -420,35 +422,35 @@ const columns = [
         v-if="filteredAgencies.length === 0"
         class="py-16 text-center text-sm text-gray-500"
       >
-        No se encontraron agencias con los filtros aplicados.
+        {{ t('admin.agencies.noResults') }}
       </div>
     </UCard>
 
     <!-- Create modal -->
-    <UModal v-model:open="isCreateOpen" title="Nueva Agencia">
+    <UModal v-model:open="isCreateOpen" :title="t('admin.agencies.modals.create.title')">
       <template #body>
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <UFormField
-              label="Nombre de la agencia"
+              :label="t('admin.agencies.modals.create.agencyName')"
               name="name"
               required
               class="sm:col-span-2"
             >
               <UInput
                 v-model="newAgency.name"
-                placeholder="Ej: Viajes López"
+                :placeholder="t('admin.agencies.modals.create.nameExample')"
                 icon="i-heroicons-building-storefront"
               />
             </UFormField>
-            <UFormField label="País" name="country" required>
+            <UFormField :label="t('admin.agencies.modals.create.country')" name="country" required>
               <UInput
                 v-model="newAgency.country"
                 placeholder="España"
                 icon="i-heroicons-globe-alt"
               />
             </UFormField>
-            <UFormField label="Grupo de Agencia" name="group" required>
+            <UFormField :label="t('admin.agencies.modals.create.agencyGroup')" name="group" required>
               <USelectMenu
                 v-model="newAgency.agencyGroup"
                 :items="groupNames"
@@ -456,7 +458,7 @@ const columns = [
               />
             </UFormField>
             <UFormField
-              label="Email de contacto"
+              :label="t('admin.agencies.modals.create.email')"
               name="email"
               required
               class="sm:col-span-2"
@@ -468,7 +470,7 @@ const columns = [
                 icon="i-heroicons-envelope"
               />
             </UFormField>
-            <UFormField label="Teléfono" name="phone" class="sm:col-span-2">
+            <UFormField :label="t('admin.agencies.modals.create.phone')" name="phone" class="sm:col-span-2">
               <UInput
                 v-model="newAgency.phone"
                 placeholder="+34 91 000 00 00"
@@ -480,7 +482,7 @@ const columns = [
             icon="i-heroicons-information-circle"
             color="info"
             variant="soft"
-            description="La agencia se creará con estado Pendiente. Deberás aprobarla manualmente para que pueda operar."
+            :description="t('admin.agencies.modals.create.alert')"
           />
         </div>
       </template>
@@ -489,12 +491,12 @@ const columns = [
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('admin.agencies.modals.create.cancel')"
             @click="isCreateOpen = false"
           />
           <UButton
             color="primary"
-            label="Crear Agencia"
+            :label="t('admin.agencies.modals.create.create')"
             icon="i-heroicons-plus"
             :disabled="!isCreateValid"
             @click="saveAgency"
@@ -504,19 +506,19 @@ const columns = [
     </UModal>
 
     <!-- Aprobar modal -->
-    <UModal v-model:open="isApproveOpen" title="Aprobar Agencia">
+    <UModal v-model:open="isApproveOpen" :title="t('admin.agencies.modals.approve.title')">
       <template #body>
         <div class="space-y-4">
           <p class="text-sm text-gray-600 dark:text-gray-300">
-            Selecciona el grupo al que pertenecerá
+            {{ t('admin.agencies.modals.approve.selectGroup') }}
             <strong>{{ agencyToApprove?.name }}</strong
             >.
           </p>
-          <UFormField label="Grupo de Agencia" name="approveGroup" required>
+          <UFormField :label="t('admin.agencies.modals.approve.groupField')" name="approveGroup" required>
             <USelectMenu
               v-model="selectedGroupName"
               :items="groupNames"
-              placeholder="Selecciona un grupo"
+              :placeholder="t('admin.agencies.modals.approve.groupPlaceholder')"
               icon="i-heroicons-user-group"
               class="w-full"
             />
@@ -526,7 +528,7 @@ const columns = [
             icon="i-heroicons-information-circle"
             color="info"
             variant="soft"
-            :description="`Markup aplicado: ${selectedGroup.baseMarkup}%`"
+            :description="`${t('admin.agencies.modals.approve.markupApplied')} ${selectedGroup.baseMarkup}%`"
           />
         </div>
       </template>
@@ -535,12 +537,12 @@ const columns = [
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('admin.agencies.modals.approve.cancel')"
             @click="isApproveOpen = false"
           />
           <UButton
             color="success"
-            label="Aprobar"
+            :label="t('admin.agencies.modals.approve.approve')"
             icon="i-heroicons-check-circle"
             :disabled="!selectedGroup"
             @click="confirmApprove"
@@ -550,10 +552,10 @@ const columns = [
     </UModal>
 
     <!-- Denegar modal -->
-    <UModal v-model:open="isDenyOpen" title="Denegar Agencia">
+    <UModal v-model:open="isDenyOpen" :title="t('admin.agencies.modals.deny.title')">
       <template #body>
         <p class="text-sm text-gray-600 dark:text-gray-300">
-          ¿Estás seguro de que deseas denegar el acceso a
+          {{ t('admin.agencies.modals.deny.message') }}
           <strong>{{ agencyToDeny?.name }}</strong
           >?
         </p>
@@ -563,12 +565,12 @@ const columns = [
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('admin.agencies.modals.deny.cancel')"
             @click="isDenyOpen = false"
           />
           <UButton
             color="error"
-            label="Denegar"
+            :label="t('admin.agencies.modals.deny.deny')"
             icon="i-heroicons-x-circle"
             @click="confirmDeny"
           />
@@ -577,12 +579,12 @@ const columns = [
     </UModal>
 
     <!-- Eliminar modal -->
-    <UModal v-model:open="isDeleteOpen" title="Eliminar Agencia">
+    <UModal v-model:open="isDeleteOpen" :title="t('admin.agencies.modals.delete.title')">
       <template #body>
         <p class="text-sm text-gray-600 dark:text-gray-300">
-          Esta acción eliminará permanentemente el registro de
+          {{ t('admin.agencies.modals.delete.message') }}
           <strong>{{ agencyToDelete?.name }}</strong
-          >. ¿Deseas continuar?
+          >. {{ t('admin.agencies.modals.delete.continue') }}
         </p>
       </template>
       <template #footer>
@@ -590,12 +592,12 @@ const columns = [
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('admin.agencies.modals.delete.cancel')"
             @click="isDeleteOpen = false"
           />
           <UButton
             color="error"
-            label="Eliminar"
+            :label="t('admin.agencies.modals.delete.delete')"
             icon="i-heroicons-trash"
             @click="confirmDelete"
           />

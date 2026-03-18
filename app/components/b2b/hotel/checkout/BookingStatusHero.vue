@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n();
+
 const props = defineProps<{
   /**
    * 'confirmation' = recién confirmada desde el checkout
@@ -23,9 +25,8 @@ const statusConfig = computed(() => {
       iconClass: "text-green-600 dark:text-green-400",
       titleClass: "text-green-800 dark:text-green-400",
       subtitleClass: "text-green-700 dark:text-green-300",
-      title: "¡Reserva Confirmada Exitosamente!",
-      subtitle:
-        "Hemos enviado un correo de confirmación con los detalles de esta reserva.",
+      title: t('hotels.bookingStatus.confirmedSuccessfully'),
+      subtitle: t('hotels.bookingStatus.confirmationEmailSent'),
     };
   }
 
@@ -39,10 +40,10 @@ const statusConfig = computed(() => {
       iconClass: "text-red-600 dark:text-red-400",
       titleClass: "text-red-800 dark:text-red-400",
       subtitleClass: "text-red-700 dark:text-red-300",
-      title: "CANCELADA",
+      title: t('hotels.bookingStatus.cancelled'),
       subtitle: props.cancelledDate
-        ? `Cancelada el: ${props.cancelledDate}`
-        : "Esta reserva ha sido cancelada.",
+        ? `${t('hotels.bookingStatus.cancelledOn')} ${props.cancelledDate}`
+        : t('hotels.bookingStatus.reservationCancelled'),
     };
   }
 
@@ -56,8 +57,8 @@ const statusConfig = computed(() => {
       iconClass: "text-gray-500 dark:text-gray-400",
       titleClass: "text-gray-700 dark:text-gray-400",
       subtitleClass: "text-gray-600 dark:text-gray-400",
-      title: "VENCIDA",
-      subtitle: "La fecha límite de pago ha expirado.",
+      title: t('hotels.bookingStatus.expired'),
+      subtitle: t('hotels.bookingStatus.paymentDeadlineExpired'),
     };
   }
 
@@ -71,10 +72,10 @@ const statusConfig = computed(() => {
       iconClass: "text-amber-600 dark:text-amber-400",
       titleClass: "text-amber-800 dark:text-amber-400",
       subtitleClass: "text-amber-700 dark:text-amber-300",
-      title: "CONFIRMADA · PENDIENTE PAGO",
+      title: t('hotels.bookingStatus.confirmedPendingPayment'),
       subtitle: props.paymentDeadline
-        ? `Fecha límite de pago: ${props.paymentDeadline}`
-        : "La reserva está confirmada pero pendiente de pago.",
+        ? `${t('hotels.bookingStatus.paymentDeadlineLabel')} ${props.paymentDeadline}`
+        : t('hotels.bookingStatus.reservationConfirmedPending'),
     };
   }
 
@@ -87,8 +88,8 @@ const statusConfig = computed(() => {
     iconClass: "text-green-600 dark:text-green-400",
     titleClass: "text-green-800 dark:text-green-400",
     subtitleClass: "text-green-700 dark:text-green-300",
-    title: "CONFIRMADA · PAGADA",
-    subtitle: `Localizador: ${props.bookingId}`,
+    title: t('hotels.bookingStatus.confirmedPaid'),
+    subtitle: `${t('hotels.bookingStatus.confirmationCode')} ${props.bookingId}`,
   };
 });
 </script>

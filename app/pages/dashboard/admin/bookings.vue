@@ -25,6 +25,7 @@ useHead({
   title: "Todas las Reservas - TravelOTA Admin",
 });
 
+const { t } = useI18n();
 const { agencyOptions, sellerOptions, filterBookings } = useBookings();
 
 // Search state
@@ -81,19 +82,19 @@ const resultStats = computed(() => {
 });
 
 // Table columns
-const columns = [
+const columns = computed(() => [
   { accessorKey: "actions", header: "" },
-  { accessorKey: "id", header: "Localizador PNR" },
-  { accessorKey: "status", header: "Estado" },
-  { accessorKey: "paymentStatus", header: "Pago" },
-  { accessorKey: "prices", header: "Precios (Neto / Agencia / Venta)" },
-  { accessorKey: "createdAt", header: "F. Creación" },
-  { accessorKey: "titular", header: "Titular" },
-  { accessorKey: "destination", header: "Destino / Hotel" },
-  { accessorKey: "dates", header: "Fechas de Viaje" },
-  { accessorKey: "agency", header: "Agencia" },
-  { accessorKey: "seller", header: "Vendedor" },
-];
+  { accessorKey: "id", header: t('admin.allBookings.tableHeaders.pnr') },
+  { accessorKey: "status", header: t('admin.allBookings.tableHeaders.status') },
+  { accessorKey: "paymentStatus", header: t('admin.allBookings.tableHeaders.payment') },
+  { accessorKey: "prices", header: t('admin.allBookings.tableHeaders.prices') },
+  { accessorKey: "createdAt", header: t('admin.allBookings.tableHeaders.createdDate') },
+  { accessorKey: "titular", header: t('admin.allBookings.tableHeaders.guestName') },
+  { accessorKey: "destination", header: t('admin.allBookings.tableHeaders.destination') },
+  { accessorKey: "dates", header: t('admin.allBookings.tableHeaders.travelDates') },
+  { accessorKey: "agency", header: t('admin.allBookings.tableHeaders.agency') },
+  { accessorKey: "seller", header: t('admin.allBookings.tableHeaders.seller') },
+]);
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -129,7 +130,7 @@ const fmt = (v: number) =>
           to="/dashboard/admin"
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> Panel Admin
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('admin.allBookings.backToPanel') }}
         </NuxtLink>
         <h1
           class="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tight flex items-center gap-3"
@@ -138,11 +139,10 @@ const fmt = (v: number) =>
             name="i-heroicons-briefcase"
             class="w-8 h-8 text-primary-500"
           />
-          Todas las Reservas
+          {{ t('admin.allBookings.title') }}
         </h1>
         <p class="text-gray-500 mt-1 dark:text-gray-400">
-          Monitor global. Precios netos visibles — solo para uso interno de
-          TravelOTA.
+          {{ t('admin.allBookings.subtitle') }}
         </p>
       </div>
     </div>
@@ -153,8 +153,8 @@ const fmt = (v: number) =>
       color="info"
       variant="soft"
       class="mb-8"
-      title="Vista de precios netos"
-      description="Estás viendo los 3 niveles de precio: Neto (coste TravelOTA), Agencia (precio de venta de la agencia) y Venta final (precio al cliente). Esta información es confidencial."
+      :title="t('admin.allBookings.netPriceAlert')"
+      :description="t('admin.allBookings.netPriceDescription')"
     />
 
     <!-- Search Filters -->
@@ -196,17 +196,17 @@ const fmt = (v: number) =>
           <div class="h-4 w-px bg-gray-200 dark:bg-gray-700" />
           <div class="flex items-center gap-2">
             <UBadge color="success" variant="subtle" class="text-xs font-bold"
-              >{{ resultStats.confirmed }} Confirmadas</UBadge
+              >{{ resultStats.confirmed }} {{ t('admin.allBookings.confirmed') }}</UBadge
             >
             <UBadge color="warning" variant="subtle" class="text-xs font-bold"
-              >{{ resultStats.pending }} Pend. Pago</UBadge
+              >{{ resultStats.pending }} {{ t('admin.allBookings.pendingPayment') }}</UBadge
             >
           </div>
           <div class="h-4 w-px bg-gray-200 dark:bg-gray-700" />
           <div class="flex items-center gap-3 flex-wrap">
             <div class="flex items-center gap-1.5">
               <span class="text-xs font-semibold text-gray-400 uppercase"
-                >Neto:</span
+                >{{ t('admin.allBookings.priceLabels.net') }}:</span
               >
               <span class="text-sm font-bold text-gray-900 dark:text-white">{{
                 fmt(resultStats.totalNet)
@@ -214,7 +214,7 @@ const fmt = (v: number) =>
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-xs font-semibold text-orange-500 uppercase"
-                >Agencia:</span
+                >{{ t('admin.allBookings.priceLabels.agency') }}:</span
               >
               <span
                 class="text-sm font-bold text-orange-600 dark:text-orange-400"
@@ -223,7 +223,7 @@ const fmt = (v: number) =>
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-xs font-semibold text-primary-500 uppercase"
-                >Venta:</span
+                >{{ t('admin.allBookings.priceLabels.sale') }}:</span
               >
               <span class="text-sm font-bold text-primary-600">{{
                 fmt(resultStats.totalSale)
@@ -293,7 +293,7 @@ const fmt = (v: number) =>
           <template #prices-cell="{ row }">
             <div class="text-xs space-y-0.5">
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-gray-400 w-12">NETO</span>
+                <span class="font-semibold text-gray-400 w-12">{{ t('admin.allBookings.priceLabels.net') }}</span>
                 <span
                   class="font-bold text-gray-900 dark:text-white tabular-nums"
                 >
@@ -301,7 +301,7 @@ const fmt = (v: number) =>
                 </span>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-orange-500 w-12">AGENC.</span>
+                <span class="font-semibold text-orange-500 w-12">{{ t('admin.allBookings.priceLabels.agency') }}</span>
                 <span
                   class="font-bold text-orange-600 dark:text-orange-400 tabular-nums"
                 >
@@ -309,7 +309,7 @@ const fmt = (v: number) =>
                 </span>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-primary-500 w-12">VENTA</span>
+                <span class="font-semibold text-primary-500 w-12">{{ t('admin.allBookings.priceLabels.sale') }}</span>
                 <span
                   class="font-bold text-primary-600 dark:text-primary-400 tabular-nums"
                 >
@@ -348,7 +348,7 @@ const fmt = (v: number) =>
           <!-- Actions -->
           <template #actions-cell="{ row }">
             <div class="flex items-center justify-end gap-2 pr-2">
-              <UTooltip text="Ver Detalles">
+              <UTooltip :text="t('admin.allBookings.tooltips.viewDetails')">
                 <UButton
                   color="neutral"
                   variant="ghost"
@@ -372,10 +372,10 @@ const fmt = (v: number) =>
                 />
               </div>
               <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                No se encontraron reservas
+                {{ t('admin.allBookings.noResults') }}
               </h3>
               <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-                Ajusta los filtros de búsqueda e inténtalo de nuevo.
+                {{ t('admin.allBookings.noResultsDescription') }}
               </p>
             </div>
           </template>
@@ -389,7 +389,7 @@ const fmt = (v: number) =>
           <p
             class="text-sm text-gray-500 dark:text-gray-400 order-2 sm:order-1"
           >
-            Mostrando
+            {{ t('admin.allBookings.pagination.showing') }}
             <span class="font-semibold text-gray-900 dark:text-white">{{
               (currentPage - 1) * 10 + 1
             }}</span>
@@ -397,11 +397,11 @@ const fmt = (v: number) =>
             <span class="font-semibold text-gray-900 dark:text-white">{{
               Math.min(currentPage * 10, filteredBookings.length)
             }}</span>
-            de
+            {{ t('admin.allBookings.pagination.of') }}
             <span class="font-semibold text-gray-900 dark:text-white">{{
               filteredBookings.length
             }}</span>
-            reservas
+            {{ t('admin.allBookings.pagination.bookings') }}
           </p>
           <UPagination
             v-model:page="currentPage"
@@ -427,7 +427,7 @@ const fmt = (v: number) =>
             />
           </div>
           <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-            No se encontraron reservas
+            {{ t('admin.allBookings.noResults') }}
           </h3>
           <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
             No hay reservas que coincidan con los filtros aplicados. Prueba con
@@ -454,11 +454,10 @@ const fmt = (v: number) =>
             />
           </div>
           <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-            Busca entre todas las reservas
+            {{ t('admin.allBookings.initialState') }}
           </h3>
           <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
-            Utiliza los filtros para buscar por localizador, titular, destino,
-            agencia, vendedor, estado o fechas.
+            {{ t('admin.allBookings.initialStateDescription') }}
           </p>
           <div class="flex flex-wrap justify-center gap-3">
             <UBadge

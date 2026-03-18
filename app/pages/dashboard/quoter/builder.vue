@@ -17,6 +17,8 @@ const formatDate = (date: DateValue): string => {
 
 definePageMeta({ layout: "dashboard" });
 
+const { t } = useI18n();
+
 const {
   itinerary,
   totalPax,
@@ -81,7 +83,7 @@ const formatCurrency = (amount: number) => {
             variant="none"
             size="xl"
             class="font-bold text-2xl text-gray-900 dark:text-white p-0 -ml-2"
-            placeholder="Nombre del Itinerario"
+            :placeholder="t('itinerary.placeholderTitle')"
           />
         </div>
         <div
@@ -93,7 +95,7 @@ const formatCurrency = (amount: number) => {
               v-model="itinerary.clientName"
               variant="none"
               size="xs"
-              placeholder="Nombre del Cliente"
+              :placeholder="t('itinerary.placeholderClient')"
               class="w-48 border-b border-dashed border-gray-300 dark:border-gray-700"
             />
           </span>
@@ -110,7 +112,7 @@ const formatCurrency = (amount: number) => {
                 base: 'px-0 text-center font-bold text-primary-600 cursor-default',
               }"
             />
-            <span class="text-xs font-bold text-gray-500">PAX</span>
+            <span class="text-xs font-bold text-gray-500">{{ t("itinerary.paxLabel") }}</span>
           </span>
           <span
             class="flex items-center gap-1 ml-2 border-l pl-4 border-gray-200 dark:border-gray-700"
@@ -125,7 +127,7 @@ const formatCurrency = (amount: number) => {
               v-model="itinerary.origin"
               class="w-32 bg-transparent border-0 border-b border-dashed border-gray-300 dark:border-gray-700 text-xs px-1 py-0.5 focus:ring-0 cursor-pointer outline-none"
             >
-              <option value="" disabled selected>Origen</option>
+              <option value="" disabled selected>{{ t("itinerary.originPlaceholder") }}</option>
               <option
                 v-for="country in nationalityOptions"
                 :key="country"
@@ -143,20 +145,20 @@ const formatCurrency = (amount: number) => {
           color="neutral"
           variant="ghost"
           icon="i-heroicons-trash"
-          label="Vaciar"
+          :label="t('itinerary.clearButton')"
           @click="clearItinerary"
         />
         <UButton
           color="neutral"
           variant="solid"
           icon="i-heroicons-document-duplicate"
-          label="Guardar Plantilla"
+          :label="t('itinerary.saveTemplate')"
         />
         <UButton
           color="primary"
           variant="solid"
           icon="i-heroicons-eye"
-          label="Previsualizar Itinerario"
+          :label="t('itinerary.previewButton')"
           @click="isPreviewOpen = true"
         />
       </div>
@@ -175,18 +177,17 @@ const formatCurrency = (amount: number) => {
             class="w-12 h-12 mx-auto text-gray-400 mb-4"
           />
           <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">
-            Comienza a armar tu viaje
+            {{ t("itinerary.emptyStateTitle") }}
           </h3>
           <p class="text-gray-500 mb-6">
-            Añade tu primer bloque (Alojamiento, Vuelo, etc.) para empezar el
-            itinerario.
+            {{ t("itinerary.emptyStateDescription") }}
           </p>
           <UButton
             icon="i-heroicons-plus"
             color="primary"
             @click="isAddBlockModalOpen = true"
           >
-            Añadir Bloque de Producto
+            {{ t("itinerary.addBlockButton") }}
           </UButton>
         </div>
 
@@ -243,10 +244,10 @@ const formatCurrency = (amount: number) => {
                     v-if="block.options.length > 0"
                     color="primary"
                     variant="subtle"
-                    >{{ block.options.length }} / 5 Opciones</UBadge
+                    >{{ block.options.length }} / 5 {{ t("itinerary.optionsBadge") }}</UBadge
                   >
                   <UBadge v-else color="warning" variant="subtle"
-                    >Bloque Vacío</UBadge
+                    >{{ t("itinerary.emptyBlock") }}</UBadge
                   >
                   <UButton
                     icon="i-heroicons-trash"
@@ -267,7 +268,7 @@ const formatCurrency = (amount: number) => {
                   class="border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6 text-center"
                 >
                   <p class="text-sm text-gray-500 mb-3">
-                    No hay opciones para este bloque todavía.
+                    {{ t("itinerary.noOptionsYet") }}
                   </p>
                   <UButton
                     size="xs"
@@ -275,7 +276,7 @@ const formatCurrency = (amount: number) => {
                     variant="solid"
                     icon="i-heroicons-magnifying-glass"
                     to="/dashboard/hotels/results"
-                    >Buscar Opciones</UButton
+                    >{{ t("itinerary.searchOptions") }}</UButton
                   >
                 </div>
 
@@ -307,7 +308,7 @@ const formatCurrency = (amount: number) => {
                       <p
                         class="text-xs text-gray-400 uppercase tracking-widest mb-0.5"
                       >
-                        PVP Cliente
+                        {{ t("itinerary.pvpClient") }}
                       </p>
                       <p
                         class="font-bold text-primary-600 dark:text-primary-400 font-mono"
@@ -339,7 +340,7 @@ const formatCurrency = (amount: number) => {
             variant="outline"
             @click="isAddBlockModalOpen = true"
           >
-            Añadir Siguiente Bloque
+            {{ t("itinerary.addNextBlock") }}
           </UButton>
         </div>
       </div>
@@ -357,7 +358,7 @@ const formatCurrency = (amount: number) => {
                 name="i-heroicons-cog-8-tooth"
                 class="w-5 h-5 text-gray-500"
               />
-              Reglas de Cotización
+              {{ t("itinerary.pricingRulesHeader") }}
             </h3>
           </template>
 
@@ -368,7 +369,7 @@ const formatCurrency = (amount: number) => {
               <label
                 class="text-xs font-bold text-primary-700 dark:text-primary-400 uppercase tracking-wider block mb-3"
               >
-                Markup Global
+                {{ t("itinerary.globalMarkupLabel") }}
               </label>
               <div class="flex items-center gap-3">
                 <USlider
@@ -384,8 +385,7 @@ const formatCurrency = (amount: number) => {
                 </span>
               </div>
               <p class="text-[10px] text-primary-600/70 mt-3 leading-snug">
-                Se aplica dinámicamente sobre los precios netos B2B en todos los
-                bloques.
+                {{ t("itinerary.globalMarkupHint") }}
               </p>
             </div>
 
@@ -395,7 +395,7 @@ const formatCurrency = (amount: number) => {
               <p
                 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2"
               >
-                Precio Mínimo Base
+                {{ t("itinerary.minimumPriceLabel") }}
               </p>
               <p
                 class="text-3xl font-black text-gray-900 dark:text-white font-mono tracking-tighter"
@@ -403,7 +403,7 @@ const formatCurrency = (amount: number) => {
                 {{ formatCurrency(minItineraryPrice) }}
               </p>
               <p class="text-xs text-gray-500 mt-1 leading-snug">
-                Estimación usando la opción más económica de cada bloque actual.
+                {{ t("itinerary.minimumPriceHint") }}
               </p>
             </div>
           </div>
@@ -412,27 +412,27 @@ const formatCurrency = (amount: number) => {
     </div>
 
     <!-- Modal Add Block -->
-    <UModal v-model:open="isAddBlockModalOpen" title="Añadir Nuevo Bloque">
+    <UModal v-model:open="isAddBlockModalOpen" :title="t('itinerary.addBlockModalTitle')">
       <template #body>
         <div class="space-y-4">
-          <UFormField label="Tipo de Producto">
+          <UFormField :label="t('itinerary.blockTypeLabel')">
             <USelect
               v-model="newBlockType"
               :options="[
-                { label: 'Alojamiento', value: 'hotel' },
-                { label: 'Vuelo', value: 'flight' },
-                { label: 'Traslado', value: 'transfer' },
-                { label: 'Actividad', value: 'activity' },
+                { label: t('itinerary.blockTypeAccommodation'), value: 'hotel' },
+                { label: t('itinerary.blockTypeFlight'), value: 'flight' },
+                { label: t('itinerary.blockTypeTransfer'), value: 'transfer' },
+                { label: t('itinerary.blockTypeActivity'), value: 'activity' },
               ]"
             />
           </UFormField>
-          <UFormField label="Título del Bloque">
+          <UFormField :label="t('itinerary.blockTitleLabel')">
             <UInput
               v-model="newBlockTitle"
-              placeholder="Ej: 3 Noches en Punta Cana"
+              :placeholder="t('itinerary.blockTitlePlaceholder')"
             />
           </UFormField>
-          <UFormField label="Fechas / Referencia">
+          <UFormField :label="t('itinerary.blockDatesLabel')">
             <UPopover class="w-full">
               <UButton
                 color="neutral"
@@ -449,7 +449,7 @@ const formatCurrency = (amount: number) => {
                     {{ formatDate(dateRange.start) }}
                   </template>
                 </template>
-                <template v-else> Fechas opcionales </template>
+                <template v-else> {{ t("itinerary.blockDatesOptional") }} </template>
               </UButton>
 
               <template #content>
@@ -476,13 +476,13 @@ const formatCurrency = (amount: number) => {
             color="neutral"
             variant="ghost"
             @click="isAddBlockModalOpen = false"
-            >Cancelar</UButton
+            >{{ t("itinerary.cancelButton") }}</UButton
           >
           <UButton
             color="primary"
             :disabled="!newBlockTitle"
             @click="handleAddBlock"
-            >Añadir Bloque</UButton
+            >{{ t("itinerary.addBlockConfirm") }}</UButton
           >
         </div>
       </template>

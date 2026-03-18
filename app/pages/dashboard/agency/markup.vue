@@ -1,5 +1,6 @@
 <script setup lang="ts">
 useHead({ title: "Markup de Agencia - TravelOTA" });
+const { t } = useI18n();
 
 const markupType = ref("global");
 const globalPercentage = ref(15);
@@ -60,8 +61,7 @@ function saveRule() {
         to="/dashboard/agency"
         class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
       >
-        <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> Volver a Mi
-        Agencia
+        <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('agency.markup.backToAgency') }}
       </NuxtLink>
       <div class="flex items-center gap-2 mb-1">
         <UIcon
@@ -69,14 +69,13 @@ function saveRule() {
           class="w-6 h-6 text-primary"
         />
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-          Modelo de Beneficios
+          {{ t('agency.markup.title') }}
         </h1>
       </div>
       <p class="text-sm text-gray-500">
-        Define tu ganancia. El porcentaje que configures aquí será tu
-        <strong>Markup de Agencia</strong>
-        y se sumará automáticamente al Precio Neto ofrecido por el sistema. Tus
-        vendedores y clientes finales solo verán el precio final de venta.
+        {{ t('agency.markup.subtitle') }}
+        <strong>{{ t('agency.markup.markupAgency') }}</strong>
+        {{ t('agency.markup.description') }}
       </p>
     </div>
 
@@ -84,13 +83,13 @@ function saveRule() {
       <div class="space-y-6">
         <URadioGroup
           v-model="markupType"
-          legend="Esquema de Ganancia"
+          :legend="t('agency.markup.scheme')"
           :options="[
             {
               value: 'global',
-              label: 'Porcentaje Fijo sobre todo el inventario',
+              label: t('agency.markup.globalPercentage'),
             },
-            { value: 'dynamic', label: 'Reglas Dinámicas por Destino/Hotel' },
+            { value: 'dynamic', label: t('agency.markup.dynamicRules') },
           ]"
         />
 
@@ -99,7 +98,7 @@ function saveRule() {
           class="flex items-end gap-4 max-w-sm"
         >
           <UFormField
-            label="Markup de tu Agencia (%)"
+            :label="t('agency.markup.markupPercentage')"
             name="percentage"
             class="flex-1"
           >
@@ -109,20 +108,20 @@ function saveRule() {
               >
             </UInput>
           </UFormField>
-          <UButton color="primary" label="Guardar Cambios" />
+          <UButton color="primary" :label="t('agency.markup.saveChanges')" />
         </div>
 
         <div v-else class="space-y-4">
           <div class="flex justify-between items-center">
             <h3 class="font-medium text-gray-900 dark:text-white">
-              Reglas Configuradas
+              {{ t('agency.markup.configuredRules') }}
             </h3>
             <UButton
               size="sm"
               color="primary"
               variant="solid"
               icon="i-heroicons-plus"
-              label="Añadir Regla"
+              :label="t('agency.markup.addRule')"
               @click="openAddRule"
             />
           </div>
@@ -158,8 +157,7 @@ function saveRule() {
               v-if="rules && rules.length === 0"
               class="p-4 text-center text-sm text-gray-500"
             >
-              No has configurado reglas aún. El sistema no cobrará markup
-              adicional al precio neto.
+              {{ t('agency.markup.noRules') }}
             </div>
           </div>
         </div>
@@ -167,10 +165,10 @@ function saveRule() {
     </UCard>
 
     <!-- Modal: Nueva Regla -->
-    <UModal v-model:open="isRuleModalOpen" title="Nueva Regla de Beneficios">
+    <UModal v-model:open="isRuleModalOpen" :title="t('agency.markup.modalTitle')">
       <template #body>
         <div class="space-y-4">
-          <UFormField label="Aplicar Regla A" name="rule-type">
+          <UFormField :label="t('agency.markup.applyRuleTo')" name="rule-type">
             <USelectMenu
               v-model="newRule.type"
               :options="['Destino', 'Hotel']"
@@ -180,8 +178,8 @@ function saveRule() {
           <UFormField
             :label="
               newRule.type === 'Destino'
-                ? 'Seleccionar Destino'
-                : 'Nombre del Hotel'
+                ? t('agency.markup.selectDestination')
+                : t('agency.markup.hotelName')
             "
             name="rule-value"
             required
@@ -196,12 +194,12 @@ function saveRule() {
             <UInput
               v-else
               v-model="newRule.value"
-              placeholder="Ej: Hard Rock Hotel"
+              :placeholder="t('agency.markup.exampleHotel')"
             />
           </UFormField>
 
           <UFormField
-            label="Markup a Sumar al Neto (%)"
+            :label="t('agency.markup.markupToAdd')"
             name="rule-percentage"
             required
           >
@@ -223,12 +221,12 @@ function saveRule() {
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('agency.users.modal.cancel')"
             @click="isRuleModalOpen = false"
           />
           <UButton
             color="primary"
-            label="Guardar Regla"
+            :label="t('agency.markup.saveRule')"
             :disabled="!newRule.value || newRule.value.trim() === ''"
             @click="saveRule"
           />

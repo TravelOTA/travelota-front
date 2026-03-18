@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+
+const { t } = useI18n();
 import PaymentMethodSelector from "~/components/b2b/hotel/checkout/PaymentMethodSelector.vue";
 
 const props = defineProps<{
@@ -92,7 +94,7 @@ const handlePay = () => {
         />
         <div class="text-sm">
           <span class="text-amber-700 dark:text-amber-300"
-            >Fecha límite de pago:
+            >{{ t('hotels.checkout.paymentDeadline') }}
           </span>
           <span class="font-bold text-amber-800 dark:text-amber-200">{{
             paymentDeadline

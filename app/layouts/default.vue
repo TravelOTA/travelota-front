@@ -1,11 +1,11 @@
 <script setup>
-const links = [
-  { label: "INICIO", to: "/" },
-  { label: "CONÓCENOS", to: "/about" },
-  { label: "REGISTRO", to: "/register" },
-];
+const { t } = useI18n();
 
-const langItems = [[{ label: "ES" }, { label: "EN" }]];
+const links = computed(() => [
+  { label: t("nav.home").toUpperCase(), to: "/" },
+  { label: t("nav.about").toUpperCase(), to: "/about" },
+  { label: t("nav.register").toUpperCase(), to: "/register" },
+]);
 </script>
 
 <template>
@@ -22,20 +22,13 @@ const langItems = [[{ label: "ES" }, { label: "EN" }]];
       <template #right>
         <UNavigationMenu :items="links" />
         <UButton
-          label="LOGIN"
+          :label="t('nav.login').toUpperCase()"
           icon="i-lucide-user"
           variant="ghost"
           color="neutral"
           to="/dashboard"
         />
-        <UDropdownMenu :items="langItems">
-          <UButton
-            variant="ghost"
-            color="neutral"
-            label="ES"
-            trailing-icon="i-lucide-chevron-down"
-          />
-        </UDropdownMenu>
+        <AppLocaleSwitcher />
         <UColorModeButton />
       </template>
     </UHeader>

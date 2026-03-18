@@ -12,6 +12,8 @@ useHead({
   title: "Usuarios de Soporte - TravelOTA Admin",
 });
 
+const { t } = useI18n();
+
 const {
   users,
   stats: supportStats,
@@ -21,14 +23,14 @@ const {
   toggleStatus: toggleUserStatus,
 } = useSupportUsers();
 
-const columns = [
-  { accessorKey: "name", header: "Nombre" },
-  { accessorKey: "email", header: "Correo Electrónico" },
-  { accessorKey: "role", header: "Rol" },
-  { accessorKey: "lastLogin", header: "Último Acceso" },
-  { accessorKey: "status", header: "Estado" },
+const columns = computed(() => [
+  { accessorKey: "name", header: t('admin.supportUsers.tableHeaders.name') },
+  { accessorKey: "email", header: t('admin.supportUsers.tableHeaders.email') },
+  { accessorKey: "role", header: t('admin.supportUsers.tableHeaders.role') },
+  { accessorKey: "lastLogin", header: t('admin.supportUsers.tableHeaders.lastLogin') },
+  { accessorKey: "status", header: t('admin.supportUsers.tableHeaders.status') },
   { id: "actions" },
-];
+]);
 
 const searchQuery = ref("");
 const statusFilter = ref("Todos");
@@ -146,22 +148,20 @@ function saveEditUser() {
           to="/dashboard/admin"
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> Volver al
-          Panel
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('admin.supportUsers.backToPanel') }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-          Usuarios de Soporte
+          {{ t('admin.supportUsers.title') }}
         </h1>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          Gestiona los agentes internos de TravelOTA. Tienen acceso a precios
-          netos y todas las reservas del sistema.
+          {{ t('admin.supportUsers.subtitle') }}
         </p>
       </div>
       <UButton
         id="btn-new-support-user"
         icon="i-heroicons-user-plus"
         color="primary"
-        label="Nuevo Usuario"
+        :label="t('admin.supportUsers.newUser')"
         @click="openModal"
       />
     </div>
@@ -176,7 +176,7 @@ function saveEditUser() {
             <UIcon name="i-heroicons-users" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">Total</p>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.supportUsers.stats.total') }}</p>
             <p class="text-xl font-bold">{{ supportStats.total }}</p>
           </div>
         </div>
@@ -189,7 +189,7 @@ function saveEditUser() {
             <UIcon name="i-heroicons-check-circle" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">Activos</p>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.supportUsers.stats.active') }}</p>
             <p class="text-xl font-bold">
               {{ supportStats.active }}
             </p>
@@ -204,7 +204,7 @@ function saveEditUser() {
             <UIcon name="i-heroicons-shield-check" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">Admins</p>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.supportUsers.stats.admins') }}</p>
             <p class="text-xl font-bold">
               {{ supportStats.admins }}
             </p>
@@ -219,7 +219,7 @@ function saveEditUser() {
             <UIcon name="i-heroicons-headphone" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">Soporte</p>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.supportUsers.stats.support') }}</p>
             <p class="text-xl font-bold">
               {{ supportStats.support }}
             </p>
@@ -234,8 +234,8 @@ function saveEditUser() {
       color="info"
       variant="soft"
       class="mb-6"
-      title="Permisos del personal interno"
-      description="Estos usuarios ven precios netos en todas sus búsquedas. No pueden confirmar reservas. No tienen acceso a 'Mis Reservas' ni 'Mi Agencia'."
+      :title="t('admin.supportUsers.permissionsAlert')"
+      :description="t('admin.supportUsers.permissionsDescription')"
     />
 
     <!-- Table -->
@@ -246,7 +246,7 @@ function saveEditUser() {
         <UInput
           v-model="searchQuery"
           icon="i-heroicons-magnifying-glass"
-          placeholder="Buscar usuario..."
+          :placeholder="t('admin.supportUsers.search')"
           class="w-full sm:w-72"
         />
         <div class="flex gap-2">
@@ -295,7 +295,9 @@ function saveEditUser() {
           <div class="flex justify-end gap-1 pr-2">
             <UTooltip
               :text="
-                row.original.status === 'Activo' ? 'Desactivar' : 'Activar'
+                row.original.status === 'Activo'
+                  ? t('admin.supportUsers.tooltips.deactivate')
+                  : t('admin.supportUsers.tooltips.activate')
               "
             >
               <UButton
@@ -310,7 +312,7 @@ function saveEditUser() {
                 @click="toggleStatus(row.original)"
               />
             </UTooltip>
-            <UTooltip text="Editar">
+            <UTooltip :text="t('admin.supportUsers.tooltips.edit')">
               <UButton
                 icon="i-heroicons-pencil-square"
                 color="neutral"
@@ -319,7 +321,7 @@ function saveEditUser() {
                 @click="openEditModal(row.original)"
               />
             </UTooltip>
-            <UTooltip text="Eliminar">
+            <UTooltip :text="t('admin.supportUsers.tooltips.delete')">
               <UButton
                 icon="i-heroicons-trash"
                 color="error"
@@ -336,23 +338,23 @@ function saveEditUser() {
         v-if="filteredUsers.length === 0"
         class="py-12 text-center text-sm text-gray-500"
       >
-        No se encontraron usuarios con los filtros aplicados.
+        {{ t('admin.supportUsers.noResults') }}
       </div>
     </UCard>
 
     <!-- Modal nuevo usuario -->
-    <UModal v-model:open="isModalOpen" title="Nuevo Usuario Interno">
+    <UModal v-model:open="isModalOpen" :title="t('admin.supportUsers.modals.create.title')">
       <template #body>
         <div class="space-y-4">
           <UAlert
             icon="i-heroicons-shield-exclamation"
             color="warning"
             variant="soft"
-            title="Usuario interno TravelOTA"
-            description="Este usuario verá precios netos y tendrá visión global del sistema. No podrá confirmar reservas."
+            :title="t('admin.supportUsers.modals.create.warning')"
+            :description="t('admin.supportUsers.modals.create.warningDescription')"
           />
 
-          <UFormField label="Nombre completo" name="name" required>
+          <UFormField :label="t('admin.supportUsers.modals.create.fullName')" name="name" required>
             <UInput
               v-model="newUser.name"
               placeholder="Ej: Laura Martínez"
@@ -361,7 +363,7 @@ function saveEditUser() {
           </UFormField>
 
           <UFormField
-            label="Correo electrónico (usuario de acceso)"
+            :label="t('admin.supportUsers.modals.create.email')"
             name="email"
             required
             :error="
@@ -381,10 +383,10 @@ function saveEditUser() {
           </UFormField>
 
           <UFormField
-            label="Contraseña"
+            :label="t('admin.supportUsers.modals.create.password')"
             name="password"
             required
-            hint="Mínimo 8 caracteres"
+            :hint="t('admin.supportUsers.modals.create.passwordHint')"
           >
             <UInput
               v-model="newUser.password"
@@ -407,7 +409,7 @@ function saveEditUser() {
             </UInput>
           </UFormField>
 
-          <UFormField label="Rol" name="role" required>
+          <UFormField :label="t('admin.supportUsers.modals.create.role')" name="role" required>
             <USelectMenu
               v-model="newUser.role"
               :items="[
@@ -425,12 +427,12 @@ function saveEditUser() {
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('admin.supportUsers.modals.create.cancel')"
             @click="isModalOpen = false"
           />
           <UButton
             color="primary"
-            label="Crear Usuario"
+            :label="t('admin.supportUsers.modals.create.create')"
             icon="i-heroicons-user-plus"
             :disabled="!isFormValid"
             @click="saveUser"
@@ -440,10 +442,10 @@ function saveEditUser() {
     </UModal>
 
     <!-- Modal edición de usuario -->
-    <UModal v-model:open="isEditModalOpen" title="Editar Usuario">
+    <UModal v-model:open="isEditModalOpen" :title="t('admin.supportUsers.modals.edit.title')">
       <template #body>
         <div v-if="editUser" class="space-y-4">
-          <UFormField label="Nombre completo" name="edit-name" required>
+          <UFormField :label="t('admin.supportUsers.modals.edit.fullName')" name="edit-name" required>
             <UInput
               v-model="editUser.name"
               placeholder="Ej: Laura Martínez"
@@ -452,7 +454,7 @@ function saveEditUser() {
           </UFormField>
 
           <UFormField
-            label="Correo electrónico (usuario de acceso)"
+            :label="t('admin.supportUsers.modals.edit.email')"
             name="edit-email"
             required
             :error="
@@ -472,9 +474,9 @@ function saveEditUser() {
           </UFormField>
 
           <UFormField
-            label="Contraseña"
+            :label="t('admin.supportUsers.modals.edit.password')"
             name="edit-password"
-            hint="Dejar en blanco para no cambiarla. Mínimo 8 caracteres si se modifica."
+            :hint="t('admin.supportUsers.modals.edit.passwordHint')"
             :error="
               editPassword.length > 0 && editPassword.length < 8
                 ? 'La contraseña debe tener al menos 8 caracteres'
@@ -504,7 +506,7 @@ function saveEditUser() {
             </UInput>
           </UFormField>
 
-          <UFormField label="Rol" name="edit-role" required>
+          <UFormField :label="t('admin.supportUsers.modals.edit.role')" name="edit-role" required>
             <USelectMenu
               v-model="editUser.role"
               :items="[
@@ -516,7 +518,7 @@ function saveEditUser() {
             />
           </UFormField>
 
-          <UFormField label="Estado" name="edit-status">
+          <UFormField :label="t('admin.supportUsers.modals.edit.status')" name="edit-status">
             <USelectMenu
               v-model="editUser.status"
               :items="[
@@ -534,12 +536,12 @@ function saveEditUser() {
           <UButton
             color="neutral"
             variant="ghost"
-            label="Cancelar"
+            :label="t('admin.supportUsers.modals.edit.cancel')"
             @click="isEditModalOpen = false"
           />
           <UButton
             color="primary"
-            label="Guardar Cambios"
+            :label="t('admin.supportUsers.modals.edit.save')"
             icon="i-heroicons-check"
             :disabled="!isEditFormValid"
             @click="saveEditUser"

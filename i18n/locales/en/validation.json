@@ -1,0 +1,12 @@
+{
+  "emailInvalid": "Invalid email",
+  "passwordMinLength": "Password must be at least {min} characters",
+  "commercialNameRequired": "Commercial name is required",
+  "addressRequired": "Registered address is required",
+  "nifInvalid": "Invalid NIF/CIF",
+  "phoneInvalid": "Invalid phone number",
+  "urlInvalid": "Invalid URL",
+  "countryRequired": "Please select a country",
+  "contactNameRequired": "Contact name is required",
+  "privacyRequired": "You must accept the privacy policy"
+}

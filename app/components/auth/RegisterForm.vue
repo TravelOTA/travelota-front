@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { registerSchema, type RegisterInput } from "~/utils/schemas";
+import { createRegisterSchema, type RegisterInput } from "~/utils/schemas";
 import type { FormSubmitEvent } from "@nuxt/ui";
+
+const { t } = useI18n();
+const registerSchema = createRegisterSchema(t);
 
 const emit = defineEmits<{ success: [] }>();
 
@@ -47,7 +50,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
         <UFormField name="nombreComercial">
           <UInput
             v-model="form.nombreComercial"
-            placeholder="NOMBRE COMERCIAL DE LA EMPRESA"
+            :placeholder="t('auth.register.commercialNamePlaceholder').toUpperCase()"
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"
@@ -67,7 +70,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
         <UFormField name="direccionRegistrada">
           <UInput
             v-model="form.direccionRegistrada"
-            placeholder="DIRECCIÓN REGISTRADA"
+            :placeholder="t('auth.register.addressPlaceholder').toUpperCase()"
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"
@@ -87,7 +90,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
         <UFormField name="nif">
           <UInput
             v-model="form.nif"
-            placeholder="NÚMERO DE IDENTIFICADOR FISCAL"
+            :placeholder="t('auth.register.nifPlaceholder').toUpperCase()"
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"
@@ -108,7 +111,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
           <UInput
             v-model="form.telefono"
             type="tel"
-            placeholder="TELÉFONO PRINCIPAL"
+            :placeholder="t('auth.register.phonePlaceholder').toUpperCase()"
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"
@@ -132,7 +135,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
           <UInput
             v-model="form.email"
             type="email"
-            placeholder="E-MAIL"
+            :placeholder="t('auth.register.emailPlaceholder').toUpperCase()"
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"
@@ -153,7 +156,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
           <UInput
             v-model="form.web"
             type="url"
-            placeholder="WEB (OPCIONAL)"
+            :placeholder="t('auth.register.websitePlaceholder').toUpperCase()"
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"
@@ -175,7 +178,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             v-model="form.pais"
             :items="paises"
             size="xl"
-            placeholder="PAÍS OPERATIVO"
+            :placeholder="t('auth.register.countryPlaceholder').toUpperCase()"
             variant="outline"
             class="uppercase-placeholder-select w-full"
             :ui="{
@@ -194,7 +197,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
         <UFormField name="nombreContacto">
           <UInput
             v-model="form.nombreContacto"
-            placeholder="NOMBRE DE CONTACTO"
+            :placeholder="t('auth.register.contactNamePlaceholder').toUpperCase()"
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"
@@ -232,11 +235,11 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
           >
             <template #label>
               <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">
-                Acepto la
+                {{ t('auth.register.privacyLabel') }}
                 <NuxtLink
                   to="/privacy"
                   class="text-[#00A1A1] hover:text-[#008181] underline underline-offset-2 decoration-[#00A1A1]"
-                  >política de privacidad</NuxtLink
+                  >{{ t('auth.register.privacyLink') }}</NuxtLink
                 >
               </span>
             </template>
@@ -258,7 +261,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
           !isFormValid && 'btn-registro-disabled',
         ]"
       >
-        Regístrame
+        {{ t('auth.register.submitButton') }}
       </UButton>
     </div>
   </UForm>

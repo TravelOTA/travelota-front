@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Motion } from "motion-v";
+const { t } = useI18n();
 </script>
 
 <template>
@@ -16,7 +17,7 @@ import { Motion } from "motion-v";
         <h2
           class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white uppercase"
         >
-          TravelOTA - Incoming Service
+          {{ t('auth.landing.incomingTitle') }}
         </h2>
         <div class="mt-4 w-24 h-1 bg-primary mx-auto rounded-full"></div>
       </Motion>
@@ -36,12 +37,12 @@ import { Motion } from "motion-v";
             <UIcon name="i-lucide-hotel" class="w-8 h-8 text-primary" />
           </div>
           <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
-            Servicios Receptivos
+            {{ t('auth.landing.service1Title') }}
           </h3>
           <p class="text-gray-600 dark:text-gray-400">
-            Receptivo independiente en los principales destinos.
-            <strong>Reservas de hoteles, traslados, coches de alquiler</strong>
-            y excursiones.
+            {{ t('auth.landing.service1Description') }}
+            <strong>{{ t('auth.landing.service1Highlight') }}</strong>
+            {{ t('auth.landing.service1Suffix') }}
           </p>
         </Motion>
 
@@ -59,12 +60,12 @@ import { Motion } from "motion-v";
             <UIcon name="i-lucide-lightbulb" class="w-8 h-8 text-primary" />
           </div>
           <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
-            Conocimiento Profundo
+            {{ t('auth.landing.service2Title') }}
           </h3>
           <p class="text-gray-600 dark:text-gray-400">
-            Nuestra trayectoria nos concede un
-            <strong>conocimiento profundo</strong> de la oferta en cada destino
-            para ofrecer respuestas ágiles y ventajosas.
+            {{ t('auth.landing.service2Prefix') }}
+            <strong>{{ t('auth.landing.service2Highlight') }}</strong>
+            {{ t('auth.landing.service2Suffix') }}
           </p>
         </Motion>
 
@@ -82,12 +83,12 @@ import { Motion } from "motion-v";
             <UIcon name="i-lucide-map" class="w-8 h-8 text-primary" />
           </div>
           <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
-            Incentivos y Circuitos
+            {{ t('auth.landing.service3Title') }}
           </h3>
           <p class="text-gray-600 dark:text-gray-400">
-            Ofrecemos servicios integrales para
-            <strong>grupos de incentivos y circuitos</strong>, junto con
-            representación profesional en el destino.
+            {{ t('auth.landing.service3Prefix') }}
+            <strong>{{ t('auth.landing.service3Highlight') }}</strong>,
+            {{ t('auth.landing.service3Suffix') }}
           </p>
         </Motion>
       </div>
