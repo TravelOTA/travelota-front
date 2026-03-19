@@ -138,7 +138,7 @@ onMounted(async () => {
       <h3
         class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
       >
-        Hoteles en el mapa
+        {{ t('hotels.map.title') }}
       </h3>
       <UButton
         color="neutral"
@@ -223,7 +223,7 @@ onMounted(async () => {
                     block
                     class="mt-2 font-bold cursor-pointer"
                     :to="`/dashboard/hotels/${hotel.id}`"
-                    >Detalles</UButton
+                    >{{ t('hotels.map.details') }}</UButton
                   >
                 </div>
               </component>

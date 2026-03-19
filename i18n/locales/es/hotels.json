@@ -11,7 +11,8 @@
       "adults": "Adultos",
       "children": "Niños",
       "roomLabel": "Habitación",
-      "childAgeLabel": "Edad niño"
+      "childAgeLabel": "Edad niño",
+      "datePlaceholder": "dd/mm/aa - dd/mm/aa"
     },
     "results": {
       "seeOnMap": "Ver hoteles en el mapa",
@@ -133,6 +134,65 @@
       "reservationConfirmedPending": "La reserva está confirmada pero pendiente de pago.",
       "confirmedPaid": "CONFIRMADA · PAGADA",
       "confirmationCode": "Localizador:"
+    },
+    "bookingStatusLabel": {
+      "confirmed": "Confirmada",
+      "cancelled": "Cancelada",
+      "expired": "Vencida"
+    },
+    "paymentStatusLabel": {
+      "paid": "Pagada",
+      "pending_payment": "Pendiente de Pago",
+      "pending_transfer": "Pendiente Transferencia",
+      "deferred": "Pago Aplazado"
+    },
+    "map": {
+      "title": "Hoteles en el mapa",
+      "details": "Detalles"
+    },
+    "voucher": {
+      "reservationTitle": "Voucher de Reserva",
+      "invoiceTitle": "Factura de Reserva",
+      "printPdf": "Imprimir PDF",
+      "logoAlt": "Logo Agencia",
+      "travelerData": "Datos del Viajero",
+      "dates": "Fechas",
+      "checkIn": "Check-In:",
+      "checkOut": "Check-Out:",
+      "accommodation": "Alojamiento Contratado",
+      "roomLabel": "Habitación {n}",
+      "subtotal": "Subtotal:",
+      "taxes": "Impuestos (10%):",
+      "total": "Total:",
+      "disclaimer": "Este documento es válido como confirmación formal de su reserva.",
+      "printedBy": "Impreso por {agent} el {date}",
+      "confirmed": "Confirmada"
+    },
+    "payment": {
+      "title": "Estado de Pago",
+      "paid": "Reserva Pagada",
+      "paidDescription": "El pago ha sido recibido y procesado correctamente.",
+      "paidDate": "Fecha de pago: {date}",
+      "paidAmount": "Importe pagado:",
+      "pendingAmount": "Importe pendiente",
+      "payNow": "Pagar Ahora"
+    },
+    "bookingDetail": {
+      "pnrLabel": "Localizador de Reserva (PNR)",
+      "titular": "Titular de la Reserva",
+      "agencyReference": "Referencia Agencia",
+      "confirmationEmail": "Email Confirmación",
+      "responsibleAgent": "Agente Responsable",
+      "creationDate": "Fecha de Creación",
+      "notFound": "Reserva no encontrada",
+      "documentsAndActions": "Documentos y Acciones",
+      "downloadVoucher": "Descargar Voucher",
+      "voucherSubtitle": "PDF Cliente Final (Sin Precio)",
+      "downloadInvoice": "Descargar Factura",
+      "invoiceSubtitle": "PDF Interno Agencia (Con Precio)",
+      "backToBookings": "Volver a Mis Reservas",
+      "newSearch": "Nueva Búsqueda",
+      "requestedDetail": "Detalle Solicitado"
     }
   }
 }

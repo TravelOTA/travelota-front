@@ -8,6 +8,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits(["update:isOpen"]);
+const { t } = useI18n();
 
 // Mock Agency Data
 const agency = {
@@ -41,7 +42,7 @@ function printVoucher() {
             "
             class="w-5 h-5"
           />
-          {{ mode === "invoice" ? "Factura de Reserva" : "Voucher de Reserva" }}
+          {{ mode === "invoice" ? t('hotels.voucher.invoiceTitle') : t('hotels.voucher.reservationTitle') }}
           - {{ bookingId }}
         </h3>
         <div class="flex items-center gap-2 print:hidden">
@@ -49,7 +50,7 @@ function printVoucher() {
             color="primary"
             variant="solid"
             icon="i-heroicons-printer"
-            label="Imprimir PDF"
+            :label="t('hotels.voucher.printPdf')"
             @click="printVoucher"
           />
           <UButton
@@ -76,7 +77,7 @@ function printVoucher() {
           <div class="flex items-center gap-4">
             <img
               :src="agency.logo"
-              alt="Logo Agencia"
+              :alt="t('hotels.voucher.logoAlt')"
               class="h-16 w-auto rounded shadow-sm"
             />
             <div>
@@ -92,14 +93,14 @@ function printVoucher() {
             <h1
               class="text-3xl font-black text-primary-600 tracking-tighter uppercase"
             >
-              {{ mode === "invoice" ? "FACTURA" : "VOUCHER" }}
+              {{ mode === "invoice" ? t('hotels.voucher.invoiceTitle').toUpperCase() : t('hotels.voucher.reservationTitle').toUpperCase() }}
             </h1>
             <p class="font-medium text-gray-600 mt-1 mb-2">
-              Localizador:
+              {{ t('hotels.bookingStatus.confirmationCode') }}
               <span class="text-gray-900 font-bold ml-1">{{ bookingId }}</span>
             </p>
             <UBadge color="success" variant="subtle" size="lg"
-              >Confirmada</UBadge
+              >{{ t('hotels.voucher.confirmed') }}</UBadge
             >
           </div>
         </div>
@@ -111,7 +112,7 @@ function printVoucher() {
               <h3
                 class="text-sm uppercase tracking-widest font-bold text-gray-400 mb-4 border-b pb-2"
               >
-                Datos del Viajero
+                {{ t('hotels.voucher.travelerData') }}
               </h3>
               <div class="space-y-3">
                 <p class="text-gray-800 flex items-center gap-2">
@@ -128,18 +129,18 @@ function printVoucher() {
               <h3
                 class="text-sm uppercase tracking-widest font-bold text-gray-400 mb-4 border-b pb-2"
               >
-                Fechas
+                {{ t('hotels.voucher.dates') }}
               </h3>
               <div class="space-y-3">
                 <p class="text-gray-800">
                   <span class="font-medium text-gray-500 w-24 inline-block"
-                    >Check-In:</span
+                    >{{ t('hotels.voucher.checkIn') }}</span
                   >
                   <span class="font-bold">{{ reservation.checkIn }}</span>
                 </p>
                 <p class="text-gray-800">
                   <span class="font-medium text-gray-500 w-24 inline-block"
-                    >Check-Out:</span
+                    >{{ t('hotels.voucher.checkOut') }}</span
                   >
                   <span class="font-bold">{{ reservation.checkOut }}</span>
                 </p>
@@ -151,7 +152,7 @@ function printVoucher() {
             <h3
               class="text-sm uppercase tracking-widest font-bold text-gray-400 mb-4 border-b pb-2"
             >
-              Alojamiento Contratado
+              {{ t('hotels.voucher.accommodation') }}
             </h3>
             <p class="text-2xl font-black tracking-tight text-gray-900 mb-4">
               {{ hotelName }}
@@ -167,7 +168,7 @@ function printVoucher() {
                   <p
                     class="text-xs font-bold text-primary-600 uppercase tracking-widest mb-1"
                   >
-                    Habitación {{ index + 1 }}
+                    {{ t('hotels.voucher.roomLabel', { n: index + 1 }) }}
                   </p>
                   <p class="font-bold text-gray-900 text-lg">{{ room.name }}</p>
                 </div>
@@ -204,7 +205,7 @@ function printVoucher() {
             >
               <div class="w-64 space-y-3">
                 <div class="flex justify-between text-sm text-gray-600">
-                  <span>Subtotal:</span>
+                  <span>{{ t('hotels.voucher.subtotal') }}</span>
                   <span class="font-medium"
                     >${{
                       (
@@ -217,7 +218,7 @@ function printVoucher() {
                   >
                 </div>
                 <div class="flex justify-between text-sm text-gray-600">
-                  <span>Impuestos (10%):</span>
+                  <span>{{ t('hotels.voucher.taxes') }}</span>
                   <span class="font-medium"
                     >${{
                       (
@@ -232,7 +233,7 @@ function printVoucher() {
                 <div
                   class="flex justify-between text-lg font-black text-gray-900 border-t border-gray-200 pt-3"
                 >
-                  <span>Total:</span>
+                  <span>{{ t('hotels.voucher.total') }}</span>
                   <span class="text-primary-600"
                     >${{
                       reservation.rooms
@@ -249,11 +250,10 @@ function printVoucher() {
             class="mt-16 text-center text-xs text-gray-400 uppercase tracking-wider font-bold pt-8 border-t border-gray-100"
           >
             <p>
-              Este documento es válido como confirmación formal de su reserva.
+              {{ t('hotels.voucher.disclaimer') }}
             </p>
             <p class="mt-1">
-              Impreso por {{ reservation.agent }} el
-              {{ new Date().toLocaleDateString() }}
+              {{ t('hotels.voucher.printedBy', { agent: reservation.agent, date: new Date().toLocaleDateString() }) }}
             </p>
           </div>
         </div>

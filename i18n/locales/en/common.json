@@ -11,7 +11,8 @@
     "myAgency": "My Agency",
     "administration": "Administration",
     "b2bTemplates": "B2B Templates",
-    "comingSoon": "Soon"
+    "comingSoon": "Soon",
+    "adminBrand": "TravelOTA Admin"
   },
   "footer": {
     "contactTitle": "Contact Us",
@@ -23,5 +24,51 @@
     "privacyPolicy": "Privacy policy",
     "termsOfUse": "Legal notice and terms of use",
     "rights": "© {year} TRAVELOTA GLOBAL SERVICES."
+  },
+  "bookings": {
+    "pageTitle": "My Bookings - TravelOTA B2B",
+    "title": "My Bookings",
+    "subtitle": "Search, manage and make payments for your agency's bookings.",
+    "newSale": "New Sale",
+    "resultsLabel": "Results:",
+    "badgeConfirmed": "{count} Confirmed",
+    "badgePending": "{count} Pending Payment",
+    "badgeCancelled": "{count} Cancelled",
+    "totalVolume": "Total Vol.:",
+    "pendingAmount": "Pend. Pay.:",
+    "pendingCount": "{count} pending booking | {count} pending bookings",
+    "pendingInResults": "pending payment in results",
+    "selectAllPending": "Select all pending payment",
+    "deselectAll": "Deselect all",
+    "colCost": "COST",
+    "colSale": "SALE",
+    "checkoutUntil": "until {date}",
+    "tooltipVoucher": "Download Voucher",
+    "tooltipDetails": "View Details",
+    "emptyTitle": "No bookings found",
+    "emptyDescription": "Try adjusting the search filters or perform a new search with different criteria.",
+    "noResultsTitle": "No bookings found",
+    "noResultsDescription": "No bookings match the applied filters. Try modifying the search criteria.",
+    "searchTitle": "Search your bookings",
+    "searchDescription": "Use the filters above to search bookings by locator, holder, destination, status or dates.",
+    "badgePNR": "PNR",
+    "badgeTitular": "Holder",
+    "badgeDestination": "Destination",
+    "badgeStatus": "Status",
+    "badgeDates": "Dates",
+    "paginationShowing": "Showing",
+    "paginationOf": "of",
+    "paginationBookings": "bookings",
+    "tableColumns": {
+      "pnr": "PNR Locator",
+      "status": "Status",
+      "payment": "Payment",
+      "prices": "Cost / Sale",
+      "createdAt": "Created",
+      "titular": "Holder",
+      "destination": "Destination / Hotel",
+      "dates": "Travel Dates",
+      "seller": "Seller"
+    }
   }
 }

@@ -6,12 +6,14 @@ import VoucherPreviewModal from "~/components/b2b/hotel/checkout/VoucherPreviewM
 import { useBookings } from "~/composables/useBookings";
 import type { BookingRow } from "~/composables/useBookings";
 
+const { t } = useI18n();
+
 definePageMeta({
   layout: "dashboard",
 });
 
 useHead({
-  title: "Mis Reservas - TravelOTA B2B",
+  title: () => t("bookings.pageTitle"),
 });
 
 interface SearchFilters {
@@ -210,19 +212,19 @@ const openVoucher = (booking: BookingRow) => {
 };
 
 // Table Columns
-const columns = [
+const columns = computed(() => [
   { accessorKey: "actions", header: "" },
   { accessorKey: "select", header: "" },
-  { accessorKey: "id", header: "Localizador PNR" },
-  { accessorKey: "status", header: "Estado" },
-  { accessorKey: "paymentStatus", header: "Pago" },
-  { accessorKey: "prices", header: "Coste / Venta" },
-  { accessorKey: "createdAt", header: "F. Creación" },
-  { accessorKey: "titular", header: "Titular" },
-  { accessorKey: "destination", header: "Destino / Hotel" },
-  { accessorKey: "dates", header: "Fechas de Viaje" },
-  { accessorKey: "seller", header: "Vendedor" },
-];
+  { accessorKey: "id", header: t("bookings.tableColumns.pnr") },
+  { accessorKey: "status", header: t("bookings.tableColumns.status") },
+  { accessorKey: "paymentStatus", header: t("bookings.tableColumns.payment") },
+  { accessorKey: "prices", header: t("bookings.tableColumns.prices") },
+  { accessorKey: "createdAt", header: t("bookings.tableColumns.createdAt") },
+  { accessorKey: "titular", header: t("bookings.tableColumns.titular") },
+  { accessorKey: "destination", header: t("bookings.tableColumns.destination") },
+  { accessorKey: "dates", header: t("bookings.tableColumns.dates") },
+  { accessorKey: "seller", header: t("bookings.tableColumns.seller") },
+]);
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -275,10 +277,10 @@ const resultStats = computed(() => {
             name="i-heroicons-briefcase"
             class="w-8 h-8 text-primary-500"
           />
-          Mis Reservas
+          {{ t('bookings.title') }}
         </h1>
         <p class="text-gray-500 mt-1 dark:text-gray-400">
-          Busca, gestiona y realiza pagos de las reservas de tu agencia.
+          {{ t('bookings.subtitle') }}
         </p>
       </div>
       <UButton
@@ -287,7 +289,7 @@ const resultStats = computed(() => {
         icon="i-heroicons-plus"
         to="/dashboard"
       >
-        Nueva Venta
+        {{ t('bookings.newSale') }}
       </UButton>
     </div>
 
@@ -314,7 +316,7 @@ const resultStats = computed(() => {
               class="w-5 h-5 text-gray-400"
             />
             <span class="text-sm text-gray-600 dark:text-gray-400"
-              >Resultados:</span
+              >{{ t('bookings.resultsLabel') }}</span
             >
             <span class="text-sm font-bold text-gray-900 dark:text-white">{{
               resultStats.total
@@ -323,23 +325,23 @@ const resultStats = computed(() => {
           <div class="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
           <div class="flex items-center gap-2">
             <UBadge color="success" variant="subtle" class="text-xs font-bold"
-              >{{ resultStats.confirmed }} Confirmadas</UBadge
+              >{{ t('bookings.badgeConfirmed', { count: resultStats.confirmed }) }}</UBadge
             >
             <UBadge color="warning" variant="subtle" class="text-xs font-bold"
-              >{{ resultStats.pending }} Pendientes Pago</UBadge
+              >{{ t('bookings.badgePending', { count: resultStats.pending }) }}</UBadge
             >
             <UBadge
               v-if="resultStats.cancelled > 0"
               color="error"
               variant="subtle"
               class="text-xs font-bold"
-              >{{ resultStats.cancelled }} Canceladas</UBadge
+              >{{ t('bookings.badgeCancelled', { count: resultStats.cancelled }) }}</UBadge
             >
           </div>
           <div class="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
           <div class="flex items-center gap-2">
             <span class="text-sm text-gray-600 dark:text-gray-400"
-              >Vol. Total:</span
+              >{{ t('bookings.totalVolume') }}</span
             >
             <span class="text-sm font-bold text-gray-900 dark:text-white"
               >${{
@@ -355,7 +357,7 @@ const resultStats = computed(() => {
             class="flex items-center gap-2"
           >
             <span class="text-sm text-amber-600 dark:text-amber-400"
-              >Pend. Pago:</span
+              >{{ t('bookings.pendingAmount') }}</span
             >
             <span class="text-sm font-bold text-amber-700 dark:text-amber-300"
               >${{
@@ -380,13 +382,8 @@ const resultStats = computed(() => {
             class="w-5 h-5 text-amber-600 dark:text-amber-400"
           />
           <span class="text-sm font-medium text-amber-800 dark:text-amber-300">
-            {{ pendingPaymentBookings.length }}
-            {{
-              pendingPaymentBookings.length === 1
-                ? "reserva pendiente"
-                : "reservas pendientes"
-            }}
-            de pago en los resultados
+            {{ t('bookings.pendingCount', pendingPaymentBookings.length) }}
+            {{ t('bookings.pendingInResults') }}
           </span>
         </div>
         <UButton
@@ -398,7 +395,7 @@ const resultStats = computed(() => {
           class="font-bold"
           @click="selectAllPending"
         >
-          Seleccionar todas las pendientes de pago
+          {{ t('bookings.selectAllPending') }}
         </UButton>
         <UButton
           v-else
@@ -409,7 +406,7 @@ const resultStats = computed(() => {
           class="font-bold"
           @click="deselectAllPending"
         >
-          Deseleccionar todas
+          {{ t('bookings.deselectAll') }}
         </UButton>
       </div>
 
@@ -453,7 +450,7 @@ const resultStats = computed(() => {
                 (row as any).original.checkIn
               }}</span>
               <span class="block text-xs text-gray-500"
-                >hasta {{ (row as any).original.checkOut }}</span
+                >{{ t('bookings.checkoutUntil', { date: (row as any).original.checkOut }) }}</span
               >
             </div>
           </template>
@@ -475,7 +472,7 @@ const resultStats = computed(() => {
           <template #prices-cell="{ row }">
             <div class="text-xs space-y-0.5">
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-gray-400 w-12">COSTE</span>
+                <span class="font-semibold text-gray-400 w-12">{{ t('bookings.colCost') }}</span>
                 <span
                   class="font-bold text-gray-900 dark:text-white tabular-nums"
                 >
@@ -488,7 +485,7 @@ const resultStats = computed(() => {
                 </span>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-primary-500 w-12">VENTA</span>
+                <span class="font-semibold text-primary-500 w-12">{{ t('bookings.colSale') }}</span>
                 <span
                   class="font-bold text-primary-600 dark:text-primary-400 tabular-nums"
                 >
@@ -532,7 +529,7 @@ const resultStats = computed(() => {
           <!-- Actions Column -->
           <template #actions-cell="{ row }">
             <div class="flex items-center justify-end gap-2">
-              <UTooltip text="Descargar Voucher">
+              <UTooltip :text="t('bookings.tooltipVoucher')">
                 <UButton
                   color="neutral"
                   variant="ghost"
@@ -541,7 +538,7 @@ const resultStats = computed(() => {
                   @click="openVoucher((row as any).original)"
                 />
               </UTooltip>
-              <UTooltip text="Ver Detalles">
+              <UTooltip :text="t('bookings.tooltipDetails')">
                 <UButton
                   color="neutral"
                   variant="ghost"
@@ -565,11 +562,10 @@ const resultStats = computed(() => {
                 />
               </div>
               <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                No se encontraron reservas
+                {{ t('bookings.emptyTitle') }}
               </h3>
               <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-                Intenta ajustar los filtros de búsqueda o realiza una nueva
-                búsqueda con diferentes criterios.
+                {{ t('bookings.emptyDescription') }}
               </p>
             </div>
           </template>
@@ -583,7 +579,7 @@ const resultStats = computed(() => {
           <p
             class="text-sm text-gray-500 dark:text-gray-400 order-2 sm:order-1"
           >
-            Mostrando
+            {{ t('bookings.paginationShowing') }}
             <span class="font-semibold text-gray-900 dark:text-white">{{
               (currentPage - 1) * 10 + 1
             }}</span>
@@ -591,11 +587,11 @@ const resultStats = computed(() => {
             <span class="font-semibold text-gray-900 dark:text-white">{{
               Math.min(currentPage * 10, filteredBookings.length)
             }}</span>
-            de
+            {{ t('bookings.paginationOf') }}
             <span class="font-semibold text-gray-900 dark:text-white">{{
               filteredBookings.length
             }}</span>
-            reservas
+            {{ t('bookings.paginationBookings') }}
           </p>
           <UPagination
             v-model:page="currentPage"
@@ -621,11 +617,10 @@ const resultStats = computed(() => {
             />
           </div>
           <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-            No se encontraron reservas
+            {{ t('bookings.noResultsTitle') }}
           </h3>
           <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-            No hay reservas que coincidan con los filtros aplicados. Intenta
-            modificar los criterios de búsqueda.
+            {{ t('bookings.noResultsDescription') }}
           </p>
         </div>
       </div>
@@ -648,11 +643,10 @@ const resultStats = computed(() => {
             />
           </div>
           <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-            Busca tus reservas
+            {{ t('bookings.searchTitle') }}
           </h3>
           <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
-            Utiliza los filtros de arriba para buscar reservas por localizador,
-            titular, destino, estado o fechas.
+            {{ t('bookings.searchDescription') }}
           </p>
           <div class="flex flex-wrap justify-center gap-3">
             <UBadge color="primary" variant="subtle" class="px-3 py-1 text-xs">
@@ -660,26 +654,26 @@ const resultStats = computed(() => {
                 name="i-heroicons-document-text"
                 class="w-3 h-3 mr-1 inline"
               />
-              PNR
+              {{ t('bookings.badgePNR') }}
             </UBadge>
             <UBadge color="primary" variant="subtle" class="px-3 py-1 text-xs">
               <UIcon name="i-heroicons-user" class="w-3 h-3 mr-1 inline" />
-              Titular
+              {{ t('bookings.badgeTitular') }}
             </UBadge>
             <UBadge color="primary" variant="subtle" class="px-3 py-1 text-xs">
               <UIcon name="i-heroicons-map-pin" class="w-3 h-3 mr-1 inline" />
-              Destino
+              {{ t('bookings.badgeDestination') }}
             </UBadge>
             <UBadge color="primary" variant="subtle" class="px-3 py-1 text-xs">
               <UIcon name="i-heroicons-funnel" class="w-3 h-3 mr-1 inline" />
-              Estado
+              {{ t('bookings.badgeStatus') }}
             </UBadge>
             <UBadge color="primary" variant="subtle" class="px-3 py-1 text-xs">
               <UIcon
                 name="i-heroicons-calendar-days"
                 class="w-3 h-3 mr-1 inline"
               />
-              Fechas
+              {{ t('bookings.badgeDates') }}
             </UBadge>
           </div>
         </div>

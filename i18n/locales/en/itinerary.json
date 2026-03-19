@@ -80,6 +80,7 @@
     "errorSelectValidBlock": "Select a valid block.",
     "successAddedToItinerary": "The option has been successfully added to your itinerary.",
     "errorAddingToItinerary": "Could not add to itinerary.",
-    "toastAddedTitle": "Added to Itinerary"
+    "toastAddedTitle": "Added to Itinerary",
+    "errorAddTitle": "Error adding"
   }
 }

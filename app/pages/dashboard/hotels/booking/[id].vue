@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+const { t } = useI18n();
 import CheckoutSidebarSummary from "~/components/b2b/hotel/checkout/CheckoutSidebarSummary.vue";
 import BookingStatusHero from "~/components/b2b/hotel/checkout/BookingStatusHero.vue";
 import BookingCancellation from "~/components/b2b/hotel/checkout/BookingCancellation.vue";
@@ -34,28 +35,14 @@ onMounted(async () => {
   loading.value = false;
 });
 
-// Status label maps for display
-const STATUS_LABELS: Record<string, string> = {
-  confirmed: "Confirmada",
-  cancelled: "Cancelada",
-  expired: "Vencida",
-};
-const PAYMENT_STATUS_LABELS: Record<string, string> = {
-  paid: "Pagada",
-  pending_payment: "Pendiente de Pago",
-  pending_transfer: "Pendiente Transferencia",
-  deferred: "Pago Aplazado",
-};
-
 const bookingStatusLabel = computed(() =>
   booking.value
-    ? (STATUS_LABELS[booking.value.status] ?? booking.value.status)
+    ? t(`hotels.bookingStatusLabel.${booking.value.status}`, booking.value.status)
     : "",
 );
 const paymentStatusLabel = computed(() =>
   booking.value
-    ? (PAYMENT_STATUS_LABELS[booking.value.paymentStatus] ??
-      booking.value.paymentStatus)
+    ? t(`hotels.paymentStatusLabel.${booking.value.paymentStatus}`, booking.value.paymentStatus)
     : "",
 );
 
@@ -114,8 +101,8 @@ const cancellationPolicies = computed(() => {
 // Computed flags for conditional rendering
 const showCancellation = computed(
   () =>
-    bookingStatusLabel.value !== "Cancelada" &&
-    bookingStatusLabel.value !== "Vencida",
+    booking.value?.status !== "cancelled" &&
+    booking.value?.status !== "expired",
 );
 
 const paidDate = computed(() =>
@@ -159,7 +146,7 @@ useHead({
 
     <!-- Not found state -->
     <div v-else-if="notFound" class="text-center py-20 text-gray-500">
-      Reserva no encontrada
+      {{ t('hotels.bookingDetail.notFound') }}
     </div>
 
     <!-- Booking detail -->
@@ -189,7 +176,7 @@ useHead({
                 <p
                   class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1"
                 >
-                  Localizador de Reserva (PNR)
+                  {{ t('hotels.bookingDetail.pnrLabel') }}
                 </p>
                 <h2
                   class="text-3xl font-black text-primary-600 dark:text-primary-400 tracking-tight flex items-center gap-2"
@@ -197,9 +184,9 @@ useHead({
                   {{ booking.id }}
                   <UBadge
                     :color="
-                      bookingStatusLabel === 'Confirmada'
+                      booking.status === 'confirmed'
                         ? 'success'
-                        : bookingStatusLabel === 'Cancelada'
+                        : booking.status === 'cancelled'
                           ? 'error'
                           : 'warning'
                     "
@@ -209,9 +196,9 @@ useHead({
                     {{ bookingStatusLabel }}
                   </UBadge>
                   <UBadge
-                    v-if="bookingStatusLabel !== 'Cancelada'"
+                    v-if="booking.status !== 'cancelled'"
                     :color="
-                      paymentStatusLabel === 'Pagada' ? 'success' : 'warning'
+                      booking.paymentStatus === 'paid' ? 'success' : 'warning'
                     "
                     variant="subtle"
                     class="px-2 py-1 text-xs uppercase tracking-wider font-bold"
@@ -229,7 +216,7 @@ useHead({
                 <p
                   class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1"
                 >
-                  Titular de la Reserva
+                  {{ t('hotels.bookingDetail.titular') }}
                 </p>
                 <p
                   class="font-bold text-gray-900 dark:text-white text-lg flex items-center gap-2"
@@ -245,7 +232,7 @@ useHead({
                 <p
                   class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1"
                 >
-                  Referencia Agencia
+                  {{ t('hotels.bookingDetail.agencyReference') }}
                 </p>
                 <p class="font-bold text-gray-900 dark:text-white text-lg">
                   {{ booking.titular.refAgencia || "N/A" }}
@@ -255,7 +242,7 @@ useHead({
                 <p
                   class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1"
                 >
-                  Email Confirmación
+                  {{ t('hotels.bookingDetail.confirmationEmail') }}
                 </p>
                 <p
                   class="text-gray-900 dark:text-gray-300 flex items-center gap-2"
@@ -271,7 +258,7 @@ useHead({
                 <p
                   class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1"
                 >
-                  Agente Responsable
+                  {{ t('hotels.bookingDetail.responsibleAgent') }}
                 </p>
                 <p class="text-gray-900 dark:text-gray-300">
                   {{ booking.createdBy }}
@@ -281,7 +268,7 @@ useHead({
                 <p
                   class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1"
                 >
-                  Fecha de Creación
+                  {{ t('hotels.bookingDetail.creationDate') }}
                 </p>
                 <p
                   class="text-gray-900 dark:text-gray-300 flex items-center gap-2"
@@ -298,7 +285,7 @@ useHead({
 
           <!-- Payment Status Component (always visible, adapts to paid or pending) -->
           <BookingPayment
-            v-if="bookingStatusLabel !== 'Vencida'"
+            v-if="booking.status !== 'expired'"
             :payment-status="paymentStatusLabel"
             :total-price="booking.totalPrice"
             :payment-deadline="paymentDeadline"
@@ -307,7 +294,7 @@ useHead({
 
           <!-- Cancellation Component (hidden for expired bookings) -->
           <BookingCancellation
-            v-if="showCancellation || bookingStatusLabel === 'Cancelada'"
+            v-if="showCancellation || booking.status === 'cancelled'"
             :booking-status="bookingStatusLabel"
             :total-price="booking.totalPrice"
             :policies="cancellationPolicies"
@@ -318,7 +305,7 @@ useHead({
             class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-6"
           >
             <h3 class="font-bold text-gray-900 dark:text-white mb-4">
-              Documentos y Acciones
+              {{ t('hotels.bookingDetail.documentsAndActions') }}
             </h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <UButton
@@ -330,9 +317,9 @@ useHead({
                 @click="openDocument('voucher')"
               >
                 <div class="text-left">
-                  <span class="block">Descargar Voucher</span>
+                  <span class="block">{{ t('hotels.bookingDetail.downloadVoucher') }}</span>
                   <span class="block text-[10px] font-normal opacity-80 mt-0.5"
-                    >PDF Cliente Final (Sin Precio)</span
+                    >{{ t('hotels.bookingDetail.voucherSubtitle') }}</span
                   >
                 </div>
               </UButton>
@@ -346,9 +333,9 @@ useHead({
                 @click="openDocument('invoice')"
               >
                 <div class="text-left">
-                  <span class="block">Descargar Factura</span>
+                  <span class="block">{{ t('hotels.bookingDetail.downloadInvoice') }}</span>
                   <span class="block text-[10px] font-normal opacity-90 mt-0.5"
-                    >PDF Interno Agencia (Con Precio)</span
+                    >{{ t('hotels.bookingDetail.invoiceSubtitle') }}</span
                   >
                 </div>
               </UButton>
@@ -362,7 +349,7 @@ useHead({
                 class="text-gray-500 font-bold uppercase tracking-wider text-xs"
                 @click="router.push('/dashboard/bookings')"
               >
-                Volver a Mis Reservas
+                {{ t('hotels.bookingDetail.backToBookings') }}
               </UButton>
               <UButton
                 color="neutral"
@@ -371,7 +358,7 @@ useHead({
                 class="text-gray-500 font-bold uppercase tracking-wider text-xs"
                 @click="router.push('/dashboard')"
               >
-                Nueva Búsqueda
+                {{ t('hotels.bookingDetail.newSearch') }}
               </UButton>
             </div>
           </div>
@@ -384,7 +371,7 @@ useHead({
           <h3
             class="font-black tracking-tight text-gray-900 dark:text-white text-xl mb-4"
           >
-            Detalle Solicitado
+            {{ t('hotels.bookingDetail.requestedDetail') }}
           </h3>
           <CheckoutSidebarSummary
             v-if="hotelProp && reservationProp"

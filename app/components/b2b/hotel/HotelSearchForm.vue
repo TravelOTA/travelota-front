@@ -154,7 +154,7 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
                   {{ formatCalendarDate(dateRange.end) }}
                 </template>
                 <span v-else class="text-gray-400 dark:text-gray-500"
-                  >dd/mm/yy - dd/mm/yy</span
+                  >{{ t('hotels.search.datePlaceholder') }}</span
                 >
               </span>
             </div>

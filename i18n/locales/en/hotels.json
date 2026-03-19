@@ -11,7 +11,8 @@
       "adults": "Adults",
       "children": "Children",
       "roomLabel": "Room",
-      "childAgeLabel": "Child age"
+      "childAgeLabel": "Child age",
+      "datePlaceholder": "mm/dd/yy - mm/dd/yy"
     },
     "results": {
       "seeOnMap": "View hotels on the map",
@@ -133,6 +134,65 @@
       "reservationConfirmedPending": "The reservation is confirmed but pending payment.",
       "confirmedPaid": "CONFIRMED · PAID",
       "confirmationCode": "Locator:"
+    },
+    "bookingStatusLabel": {
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "expired": "Expired"
+    },
+    "paymentStatusLabel": {
+      "paid": "Paid",
+      "pending_payment": "Pending Payment",
+      "pending_transfer": "Pending Transfer",
+      "deferred": "Deferred Payment"
+    },
+    "map": {
+      "title": "Hotels on the map",
+      "details": "Details"
+    },
+    "voucher": {
+      "reservationTitle": "Reservation Voucher",
+      "invoiceTitle": "Reservation Invoice",
+      "printPdf": "Print PDF",
+      "logoAlt": "Agency Logo",
+      "travelerData": "Traveler Data",
+      "dates": "Dates",
+      "checkIn": "Check-In:",
+      "checkOut": "Check-Out:",
+      "accommodation": "Booked Accommodation",
+      "roomLabel": "Room {n}",
+      "subtotal": "Subtotal:",
+      "taxes": "Taxes (10%):",
+      "total": "Total:",
+      "disclaimer": "This document is valid as formal confirmation of your reservation.",
+      "printedBy": "Printed by {agent} on {date}",
+      "confirmed": "Confirmed"
+    },
+    "payment": {
+      "title": "Payment Status",
+      "paid": "Reservation Paid",
+      "paidDescription": "Payment has been received and processed successfully.",
+      "paidDate": "Payment date: {date}",
+      "paidAmount": "Amount paid:",
+      "pendingAmount": "Pending amount",
+      "payNow": "Pay Now"
+    },
+    "bookingDetail": {
+      "pnrLabel": "Booking Locator (PNR)",
+      "titular": "Reservation Holder",
+      "agencyReference": "Agency Reference",
+      "confirmationEmail": "Confirmation Email",
+      "responsibleAgent": "Responsible Agent",
+      "creationDate": "Creation Date",
+      "notFound": "Reservation not found",
+      "documentsAndActions": "Documents & Actions",
+      "downloadVoucher": "Download Voucher",
+      "voucherSubtitle": "Client PDF (No Price)",
+      "downloadInvoice": "Download Invoice",
+      "invoiceSubtitle": "Internal Agency PDF (With Price)",
+      "backToBookings": "Back to My Bookings",
+      "newSearch": "New Search",
+      "requestedDetail": "Requested Detail"
     }
   }
 }

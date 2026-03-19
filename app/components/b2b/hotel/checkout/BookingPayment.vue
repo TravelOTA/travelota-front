@@ -38,7 +38,7 @@ const handlePay = () => {
       class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2"
     >
       <UIcon name="i-heroicons-credit-card" class="w-5 h-5 text-primary-500" />
-      Estado de Pago
+      {{ t('hotels.payment.title') }}
     </h3>
 
     <!-- Reserva ya pagada: Mensaje informativo -->
@@ -55,21 +55,21 @@ const handlePay = () => {
         />
       </div>
       <p class="text-base font-bold text-green-800 dark:text-green-400 mb-1">
-        Reserva Pagada
+        {{ t('hotels.payment.paid') }}
       </p>
       <p class="text-sm text-green-700 dark:text-green-300">
-        El pago ha sido recibido y procesado correctamente.
+        {{ t('hotels.payment.paidDescription') }}
       </p>
       <p
         v-if="paidDate"
         class="text-xs text-green-600 dark:text-green-400 mt-2"
       >
-        Fecha de pago: {{ paidDate }}
+        {{ t('hotels.payment.paidDate', { date: paidDate }) }}
       </p>
       <div
         class="mt-4 pt-3 border-t border-green-200 dark:border-green-800 flex items-center justify-center gap-2 text-sm text-green-700 dark:text-green-300"
       >
-        <span class="font-medium">Importe pagado:</span>
+        <span class="font-medium">{{ t('hotels.payment.paidAmount') }}</span>
         <span class="font-black text-lg text-green-800 dark:text-green-400"
           >${{
             totalPrice.toLocaleString("en-US", {
@@ -107,7 +107,7 @@ const handlePay = () => {
         class="flex items-center justify-between mb-5 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg"
       >
         <span class="text-sm font-bold text-gray-500 uppercase tracking-wider"
-          >Importe pendiente</span
+          >{{ t('hotels.payment.pendingAmount') }}</span
         >
         <span class="text-2xl font-black text-primary-600 dark:text-primary-400"
           >${{
@@ -133,7 +133,7 @@ const handlePay = () => {
         :loading="isProcessing"
         @click="handlePay"
       >
-        Pagar Ahora
+        {{ t('hotels.payment.payNow') }}
       </UButton>
     </template>
   </div>

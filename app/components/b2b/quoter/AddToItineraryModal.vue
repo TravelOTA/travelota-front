@@ -105,7 +105,7 @@ const handleConfirm = () => {
     const errorMessage =
       err instanceof Error ? err.message : t("itinerary.errorAddingToItinerary");
     toast.add({
-      title: "Error al agregar",
+      title: t("itinerary.errorAddTitle"),
       description: errorMessage,
       icon: "i-heroicons-exclamation-triangle",
       color: "error",
@@ -203,7 +203,7 @@ const handleConfirm = () => {
           <UFormField :label="t('itinerary.blockTitleLabel')">
             <UInput
               v-model="newBlockTitle"
-              placeholder="Ej: Noches en Caribe"
+              :placeholder="t('itinerary.blockTitlePlaceholder')"
             />
           </UFormField>
           <UFormField :label="t('itinerary.stayDatesLabel')">

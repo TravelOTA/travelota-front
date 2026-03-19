@@ -126,7 +126,7 @@ const userLinks = computed(() => {
           </template>
           <template v-else>
             <span class="text-xl font-black tracking-tight text-primary"
-              >TravelOTA Admin</span
+              >{{ t('nav.adminBrand') }}</span
             >
           </template>
         </NuxtLink>

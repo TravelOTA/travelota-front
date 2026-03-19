@@ -11,7 +11,8 @@
     "myAgency": "Mi Agencia",
     "administration": "Administración",
     "b2bTemplates": "Plantillas B2B",
-    "comingSoon": "Prónto"
+    "comingSoon": "Prónto",
+    "adminBrand": "TravelOTA Admin"
   },
   "footer": {
     "contactTitle": "Contacta con Nosotros",
@@ -23,5 +24,51 @@
     "privacyPolicy": "Políticas de privacidad",
     "termsOfUse": "Aviso legal y condiciones de uso",
     "rights": "© {year} TRAVELOTA GLOBAL SERVICES."
+  },
+  "bookings": {
+    "pageTitle": "Mis Reservas - TravelOTA B2B",
+    "title": "Mis Reservas",
+    "subtitle": "Busca, gestiona y realiza pagos de las reservas de tu agencia.",
+    "newSale": "Nueva Venta",
+    "resultsLabel": "Resultados:",
+    "badgeConfirmed": "{count} Confirmadas",
+    "badgePending": "{count} Pendientes Pago",
+    "badgeCancelled": "{count} Canceladas",
+    "totalVolume": "Vol. Total:",
+    "pendingAmount": "Pend. Pago:",
+    "pendingCount": "{count} reserva pendiente | {count} reservas pendientes",
+    "pendingInResults": "de pago en los resultados",
+    "selectAllPending": "Seleccionar todas las pendientes de pago",
+    "deselectAll": "Deseleccionar todas",
+    "colCost": "COSTE",
+    "colSale": "VENTA",
+    "checkoutUntil": "hasta {date}",
+    "tooltipVoucher": "Descargar Voucher",
+    "tooltipDetails": "Ver Detalles",
+    "emptyTitle": "No se encontraron reservas",
+    "emptyDescription": "Intenta ajustar los filtros de búsqueda o realiza una nueva búsqueda con diferentes criterios.",
+    "noResultsTitle": "No se encontraron reservas",
+    "noResultsDescription": "No hay reservas que coincidan con los filtros aplicados. Intenta modificar los criterios de búsqueda.",
+    "searchTitle": "Busca tus reservas",
+    "searchDescription": "Utiliza los filtros de arriba para buscar reservas por localizador, titular, destino, estado o fechas.",
+    "badgePNR": "PNR",
+    "badgeTitular": "Titular",
+    "badgeDestination": "Destino",
+    "badgeStatus": "Estado",
+    "badgeDates": "Fechas",
+    "paginationShowing": "Mostrando",
+    "paginationOf": "de",
+    "paginationBookings": "reservas",
+    "tableColumns": {
+      "pnr": "Localizador PNR",
+      "status": "Estado",
+      "payment": "Pago",
+      "prices": "Coste / Venta",
+      "createdAt": "F. Creación",
+      "titular": "Titular",
+      "destination": "Destino / Hotel",
+      "dates": "Fechas de Viaje",
+      "seller": "Vendedor"
+    }
   }
 }
