@@ -1,12 +1,14 @@
 {
-  "emailInvalid": "Email inválido",
-  "passwordMinLength": "La contraseña debe tener al menos {min} caracteres",
-  "commercialNameRequired": "Nombre comercial requerido",
-  "addressRequired": "Dirección registrada requerida",
-  "nifInvalid": "NIF/CIF inválido",
-  "phoneInvalid": "Teléfono inválido",
-  "urlInvalid": "URL inválida",
-  "countryRequired": "Selecciona un país",
-  "contactNameRequired": "Nombre de contacto requerido",
-  "privacyRequired": "Debes aceptar la política de privacidad"
+  "validation": {
+    "emailInvalid": "Email inválido",
+    "passwordMinLength": "La contraseña debe tener al menos {min} caracteres",
+    "commercialNameRequired": "Nombre comercial requerido",
+    "addressRequired": "Dirección registrada requerida",
+    "nifInvalid": "NIF/CIF inválido",
+    "phoneInvalid": "Teléfono inválido",
+    "urlInvalid": "URL inválida",
+    "countryRequired": "Selecciona un país",
+    "contactNameRequired": "Nombre de contacto requerido",
+    "privacyRequired": "Debes aceptar la política de privacidad"
+  }
 }

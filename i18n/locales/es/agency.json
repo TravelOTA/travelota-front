@@ -1,115 +1,117 @@
 {
-  "dashboard": {
-    "title": "Mi Agencia",
-    "subtitle": "Resumen operativo y datos corporativos de tu empresa en TravelOTA.",
-    "quickStats": {
-      "salesTeam": "Equipo de Ventas",
-      "manageTeam": "Gestionar Equipo",
-      "totalBookings": "Reservas Totales",
-      "goToMyBookings": "Ir a Mis Reservas",
-      "benefitsAndMarkup": "Beneficios y Markup",
-      "configureMarkup": "Configurar Markup",
-      "active": "Activo"
+  "agency": {
+    "dashboard": {
+      "title": "Mi Agencia",
+      "subtitle": "Resumen operativo y datos corporativos de tu empresa en TravelOTA.",
+      "quickStats": {
+        "salesTeam": "Equipo de Ventas",
+        "manageTeam": "Gestionar Equipo",
+        "totalBookings": "Reservas Totales",
+        "goToMyBookings": "Ir a Mis Reservas",
+        "benefitsAndMarkup": "Beneficios y Markup",
+        "configureMarkup": "Configurar Markup",
+        "active": "Activo"
+      },
+      "profile": {
+        "corporateProfile": "Perfil Corporativo",
+        "configureWhiteLabel": "Configurar White-Label",
+        "registered": "Registrada el",
+        "businessName": "Nombre Comercial",
+        "taxId": "DNI / RUT Fiscal",
+        "registeredAddress": "Dirección Registrada",
+        "operatingCountry": "País Operativo",
+        "adminEmail": "Correo Administrador",
+        "mainPhone": "Teléfono Principal",
+        "disclaimer": "* Para modificar los datos corporativos, legales o fiscales de tu agencia, por favor contacta con tu soporte asignado en TravelOTA. El branding y logos pueden editarse libremente."
+      },
+      "finance": {
+        "creditAndFinance": "Crédito y Finanzas"
+      },
+      "whiteLabelModal": {
+        "title": "Configuración White-Label",
+        "agencyLogo": "Logo de la Agencia",
+        "logoDescription": "Sube una imagen para mostrar en la plataforma y documentos.",
+        "primaryColor": "Color Principal del Sistema",
+        "primaryColorDescription": "Personaliza el color de botones y acentos visuales B2B.",
+        "hexCode": "O usa un código HEX personalizado:",
+        "publicEmail": "Correo de Contacto Público",
+        "publicPhone": "Teléfono de Contacto",
+        "cancel": "Cancelar",
+        "saveChanges": "Guardar Cambios"
+      }
     },
-    "profile": {
-      "corporateProfile": "Perfil Corporativo",
-      "configureWhiteLabel": "Configurar White-Label",
-      "registered": "Registrada el",
-      "businessName": "Nombre Comercial",
-      "taxId": "DNI / RUT Fiscal",
-      "registeredAddress": "Dirección Registrada",
-      "operatingCountry": "País Operativo",
-      "adminEmail": "Correo Administrador",
-      "mainPhone": "Teléfono Principal",
-      "disclaimer": "* Para modificar los datos corporativos, legales o fiscales de tu agencia, por favor contacta con tu soporte asignado en TravelOTA. El branding y logos pueden editarse libremente."
-    },
-    "finance": {
-      "creditAndFinance": "Crédito y Finanzas"
-    },
-    "whiteLabelModal": {
-      "title": "Configuración White-Label",
-      "agencyLogo": "Logo de la Agencia",
-      "logoDescription": "Sube una imagen para mostrar en la plataforma y documentos.",
-      "primaryColor": "Color Principal del Sistema",
-      "primaryColorDescription": "Personaliza el color de botones y acentos visuales B2B.",
-      "hexCode": "O usa un código HEX personalizado:",
-      "publicEmail": "Correo de Contacto Público",
-      "publicPhone": "Teléfono de Contacto",
-      "cancel": "Cancelar",
-      "saveChanges": "Guardar Cambios"
-    }
-  },
-  "markup": {
-    "title": "Modelo de Beneficios",
-    "subtitle": "Define tu ganancia. El porcentaje que configures aquí será tu",
-    "markupAgency": "Markup de Agencia",
-    "description": "y se sumará automáticamente al Precio Neto ofrecido por el sistema. Tus vendedores y clientes finales solo verán el precio final de venta.",
-    "backToAgency": "Volver a Mi Agencia",
-    "scheme": "Esquema de Ganancia",
-    "globalPercentage": "Porcentaje Fijo sobre todo el inventario",
-    "dynamicRules": "Reglas Dinámicas por Destino/Hotel",
-    "markupPercentage": "Markup de tu Agencia (%)",
-    "saveChanges": "Guardar Cambios",
-    "configuredRules": "Reglas Configuradas",
-    "addRule": "Añadir Regla",
-    "noRules": "No has configurado reglas aún. El sistema no cobrará markup adicional al precio neto.",
-    "modalTitle": "Nueva Regla de Beneficios",
-    "applyRuleTo": "Aplicar Regla A",
-    "selectDestination": "Seleccionar Destino",
-    "hotelName": "Nombre del Hotel",
-    "exampleHotel": "Ej: Hard Rock Hotel",
-    "markupToAdd": "Markup a Sumar al Neto (%)",
-    "saveRule": "Guardar Regla"
-  },
-  "users": {
-    "title": "Equipo de Ventas",
-    "backToAgency": "Volver a Mi Agencia",
-    "subtitle": "Gestiona los accesos de tus vendedores a la plataforma TravelOTA.",
-    "inviteSeller": "Invitar Vendedor",
-    "search": "Buscar por nombre o email...",
-    "filters": {
-      "all": "Todos",
-      "active": "Activos",
-      "inactive": "Inactivos"
-    },
-    "tableHeaders": {
-      "user": "Usuario",
-      "role": "Rol B2B",
-      "status": "Estado",
-      "lastLogin": "Último Acceso"
-    },
-    "tableEmpty": "No se encontraron usuarios.",
-    "roles": {
-      "seller": "Vendedor",
-      "adminAgency": "Admin Agencia"
-    },
-    "statuses": {
-      "active": "Activo",
-      "inactive": "Inactivo",
-      "never": "Nunca"
-    },
-    "tooltips": {
-      "deactivate": "Desactivar acceso",
-      "reactivate": "Reactivar acceso",
-      "edit": "Editar usuario"
-    },
-    "modal": {
-      "create": "Invitar Nuevo Vendedor",
-      "edit": "Editar Usuario",
-      "fullName": "Nombre Completo",
-      "fullNameExample": "Ej: Ana Martinez",
-      "email": "Correo Electrónico",
-      "emailExample": "ana{'@'}miagencia.com",
-      "password": "Contraseña",
-      "newPassword": "Nueva Contraseña (Opcional)",
-      "passwordRequirement": "Mínimo 8 caracteres.",
-      "passwordHint": "Déjalo en blanco para mantener la contraseña actual.",
-      "role": "Rol en Plataforma",
-      "initialStatus": "Estado Inicial",
-      "cancel": "Cancelar",
-      "sendInvitation": "Enviar Invitación",
+    "markup": {
+      "title": "Modelo de Beneficios",
+      "subtitle": "Define tu ganancia. El porcentaje que configures aquí será tu",
+      "markupAgency": "Markup de Agencia",
+      "description": "y se sumará automáticamente al Precio Neto ofrecido por el sistema. Tus vendedores y clientes finales solo verán el precio final de venta.",
+      "backToAgency": "Volver a Mi Agencia",
+      "scheme": "Esquema de Ganancia",
+      "globalPercentage": "Porcentaje Fijo sobre todo el inventario",
+      "dynamicRules": "Reglas Dinámicas por Destino/Hotel",
+      "markupPercentage": "Markup de tu Agencia (%)",
       "saveChanges": "Guardar Cambios",
-      "emailError": "Ingresa un correo válido"
+      "configuredRules": "Reglas Configuradas",
+      "addRule": "Añadir Regla",
+      "noRules": "No has configurado reglas aún. El sistema no cobrará markup adicional al precio neto.",
+      "modalTitle": "Nueva Regla de Beneficios",
+      "applyRuleTo": "Aplicar Regla A",
+      "selectDestination": "Seleccionar Destino",
+      "hotelName": "Nombre del Hotel",
+      "exampleHotel": "Ej: Hard Rock Hotel",
+      "markupToAdd": "Markup a Sumar al Neto (%)",
+      "saveRule": "Guardar Regla"
+    },
+    "users": {
+      "title": "Equipo de Ventas",
+      "backToAgency": "Volver a Mi Agencia",
+      "subtitle": "Gestiona los accesos de tus vendedores a la plataforma TravelOTA.",
+      "inviteSeller": "Invitar Vendedor",
+      "search": "Buscar por nombre o email...",
+      "filters": {
+        "all": "Todos",
+        "active": "Activos",
+        "inactive": "Inactivos"
+      },
+      "tableHeaders": {
+        "user": "Usuario",
+        "role": "Rol B2B",
+        "status": "Estado",
+        "lastLogin": "Último Acceso"
+      },
+      "tableEmpty": "No se encontraron usuarios.",
+      "roles": {
+        "seller": "Vendedor",
+        "adminAgency": "Admin Agencia"
+      },
+      "statuses": {
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "never": "Nunca"
+      },
+      "tooltips": {
+        "deactivate": "Desactivar acceso",
+        "reactivate": "Reactivar acceso",
+        "edit": "Editar usuario"
+      },
+      "modal": {
+        "create": "Invitar Nuevo Vendedor",
+        "edit": "Editar Usuario",
+        "fullName": "Nombre Completo",
+        "fullNameExample": "Ej: Ana Martinez",
+        "email": "Correo Electrónico",
+        "emailExample": "ana{'@'}miagencia.com",
+        "password": "Contraseña",
+        "newPassword": "Nueva Contraseña (Opcional)",
+        "passwordRequirement": "Mínimo 8 caracteres.",
+        "passwordHint": "Déjalo en blanco para mantener la contraseña actual.",
+        "role": "Rol en Plataforma",
+        "initialStatus": "Estado Inicial",
+        "cancel": "Cancelar",
+        "sendInvitation": "Enviar Invitación",
+        "saveChanges": "Guardar Cambios",
+        "emailError": "Ingresa un correo válido"
+      }
     }
   }
 }
