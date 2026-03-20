@@ -1,6 +1,7 @@
 {
   "itinerary": {
     "pageTitle": "Itinerary",
+    "newTitle": "New Itinerary",
     "emptyStateTitle": "Start building your trip",
     "emptyStateDescription": "Add your first block (Accommodation, Flight, etc.) to start the itinerary.",
     "addBlockButton": "Add Product Block",

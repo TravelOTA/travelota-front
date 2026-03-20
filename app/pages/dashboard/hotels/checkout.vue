@@ -46,15 +46,15 @@ const hotel = computed(() => selectedHotel.value);
 
 // Build a pax string from guest data
 function buildPax(guests: { adults: number; children: number[] }[]): string {
-  if (!guests || guests.length === 0) return "2 Adultos";
+  if (!guests || guests.length === 0) return `2 ${t('hotels.search.adults')}`;
   const totalAdults = guests.reduce((acc, g) => acc + g.adults, 0);
   const totalChildren = guests.reduce((acc, g) => acc + g.children.length, 0);
   const parts: string[] = [];
   if (totalAdults > 0)
-    parts.push(`${totalAdults} Adulto${totalAdults !== 1 ? "s" : ""}`);
+    parts.push(`${totalAdults} ${totalAdults !== 1 ? t('hotels.search.adults') : t('hotels.search.adult')}`);
   if (totalChildren > 0)
-    parts.push(`${totalChildren} Niño${totalChildren !== 1 ? "s" : ""}`);
-  return parts.join(", ") || "2 Adultos";
+    parts.push(`${totalChildren} ${totalChildren !== 1 ? t('hotels.search.children') : t('hotels.search.child')}`);
+  return parts.join(", ") || `2 ${t('hotels.search.adults')}`;
 }
 
 // Build the reservation shape expected by CheckoutSidebarSummary
@@ -101,7 +101,7 @@ const cancellationPolicies = computed(() => {
     ];
   }
   return policy.penalties.map((p) => ({
-    status: "Con gastos",
+    status: t('hotels.checkout.withFees'),
     fromDate: p.from,
     toDate: policy.penaltyFrom ?? p.from,
     time: "00:00:00",
@@ -137,12 +137,12 @@ function onBookingError(msg: string) {
         class="text-gray-500 hover:text-gray-900 dark:hover:text-white"
         @click="router.back()"
       >
-        Volver a Detalles del Hotel
+        {{ t('hotels.checkout.backToHotelDetail') }}
       </UButton>
       <h1
         class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight"
       >
-        Confirmar Reserva
+        {{ t('hotels.checkout.confirmReservationTitle') }}
       </h1>
     </div>
 

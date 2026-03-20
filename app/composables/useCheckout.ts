@@ -1,5 +1,5 @@
 // app/composables/useCheckout.ts
-import { useState } from "#imports";
+import { useState, useI18n } from "#imports";
 import { computed } from "vue";
 import { apiFetch } from "~/composables/useApi";
 import type { IBooking } from "#shared/types/booking";
@@ -16,6 +16,7 @@ type HotelSummary = {
 };
 
 export function useCheckout() {
+  const { t } = useI18n();
   const selectedHotel = useState<HotelSummary | null>(
     "checkout:hotel",
     () => null,
@@ -68,7 +69,14 @@ export function useCheckout() {
     cardData?: { number: string; expiry: string; cvv: string },
   ): Promise<string> {
     if (!selectedHotel.value || !selectedRoom.value || !searchParams.value) {
-      throw new Error("No hay habitación seleccionada");
+      throw new Error(t("hotels.checkout.errorNoRoom"));
+    }
+
+    if (!titular.nombre || titular.nombre.trim().length < 2) {
+      throw new Error(t("hotels.checkout.errorNameRequired"));
+    }
+    if (!titular.apellido || titular.apellido.trim().length < 2) {
+      throw new Error(t("hotels.checkout.errorLastNameRequired"));
     }
 
     isSubmitting.value = true;
@@ -123,7 +131,7 @@ export function useCheckout() {
       return booking.id;
     } catch (err) {
       submitError.value =
-        err instanceof Error ? err.message : "Error al confirmar la reserva";
+        err instanceof Error ? err.message : t("hotels.checkout.errorConfirm");
       throw err;
     } finally {
       isSubmitting.value = false;

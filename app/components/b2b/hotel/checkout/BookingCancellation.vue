@@ -44,7 +44,7 @@ const handleCancel = () => {
         name="i-heroicons-shield-exclamation"
         class="w-5 h-5 text-primary-500"
       />
-      Cancelación y Gastos
+      {{ t('hotels.cancellation.title') }}
     </h3>
 
     <!-- Si la reserva ya está cancelada -->
@@ -57,11 +57,10 @@ const handleCancel = () => {
         class="w-8 h-8 text-red-500 mx-auto mb-2"
       />
       <p class="text-sm font-bold text-red-700 dark:text-red-400">
-        Esta reserva ha sido cancelada
+        {{ t('hotels.cancellation.alreadyCancelled') }}
       </p>
       <p class="text-xs text-red-600 dark:text-red-300 mt-1">
-        Los gastos de cancelación aplicados se reflejarán en tu extracto de
-        cuenta.
+        {{ t('hotels.cancellation.feesApplied') }}
       </p>
     </div>
 
@@ -127,7 +126,7 @@ const handleCancel = () => {
         class="font-bold uppercase tracking-wider"
         @click="showConfirmModal = true"
       >
-        Solicitar Cancelación
+        {{ t('hotels.cancellation.requestCancel') }}
       </UButton>
 
       <!-- Modal de confirmación -->
@@ -144,11 +143,10 @@ const handleCancel = () => {
                 />
               </div>
               <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                ¿Confirmar Cancelación?
+                {{ t('hotels.cancellation.confirmTitle') }}
               </h3>
               <p class="text-sm text-gray-600 dark:text-gray-400">
-                Esta acción no se puede deshacer. Se aplicarán los gastos de
-                cancelación según la política vigente.
+                {{ t('hotels.cancellation.confirmText') }}
               </p>
             </div>
 
@@ -160,7 +158,7 @@ const handleCancel = () => {
                 class="font-bold"
                 @click="showConfirmModal = false"
               >
-                Volver
+                {{ t('hotels.cancellation.back') }}
               </UButton>
               <UButton
                 block
@@ -169,7 +167,7 @@ const handleCancel = () => {
                 :loading="isCancelling"
                 @click="handleCancel"
               >
-                Sí, Cancelar Reserva
+                {{ t('hotels.cancellation.confirm') }}
               </UButton>
             </div>
           </div>

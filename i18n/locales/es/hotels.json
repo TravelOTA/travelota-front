@@ -8,7 +8,9 @@
       "nationality": "Nacionalidad",
       "searchButton": "Buscar",
       "roomNumber": "Número de habitaciones",
+      "adult": "Adulto",
       "adults": "Adultos",
+      "child": "Niño",
       "children": "Niños",
       "roomLabel": "Habitación",
       "childAgeLabel": "Edad niño",
@@ -35,7 +37,15 @@
       "perStay": "Por Estancia",
       "quoteItinerary": "Cotizar / Itinerario",
       "noDestination": "Sin destino",
-      "edit": "Editar"
+      "edit": "Editar",
+      "hotelsFoundFrom": "hoteles encontrados desde",
+      "prev": "← Anterior",
+      "next": "Siguiente →",
+      "pageOf": "Página {current} de {total}",
+      "filters": "Filtros",
+      "sortPrice": "Precio",
+      "sortCategory": "Categoría",
+      "sortName": "Nombre"
     },
     "detail": {
       "bestPricePerStay": "MEJOR PRECIO POR ESTANCIA",
@@ -109,7 +119,17 @@
       "acceptPrivacy": "He leído y acepto las Políticas de Privacidad",
       "confirmReservation": "Confirmar Reserva",
       "titularData": "Datos del Cliente Titular",
-      "titularNote": "Los datos del titular no son modificables una vez confirmada la reserva"
+      "titularNote": "Los datos del titular no son modificables una vez confirmada la reserva",
+      "backToHotelDetail": "Volver a Detalles del Hotel",
+      "confirmReservationTitle": "Confirmar Reserva",
+      "privacyNotice": "Los datos personales recogidos serán tratados conforme a la legislación vigente con las finalidades de gestión de la relación con clientes y gestión de reservas, siendo por tanto la legitimación para el tratamiento de los datos personales la ejecución del presente contrato de reserva hotelera y su consentimiento para la recepción de información. Así mismo le informamos que los datos recogidos serán comunicados a los hoteles y en su caso terceros responsables encargados de prestarle los servicios contratados. Esta comunicación puede implicar la transferencia internacional de datos si su reserva o servicio contratado se encuentra fuera de Estados Unidos.",
+      "withFees": "Con gastos",
+      "cancelPaymentNote": "No se puede aplazar el pago: la reserva tiene gastos de cancelación inmediatos",
+      "expiryInvalid": "Fecha de expiración inválida",
+      "errorNoRoom": "No hay habitación seleccionada",
+      "errorConfirm": "Error al confirmar la reserva",
+      "errorNameRequired": "El nombre del titular debe tener al menos 2 caracteres",
+      "errorLastNameRequired": "El apellido del titular debe tener al menos 2 caracteres"
     },
     "cancellationPolicy": {
       "title": "Gastos de cancelación",
@@ -120,6 +140,31 @@
       "time": "Hora",
       "price": "Precio",
       "noRefund": "Sin reembolso"
+    },
+    "cancellation": {
+      "title": "Cancelación y Gastos",
+      "requestCancel": "Solicitar Cancelación",
+      "confirmTitle": "¿Confirmar Cancelación?",
+      "confirmText": "Esta acción no se puede deshacer. Se aplicarán los gastos de cancelación según la política vigente.",
+      "back": "Volver",
+      "confirm": "Sí, Cancelar Reserva",
+      "percentOfTotal": "{percentage}% del total",
+      "alreadyCancelled": "Esta reserva ha sido cancelada",
+      "feesApplied": "Los gastos de cancelación aplicados se reflejarán en tu extracto de cuenta."
+    },
+    "paymentMethods": {
+      "card": {
+        "label": "Pago con tarjeta",
+        "description": "El importe será cargado inmediatamente en tu tarjeta."
+      },
+      "transfer": {
+        "label": "Transferencia bancaria",
+        "description": "Se generarán los datos bancarios para realizar la transferencia."
+      },
+      "agencyCredit": {
+        "label": "Crédito de agencia",
+        "description": "Se descontará del saldo disponible en tu línea de crédito con TravelOTA."
+      }
     },
     "bookingStatus": {
       "confirmedSuccessfully": "¡Reserva Confirmada Exitosamente!",

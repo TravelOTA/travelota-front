@@ -1,4 +1,18 @@
 {
+  "landing": {
+    "mapTitle": "Más de 17 Oficinas en 11 Países"
+  },
+  "dashboard": {
+    "searchHotels": "Buscar Hoteles",
+    "searchHotelsSubtitle": "Encuentra y reserva el alojamiento perfecto para tus clientes al mejor precio neto B2B.",
+    "featuredDestinations": "Destinos Destacados",
+    "stats": {
+      "activeBookings": "Reservas activas",
+      "availableHotels": "Hoteles disponibles",
+      "activeDestinations": "Destinos activos",
+      "monthlyBookings": "Reservas este mes"
+    }
+  },
   "nav": {
     "home": "Inicio",
     "about": "Conócenos",
@@ -69,6 +83,31 @@
       "destination": "Destino / Hotel",
       "dates": "Fechas de Viaje",
       "seller": "Vendedor"
+    },
+    "filters": {
+      "title": "Buscar Reservas",
+      "subtitle": "Utiliza los filtros para encontrar reservas específicas.",
+      "pnrLabel": "Localizador PNR",
+      "pnrPlaceholder": "TRV-XXXXXXXXX",
+      "titularLabel": "Titular / Pasajero",
+      "titularPlaceholder": "Nombre del titular...",
+      "destinationLabel": "Destino / Hotel",
+      "destinationPlaceholder": "Ciudad o hotel...",
+      "createdFrom": "Creación desde",
+      "createdTo": "Creación hasta",
+      "checkInFrom": "Check-in desde",
+      "checkInTo": "Check-in hasta",
+      "bookingStatus": "Estado Reserva",
+      "allStatuses": "Todos los estados",
+      "paymentStatus": "Estado Pago",
+      "allPayments": "Todos los pagos",
+      "sellerLabel": "Vendedor",
+      "allSellers": "Todos los vendedores",
+      "agencyLabel": "Agencia",
+      "allAgencies": "Todas las agencias",
+      "active": "Filtros activos",
+      "clear": "Limpiar Filtros",
+      "search": "Buscar"
     }
   }
 }

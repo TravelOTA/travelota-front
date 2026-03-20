@@ -85,3 +85,21 @@ export const createRegisterSchema = (t: T) =>
 
 export type LoginInput = z.infer<ReturnType<typeof createLoginSchema>>;
 export type RegisterInput = z.infer<ReturnType<typeof createRegisterSchema>>;
+
+export const createCardSchema = (t: T) =>
+  z.object({
+    number: z
+      .string()
+      .min(1, t("validation.cardNumberRequired"))
+      .regex(/^\d{16}$/, t("validation.cardNumberInvalid")),
+    expiry: z
+      .string()
+      .min(1, t("validation.cardExpiryRequired"))
+      .regex(/^(0[1-9]|1[0-2])\/\d{2}$/, t("validation.cardExpiryInvalid")),
+    cvv: z
+      .string()
+      .min(1, t("validation.cardCvvRequired"))
+      .regex(/^\d{3,4}$/, t("validation.cardCvvInvalid")),
+  });
+
+export type CardInput = z.infer<ReturnType<typeof createCardSchema>>;

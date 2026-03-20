@@ -13,7 +13,7 @@
         <h2
           class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white uppercase mb-6"
         >
-          Más de 17 Oficinas en 11 Países
+          {{ $t('landing.mapTitle') }}
         </h2>
         <div
           class="flex flex-wrap justify-center gap-3 mb-12 max-w-4xl mx-auto"

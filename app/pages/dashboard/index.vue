@@ -7,6 +7,8 @@ import {
   type HotelSearchParams,
 } from "~/composables/useHotelSearch";
 
+const { t } = useI18n();
+
 definePageMeta({
   layout: "dashboard",
 });
@@ -35,28 +37,28 @@ const handlePromotionSearch = async (destination: string) => {
 
 const processedStats = computed(() => [
   {
-    label: "Reservas activas",
+    label: t('dashboard.stats.activeBookings'),
     value: b2bStats.value.activeBookings.toString(),
     icon: "i-heroicons-briefcase",
     iconBg: "bg-primary-50 dark:bg-primary-950",
     iconColor: "text-primary-500",
   },
   {
-    label: "Hoteles disponibles",
+    label: t('dashboard.stats.availableHotels'),
     value: b2bStats.value.availableHotels,
     icon: "i-heroicons-building-office-2",
     iconBg: "bg-blue-50 dark:bg-blue-950",
     iconColor: "text-blue-500",
   },
   {
-    label: "Destinos activos",
+    label: t('dashboard.stats.activeDestinations'),
     value: b2bStats.value.activeDestinations.toString(),
     icon: "i-heroicons-map-pin",
     iconBg: "bg-amber-50 dark:bg-amber-950",
     iconColor: "text-amber-500",
   },
   {
-    label: "Reservas este mes",
+    label: t('dashboard.stats.monthlyBookings'),
     value: b2bStats.value.monthlyBookings.toString(),
     icon: "i-heroicons-calendar-days",
     iconBg: "bg-green-50 dark:bg-green-950",
@@ -69,11 +71,10 @@ const processedStats = computed(() => [
   <div class="max-w-7xl mx-auto">
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-        Buscar Hoteles
+        {{ $t('dashboard.searchHotels') }}
       </h1>
       <p class="text-gray-500 dark:text-gray-400">
-        Encuentra y reserva el alojamiento perfecto para tus clientes al mejor
-        precio neto B2B.
+        {{ $t('dashboard.searchHotelsSubtitle') }}
       </p>
     </div>
 
@@ -113,7 +114,7 @@ const processedStats = computed(() => [
     <!-- Promociones Destacadas -->
     <div>
       <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6">
-        Destinos Destacados
+        {{ $t('dashboard.featuredDestinations') }}
       </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <B2bLandingPromotionCard

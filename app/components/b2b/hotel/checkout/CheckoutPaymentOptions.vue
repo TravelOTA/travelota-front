@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 const { t } = useI18n();
 import type { ICancellationPolicy } from "#shared/types/booking";
 import type { PaymentMethod } from "#shared/types/payment";
 import { useCheckout } from "~/composables/useCheckout";
+import { createCardSchema } from "~/utils/schemas";
 import PaymentMethodSelector from "~/components/b2b/hotel/checkout/PaymentMethodSelector.vue";
 
 const props = defineProps<{
@@ -41,8 +42,44 @@ const cardNumber = ref("");
 const cardExpiry = ref("");
 const cardCvv = ref("");
 
+// Card validation — only active after first submit attempt
+const cardSubmitAttempted = ref(false);
+
+const cardSchema = computed(() => createCardSchema(t));
+
+const cardErrors = computed(() => {
+  if (!cardSubmitAttempted.value || selectedMethod.value !== "card") return {};
+  const result = cardSchema.value.safeParse({
+    number: cardNumber.value,
+    expiry: cardExpiry.value,
+    cvv: cardCvv.value,
+  });
+  if (result.success) return {};
+  return Object.fromEntries(
+    result.error.errors.map((e) => [e.path[0], e.message]),
+  );
+});
+
+watch(selectedMethod, () => {
+  cardSubmitAttempted.value = false;
+});
+
+const isCardValid = computed(() => {
+  if (selectedMethod.value !== "card") return true;
+  return cardSchema.value.safeParse({
+    number: cardNumber.value,
+    expiry: cardExpiry.value,
+    cvv: cardCvv.value,
+  }).success;
+});
+
 async function submitBooking() {
   if (!isBookEnabled.value) return;
+
+  if (selectedMethod.value === "card") {
+    cardSubmitAttempted.value = true;
+    if (!isCardValid.value) return;
+  }
 
   try {
     const cardData =
@@ -62,7 +99,7 @@ async function submitBooking() {
     );
     emit("confirmed", pnr);
   } catch (err) {
-    emit("error", err instanceof Error ? err.message : "Error al confirmar");
+    emit("error", err instanceof Error ? err.message : t('hotels.checkout.errorConfirm'));
   }
 }
 </script>
@@ -95,7 +132,10 @@ async function submitBooking() {
       v-if="selectedMethod === 'card'"
       class="mt-4 space-y-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
     >
-      <UFormField :label="t('hotels.checkout.cardNumber')">
+      <UFormField
+        :label="t('hotels.checkout.cardNumber')"
+        :error="cardErrors.number"
+      >
         <UInput
           v-model="cardNumber"
           :placeholder="t('hotels.checkout.cardNumberPlaceholder')"
@@ -103,10 +143,16 @@ async function submitBooking() {
         />
       </UFormField>
       <div class="grid grid-cols-2 gap-3">
-        <UFormField :label="t('hotels.checkout.expiry')">
+        <UFormField
+          :label="t('hotels.checkout.expiry')"
+          :error="cardErrors.expiry"
+        >
           <UInput v-model="cardExpiry" :placeholder="t('hotels.checkout.expiryPlaceholder')" maxlength="5" />
         </UFormField>
-        <UFormField :label="t('hotels.checkout.cvv')">
+        <UFormField
+          :label="t('hotels.checkout.cvv')"
+          :error="cardErrors.cvv"
+        >
           <UInput
             v-model="cardCvv"
             :placeholder="t('hotels.checkout.cvvPlaceholder')"
@@ -124,16 +170,7 @@ async function submitBooking() {
       <p
         class="text-xs text-gray-500 dark:text-gray-400 text-justify mb-4 leading-relaxed tracking-tight"
       >
-        Los datos personales recogidos serán tratados conforme a la legislación
-        vigente con las finalidades de gestión de la relación con clientes y
-        gestión de reservas, siendo por tanto la legitimación para el
-        tratamiento de los datos personales la ejecución del presente contrato
-        de reserva hotelera y su consentimiento para la recepción de
-        información. Así mismo le informamos que los datos recogidos serán
-        comunicados a los hoteles y en su caso terceros responsables encargados
-        de prestarle los servicios contratados. Esta comunicación puede implicar
-        la transferencia internacional de datos si su reserva o servicio
-        contratado se encuentra fuera de Estados Unidos.
+        {{ t('hotels.checkout.privacyNotice') }}
       </p>
 
       <div class="flex flex-col gap-2">

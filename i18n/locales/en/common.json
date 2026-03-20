@@ -1,4 +1,18 @@
 {
+  "landing": {
+    "mapTitle": "More than 17 Offices in 11 Countries"
+  },
+  "dashboard": {
+    "searchHotels": "Search Hotels",
+    "searchHotelsSubtitle": "Find and book the perfect accommodation for your clients at the best B2B net price.",
+    "featuredDestinations": "Featured Destinations",
+    "stats": {
+      "activeBookings": "Active bookings",
+      "availableHotels": "Available hotels",
+      "activeDestinations": "Active destinations",
+      "monthlyBookings": "Bookings this month"
+    }
+  },
   "nav": {
     "home": "Home",
     "about": "About Us",
@@ -69,6 +83,31 @@
       "destination": "Destination / Hotel",
       "dates": "Travel Dates",
       "seller": "Seller"
+    },
+    "filters": {
+      "title": "Search Bookings",
+      "subtitle": "Use the filters to find specific bookings.",
+      "pnrLabel": "PNR Locator",
+      "pnrPlaceholder": "TRV-XXXXXXXXX",
+      "titularLabel": "Holder / Passenger",
+      "titularPlaceholder": "Holder name...",
+      "destinationLabel": "Destination / Hotel",
+      "destinationPlaceholder": "City or hotel...",
+      "createdFrom": "Created from",
+      "createdTo": "Created to",
+      "checkInFrom": "Check-in from",
+      "checkInTo": "Check-in to",
+      "bookingStatus": "Booking Status",
+      "allStatuses": "All statuses",
+      "paymentStatus": "Payment Status",
+      "allPayments": "All payments",
+      "sellerLabel": "Seller",
+      "allSellers": "All sellers",
+      "agencyLabel": "Agency",
+      "allAgencies": "All agencies",
+      "active": "Active filters",
+      "clear": "Clear Filters",
+      "search": "Search"
     }
   }
 }

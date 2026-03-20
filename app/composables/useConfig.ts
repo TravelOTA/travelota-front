@@ -1,4 +1,5 @@
-import { useState } from "#imports";
+import { useState, useI18n } from "#imports";
+import { computed } from "vue";
 import type { PaymentMethod as PaymentMethodKey } from "#shared/types/payment";
 
 export interface PaymentMethodConfig {
@@ -64,30 +65,9 @@ const NATIONALITIES = [
   "Venezuela",
 ];
 
-const PAYMENT_METHODS: PaymentMethodConfig[] = [
-  {
-    key: "card",
-    label: "Pago con tarjeta",
-    description: "El importe será cargado inmediatamente en tu tarjeta.",
-    icon: "i-heroicons-credit-card",
-  },
-  {
-    key: "transfer",
-    label: "Transferencia bancaria",
-    description:
-      "Se generarán los datos bancarios para realizar la transferencia.",
-    icon: "i-heroicons-building-library",
-  },
-  {
-    key: "agency_credit",
-    label: "Crédito de agencia",
-    description:
-      "Se descontará del saldo disponible en tu línea de crédito con TravelOTA.",
-    icon: "i-heroicons-banknotes",
-  },
-];
-
 export function useConfig() {
+  const { t } = useI18n();
+
   const countries = useState<string[]>("config-countries", () => COUNTRIES);
   const destinations = useState<string[]>(
     "config-destinations",
@@ -97,10 +77,26 @@ export function useConfig() {
     "config-nationalities",
     () => NATIONALITIES,
   );
-  const paymentMethods = useState<PaymentMethodConfig[]>(
-    "config-payment-methods",
-    () => PAYMENT_METHODS,
-  );
+  const paymentMethods = computed<PaymentMethodConfig[]>(() => [
+    {
+      key: "card",
+      label: t("hotels.paymentMethods.card.label"),
+      description: t("hotels.paymentMethods.card.description"),
+      icon: "i-heroicons-credit-card",
+    },
+    {
+      key: "transfer",
+      label: t("hotels.paymentMethods.transfer.label"),
+      description: t("hotels.paymentMethods.transfer.description"),
+      icon: "i-heroicons-building-library",
+    },
+    {
+      key: "agency_credit",
+      label: t("hotels.paymentMethods.agencyCredit.label"),
+      description: t("hotels.paymentMethods.agencyCredit.description"),
+      icon: "i-heroicons-banknotes",
+    },
+  ]);
 
   return {
     countries,

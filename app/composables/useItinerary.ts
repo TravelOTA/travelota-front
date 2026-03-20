@@ -39,8 +39,9 @@ export interface Itinerary {
 
 // Global active builder state mapped to Nuxt useState
 export const useItinerary = () => {
+  const { t } = useI18n();
   const itinerary = useState<Itinerary>("quoter-itinerary", () => ({
-    title: "Nuevo Itinerario",
+    title: t("itinerary.newTitle"),
     clientName: "",
     rooms: [{ adults: 2, children: [] }],
     origin: "",
@@ -164,7 +165,7 @@ export const useItinerary = () => {
 
   const clearItinerary = () => {
     itinerary.value = {
-      title: "Nuevo Itinerario",
+      title: t("itinerary.newTitle"),
       clientName: "",
       rooms: [{ adults: 2, children: [] }],
       origin: "",

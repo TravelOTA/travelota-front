@@ -71,10 +71,10 @@ const reservationProp = computed(() =>
               .map((g) => {
                 const parts = [];
                 if (g.adults)
-                  parts.push(`${g.adults} Adulto${g.adults !== 1 ? "s" : ""}`);
+                  parts.push(`${g.adults} ${g.adults !== 1 ? t('hotels.search.adults') : t('hotels.search.adult')}`);
                 if (g.children.length)
                   parts.push(
-                    `${g.children.length} Niño${g.children.length !== 1 ? "s" : ""}`,
+                    `${g.children.length} ${g.children.length !== 1 ? t('hotels.search.children') : t('hotels.search.child')}`,
                   );
                 return parts.join(", ");
               })
@@ -90,7 +90,7 @@ const reservationProp = computed(() =>
 const cancellationPolicies = computed(() => {
   if (!booking.value) return [];
   return booking.value.room.cancellationPolicy.penalties.map((p) => ({
-    status: `${p.percentage}% del total`,
+    status: t('hotels.cancellation.percentOfTotal', { percentage: p.percentage }),
     fromDate: p.from,
     toDate: p.from,
     time: "23:59 CET",

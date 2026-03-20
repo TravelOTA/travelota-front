@@ -9,6 +9,12 @@
     "urlInvalid": "URL inválida",
     "countryRequired": "Selecciona un país",
     "contactNameRequired": "Nombre de contacto requerido",
-    "privacyRequired": "Debes aceptar la política de privacidad"
+    "privacyRequired": "Debes aceptar la política de privacidad",
+    "cardNumberRequired": "El número de tarjeta es requerido",
+    "cardNumberInvalid": "El número de tarjeta debe tener 16 dígitos",
+    "cardExpiryRequired": "La fecha de vencimiento es requerida",
+    "cardExpiryInvalid": "Fecha de expiración inválida",
+    "cardCvvRequired": "El CVV es requerido",
+    "cardCvvInvalid": "El CVV debe tener 3 o 4 dígitos"
   }
 }

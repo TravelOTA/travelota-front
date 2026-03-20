@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
+
+const { t } = useI18n();
 
 interface Props {
   showAgencyFilter?: boolean;
@@ -14,12 +16,18 @@ const props = withDefaults(defineProps<Props>(), {
   showSellerFilter: false,
   agencyOptions: () => [],
   sellerOptions: () => [],
-  statusOptions: () => [
-    { label: "Confirmada", value: "Confirmada" },
-    { label: "Cancelada", value: "Cancelada" },
-    { label: "Vencida", value: "Vencida" },
-  ],
+  statusOptions: () => [],
 });
+
+const resolvedStatusOptions = computed(() =>
+  props.statusOptions.length > 0
+    ? props.statusOptions
+    : [
+        { label: t('hotels.bookingStatusLabel.confirmed'), value: "confirmed" },
+        { label: t('hotels.bookingStatusLabel.cancelled'), value: "cancelled" },
+        { label: t('hotels.bookingStatusLabel.expired'), value: "expired" },
+      ],
+);
 
 interface FilterPayload {
   pnr: string;
@@ -106,10 +114,10 @@ const hasActiveFilters = computed(() => {
       </div>
       <div>
         <h2 class="text-lg font-bold text-gray-900 dark:text-white">
-          Buscar Reservas
+          {{ t('bookings.filters.title') }}
         </h2>
         <p class="text-xs text-gray-500 dark:text-gray-400">
-          Utiliza los filtros para encontrar reservas específicas.
+          {{ t('bookings.filters.subtitle') }}
         </p>
       </div>
     </div>
@@ -117,28 +125,28 @@ const hasActiveFilters = computed(() => {
     <form @submit.prevent="handleSearch">
       <!-- Row 1: Text search fields -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <UFormField label="Localizador PNR">
+        <UFormField :label="t('bookings.filters.pnrLabel')">
           <UInput
             v-model="filters.pnr"
-            placeholder="TRV-XXXXXXXXX"
+            :placeholder="t('bookings.filters.pnrPlaceholder')"
             icon="i-heroicons-document-text"
             class="w-full"
           />
         </UFormField>
 
-        <UFormField label="Titular / Pasajero">
+        <UFormField :label="t('bookings.filters.titularLabel')">
           <UInput
             v-model="filters.titular"
-            placeholder="Nombre del titular..."
+            :placeholder="t('bookings.filters.titularPlaceholder')"
             icon="i-heroicons-user"
             class="w-full"
           />
         </UFormField>
 
-        <UFormField label="Destino / Hotel">
+        <UFormField :label="t('bookings.filters.destinationLabel')">
           <UInput
             v-model="filters.destination"
-            placeholder="Ciudad o hotel..."
+            :placeholder="t('bookings.filters.destinationPlaceholder')"
             icon="i-heroicons-map-pin"
             class="w-full"
           />
@@ -150,11 +158,11 @@ const hasActiveFilters = computed(() => {
         v-if="props.showAgencyFilter && !props.showSellerFilter"
         class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"
       >
-        <UFormField label="Agencia">
+        <UFormField :label="t('bookings.filters.agencyLabel')">
           <USelectMenu
             v-model="filters.agency"
             :items="['Todas', ...props.agencyOptions]"
-            placeholder="Todas las agencias"
+            :placeholder="t('bookings.filters.allAgencies')"
             icon="i-heroicons-building-storefront"
             class="w-full"
           />
@@ -163,37 +171,37 @@ const hasActiveFilters = computed(() => {
 
       <!-- Row 3: Fechas -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <UFormField label="Creación desde">
+        <UFormField :label="t('bookings.filters.createdFrom')">
           <UInput v-model="filters.createdFrom" type="date" class="w-full" />
         </UFormField>
 
-        <UFormField label="Creación hasta">
+        <UFormField :label="t('bookings.filters.createdTo')">
           <UInput v-model="filters.createdTo" type="date" class="w-full" />
         </UFormField>
 
-        <UFormField label="Check-in desde">
+        <UFormField :label="t('bookings.filters.checkInFrom')">
           <UInput v-model="filters.checkInFrom" type="date" class="w-full" />
         </UFormField>
 
-        <UFormField label="Check-in hasta">
+        <UFormField :label="t('bookings.filters.checkInTo')">
           <UInput v-model="filters.checkInTo" type="date" class="w-full" />
         </UFormField>
       </div>
 
       <!-- Row 4: Estado Reserva + Estado Pago -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <UFormField label="Estado Reserva">
+        <UFormField :label="t('bookings.filters.bookingStatus')">
           <USelectMenu
             v-model="filters.statuses"
-            :items="props.statusOptions"
+            :items="resolvedStatusOptions"
             multiple
-            placeholder="Todos los estados"
+            :placeholder="t('bookings.filters.allStatuses')"
             value-key="value"
             class="w-full"
           />
         </UFormField>
 
-        <UFormField label="Estado Pago">
+        <UFormField :label="t('bookings.filters.paymentStatus')">
           <USelectMenu
             v-model="filters.paymentStatuses"
             :items="[
@@ -201,7 +209,7 @@ const hasActiveFilters = computed(() => {
               { label: 'Pendiente Pago', value: 'Pendiente Pago' },
             ]"
             multiple
-            placeholder="Todos los pagos"
+            :placeholder="t('bookings.filters.allPayments')"
             value-key="value"
             class="w-full"
           />
@@ -213,20 +221,20 @@ const hasActiveFilters = computed(() => {
         v-if="props.showAgencyFilter && props.showSellerFilter"
         class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"
       >
-        <UFormField label="Agencia">
+        <UFormField :label="t('bookings.filters.agencyLabel')">
           <USelectMenu
             v-model="filters.agency"
             :items="['Todas', ...props.agencyOptions]"
-            placeholder="Todas las agencias"
+            :placeholder="t('bookings.filters.allAgencies')"
             icon="i-heroicons-building-storefront"
             class="w-full"
           />
         </UFormField>
-        <UFormField label="Vendedor">
+        <UFormField :label="t('bookings.filters.sellerLabel')">
           <USelectMenu
             v-model="filters.seller"
             :items="['Todos', ...props.sellerOptions]"
-            placeholder="Todos los vendedores"
+            :placeholder="t('bookings.filters.allSellers')"
             icon="i-heroicons-user-circle"
             class="w-full"
           />
@@ -238,11 +246,11 @@ const hasActiveFilters = computed(() => {
         v-if="props.showSellerFilter && !props.showAgencyFilter"
         class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"
       >
-        <UFormField label="Vendedor">
+        <UFormField :label="t('bookings.filters.sellerLabel')">
           <USelectMenu
             v-model="filters.seller"
             :items="['Todos', ...props.sellerOptions]"
-            placeholder="Todos los vendedores"
+            :placeholder="t('bookings.filters.allSellers')"
             icon="i-heroicons-user-circle"
             class="w-full"
           />
@@ -260,7 +268,7 @@ const hasActiveFilters = computed(() => {
             variant="subtle"
             class="text-xs"
           >
-            Filtros activos
+            {{ t('bookings.filters.active') }}
           </UBadge>
         </div>
         <div class="flex items-center gap-3">
@@ -273,7 +281,7 @@ const hasActiveFilters = computed(() => {
             :disabled="!hasActiveFilters"
             @click="handleClear"
           >
-            Limpiar Filtros
+            {{ t('bookings.filters.clear') }}
           </UButton>
           <UButton
             type="submit"
@@ -282,7 +290,7 @@ const hasActiveFilters = computed(() => {
             class="font-bold px-6"
             size="lg"
           >
-            Buscar
+            {{ t('bookings.filters.search') }}
           </UButton>
         </div>
       </div>

@@ -156,8 +156,7 @@ watch(
         <p
           class="text-sm text-primary-600 dark:text-primary-400 font-medium mb-3"
         >
-          <span class="font-bold">{{ filteredHotels.length }}</span> hoteles
-          encontrados desde
+          <span class="font-bold">{{ filteredHotels.length }}</span> {{ $t('hotels.results.hotelsFoundFrom') }}
           <span class="font-bold"
             >${{
               minPrice.toLocaleString("en-US", {
@@ -178,7 +177,7 @@ watch(
             class="lg:hidden"
             @click="showMobileFilters = true"
           >
-            Filtros
+            {{ $t('hotels.results.filters') }}
           </UButton>
 
           <UButton
@@ -188,7 +187,7 @@ watch(
             :icon="sortIcon('price')"
             @click="toggleSort('price')"
           >
-            Precio
+            {{ $t('hotels.results.sortPrice') }}
           </UButton>
           <UButton
             color="neutral"
@@ -197,7 +196,7 @@ watch(
             :icon="sortIcon('stars')"
             @click="toggleSort('stars')"
           >
-            Categoría
+            {{ $t('hotels.results.sortCategory') }}
           </UButton>
           <UButton
             color="neutral"
@@ -206,7 +205,7 @@ watch(
             :icon="sortIcon('name')"
             @click="toggleSort('name')"
           >
-            Nombre
+            {{ $t('hotels.results.sortName') }}
           </UButton>
         </div>
 
@@ -216,7 +215,7 @@ watch(
           class="flex items-center justify-between mb-4"
         >
           <span class="text-xs text-gray-500">
-            Página {{ currentPage }} de {{ totalPages }}
+            {{ $t('hotels.results.pageOf', { current: currentPage, total: totalPages }) }}
           </span>
           <div class="flex items-center gap-1">
             <UButton
@@ -226,7 +225,7 @@ watch(
               :disabled="currentPage <= 1"
               @click="goToPage(currentPage - 1)"
             >
-              ← Anterior
+              {{ $t('hotels.results.prev') }}
             </UButton>
             <UButton
               v-for="p in totalPages"
@@ -245,7 +244,7 @@ watch(
               :disabled="currentPage >= totalPages"
               @click="goToPage(currentPage + 1)"
             >
-              Siguiente →
+              {{ $t('hotels.results.next') }}
             </UButton>
           </div>
         </div>
@@ -266,7 +265,7 @@ watch(
           class="flex items-center justify-between mt-6"
         >
           <span class="text-xs text-gray-500">
-            Página {{ currentPage }} de {{ totalPages }}
+            {{ $t('hotels.results.pageOf', { current: currentPage, total: totalPages }) }}
           </span>
           <div class="flex items-center gap-1">
             <UButton
@@ -276,7 +275,7 @@ watch(
               :disabled="currentPage <= 1"
               @click="goToPage(currentPage - 1)"
             >
-              ← Anterior
+              {{ $t('hotels.results.prev') }}
             </UButton>
             <UButton
               v-for="p in totalPages"
@@ -295,7 +294,7 @@ watch(
               :disabled="currentPage >= totalPages"
               @click="goToPage(currentPage + 1)"
             >
-              Siguiente →
+              {{ $t('hotels.results.next') }}
             </UButton>
           </div>
         </div>
@@ -307,7 +306,7 @@ watch(
       <template #header>
         <div class="flex items-center justify-between w-full">
           <h3 class="text-lg font-bold text-gray-900 dark:text-white">
-            Filtros
+            {{ $t('hotels.results.filters') }}
           </h3>
           <UButton
             color="neutral"

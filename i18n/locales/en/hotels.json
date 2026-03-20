@@ -8,7 +8,9 @@
       "nationality": "Nationality",
       "searchButton": "Search",
       "roomNumber": "Number of rooms",
+      "adult": "Adult",
       "adults": "Adults",
+      "child": "Child",
       "children": "Children",
       "roomLabel": "Room",
       "childAgeLabel": "Child age",
@@ -35,7 +37,15 @@
       "perStay": "Per Stay",
       "quoteItinerary": "Quote / Itinerary",
       "noDestination": "No destination",
-      "edit": "Edit"
+      "edit": "Edit",
+      "hotelsFoundFrom": "hotels found from",
+      "prev": "← Previous",
+      "next": "Next →",
+      "pageOf": "Page {current} of {total}",
+      "filters": "Filters",
+      "sortPrice": "Price",
+      "sortCategory": "Category",
+      "sortName": "Name"
     },
     "detail": {
       "bestPricePerStay": "BEST PRICE PER STAY",
@@ -109,7 +119,17 @@
       "acceptPrivacy": "I have read and accept the Privacy Policies",
       "confirmReservation": "Confirm Reservation",
       "titularData": "Titular Customer Data",
-      "titularNote": "Titular data cannot be modified once the reservation is confirmed"
+      "titularNote": "Titular data cannot be modified once the reservation is confirmed",
+      "backToHotelDetail": "Back to Hotel Details",
+      "confirmReservationTitle": "Confirm Reservation",
+      "privacyNotice": "The personal data collected will be processed in accordance with current legislation for the purposes of managing the customer relationship and booking management, the legal basis for processing personal data being the execution of this hotel booking contract and your consent to receive information. We also inform you that the collected data will be shared with the hotels and, where applicable, third parties responsible for providing the contracted services. This communication may involve the international transfer of data if your booking or contracted service is located outside the United States.",
+      "withFees": "With fees",
+      "cancelPaymentNote": "Payment cannot be deferred: the booking has immediate cancellation fees",
+      "expiryInvalid": "Invalid expiry date",
+      "errorNoRoom": "No room selected",
+      "errorConfirm": "Error confirming the reservation",
+      "errorNameRequired": "The titular name must be at least 2 characters",
+      "errorLastNameRequired": "The titular last name must be at least 2 characters"
     },
     "cancellationPolicy": {
       "title": "Cancellation Costs",
@@ -120,6 +140,31 @@
       "time": "Time",
       "price": "Price",
       "noRefund": "No Refund"
+    },
+    "cancellation": {
+      "title": "Cancellation & Fees",
+      "requestCancel": "Request Cancellation",
+      "confirmTitle": "Confirm Cancellation?",
+      "confirmText": "This action cannot be undone. Cancellation fees will be applied according to the current policy.",
+      "back": "Go Back",
+      "confirm": "Yes, Cancel Booking",
+      "percentOfTotal": "{percentage}% of total",
+      "alreadyCancelled": "This booking has been cancelled",
+      "feesApplied": "Applied cancellation fees will be reflected in your account statement."
+    },
+    "paymentMethods": {
+      "card": {
+        "label": "Card payment",
+        "description": "The amount will be charged immediately to your card."
+      },
+      "transfer": {
+        "label": "Bank transfer",
+        "description": "Bank details will be generated to complete the transfer."
+      },
+      "agencyCredit": {
+        "label": "Agency credit",
+        "description": "Will be deducted from the available balance on your credit line with TravelOTA."
+      }
     },
     "bookingStatus": {
       "confirmedSuccessfully": "Reservation Confirmed Successfully!",

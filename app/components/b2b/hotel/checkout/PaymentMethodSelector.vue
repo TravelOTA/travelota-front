@@ -81,8 +81,8 @@ const formatPrice = (price: number) => {
 <template>
   <div class="space-y-3">
     <!-- Pay Later option (only at checkout) -->
+    <div v-if="props.showPayLater">
     <div
-      v-if="props.showPayLater"
       class="border rounded-lg p-4 transition-all"
       :class="[
         isDeferredDisabled
@@ -165,6 +165,10 @@ const formatPrice = (price: number) => {
           ></div>
         </div>
       </div>
+    </div>
+    <p v-if="isDeferredDisabled" class="text-xs text-amber-600 dark:text-amber-400 mt-1 px-1">
+      {{ t('hotels.checkout.cancelPaymentNote') }}
+    </p>
     </div>
 
     <!-- Base payment methods -->
