@@ -7,11 +7,14 @@ export default defineNuxtRouteMiddleware((to) => {
     return;
   }
 
-  const roleCookie = useCookie<UserRole>("travelota-role");
+  const accessToken = useCookie<string | null>("travelota-token");
+  const roleCookie = useCookie<UserRole | null>("travelota-role");
+
+  const isAuthenticated = !!accessToken.value || !!roleCookie.value;
   const role = roleCookie.value;
 
-  // Sin cookie de rol → no autenticado → redirigir a la landing
-  if (!role) {
+  // Sin token ni rol → no autenticado → redirigir a la landing
+  if (!isAuthenticated) {
     return navigateTo("/");
   }
 
@@ -44,5 +47,5 @@ export default defineNuxtRouteMiddleware((to) => {
     return;
   }
 
-  // Resto del dashboard y /print: cualquier rol autenticado puede acceder
+  // Resto del dashboard y /print: cualquier usuario autenticado puede acceder
 });

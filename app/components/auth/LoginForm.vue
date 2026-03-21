@@ -13,9 +13,22 @@ const form = reactive<LoginInput>({
   rememberMe: false,
 });
 
-const { loginAs } = useAuth();
+const { login, loginAs } = useAuth();
 
-async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
+const loginError = ref<string | null>(null);
+const isSubmitting = ref(false);
+
+async function onSubmit(event: FormSubmitEvent<LoginInput>) {
+  loginError.value = null;
+  isSubmitting.value = true;
+  try {
+    await login(event.data.email, event.data.password);
+  } catch {
+    loginError.value = t("auth.login.errorInvalidCredentials");
+  } finally {
+    isSubmitting.value = false;
+  }
+}
 </script>
 
 <template>
@@ -51,6 +64,7 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
         <template #help>
           <div class="text-right w-full mt-1">
             <NuxtLink
+              to="/forgot-password"
               class="text-xs text-primary-500 hover:text-primary-600 transition-colors"
               >{{ t('auth.login.forgotPassword') }}</NuxtLink
             >
@@ -90,11 +104,20 @@ async function onSubmit(_event: FormSubmitEvent<LoginInput>) {}
         </UCheckbox>
       </div>
 
+      <UAlert
+        v-if="loginError"
+        color="error"
+        variant="soft"
+        :description="loginError"
+        class="mt-2"
+      />
+
       <UButton
         type="submit"
         color="primary"
         block
         size="xl"
+        :loading="isSubmitting"
         class="mt-6 font-bold tracking-wide uppercase"
       >
         {{ t('auth.login.submitButton') }}
