@@ -12,6 +12,7 @@ vi.mock("#imports", async (importOriginal) => {
     useRuntimeConfig: vi.fn(() => ({ public: { apiBaseUrl: "" } })),
     useCookie: vi.fn(() => ref("test-token")),
     navigateTo: vi.fn(),
+    useI18n: () => ({ t: (key: string) => key }),
   };
 });
 
