@@ -1,0 +1,22 @@
+{
+  "errors": {
+    "unauthorized": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
+    "forbidden": "No tienes permisos para realizar esta acción.",
+    "unprocessable": "Datos inválidos, revisa el formulario.",
+    "serverError": "Error del servidor, inténtalo de nuevo más tarde.",
+    "notFound": {
+      "title": "Página no encontrada",
+      "description": "La página que buscas no existe o ha sido movida."
+    },
+    "serverErrorPage": {
+      "title": "Error del servidor",
+      "description": "Algo salió mal en nuestro lado. Puedes intentarlo de nuevo o volver al inicio."
+    },
+    "generic": {
+      "title": "Algo salió mal",
+      "description": "Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo."
+    },
+    "backHome": "Volver al inicio",
+    "retry": "Reintentar"
+  }
+}

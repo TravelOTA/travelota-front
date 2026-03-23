@@ -1,22 +1,5 @@
 import { useRuntimeConfig, useCookie, useFetch } from "#imports";
-import type { FetchError } from "ofetch";
 import type { UseFetchOptions } from "nuxt/app";
-
-const ERROR_MESSAGES: Record<number, string> = {
-  400: "Datos de reserva incorrectos",
-  402: "Crédito insuficiente para completar el pago",
-  404: "Reserva no encontrada",
-  409: "Esta habitación ya no está disponible",
-  500: "Error del servidor, intenta de nuevo",
-};
-
-function resolveError(error: FetchError): string {
-  if (error.status === 422 && error.data?.message) return error.data.message;
-  return (
-    ERROR_MESSAGES[error.status ?? 500] ??
-    "Error del servidor, intenta de nuevo"
-  );
-}
 
 /** Reactive wrapper — use in component setup for GET requests */
 export const useApi = <T>(path: string, options?: UseFetchOptions<T>) => {
@@ -44,7 +27,5 @@ export const apiFetch = <T>(
       ...(token.value ? { Authorization: `Bearer ${token.value}` } : {}),
     },
     ...options,
-  }).catch((err: FetchError) => {
-    throw new Error(resolveError(err));
-  }) as Promise<T>;
+  });
 };

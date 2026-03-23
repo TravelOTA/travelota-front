@@ -36,6 +36,7 @@ export default defineNuxtConfig({
           "es/agency.json",
           "es/admin.json",
           "es/validation.json",
+          "es/errors.json",
         ],
       },
       {
@@ -50,6 +51,7 @@ export default defineNuxtConfig({
           "en/agency.json",
           "en/admin.json",
           "en/validation.json",
+          "en/errors.json",
         ],
       },
     ],

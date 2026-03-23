@@ -1,0 +1,22 @@
+{
+  "errors": {
+    "unauthorized": "Your session has expired. Please log in again.",
+    "forbidden": "You do not have permission to perform this action.",
+    "unprocessable": "Invalid data, please review the form.",
+    "serverError": "Server error, please try again later.",
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you are looking for does not exist or has been moved."
+    },
+    "serverErrorPage": {
+      "title": "Server error",
+      "description": "Something went wrong on our side. You can try again or go back to the home page."
+    },
+    "generic": {
+      "title": "Something went wrong",
+      "description": "An unexpected error occurred. Please try again."
+    },
+    "backHome": "Back to home",
+    "retry": "Retry"
+  }
+}
