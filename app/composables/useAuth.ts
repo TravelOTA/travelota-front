@@ -19,6 +19,12 @@ export interface CurrentUser {
 
 const REMEMBER_ME_MAX_AGE = 60 * 60 * 12; // 12 horas
 
+function roleFromProfile(profile: CurrentUser): UserRole {
+  // Cuando el backend exponga un campo `role` explícito, usarlo aquí.
+  // Por ahora: is_staff=true → SUPER_ADMIN, resto → USER.
+  return profile.is_staff ? "SUPER_ADMIN" : "USER";
+}
+
 export const useAuth = () => {
   const config = useRuntimeConfig();
   const router = useRouter();
@@ -34,7 +40,14 @@ export const useAuth = () => {
     sameSite: "lax",
   });
 
-  // Dev-only role simulator (usado por botones de test en LoginForm)
+  // Rol derivado de JWT real — se setea en loadProfile(), se limpia en logout()
+  const realRole = useCookie<UserRole | null>("travelota-real-role", {
+    default: () => null,
+    secure: true,
+    sameSite: "lax",
+  });
+
+  // Dev-only: simulador de roles (botones de test en LoginForm)
   const simulatedRole = useCookie<UserRole | null>("travelota-role", {
     default: () => null,
   });
@@ -42,7 +55,9 @@ export const useAuth = () => {
   const currentUser = useState<CurrentUser | null>("auth:currentUser", () => null);
 
   const isAuthenticated = computed(() => !!accessToken.value);
-  const role = computed<UserRole>(() => simulatedRole.value ?? "USER");
+
+  // simulatedRole tiene prioridad solo en dev; en prod siempre será null
+  const role = computed<UserRole>(() => simulatedRole.value ?? realRole.value ?? "USER");
 
   async function loadProfile(): Promise<void> {
     if (!accessToken.value) return;
@@ -52,9 +67,7 @@ export const useAuth = () => {
     ).catch(() => null);
     if (profile) {
       currentUser.value = profile;
-      if (profile.is_staff && !simulatedRole.value) {
-        simulatedRole.value = "SUPER_ADMIN";
-      }
+      realRole.value = roleFromProfile(profile);
     }
   }
 
@@ -64,15 +77,16 @@ export const useAuth = () => {
       { method: "POST", body: { email, password } },
     );
 
-    const cookieOptions = {
-      default: () => null as string | null,
-      secure: true,
-      sameSite: "lax" as const,
-      ...(rememberMe && { maxAge: REMEMBER_ME_MAX_AGE }),
-    };
+    // Setear en la ref original garantiza que loadProfile() lee el valor correcto
+    accessToken.value = data.access;
+    refreshToken.value = data.refresh;
 
-    useCookie<string | null>("travelota-token", cookieOptions).value = data.access;
-    useCookie<string | null>("travelota-refresh", cookieOptions).value = data.refresh;
+    // Si rememberMe, re-setear con maxAge para persistir la cookie más allá de la sesión
+    if (rememberMe) {
+      const opts = { default: () => null as string | null, secure: true, sameSite: "lax" as const, maxAge: REMEMBER_ME_MAX_AGE };
+      useCookie<string | null>("travelota-token", opts).value = data.access;
+      useCookie<string | null>("travelota-refresh", opts).value = data.refresh;
+    }
 
     await loadProfile();
     await router.push("/dashboard");
@@ -90,6 +104,7 @@ export const useAuth = () => {
     }
     accessToken.value = null;
     refreshToken.value = null;
+    realRole.value = null;
     simulatedRole.value = null;
     currentUser.value = null;
     await router.push("/");

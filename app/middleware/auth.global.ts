@@ -8,12 +8,15 @@ export default defineNuxtRouteMiddleware((to) => {
   }
 
   const accessToken = useCookie<string | null>("travelota-token");
-  const roleCookie = useCookie<UserRole | null>("travelota-role");
+  const realRole = useCookie<UserRole | null>("travelota-real-role");
+  const simulatedRole = useCookie<UserRole | null>("travelota-role");
 
-  const isAuthenticated = !!accessToken.value || !!roleCookie.value;
-  const role = roleCookie.value;
+  // Autenticado si hay token JWT real o rol simulado (dev)
+  const isAuthenticated = !!accessToken.value || !!simulatedRole.value;
 
-  // Sin token ni rol → no autenticado → redirigir a la landing
+  // simulatedRole tiene prioridad en dev; en prod siempre será null
+  const role: UserRole | null = simulatedRole.value ?? realRole.value ?? null;
+
   if (!isAuthenticated) {
     return navigateTo("/");
   }
@@ -23,7 +26,6 @@ export default defineNuxtRouteMiddleware((to) => {
     if (role !== "SUPER_ADMIN" && role !== "SUPPORT") {
       return navigateTo("/dashboard");
     }
-    // SUPPORT tiene acceso restringido dentro de admin
     if (role === "SUPPORT") {
       const allowedForSupport = [
         "/dashboard/admin/bookings",

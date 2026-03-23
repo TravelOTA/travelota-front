@@ -18,7 +18,8 @@ const defaultAgency: Agency = {
 };
 
 export const useAgency = () => {
-  const { data, refresh } = useApi<Agency>("/api/agency", { key: "agency" });
+  // Nuxt server mock — llamada directa sin apiBaseUrl (no es el backend Django)
+  const { data, refresh } = useAsyncData<Agency>("agency", () => $fetch("/api/agency"));
 
   // Always non-null: falls back to defaults while loading
   const agency = computed<Agency>(() => data.value ?? defaultAgency);
