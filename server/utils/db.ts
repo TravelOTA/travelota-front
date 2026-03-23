@@ -1,5 +1,5 @@
 import type { IBooking } from "../../shared/types/booking";
-import type { IWallet } from "../../shared/types/wallet";
+import type { IDepositRequest, IWallet } from "../../shared/types/wallet";
 
 export const MOCK_SESSION = {
   agencyId: "AGENCY-001",
@@ -7,24 +7,47 @@ export const MOCK_SESSION = {
 };
 
 const WALLET_SEED: IWallet = {
-  creditLimit: 15000,
-  currentBalance: 4250,
-  availableCredit: 10750,
+  balance: 6300,
+  lowBalanceThreshold: 500,
+  currency: "USD",
+  totalDeposited: 15000,
+  totalConsumed: 8700,
+  lastUpdatedAt: "2026-03-22T09:00:00.000Z",
   transactions: [
+    {
+      id: "TXN-004",
+      type: "charge",
+      amount: 1200,
+      description: "Reserva Hotel Meliá",
+      bookingId: "BK-0045",
+      date: "2026-03-22T09:00:00.000Z",
+      balanceAfter: 6300,
+    },
+    {
+      id: "TXN-003",
+      type: "deposit",
+      amount: 5000,
+      description: "Depósito — Transferencia bancaria",
+      date: "2026-03-20T14:00:00.000Z",
+      balanceAfter: 7500,
+    },
+    {
+      id: "TXN-002",
+      type: "refund",
+      amount: 2000,
+      description: "Reembolso — Cancelación Hotel NH",
+      bookingId: "BK-0038",
+      date: "2026-03-18T11:00:00.000Z",
+      balanceAfter: 2500,
+    },
     {
       id: "TXN-001",
       type: "charge",
       amount: 2500,
-      description: "Reserva TRV-20260301-SEED",
-      bookingId: "TRV-20260301-SEED",
-      date: "2026-03-01T10:00:00.000Z",
-    },
-    {
-      id: "TXN-002",
-      type: "payment",
-      amount: 1500, // amounts are always positive; type field conveys direction
-      description: "Pago parcial cuenta corriente",
-      date: "2026-03-10T14:00:00.000Z",
+      description: "Reserva Hotel NH",
+      bookingId: "BK-0038",
+      date: "2026-03-15T10:00:00.000Z",
+      balanceAfter: 500,
     },
   ],
 };
@@ -43,20 +66,53 @@ export async function readWallet(): Promise<IWallet> {
   const stored = await storage.getItem<IWallet>("wallet");
   if (!stored) {
     await storage.setItem("wallet", WALLET_SEED);
-    return {
-      ...WALLET_SEED,
-      availableCredit: WALLET_SEED.creditLimit - WALLET_SEED.currentBalance,
-    };
+    return WALLET_SEED;
   }
-  return {
-    ...stored,
-    availableCredit: stored.creditLimit - stored.currentBalance,
-  };
+  return stored;
 }
 
 export async function writeWallet(wallet: IWallet): Promise<void> {
-  await useStorage("data").setItem("wallet", {
-    ...wallet,
-    availableCredit: wallet.creditLimit - wallet.currentBalance,
-  });
+  await useStorage("data").setItem("wallet", wallet);
+}
+
+const DEPOSIT_REQUESTS_SEED: IDepositRequest[] = [
+  {
+    id: "DEP-001",
+    agencyId: "AGENCY-001",
+    agencyName: "Viajes El Corte Inglés",
+    amount: 5000,
+    currency: "USD",
+    concept: "TOT-AGC-0042",
+    note: "Transferencia enviada el 20/03 desde Banco Santander",
+    status: "confirmed",
+    createdAt: "2026-03-20T10:00:00.000Z",
+    processedAt: "2026-03-20T14:00:00.000Z",
+    processedBy: "admin@travelota.com",
+  },
+  {
+    id: "DEP-002",
+    agencyId: "AGENCY-001",
+    agencyName: "Viajes El Corte Inglés",
+    amount: 3000,
+    currency: "USD",
+    concept: "TOT-AGC-0042",
+    status: "pending",
+    createdAt: "2026-03-22T08:00:00.000Z",
+  },
+];
+
+export async function readDepositRequests(): Promise<IDepositRequest[]> {
+  const storage = useStorage("data");
+  const stored = await storage.getItem<IDepositRequest[]>("depositRequests");
+  if (!stored) {
+    await storage.setItem("depositRequests", DEPOSIT_REQUESTS_SEED);
+    return DEPOSIT_REQUESTS_SEED;
+  }
+  return stored;
+}
+
+export async function writeDepositRequests(
+  requests: IDepositRequest[],
+): Promise<void> {
+  await useStorage("data").setItem("depositRequests", requests);
 }

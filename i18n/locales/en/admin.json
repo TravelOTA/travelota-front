@@ -29,6 +29,49 @@
         "title": "Agency Groups",
         "description": "Define sets of shared commercial rules (Base Markup, conditions) for different agencies.",
         "manage": "Manage Groups"
+      },
+      "depositRequests": {
+        "title": "Recharge Requests",
+        "description": "Confirm received bank transfers to credit the agency wallet balance.",
+        "manage": "Manage Requests"
+      }
+    },
+    "depositRequests": {
+      "title": "Recharge Requests",
+      "subtitle": "Confirm received bank deposits to credit the wallet balance of each agency.",
+      "pendingBadge": "pending",
+      "results": "requests",
+      "filter": {
+        "all": "All statuses"
+      },
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "rejected": "Rejected"
+      },
+      "col": {
+        "date": "Request date",
+        "agency": "Agency",
+        "amount": "Amount",
+        "concept": "Reference",
+        "note": "Note",
+        "status": "Status",
+        "processedAt": "Processed"
+      },
+      "confirm": "Confirm",
+      "reject": "Reject",
+      "empty": "No recharge requests found.",
+      "cancel": "Cancel",
+      "confirmModal": {
+        "title": "Confirm deposit",
+        "body": "Confirm that you received the deposit of {amount} from {agency} with reference {concept}? The balance will be credited to their wallet immediately.",
+        "warning": "This action cannot be undone.",
+        "action": "Yes, confirm deposit"
+      },
+      "rejectModal": {
+        "title": "Reject request",
+        "body": "Reject the recharge request of {amount} from {agency}? Their balance will not be modified.",
+        "action": "Yes, reject"
       }
     },
     "agencies": {

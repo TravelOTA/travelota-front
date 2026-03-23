@@ -206,6 +206,30 @@ const fmtCurrency = (v: number) =>
           </div>
         </template>
       </UCard>
+      <UCard
+        class="cursor-pointer hover:border-primary-500 transition-colors"
+        @click="$router.push('/dashboard/admin/deposit-requests')"
+      >
+        <div class="p-2">
+          <div
+            class="w-10 h-10 bg-green-50 dark:bg-green-900/20 text-green-500 rounded-lg flex items-center justify-center mb-4"
+          >
+            <UIcon name="i-heroicons-banknotes" class="w-6 h-6" />
+          </div>
+          <h3 class="font-bold text-lg mb-1">{{ t('admin.dashboard.depositRequests.title') }}</h3>
+          <p class="text-sm text-gray-500">
+            {{ t('admin.dashboard.depositRequests.description') }}
+          </p>
+        </div>
+        <template #footer>
+          <div
+            class="flex items-center justify-between text-primary text-sm font-semibold"
+          >
+            {{ t('admin.dashboard.depositRequests.manage') }}
+            <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
+          </div>
+        </template>
+      </UCard>
     </div>
   </div>
 </template>

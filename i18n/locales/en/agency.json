@@ -40,6 +40,85 @@
         "saveChanges": "Save Changes"
       }
     },
+    "wallet": {
+      "title": "Wallet",
+      "balance": "Available balance",
+      "historical": "historical",
+      "inBookings": "in bookings",
+      "updatedNow": "Updated just now",
+      "updatedMinute": "Updated 1 min ago",
+      "updatedMinutes": "Updated {n} min ago",
+      "updatedHours": "Updated {n} h ago",
+      "lowBalance": {
+        "title": "Low balance",
+        "description": "Your balance is below the minimum required ({threshold}). Top up to keep operating without interruptions."
+      },
+      "rechargeNow": "Top up now",
+      "requestRecharge": "Request top-up",
+      "totalDeposited": "Total deposited",
+      "totalConsumed": "Total consumed",
+      "alertThreshold": "Alert threshold",
+      "configuredByGroup": "configured by group",
+      "movements": {
+        "title": "Recent transactions",
+        "export": "Export",
+        "date": "Date",
+        "description": "Description",
+        "reference": "Reference",
+        "type": "Type",
+        "amount": "Amount",
+        "balanceAfter": "Balance",
+        "empty": "No transactions recorded."
+      },
+      "type": {
+        "charge": "Charge",
+        "deposit": "Deposit",
+        "refund": "Refund"
+      },
+      "recharge": {
+        "title": "Request balance top-up",
+        "subtitle": "The team will process your request once payment is confirmed.",
+        "amount": "Amount to top up",
+        "amountPlaceholder": "0.00",
+        "amountMin": "Minimum $100.00",
+        "method": "Payment method",
+        "methodBank": "Bank transfer",
+        "methodBankHint": "You will receive bank details after confirming.",
+        "methodCard": "Credit card",
+        "methodCardSoon": "Coming soon",
+        "note": "Note (optional)",
+        "notePlaceholder": "E.g.: Transfer sent on 03/22 from Santander Bank",
+        "confirm": "Confirm request",
+        "success": {
+          "title": "Request registered",
+          "description": "Make the transfer for the exact amount using the details below. Your balance will be updated within 1–2 business days."
+        },
+        "bank": {
+          "title": "Bank details",
+          "bankName": "Bank",
+          "holder": "Account holder",
+          "iban": "IBAN",
+          "bic": "BIC / SWIFT",
+          "concept": "Reference (required)",
+          "exactAmount": "Exact amount to transfer",
+          "conceptWarning": "Use exactly the reference {concept} so the payment is identified automatically."
+        },
+        "close": "Close"
+      },
+      "export": {
+        "title": "Export transactions",
+        "range": "Period",
+        "lastMonth": "Last month",
+        "last3Months": "Last 3 months",
+        "lastYear": "Last year",
+        "allTime": "Full history",
+        "custom": "Custom range",
+        "from": "From",
+        "to": "To",
+        "preview": "{n} transactions included",
+        "download": "Download CSV"
+      }
+    },
     "markup": {
       "title": "Benefits Model",
       "subtitle": "Define your profit. The percentage you configure here will be your",

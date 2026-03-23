@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import WalletWidgets from "~/components/b2b/finance/WalletWidgets.vue";
 import AgencyTransactions from "~/components/b2b/finance/AgencyTransactions.vue";
+import RechargeRequestModal from "~/components/b2b/finance/RechargeRequestModal.vue";
+import ExportTransactionsModal from "~/components/b2b/finance/ExportTransactionsModal.vue";
 
 definePageMeta({ layout: "dashboard" });
 const { t } = useI18n();
 const appConfig = useAppConfig();
 const { agency, updateAgency } = useAgency();
+const { fetchWallet, transactions, currency } = useWallet();
+
+onMounted(() => fetchWallet());
 
 const isEditModalOpen = ref(false);
+const isRechargeModalOpen = ref(false);
+const isExportModalOpen = ref(false);
 const formAgency = ref({ ...agency.value });
 
 const colorMap: Record<string, string> = {
@@ -254,18 +261,24 @@ function saveAgency() {
       </div>
     </UCard>
 
-    <!-- Wallet Finances -->
-    <div class="mt-8 mb-6">
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
-        {{ t('agency.dashboard.finance.creditAndFinance') }}
+    <!-- Wallet -->
+    <div class="mt-8">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+        <UIcon name="i-heroicons-wallet" class="w-6 h-6 text-indigo-500" />
+        {{ t('agency.wallet.title') }}
       </h2>
-      <WalletWidgets />
+      <div class="space-y-6">
+        <WalletWidgets @request-recharge="isRechargeModalOpen = true" />
+        <AgencyTransactions @export="isExportModalOpen = true" />
+      </div>
     </div>
 
-    <!-- Transactions -->
-    <div class="mb-8">
-      <AgencyTransactions />
-    </div>
+    <RechargeRequestModal v-model="isRechargeModalOpen" />
+    <ExportTransactionsModal
+      v-model="isExportModalOpen"
+      :transactions="transactions"
+      :currency="currency"
+    />
 
     <!-- Modal Formulario de Branding -->
     <UModal v-model:open="isEditModalOpen" :title="t('agency.dashboard.whiteLabelModal.title')">

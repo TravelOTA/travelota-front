@@ -29,6 +29,49 @@
         "title": "Grupos de Agencia",
         "description": "Define conjuntos de reglas comerciales compartidas (Markup Base, condiciones) para las distintas agencias.",
         "manage": "Gestionar Grupos"
+      },
+      "depositRequests": {
+        "title": "Solicitudes de Recarga",
+        "description": "Confirma los depósitos recibidos por transferencia bancaria para actualizar el saldo de las agencias.",
+        "manage": "Gestionar Solicitudes"
+      }
+    },
+    "depositRequests": {
+      "title": "Solicitudes de Recarga",
+      "subtitle": "Confirma los depósitos bancarios recibidos para acreditar el saldo en el wallet de cada agencia.",
+      "pendingBadge": "pendientes",
+      "results": "solicitudes",
+      "filter": {
+        "all": "Todos los estados"
+      },
+      "status": {
+        "pending": "Pendiente",
+        "confirmed": "Confirmado",
+        "rejected": "Rechazado"
+      },
+      "col": {
+        "date": "Fecha solicitud",
+        "agency": "Agencia",
+        "amount": "Importe",
+        "concept": "Concepto",
+        "note": "Nota",
+        "status": "Estado",
+        "processedAt": "Procesado"
+      },
+      "confirm": "Confirmar",
+      "reject": "Rechazar",
+      "empty": "No hay solicitudes de recarga.",
+      "cancel": "Cancelar",
+      "confirmModal": {
+        "title": "Confirmar depósito",
+        "body": "¿Confirmas que recibiste el depósito de {amount} de {agency} con concepto {concept}? Se acreditará el saldo en su wallet inmediatamente.",
+        "warning": "Esta acción no se puede deshacer.",
+        "action": "Sí, confirmar depósito"
+      },
+      "rejectModal": {
+        "title": "Rechazar solicitud",
+        "body": "¿Rechazas la solicitud de recarga de {amount} de {agency}? No se modificará su saldo.",
+        "action": "Sí, rechazar"
       }
     },
     "agencies": {

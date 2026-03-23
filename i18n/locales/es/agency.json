@@ -62,6 +62,85 @@
       "markupToAdd": "Markup a Sumar al Neto (%)",
       "saveRule": "Guardar Regla"
     },
+    "wallet": {
+      "title": "Wallet",
+      "balance": "Saldo disponible",
+      "historical": "histórico",
+      "inBookings": "en reservas",
+      "updatedNow": "Actualizado ahora",
+      "updatedMinute": "Actualizado hace 1 min",
+      "updatedMinutes": "Actualizado hace {n} min",
+      "updatedHours": "Actualizado hace {n} h",
+      "lowBalance": {
+        "title": "Saldo bajo",
+        "description": "Tu saldo está por debajo del mínimo requerido ({threshold}). Recarga para seguir operando sin interrupciones."
+      },
+      "rechargeNow": "Recargar ahora",
+      "requestRecharge": "Solicitar recarga",
+      "totalDeposited": "Total depositado",
+      "totalConsumed": "Total consumido",
+      "alertThreshold": "Umbral de alerta",
+      "configuredByGroup": "configurado por grupo",
+      "movements": {
+        "title": "Movimientos recientes",
+        "export": "Exportar",
+        "date": "Fecha",
+        "description": "Descripción",
+        "reference": "Referencia",
+        "type": "Tipo",
+        "amount": "Monto",
+        "balanceAfter": "Saldo",
+        "empty": "No hay movimientos registrados."
+      },
+      "type": {
+        "charge": "Cargo",
+        "deposit": "Depósito",
+        "refund": "Reembolso"
+      },
+      "recharge": {
+        "title": "Solicitar recarga de saldo",
+        "subtitle": "El equipo procesará tu solicitud una vez confirmado el pago.",
+        "amount": "Monto a recargar",
+        "amountPlaceholder": "0.00",
+        "amountMin": "Mínimo $100.00",
+        "method": "Método de pago",
+        "methodBank": "Transferencia bancaria",
+        "methodBankHint": "Recibirás los datos bancarios tras confirmar.",
+        "methodCard": "Tarjeta de crédito",
+        "methodCardSoon": "Próximamente",
+        "note": "Nota (opcional)",
+        "notePlaceholder": "Ej: Transferencia enviada el 22/03 desde Banco Santander",
+        "confirm": "Confirmar solicitud",
+        "success": {
+          "title": "Solicitud registrada",
+          "description": "Realiza la transferencia por el monto exacto usando los datos a continuación. Tu saldo se actualizará en 1–2 días hábiles."
+        },
+        "bank": {
+          "title": "Datos bancarios",
+          "bankName": "Banco",
+          "holder": "Titular",
+          "iban": "IBAN",
+          "bic": "BIC / SWIFT",
+          "concept": "Concepto (obligatorio)",
+          "exactAmount": "Importe exacto a transferir",
+          "conceptWarning": "Usa exactamente el concepto {concept} para que el pago se identifique automáticamente."
+        },
+        "close": "Cerrar"
+      },
+      "export": {
+        "title": "Exportar movimientos",
+        "range": "Período",
+        "lastMonth": "Último mes",
+        "last3Months": "Últimos 3 meses",
+        "lastYear": "Último año",
+        "allTime": "Histórico completo",
+        "custom": "Rango personalizado",
+        "from": "Desde",
+        "to": "Hasta",
+        "preview": "{n} transacciones incluidas",
+        "download": "Descargar CSV"
+      }
+    },
     "users": {
       "title": "Equipo de Ventas",
       "backToAgency": "Volver a Mi Agencia",

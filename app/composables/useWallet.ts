@@ -1,7 +1,5 @@
-// app/composables/useWallet.ts
 import { useState } from "#imports";
 import { computed } from "vue";
-import { apiFetch } from "~/composables/useApi";
 import type { IWallet } from "#shared/types/wallet";
 
 export function useWallet() {
@@ -13,7 +11,7 @@ export function useWallet() {
     loading.value = true;
     error.value = null;
     try {
-      wallet.value = await apiFetch<IWallet>("/api/wallet");
+      wallet.value = await $fetch<IWallet>("/api/wallet");
     } catch (err) {
       error.value =
         err instanceof Error ? err.message : "Error al cargar el wallet";
@@ -22,31 +20,39 @@ export function useWallet() {
     }
   }
 
-  function hasSufficientCredit(amount: number): boolean {
+  function hasSufficientFunds(amount: number): boolean {
     if (!wallet.value) return false;
-    return wallet.value.availableCredit >= amount;
+    return wallet.value.balance >= amount;
   }
 
-  const availableCredit = computed(() => wallet.value?.availableCredit ?? 0);
-  const creditLimit = computed(() => wallet.value?.creditLimit ?? 0);
-  const currentBalance = computed(() => wallet.value?.currentBalance ?? 0);
-  const creditUsagePercentage = computed(() =>
-    creditLimit.value > 0
-      ? (currentBalance.value / creditLimit.value) * 100
-      : 0,
+  const balance = computed(() => wallet.value?.balance ?? 0);
+  const lowBalanceThreshold = computed(
+    () => wallet.value?.lowBalanceThreshold ?? 0,
   );
+  const isLowBalance = computed(
+    () => balance.value > 0 && balance.value < lowBalanceThreshold.value,
+  );
+  const isZeroBalance = computed(() => balance.value === 0);
+  const currency = computed(() => wallet.value?.currency ?? "USD");
+  const totalDeposited = computed(() => wallet.value?.totalDeposited ?? 0);
+  const totalConsumed = computed(() => wallet.value?.totalConsumed ?? 0);
+  const lastUpdatedAt = computed(() => wallet.value?.lastUpdatedAt ?? null);
   const transactions = computed(() => wallet.value?.transactions ?? []);
 
   return {
     wallet,
     loading,
     error,
-    availableCredit,
-    creditLimit,
-    currentBalance,
-    creditUsagePercentage,
+    balance,
+    lowBalanceThreshold,
+    isLowBalance,
+    isZeroBalance,
+    currency,
+    totalDeposited,
+    totalConsumed,
+    lastUpdatedAt,
     transactions,
     fetchWallet,
-    hasSufficientCredit,
+    hasSufficientFunds,
   };
 }
