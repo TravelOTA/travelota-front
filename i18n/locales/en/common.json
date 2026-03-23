@@ -26,7 +26,8 @@
     "administration": "Administration",
     "b2bTemplates": "B2B Templates",
     "comingSoon": "Soon",
-    "adminBrand": "TravelOTA Admin"
+    "adminBrand": "TravelOTA Admin",
+    "user": "User"
   },
   "footer": {
     "contactTitle": "Contact Us",

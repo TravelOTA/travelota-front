@@ -30,7 +30,16 @@ useHead(() => ({
 }));
 
 const { t } = useI18n();
-const { role: userRole, logout } = useAuth();
+const { role: userRole, logout, currentUser } = useAuth();
+
+const userDisplayName = computed(() => {
+  if (!currentUser.value) return null;
+  const { first_name, last_name } = currentUser.value;
+  return [first_name, last_name].filter(Boolean).join(" ") || currentUser.value.email;
+});
+
+const userEmail = computed(() => currentUser.value?.email ?? null);
+const userAvatar = computed(() => currentUser.value?.avatar ?? null);
 const { agency } = useAgency();
 
 const isInternalRole = computed(() =>
@@ -167,17 +176,17 @@ const userLinks = computed(() => {
         ></div>
 
         <div class="flex items-center gap-3">
-          <div class="hidden sm:block text-right">
+          <div v-if="userDisplayName" class="hidden sm:block text-right">
             <p
               class="text-xs font-bold text-gray-900 dark:text-white leading-none"
             >
-              Agencia Demo
+              {{ userDisplayName }}
             </p>
-            <p class="text-[10px] text-gray-500 mt-0.5">Vendedor 1</p>
+            <p class="text-[10px] text-gray-500 mt-0.5">{{ userEmail }}</p>
           </div>
           <UAvatar
-            src="https://avatars.githubusercontent.com/u/739984"
-            alt="Usuario"
+            :src="userAvatar ?? undefined"
+            :alt="userDisplayName ?? t('nav.user')"
             size="sm"
           />
           <UButton

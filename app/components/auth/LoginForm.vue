@@ -13,7 +13,8 @@ const form = reactive<LoginInput>({
   rememberMe: false,
 });
 
-const { login, loginAs } = useAuth();
+const { login, loginAs } = useAuth()
+const isDev = import.meta.dev;
 
 const loginError = ref<string | null>(null);
 const isSubmitting = ref(false);
@@ -22,7 +23,7 @@ async function onSubmit(event: FormSubmitEvent<LoginInput>) {
   loginError.value = null;
   isSubmitting.value = true;
   try {
-    await login(event.data.email, event.data.password);
+    await login(event.data.email, event.data.password, event.data.rememberMe ?? false);
   } catch {
     loginError.value = t("auth.login.errorInvalidCredentials");
   } finally {
@@ -124,7 +125,7 @@ async function onSubmit(event: FormSubmitEvent<LoginInput>) {
       </UButton>
     </UForm>
 
-    <div class="mt-8 border-t border-gray-100 dark:border-gray-800 pt-6">
+    <div v-if="isDev" class="mt-8 border-t border-gray-100 dark:border-gray-800 pt-6">
       <p
         class="text-xs text-center text-gray-500 font-bold uppercase tracking-wider mb-4"
       >
