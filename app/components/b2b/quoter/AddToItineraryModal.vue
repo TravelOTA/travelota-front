@@ -26,7 +26,7 @@ const { t } = useI18n();
 const selectedBlockId = ref("");
 const showNewBlockForm = ref(false);
 
-const newBlockType = ref<"hotel" | "flight" | "transfer" | "activity">("hotel");
+const newBlockType = ref<"hotel" | "flight" | "transfer" | "excursion" | "extra">("hotel");
 const newBlockTitle = ref("");
 
 const dateRange = ref({
@@ -192,11 +192,12 @@ const handleConfirm = () => {
           <UFormField :label="t('itinerary.serviceTypeLabel')">
             <USelect
               v-model="newBlockType"
-              :options="[
+              :items="[
                 { label: t('itinerary.serviceTypeAccommodation'), value: 'hotel' },
                 { label: t('itinerary.serviceTypeFlight'), value: 'flight' },
                 { label: t('itinerary.serviceTypeTransfer'), value: 'transfer' },
-                { label: t('itinerary.serviceTypeActivityTour'), value: 'activity' },
+                { label: t('itinerary.serviceTypeExcursion'), value: 'excursion' },
+                { label: t('itinerary.serviceTypeExtra'), value: 'extra' },
               ]"
             />
           </UFormField>

@@ -9,6 +9,11 @@ import type {
   ItineraryOption,
 } from "~/composables/useItinerary";
 import { useAgency } from "~/composables/useAgency";
+import ItineraryBlockHotel from "~/components/b2b/quoter/ItineraryBlockHotel.vue";
+import ItineraryBlockTransfer from "~/components/b2b/quoter/ItineraryBlockTransfer.vue";
+import ItineraryBlockFlight from "~/components/b2b/quoter/ItineraryBlockFlight.vue";
+import ItineraryBlockExcursion from "~/components/b2b/quoter/ItineraryBlockExcursion.vue";
+import ItineraryBlockExtra from "~/components/b2b/quoter/ItineraryBlockExtra.vue";
 
 const {
   itinerary,
@@ -164,22 +169,60 @@ const formatCurrency = (amount: number) => {
               class="border border-gray-200 rounded-lg overflow-hidden flex flex-col"
             >
               <div class="h-32 bg-gray-100 overflow-hidden relative">
-                <img :src="opt.image" class="w-full h-full object-cover" />
+                <img
+                  v-if="opt.image"
+                  :src="opt.image"
+                  class="w-full h-full object-cover"
+                />
+                <div
+                  v-else
+                  class="w-full h-full flex items-center justify-center"
+                >
+                  <UIcon
+                    :name="
+                      block.type === 'hotel'
+                        ? 'i-heroicons-building-office'
+                        : block.type === 'flight'
+                          ? 'i-heroicons-paper-airplane'
+                          : block.type === 'transfer'
+                            ? 'i-heroicons-truck'
+                            : block.type === 'excursion'
+                              ? 'i-heroicons-ticket'
+                              : 'i-heroicons-document-text'
+                    "
+                    class="w-10 h-10 text-gray-300"
+                  />
+                </div>
                 <div
                   class="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider backdrop-blur-sm"
                 >
                   {{ t("itinerary.documentOptionLabel") }} {{ oIndex + 1 }}
                 </div>
+                <UBadge
+                  v-if="opt.isManual"
+                  color="neutral"
+                  variant="solid"
+                  size="xs"
+                  class="absolute top-2 right-2"
+                >{{ t("itinerary.manualBadge") }}</UBadge>
               </div>
               <div class="p-4 flex-1 flex flex-col justify-between bg-white">
                 <div>
-                  <h4
-                    class="font-bold text-gray-900 text-sm mb-1 leading-tight"
-                  >
+                  <h4 class="font-bold text-gray-900 text-sm mb-1 leading-tight">
                     {{ opt.name }}
                   </h4>
-                  <p class="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                  <template v-if="opt.isManual && opt.metadata">
+                    <ItineraryBlockHotel v-if="opt.metadata.type === 'hotel'" :option="opt" />
+                    <ItineraryBlockTransfer v-else-if="opt.metadata.type === 'transfer'" :option="opt" />
+                    <ItineraryBlockFlight v-else-if="opt.metadata.type === 'flight'" :option="opt" />
+                    <ItineraryBlockExcursion v-else-if="opt.metadata.type === 'excursion'" :option="opt" />
+                    <ItineraryBlockExtra v-else-if="opt.metadata.type === 'extra'" :option="opt" />
+                  </template>
+                  <p v-else class="text-xs text-gray-500 line-clamp-2 leading-relaxed">
                     {{ opt.description }}
+                  </p>
+                  <p v-if="opt.notes" class="text-xs text-gray-400 mt-1 italic">
+                    {{ opt.notes }}
                   </p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-gray-100">

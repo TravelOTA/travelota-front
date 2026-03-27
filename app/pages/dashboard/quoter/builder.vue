@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useItinerary } from "~/composables/useItinerary";
 import { useConfig } from "~/composables/useConfig";
 import ItineraryPreviewModal from "~/components/b2b/quoter/ItineraryPreviewModal.vue";
+import ManualOptionModal from "~/components/b2b/quoter/ManualOptionModal.vue";
 import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
 import type { DateValue } from "@internationalized/date";
 import type { ItineraryBlock } from "~/composables/useItinerary";
@@ -34,7 +35,11 @@ const { nationalities: nationalityOptions } = useConfig();
 
 // For adding new blocks
 const isAddBlockModalOpen = ref(false);
-const newBlockType = ref<"hotel" | "flight" | "transfer" | "activity">("hotel");
+const newBlockType = ref<"hotel" | "flight" | "transfer" | "excursion" | "extra">("hotel");
+
+// For manual option entry
+const isManualModalOpen = ref(false);
+const manualModalBlockId = ref("");
 const newBlockTitle = ref("");
 
 const dateRange = ref({
@@ -57,6 +62,11 @@ const handleAddBlock = () => {
     start: todayDate(getLocalTimeZone()),
     end: todayDate(getLocalTimeZone()).add({ days: 2 }),
   };
+};
+
+const openManualModal = (blockId: string) => {
+  manualModalBlockId.value = blockId;
+  isManualModalOpen.value = true;
 };
 
 const isPreviewOpen = ref(false);
@@ -216,7 +226,9 @@ const formatCurrency = (amount: number) => {
                       ? 'i-heroicons-paper-airplane'
                       : block.type === 'transfer'
                         ? 'i-heroicons-truck'
-                        : 'i-heroicons-ticket'
+                        : block.type === 'excursion'
+                          ? 'i-heroicons-ticket'
+                          : 'i-heroicons-document-text'
                 "
                 class="w-5 h-5"
               />
@@ -270,14 +282,25 @@ const formatCurrency = (amount: number) => {
                   <p class="text-sm text-gray-500 mb-3">
                     {{ t("itinerary.noOptionsYet") }}
                   </p>
-                  <UButton
-                    size="xs"
-                    color="neutral"
-                    variant="solid"
-                    icon="i-heroicons-magnifying-glass"
-                    to="/dashboard/hotels/results"
-                    >{{ t("itinerary.searchOptions") }}</UButton
-                  >
+                  <div class="flex items-center justify-center gap-2">
+                    <UButton
+                      v-if="block.type === 'hotel'"
+                      size="xs"
+                      color="neutral"
+                      variant="solid"
+                      icon="i-heroicons-magnifying-glass"
+                      to="/dashboard/hotels/results"
+                      >{{ t("itinerary.searchHotelButton") }}</UButton
+                    >
+                    <UButton
+                      size="xs"
+                      color="neutral"
+                      variant="outline"
+                      icon="i-heroicons-pencil-square"
+                      @click="openManualModal(block.id)"
+                      >{{ t("itinerary.addManualOptionButton") }}</UButton
+                    >
+                  </div>
                 </div>
 
                 <!-- Listed Options (Max 5) -->
@@ -292,30 +315,38 @@ const formatCurrency = (amount: number) => {
                     >
                       #{{ optIdx + 1 }}
                     </span>
-                    <img
-                      :src="opt.image"
-                      class="w-16 h-12 object-cover rounded"
-                    />
-                    <div class="flex-1">
-                      <p
-                        class="font-bold text-gray-900 dark:text-white text-sm"
-                      >
-                        {{ opt.name }}
-                      </p>
-                      <p class="text-xs text-gray-500">{{ opt.description }}</p>
+                    <div
+                      v-if="opt.image"
+                      class="w-16 h-12 rounded overflow-hidden shrink-0"
+                    >
+                      <img :src="opt.image" class="w-full h-full object-cover" />
                     </div>
-                    <div class="text-right">
-                      <p
-                        class="text-xs text-gray-400 uppercase tracking-widest mb-0.5"
-                      >
+                    <div
+                      v-else
+                      class="w-16 h-12 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0"
+                    >
+                      <UIcon name="i-heroicons-pencil-square" class="w-5 h-5 text-gray-400" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5 flex-wrap">
+                        <p class="font-bold text-gray-900 dark:text-white text-sm truncate">
+                          {{ opt.name }}
+                        </p>
+                        <UBadge
+                          v-if="opt.isManual"
+                          color="neutral"
+                          variant="subtle"
+                          size="xs"
+                        >{{ t("itinerary.manualBadge") }}</UBadge>
+                      </div>
+                      <p class="text-xs text-gray-500 truncate">{{ opt.description }}</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <p class="text-xs text-gray-400 uppercase tracking-widest mb-0.5">
                         {{ t("itinerary.pvpClient") }}
                       </p>
-                      <p
-                        class="font-bold text-primary-600 dark:text-primary-400 font-mono"
-                      >
-                        {{
-                          formatCurrency(calculateOptionSellPrice(opt.netPrice))
-                        }}
+                      <p class="font-bold text-primary-600 dark:text-primary-400 font-mono">
+                        {{ formatCurrency(calculateOptionSellPrice(opt.netPrice)) }}
                       </p>
                     </div>
                     <UButton
@@ -327,6 +358,25 @@ const formatCurrency = (amount: number) => {
                       @click="removeOptionFromBlock(block.id, opt.id)"
                     />
                   </div>
+                </div>
+
+                <!-- Add more options actions (when block has options but < 5) -->
+                <div v-if="block.options.length > 0 && block.options.length < 5" class="mt-3 flex gap-2">
+                  <UButton
+                    v-if="block.type === 'hotel'"
+                    size="xs"
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-heroicons-magnifying-glass"
+                    to="/dashboard/hotels/results"
+                  >{{ t("itinerary.searchHotelButton") }}</UButton>
+                  <UButton
+                    size="xs"
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-heroicons-pencil-square"
+                    @click="openManualModal(block.id)"
+                  >{{ t("itinerary.addManualOptionButton") }}</UButton>
                 </div>
               </div>
             </div>
@@ -418,11 +468,12 @@ const formatCurrency = (amount: number) => {
           <UFormField :label="t('itinerary.blockTypeLabel')">
             <USelect
               v-model="newBlockType"
-              :options="[
+              :items="[
                 { label: t('itinerary.blockTypeAccommodation'), value: 'hotel' },
                 { label: t('itinerary.blockTypeFlight'), value: 'flight' },
                 { label: t('itinerary.blockTypeTransfer'), value: 'transfer' },
-                { label: t('itinerary.blockTypeActivity'), value: 'activity' },
+                { label: t('itinerary.blockTypeExcursion'), value: 'excursion' },
+                { label: t('itinerary.blockTypeExtra'), value: 'extra' },
               ]"
             />
           </UFormField>
@@ -489,5 +540,11 @@ const formatCurrency = (amount: number) => {
     </UModal>
 
     <ItineraryPreviewModal v-model:is-open="isPreviewOpen" />
+
+    <ManualOptionModal
+      v-model:is-open="isManualModalOpen"
+      :block-id="manualModalBlockId"
+      :block-type="itinerary.blocks.find(b => b.id === manualModalBlockId)?.type ?? 'hotel'"
+    />
   </div>
 </template>

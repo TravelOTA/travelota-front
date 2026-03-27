@@ -1,18 +1,22 @@
 import { computed } from "vue";
+import type { ItineraryOptionMetadata } from "~/shared/schemas/itinerary";
 
 export interface ItineraryOption {
   id: string;
-  providerId: string; // e.g., Hotel ID or Transfer ID
+  providerId: string; // Provider ID, or "MANUAL" for manual entries
   name: string;
   image: string;
   description: string;
   netPrice: number;
+  isManual: boolean; // true = manual entry; false = provider-sourced
+  metadata?: ItineraryOptionMetadata;
+  notes?: string;
   isSelected?: boolean; // Client selection indicator
 }
 
 export interface ItineraryBlock {
   id: string; // block UUID
-  type: "hotel" | "flight" | "transfer" | "activity";
+  type: "hotel" | "flight" | "transfer" | "excursion" | "extra";
   title: string;
   date: string;
   options: ItineraryOption[]; // Min 1, Max 5

@@ -51,6 +51,7 @@ const addToItinerary = (room: HotelRoomOffer) => {
       "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
     description: `${room.name} (${room.regimen})`,
     netPrice: room.price,
+    isManual: false,
   });
 };
 </script>
