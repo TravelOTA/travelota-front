@@ -54,8 +54,10 @@ const dateRange = ref({
   end: todayDate(getLocalTimeZone()).add({ days: 2 }),
 });
 
-// Only flag date as changed when the modal is already open (not during pre-fill)
-watch(dateRange, () => { if (isAddBlockModalOpen.value) dateRangeChanged.value = true; }, { deep: true });
+// Only flag date as changed when the modal is already open (not during pre-fill).
+// flush: 'sync' ensures the watcher runs before isAddBlockModalOpen is set to true
+// in openEditModal, so the pre-fill assignment doesn't incorrectly mark the date as changed.
+watch(dateRange, () => { if (isAddBlockModalOpen.value) dateRangeChanged.value = true; }, { deep: true, flush: 'sync' });
 
 const resetBlockModal = () => {
   newBlockTitle.value = "";
