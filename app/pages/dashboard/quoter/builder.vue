@@ -4,6 +4,8 @@ import { useItinerary } from "~/composables/useItinerary";
 import { useConfig } from "~/composables/useConfig";
 import ItineraryPreviewModal from "~/components/b2b/quoter/ItineraryPreviewModal.vue";
 import ManualOptionModal from "~/components/b2b/quoter/ManualOptionModal.vue";
+import SaveTemplateModal from "~/components/b2b/quoter/SaveTemplateModal.vue";
+import TemplatePickerModal from "~/components/b2b/quoter/TemplatePickerModal.vue";
 import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
 import type { DateValue } from "@internationalized/date";
 import type { ItineraryBlock } from "~/composables/useItinerary";
@@ -70,6 +72,8 @@ const openManualModal = (blockId: string) => {
 };
 
 const isPreviewOpen = ref(false);
+const isSaveTemplateOpen = ref(false);
+const isPickerOpen = ref(false);
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("es-ES", {
@@ -163,6 +167,7 @@ const formatCurrency = (amount: number) => {
           variant="solid"
           icon="i-heroicons-document-duplicate"
           :label="t('itinerary.saveTemplate')"
+          @click="isSaveTemplateOpen = true"
         />
         <UButton
           color="primary"
@@ -198,6 +203,14 @@ const formatCurrency = (amount: number) => {
             @click="isAddBlockModalOpen = true"
           >
             {{ t("itinerary.addBlockButton") }}
+          </UButton>
+          <UButton
+            icon="i-heroicons-document-duplicate"
+            color="neutral"
+            variant="outline"
+            @click="isPickerOpen = true"
+          >
+            {{ t("templates.builder.useTemplateButton") }}
           </UButton>
         </div>
 
@@ -540,6 +553,8 @@ const formatCurrency = (amount: number) => {
     </UModal>
 
     <ItineraryPreviewModal v-model:is-open="isPreviewOpen" />
+    <SaveTemplateModal v-model:is-open="isSaveTemplateOpen" />
+    <TemplatePickerModal v-model:is-open="isPickerOpen" />
 
     <ManualOptionModal
       v-model:is-open="isManualModalOpen"
