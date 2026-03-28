@@ -4,7 +4,7 @@ import { useAuth } from "~/composables/useAuth";
 import { useTemplates } from "~/composables/useTemplates";
 import type { ItineraryTemplate } from "~/composables/useTemplates";
 
-const props = defineProps<{ isOpen: boolean }>();
+defineProps<{ isOpen: boolean }>();
 const emit = defineEmits<{ "update:isOpen": [value: boolean] }>();
 
 const { t } = useI18n();
@@ -27,7 +27,10 @@ const scopeOptions = computed(() => {
     opts.push({ label: t("templates.saveModal.scopeAgency"), value: "agency" });
   }
   if (role.value === "SUPPORT" || role.value === "SUPER_ADMIN") {
-    opts.push({ label: t("templates.saveModal.scopePlatform"), value: "platform" });
+    opts.push({
+      label: t("templates.saveModal.scopePlatform"),
+      value: "platform",
+    });
   }
   return opts;
 });
@@ -91,7 +94,10 @@ const handleSubmit = async () => {
           />
         </UFormField>
 
-        <UFormField v-if="showScopeSelector" :label="t('templates.saveModal.visibilityLabel')">
+        <UFormField
+          v-if="showScopeSelector"
+          :label="t('templates.saveModal.visibilityLabel')"
+        >
           <USelect
             v-model="scope"
             :items="scopeOptions"
@@ -104,7 +110,11 @@ const handleSubmit = async () => {
 
     <template #footer>
       <div class="flex justify-end gap-2">
-        <UButton color="neutral" variant="ghost" @click="emit('update:isOpen', false)">
+        <UButton
+          color="neutral"
+          variant="ghost"
+          @click="emit('update:isOpen', false)"
+        >
           {{ t("itinerary.cancelButton") }}
         </UButton>
         <UButton

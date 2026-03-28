@@ -25,11 +25,16 @@ const activeTab = ref<string | number>("personal");
 
 // Tabs visible based on role
 const tabs = computed(() => {
-  const list = [{ label: t("templates.pickerModal.tabPersonal"), value: "personal" }];
+  const list = [
+    { label: t("templates.pickerModal.tabPersonal"), value: "personal" },
+  ];
   if (role.value === "USER" || role.value === "AGENCY_ADMIN") {
     list.push({ label: t("templates.pickerModal.tabAgency"), value: "agency" });
   }
-  list.push({ label: t("templates.pickerModal.tabPlatform"), value: "platform" });
+  list.push({
+    label: t("templates.pickerModal.tabPlatform"),
+    value: "platform",
+  });
   return list;
 });
 
@@ -44,8 +49,10 @@ const filterBySearch = (list: ItineraryTemplate[]) => {
 };
 
 const visibleTemplates = computed(() => {
-  if (activeTab.value === "personal") return filterBySearch(personalTemplates.value);
-  if (activeTab.value === "agency") return filterBySearch(agencyTemplates.value);
+  if (activeTab.value === "personal")
+    return filterBySearch(personalTemplates.value);
+  if (activeTab.value === "agency")
+    return filterBySearch(agencyTemplates.value);
   return filterBySearch(platformTemplates.value);
 });
 
@@ -150,7 +157,12 @@ watch(
                 :placeholder="t('templates.saveModal.destinationPlaceholder')"
               />
               <div class="flex justify-end gap-2">
-                <UButton size="xs" color="neutral" variant="ghost" @click="cancelEdit">
+                <UButton
+                  size="xs"
+                  color="neutral"
+                  variant="ghost"
+                  @click="cancelEdit"
+                >
                   {{ t("itinerary.cancelButton") }}
                 </UButton>
                 <UButton
@@ -170,16 +182,25 @@ watch(
               class="group flex items-center gap-3 rounded-lg border border-gray-100 p-3 transition-colors hover:border-primary-300 dark:border-gray-800"
             >
               <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                <p
+                  class="truncate text-sm font-semibold text-gray-900 dark:text-white"
+                >
                   {{ tpl.name }}
                 </p>
                 <div class="mt-0.5 flex items-center gap-2">
                   <span
                     v-if="tpl.destination"
                     class="text-xs text-primary-600 dark:text-primary-400"
-                  >{{ tpl.destination }}</span>
+                    >{{ tpl.destination }}</span
+                  >
                   <span class="text-xs text-gray-400">
-                    {{ t("templates.pickerModal.blocksCount", { n: tpl.itinerary.blocks.length }, tpl.itinerary.blocks.length) }}
+                    {{
+                      t(
+                        "templates.pickerModal.blocksCount",
+                        { n: tpl.itinerary.blocks.length },
+                        tpl.itinerary.blocks.length,
+                      )
+                    }}
                   </span>
                 </div>
               </div>

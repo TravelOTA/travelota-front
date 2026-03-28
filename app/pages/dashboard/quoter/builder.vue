@@ -37,7 +37,9 @@ const { nationalities: nationalityOptions } = useConfig();
 
 // For adding new blocks
 const isAddBlockModalOpen = ref(false);
-const newBlockType = ref<"hotel" | "flight" | "transfer" | "excursion" | "extra">("hotel");
+const newBlockType = ref<
+  "hotel" | "flight" | "transfer" | "excursion" | "extra"
+>("hotel");
 
 // For manual option entry
 const isManualModalOpen = ref(false);
@@ -126,7 +128,9 @@ const formatCurrency = (amount: number) => {
                 base: 'px-0 text-center font-bold text-primary-600 cursor-default',
               }"
             />
-            <span class="text-xs font-bold text-gray-500">{{ t("itinerary.paxLabel") }}</span>
+            <span class="text-xs font-bold text-gray-500">{{
+              t("itinerary.paxLabel")
+            }}</span>
           </span>
           <span
             class="flex items-center gap-1 ml-2 border-l pl-4 border-gray-200 dark:border-gray-700"
@@ -141,7 +145,9 @@ const formatCurrency = (amount: number) => {
               v-model="itinerary.origin"
               class="w-32 bg-transparent border-0 border-b border-dashed border-gray-300 dark:border-gray-700 text-xs px-1 py-0.5 focus:ring-0 cursor-pointer outline-none"
             >
-              <option value="" disabled selected>{{ t("itinerary.originPlaceholder") }}</option>
+              <option value="" disabled selected>
+                {{ t("itinerary.originPlaceholder") }}
+              </option>
               <option
                 v-for="country in nationalityOptions"
                 :key="country"
@@ -269,11 +275,12 @@ const formatCurrency = (amount: number) => {
                     v-if="block.options.length > 0"
                     color="primary"
                     variant="subtle"
-                    >{{ block.options.length }} / 5 {{ t("itinerary.optionsBadge") }}</UBadge
+                    >{{ block.options.length }} / 5
+                    {{ t("itinerary.optionsBadge") }}</UBadge
                   >
-                  <UBadge v-else color="warning" variant="subtle"
-                    >{{ t("itinerary.emptyBlock") }}</UBadge
-                  >
+                  <UBadge v-else color="warning" variant="subtle">{{
+                    t("itinerary.emptyBlock")
+                  }}</UBadge>
                   <UButton
                     icon="i-heroicons-trash"
                     color="error"
@@ -332,17 +339,25 @@ const formatCurrency = (amount: number) => {
                       v-if="opt.image"
                       class="w-16 h-12 rounded overflow-hidden shrink-0"
                     >
-                      <img :src="opt.image" class="w-full h-full object-cover" />
+                      <img
+                        :src="opt.image"
+                        class="w-full h-full object-cover"
+                      />
                     </div>
                     <div
                       v-else
                       class="w-16 h-12 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0"
                     >
-                      <UIcon name="i-heroicons-pencil-square" class="w-5 h-5 text-gray-400" />
+                      <UIcon
+                        name="i-heroicons-pencil-square"
+                        class="w-5 h-5 text-gray-400"
+                      />
                     </div>
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center gap-1.5 flex-wrap">
-                        <p class="font-bold text-gray-900 dark:text-white text-sm truncate">
+                        <p
+                          class="font-bold text-gray-900 dark:text-white text-sm truncate"
+                        >
                           {{ opt.name }}
                         </p>
                         <UBadge
@@ -350,16 +365,25 @@ const formatCurrency = (amount: number) => {
                           color="neutral"
                           variant="subtle"
                           size="xs"
-                        >{{ t("itinerary.manualBadge") }}</UBadge>
+                          >{{ t("itinerary.manualBadge") }}</UBadge
+                        >
                       </div>
-                      <p class="text-xs text-gray-500 truncate">{{ opt.description }}</p>
+                      <p class="text-xs text-gray-500 truncate">
+                        {{ opt.description }}
+                      </p>
                     </div>
                     <div class="text-right shrink-0">
-                      <p class="text-xs text-gray-400 uppercase tracking-widest mb-0.5">
+                      <p
+                        class="text-xs text-gray-400 uppercase tracking-widest mb-0.5"
+                      >
                         {{ t("itinerary.pvpClient") }}
                       </p>
-                      <p class="font-bold text-primary-600 dark:text-primary-400 font-mono">
-                        {{ formatCurrency(calculateOptionSellPrice(opt.netPrice)) }}
+                      <p
+                        class="font-bold text-primary-600 dark:text-primary-400 font-mono"
+                      >
+                        {{
+                          formatCurrency(calculateOptionSellPrice(opt.netPrice))
+                        }}
                       </p>
                     </div>
                     <UButton
@@ -374,7 +398,10 @@ const formatCurrency = (amount: number) => {
                 </div>
 
                 <!-- Add more options actions (when block has options but < 5) -->
-                <div v-if="block.options.length > 0 && block.options.length < 5" class="mt-3 flex gap-2">
+                <div
+                  v-if="block.options.length > 0 && block.options.length < 5"
+                  class="mt-3 flex gap-2"
+                >
                   <UButton
                     v-if="block.type === 'hotel'"
                     size="xs"
@@ -382,14 +409,16 @@ const formatCurrency = (amount: number) => {
                     variant="ghost"
                     icon="i-heroicons-magnifying-glass"
                     to="/dashboard/hotels/results"
-                  >{{ t("itinerary.searchHotelButton") }}</UButton>
+                    >{{ t("itinerary.searchHotelButton") }}</UButton
+                  >
                   <UButton
                     size="xs"
                     color="neutral"
                     variant="ghost"
                     icon="i-heroicons-pencil-square"
                     @click="openManualModal(block.id)"
-                  >{{ t("itinerary.addManualOptionButton") }}</UButton>
+                    >{{ t("itinerary.addManualOptionButton") }}</UButton
+                  >
                 </div>
               </div>
             </div>
@@ -475,17 +504,26 @@ const formatCurrency = (amount: number) => {
     </div>
 
     <!-- Modal Add Block -->
-    <UModal v-model:open="isAddBlockModalOpen" :title="t('itinerary.addBlockModalTitle')">
+    <UModal
+      v-model:open="isAddBlockModalOpen"
+      :title="t('itinerary.addBlockModalTitle')"
+    >
       <template #body>
         <div class="space-y-4">
           <UFormField :label="t('itinerary.blockTypeLabel')">
             <USelect
               v-model="newBlockType"
               :items="[
-                { label: t('itinerary.blockTypeAccommodation'), value: 'hotel' },
+                {
+                  label: t('itinerary.blockTypeAccommodation'),
+                  value: 'hotel',
+                },
                 { label: t('itinerary.blockTypeFlight'), value: 'flight' },
                 { label: t('itinerary.blockTypeTransfer'), value: 'transfer' },
-                { label: t('itinerary.blockTypeExcursion'), value: 'excursion' },
+                {
+                  label: t('itinerary.blockTypeExcursion'),
+                  value: 'excursion',
+                },
                 { label: t('itinerary.blockTypeExtra'), value: 'extra' },
               ]"
             />
@@ -513,7 +551,9 @@ const formatCurrency = (amount: number) => {
                     {{ formatDate(dateRange.start) }}
                   </template>
                 </template>
-                <template v-else> {{ t("itinerary.blockDatesOptional") }} </template>
+                <template v-else>
+                  {{ t("itinerary.blockDatesOptional") }}
+                </template>
               </UButton>
 
               <template #content>
@@ -559,7 +599,10 @@ const formatCurrency = (amount: number) => {
     <ManualOptionModal
       v-model:is-open="isManualModalOpen"
       :block-id="manualModalBlockId"
-      :block-type="itinerary.blocks.find(b => b.id === manualModalBlockId)?.type ?? 'hotel'"
+      :block-type="
+        itinerary.blocks.find((b) => b.id === manualModalBlockId)?.type ??
+        'hotel'
+      "
     />
   </div>
 </template>
