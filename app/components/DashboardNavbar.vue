@@ -98,14 +98,6 @@ const userLinks = computed(() => {
     });
   }
 
-  if (isInternalRole.value) {
-    baseLinks.push({
-      label: t("nav.b2bTemplates"),
-      icon: "i-heroicons-document-duplicate",
-      to: "/dashboard/admin/templates",
-    });
-  }
-
   return baseLinks;
 });
 
