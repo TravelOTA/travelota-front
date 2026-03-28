@@ -1,0 +1,36 @@
+{
+  "templates": {
+    "saveModal": {
+      "title": "Guardar como Plantilla",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "Ej: Escapada Caribe 5 noches",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Descripción breve (opcional)",
+      "destinationLabel": "Destino",
+      "destinationPlaceholder": "Ej: Caribe, Europa...",
+      "visibilityLabel": "Visibilidad",
+      "scopePersonal": "Personal",
+      "scopeAgency": "Agencia",
+      "scopePlatform": "Plataforma",
+      "saveButton": "Guardar Plantilla",
+      "successToast": "Plantilla guardada correctamente."
+    },
+    "pickerModal": {
+      "title": "Seleccionar Plantilla",
+      "searchPlaceholder": "Buscar plantilla...",
+      "tabPersonal": "Personales",
+      "tabAgency": "Agencia",
+      "tabPlatform": "Plataforma",
+      "useButton": "Usar",
+      "renameAction": "Renombrar",
+      "deleteAction": "Eliminar",
+      "deleteConfirm": "¿Eliminar esta plantilla? Esta acción no se puede deshacer.",
+      "emptyState": "No hay plantillas en esta categoría.",
+      "loadedToast": "Plantilla cargada. Ajusta las fechas y añade opciones.",
+      "blocksCount": "{n} bloque | {n} bloques"
+    },
+    "builder": {
+      "useTemplateButton": "Usar Plantilla"
+    }
+  }
+}
