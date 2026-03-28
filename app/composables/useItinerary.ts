@@ -90,6 +90,13 @@ export const useItinerary = () => {
     );
   };
 
+  const updateBlock = (blockId: string, title: string, date: string) => {
+    const block = itinerary.value.blocks.find((b) => b.id === blockId);
+    if (!block) return;
+    block.title = title;
+    block.date = date;
+  };
+
   const addOptionToBlock = (
     blockId: string,
     option: Omit<ItineraryOption, "id">,
@@ -206,6 +213,7 @@ export const useItinerary = () => {
     pendingOption,
     addBlock,
     removeBlock,
+    updateBlock,
     addOptionToBlock,
     removeOptionFromBlock,
     calculateOptionSellPrice,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useItinerary } from "~/composables/useItinerary";
 import { useConfig } from "~/composables/useConfig";
 import ItineraryPreviewModal from "~/components/b2b/quoter/ItineraryPreviewModal.vue";
@@ -27,6 +27,7 @@ const {
   totalPax,
   addBlock,
   removeBlock,
+  updateBlock,
   removeOptionFromBlock,
   calculateOptionSellPrice,
   minItineraryPrice,
@@ -35,37 +36,75 @@ const {
 
 const { nationalities: nationalityOptions } = useConfig();
 
-// For adding new blocks
+// For adding / editing blocks
 const isAddBlockModalOpen = ref(false);
 const newBlockType = ref<
   "hotel" | "flight" | "transfer" | "excursion" | "extra"
 >("hotel");
+const newBlockTitle = ref("");
+const editingBlock = ref<ItineraryBlock | null>(null);
+const dateRangeChanged = ref(false);
 
 // For manual option entry
 const isManualModalOpen = ref(false);
 const manualModalBlockId = ref("");
-const newBlockTitle = ref("");
 
 const dateRange = ref({
   start: todayDate(getLocalTimeZone()),
   end: todayDate(getLocalTimeZone()).add({ days: 2 }),
 });
 
-const handleAddBlock = () => {
-  if (!newBlockTitle.value) return;
+// Only flag date as changed when the modal is already open (not during pre-fill)
+watch(dateRange, () => { if (isAddBlockModalOpen.value) dateRangeChanged.value = true; }, { deep: true });
 
-  const dateStr =
-    dateRange.value.start && dateRange.value.end
-      ? `${formatDate(dateRange.value.start)} - ${formatDate(dateRange.value.end)}`
-      : "";
-
-  addBlock(newBlockType.value, newBlockTitle.value, dateStr);
-  isAddBlockModalOpen.value = false;
+const resetBlockModal = () => {
   newBlockTitle.value = "";
+  editingBlock.value = null;
+  dateRangeChanged.value = false;
   dateRange.value = {
     start: todayDate(getLocalTimeZone()),
     end: todayDate(getLocalTimeZone()).add({ days: 2 }),
   };
+};
+
+const openAddModal = () => {
+  resetBlockModal();
+  newBlockType.value = "hotel";
+  isAddBlockModalOpen.value = true;
+};
+
+const openEditModal = (block: ItineraryBlock) => {
+  // Pre-fill BEFORE opening so the dateRange watcher doesn't flag a change
+  editingBlock.value = block;
+  newBlockTitle.value = block.title;
+  newBlockType.value = block.type;
+  dateRangeChanged.value = false;
+  dateRange.value = {
+    start: todayDate(getLocalTimeZone()),
+    end: todayDate(getLocalTimeZone()).add({ days: 2 }),
+  };
+  isAddBlockModalOpen.value = true;
+};
+
+const handleConfirmBlock = () => {
+  if (!newBlockTitle.value) return;
+
+  // Keep the original date if user didn't touch the calendar in edit mode
+  const dateStr =
+    editingBlock.value && !dateRangeChanged.value
+      ? editingBlock.value.date
+      : dateRange.value.start && dateRange.value.end
+        ? `${formatDate(dateRange.value.start)} - ${formatDate(dateRange.value.end)}`
+        : "";
+
+  if (editingBlock.value) {
+    updateBlock(editingBlock.value.id, newBlockTitle.value, dateStr);
+  } else {
+    addBlock(newBlockType.value, newBlockTitle.value, dateStr);
+  }
+
+  isAddBlockModalOpen.value = false;
+  resetBlockModal();
 };
 
 const openManualModal = (blockId: string) => {
@@ -206,7 +245,7 @@ const formatCurrency = (amount: number) => {
           <UButton
             icon="i-heroicons-plus"
             color="primary"
-            @click="isAddBlockModalOpen = true"
+            @click="openAddModal()"
           >
             {{ t("itinerary.addBlockButton") }}
           </UButton>
@@ -260,23 +299,15 @@ const formatCurrency = (amount: number) => {
               <div
                 class="px-5 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 flex items-center justify-between"
               >
-                <div class="min-w-0 flex-1">
-                  <UInput
-                    v-model="block.title"
-                    variant="none"
-                    size="xs"
-                    class="-ml-2 font-bold uppercase tracking-wide"
-                    :ui="{ base: 'font-bold uppercase tracking-wide text-sm text-gray-900 dark:text-white' }"
-                    :placeholder="t('itinerary.blockTitlePlaceholder')"
-                  />
-                  <UInput
-                    v-model="block.date"
-                    variant="none"
-                    size="xs"
-                    class="-ml-2 font-mono"
-                    :ui="{ base: 'text-xs text-gray-500 font-medium font-mono' }"
-                    :placeholder="t('itinerary.blockDatesOptional')"
-                  />
+                <div>
+                  <h4
+                    class="font-bold text-gray-900 dark:text-white uppercase text-sm tracking-wide"
+                  >
+                    {{ block.title }}
+                  </h4>
+                  <p class="text-xs text-gray-500 font-medium font-mono mt-0.5">
+                    {{ block.date || t("itinerary.blockDatesOptional") }}
+                  </p>
                 </div>
                 <div class="flex items-center gap-2">
                   <UBadge
@@ -290,12 +321,19 @@ const formatCurrency = (amount: number) => {
                     t("itinerary.emptyBlock")
                   }}</UBadge>
                   <UButton
+                    icon="i-heroicons-pencil"
+                    color="neutral"
+                    variant="ghost"
+                    size="xs"
+                    :padded="false"
+                    @click="openEditModal(block)"
+                  />
+                  <UButton
                     icon="i-heroicons-trash"
                     color="error"
                     variant="ghost"
                     size="xs"
                     :padded="false"
-                    class="ml-2"
                     @click="removeBlock(block.id)"
                   />
                 </div>
@@ -438,7 +476,7 @@ const formatCurrency = (amount: number) => {
             icon="i-heroicons-plus"
             color="neutral"
             variant="outline"
-            @click="isAddBlockModalOpen = true"
+            @click="openAddModal()"
           >
             {{ t("itinerary.addNextBlock") }}
           </UButton>
@@ -514,13 +552,14 @@ const formatCurrency = (amount: number) => {
     <!-- Modal Add Block -->
     <UModal
       v-model:open="isAddBlockModalOpen"
-      :title="t('itinerary.addBlockModalTitle')"
+      :title="editingBlock ? t('itinerary.editBlockModalTitle') : t('itinerary.addBlockModalTitle')"
     >
       <template #body>
         <div class="space-y-4">
           <UFormField :label="t('itinerary.blockTypeLabel')">
             <USelect
               v-model="newBlockType"
+              :disabled="!!editingBlock"
               :items="[
                 {
                   label: t('itinerary.blockTypeAccommodation'),
@@ -543,13 +582,29 @@ const formatCurrency = (amount: number) => {
             />
           </UFormField>
           <UFormField :label="t('itinerary.blockDatesLabel')">
+            <p
+              v-if="editingBlock && !dateRangeChanged"
+              class="mb-2 text-xs text-gray-500"
+            >
+              {{ t("itinerary.blockCurrentDate", { date: editingBlock.date || "—" }) }}
+            </p>
             <UPopover class="w-full">
               <UButton
                 color="neutral"
                 icon="i-lucide-calendar"
                 class="w-full justify-start font-normal text-gray-700 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700"
               >
-                <template v-if="dateRange.start">
+                <template v-if="dateRangeChanged && dateRange.start">
+                  <template v-if="dateRange.end">
+                    {{ formatDate(dateRange.start) }}
+                    &nbsp;&rarr;&nbsp;
+                    {{ formatDate(dateRange.end) }}
+                  </template>
+                  <template v-else>
+                    {{ formatDate(dateRange.start) }}
+                  </template>
+                </template>
+                <template v-else-if="!editingBlock && dateRange.start">
                   <template v-if="dateRange.end">
                     {{ formatDate(dateRange.start) }}
                     &nbsp;&rarr;&nbsp;
@@ -587,14 +642,14 @@ const formatCurrency = (amount: number) => {
           <UButton
             color="neutral"
             variant="ghost"
-            @click="isAddBlockModalOpen = false"
+            @click="isAddBlockModalOpen = false; resetBlockModal()"
             >{{ t("itinerary.cancelButton") }}</UButton
           >
           <UButton
             color="primary"
             :disabled="!newBlockTitle"
-            @click="handleAddBlock"
-            >{{ t("itinerary.addBlockConfirm") }}</UButton
+            @click="handleConfirmBlock"
+            >{{ editingBlock ? t("itinerary.editBlockConfirm") : t("itinerary.addBlockConfirm") }}</UButton
           >
         </div>
       </template>
