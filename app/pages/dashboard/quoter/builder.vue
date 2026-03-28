@@ -260,15 +260,23 @@ const formatCurrency = (amount: number) => {
               <div
                 class="px-5 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 flex items-center justify-between"
               >
-                <div>
-                  <h4
-                    class="font-bold text-gray-900 dark:text-white uppercase text-sm tracking-wide"
-                  >
-                    {{ block.title }}
-                  </h4>
-                  <p class="text-xs text-gray-500 font-medium font-mono mt-0.5">
-                    {{ block.date || "Fecha por definir" }}
-                  </p>
+                <div class="min-w-0 flex-1">
+                  <UInput
+                    v-model="block.title"
+                    variant="none"
+                    size="xs"
+                    class="-ml-2 font-bold uppercase tracking-wide"
+                    :ui="{ base: 'font-bold uppercase tracking-wide text-sm text-gray-900 dark:text-white' }"
+                    :placeholder="t('itinerary.blockTitlePlaceholder')"
+                  />
+                  <UInput
+                    v-model="block.date"
+                    variant="none"
+                    size="xs"
+                    class="-ml-2 font-mono"
+                    :ui="{ base: 'text-xs text-gray-500 font-medium font-mono' }"
+                    :placeholder="t('itinerary.blockDatesOptional')"
+                  />
                 </div>
                 <div class="flex items-center gap-2">
                   <UBadge
