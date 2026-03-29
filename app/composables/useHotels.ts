@@ -20,6 +20,7 @@ export interface Hotel {
   image: string;
   bestPrice: number;
   rooms: HotelRoomOffer[];
+  address?: string;   // street-level; optional — hidden in UI when absent
 }
 
 export interface HotelFilterState {

@@ -30,7 +30,24 @@
       "priceChangedDescription": "The price for {roomName} changed from ${oldPrice} to ${newPrice}. Do you want to continue with the new price?",
       "priceChangedConfirm": "Continue with new price",
       "priceChangedSkip": "Skip this item",
-      "noRateKeyWarning": "This item has no valid rate and will be skipped."
+      "noRateKeyWarning": "This item has no valid rate and will be skipped.",
+      "blocks": {
+        "hotel": "Hotel",
+        "itemCounter": "Item {n} of {total}",
+        "remove": "Remove",
+        "checkIn": "Check-in",
+        "checkOut": "Check-out",
+        "nights": "Nights",
+        "regimen": "Meal plan",
+        "importantInfo": "Important information",
+        "specialRequests": "Special requests",
+        "specialRequestsHint": "(not guaranteed)",
+        "specialRequestsPlaceholder": "E.g.: high floor, extra bed, late arrival...",
+        "netPrice": "Net price ({n} {nights})",
+        "verifying": "verifying availability...",
+        "verifyError": "Could not verify availability",
+        "priceChanged": "Price changed from ${old} to ${new}"
+      }
     },
     "confirmation": {
       "title": "Booking results",

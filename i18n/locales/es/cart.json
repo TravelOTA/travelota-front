@@ -30,7 +30,24 @@
       "priceChangedDescription": "El precio de {roomName} cambió de ${oldPrice} a ${newPrice}. ¿Deseas continuar con el nuevo precio?",
       "priceChangedConfirm": "Continuar con nuevo precio",
       "priceChangedSkip": "Omitir este item",
-      "noRateKeyWarning": "Este item no tiene una tarifa válida y será omitido."
+      "noRateKeyWarning": "Este item no tiene una tarifa válida y será omitido.",
+      "blocks": {
+        "hotel": "Hotel",
+        "itemCounter": "Item {n} de {total}",
+        "remove": "Quitar",
+        "checkIn": "Check-in",
+        "checkOut": "Check-out",
+        "nights": "Noches",
+        "regimen": "Régimen",
+        "importantInfo": "Información importante",
+        "specialRequests": "Peticiones especiales",
+        "specialRequestsHint": "(no garantizadas)",
+        "specialRequestsPlaceholder": "Ej: habitación en planta alta, cama extra, llegada tarde...",
+        "netPrice": "Precio neto ({n} {nights})",
+        "verifying": "verificando disponibilidad...",
+        "verifyError": "No se pudo verificar disponibilidad",
+        "priceChanged": "El precio cambió de ${old} a ${new}"
+      }
     },
     "confirmation": {
       "title": "Resultado de reservas",
