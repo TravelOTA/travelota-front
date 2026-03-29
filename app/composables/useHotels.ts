@@ -512,7 +512,15 @@ const MOCK_HOTELS: Hotel[] = [
 ];
 
 export function useHotels() {
-  const hotels = useState<Hotel[]>("hotels", () => MOCK_HOTELS);
+  const hotels = useState<Hotel[]>("hotels", () =>
+    MOCK_HOTELS.map((h) => ({
+      ...h,
+      rooms: h.rooms.map((r, i) => ({
+        ...r,
+        rate_key: r.rate_key ?? `MOCK-H${h.id}-${String(i + 1).padStart(3, '0')}`,
+      })),
+    })),
+  );
 
   function getHotelById(id: number | string): Hotel | undefined {
     const numericId = typeof id === "string" ? parseInt(id, 10) : id;
