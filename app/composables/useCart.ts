@@ -128,20 +128,6 @@ export function useCart() {
         continue;
       }
 
-      // Mock flow: skip API calls for mock rate keys
-      if (item.room.rate_key.startsWith('MOCK-')) {
-        await new Promise((resolve) => setTimeout(resolve, 600));
-        results.push({
-          cartItemId: item.id,
-          bookingId: String(Math.floor(Math.random() * 90000) + 10000),
-          pnr: `PNR-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
-          orderRef,
-          status: 'confirmed',
-          hotelName: item.hotel.name,
-        });
-        continue;
-      }
-
       try {
         // Step 1: select — validates availability and returns current_net_rate
         const rooms = (item.searchParams.rooms ?? [{ adults: 2, children: [] }]).map((r) => ({
