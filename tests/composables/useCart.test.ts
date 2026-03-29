@@ -147,20 +147,26 @@ describe('useCart', () => {
     it('throws if cart is empty', async () => {
       const { confirmAll } = useCart();
       await expect(
-        confirmAll({ nombre: 'Juan', apellido: 'García' }, 'WALLET')
+        confirmAll({ nombre: 'Juan', apellido: 'García' }, 'WALLET', {})
       ).rejects.toThrow();
     });
 
     it('generates one shared orderRef for all items', async () => {
       const { apiFetch } = await import('~/composables/useApi');
       vi.mocked(apiFetch)
-        .mockResolvedValueOnce({ id: 1, current_net_rate: '500.00', status: 'selected' })
-        .mockResolvedValueOnce({ id: 1, status: 'pre_booked' })
-        .mockResolvedValueOnce({ id: 1, status: 'confirmed', booking: { id: 10, pnr: 'ABC12345', order_ref: 'ORD-2026-0001' } });
+        // select is SKIPPED when preCheckResults has the item — mock only pre-book + confirm:
+        .mockResolvedValueOnce({ id: 1, status: 'pre_booked' })                                          // pre-book
+        .mockResolvedValueOnce({ id: 1, status: 'confirmed', booking: { id: 10, pnr: 'ABC12345', order_ref: 'ORD-2026-0001' } }); // confirm
 
-      const { addItem, confirmAll } = useCart();
+      const { items, addItem, confirmAll } = useCart();
       addItem('hotel', makeHotelData());
-      const results = await confirmAll({ nombre: 'Juan', apellido: 'García' }, 'WALLET');
+      const itemId = items.value[0]!.id;
+      const results = await confirmAll(
+        { nombre: 'Juan', apellido: 'García' },
+        'WALLET',
+        {},  // specialRequests
+        { [itemId]: { bookingFlowId: 1, currentPrice: 500 } },  // preCheckResults — skips select
+      );
 
       expect(results).toHaveLength(1);
       expect(results[0].orderRef).toMatch(/^ORD-\d{4}-\d{4}$/);
@@ -169,21 +175,47 @@ describe('useCart', () => {
     it('continues processing remaining items if one fails', async () => {
       const { apiFetch } = await import('~/composables/useApi');
       vi.mocked(apiFetch)
-        // Item 1: select fails
-        .mockRejectedValueOnce(new Error('Unavailable'))
-        // Item 2: full success
-        .mockResolvedValueOnce({ id: 2, current_net_rate: '300.00', status: 'selected' })
-        .mockResolvedValueOnce({ id: 2, status: 'pre_booked' })
+        // Item 1 pre-check provided → goes straight to pre-book (fails)
+        .mockRejectedValueOnce(new Error('Unavailable'))                                              // pre-book item 1 fails
+        // Item 2 pre-check provided → goes straight to pre-book (succeeds)
+        .mockResolvedValueOnce({ id: 2, status: 'pre_booked' })                                      // pre-book item 2
         .mockResolvedValueOnce({ id: 2, status: 'confirmed', booking: { id: 20, pnr: 'XYZ98765', order_ref: 'ORD-2026-0001' } });
 
-      const { addItem, confirmAll } = useCart();
+      const { items, addItem, confirmAll } = useCart();
       addItem('hotel', makeHotelData());
       addItem('hotel', makeHotelData());
-      const results = await confirmAll({ nombre: 'Juan', apellido: 'García' }, 'WALLET');
+      const ids = items.value.map((i: { id: string }) => i.id);
+      const results = await confirmAll(
+        { nombre: 'Juan', apellido: 'García' },
+        'WALLET',
+        {},
+        { [ids[0]!]: { bookingFlowId: 1, currentPrice: 500 }, [ids[1]!]: { bookingFlowId: 2, currentPrice: 500 } },
+      );
 
       expect(results).toHaveLength(2);
       expect(results[0].status).toBe('failed');
       expect(results[1].status).toBe('confirmed');
+    });
+
+    it('passes special_requests to pre-book API call', async () => {
+      const { apiFetch } = await import('~/composables/useApi');
+      vi.mocked(apiFetch)
+        .mockResolvedValueOnce({ id: 1, status: 'pre_booked' })
+        .mockResolvedValueOnce({ id: 1, status: 'confirmed', booking: { id: 10, pnr: 'ABC', order_ref: 'ORD-2026-0001' } });
+
+      const { items, addItem, confirmAll } = useCart();
+      addItem('hotel', makeHotelData());
+      const itemId = items.value[0]!.id;
+
+      await confirmAll(
+        { nombre: 'Juan', apellido: 'García' },
+        'WALLET',
+        { [itemId]: 'Planta alta por favor' },
+        { [itemId]: { bookingFlowId: 1, currentPrice: 500 } },
+      );
+
+      const preBookCall = vi.mocked(apiFetch).mock.calls[0]!;
+      expect(preBookCall[1]?.body).toMatchObject({ special_requests: 'Planta alta por favor' });
     });
   });
 });

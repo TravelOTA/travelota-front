@@ -100,12 +100,9 @@ export function useCart() {
   async function confirmAll(
     titular: TitularData,
     paymentMethod: string,
+    specialRequests: Record<string, string> = {},
+    preCheckResults?: Record<string, { bookingFlowId: number; currentPrice: number }>,
     cardData?: { number: string; expiry: string; cvv: string },
-    onPriceChange?: (
-      item: CartItemHotel,
-      oldPrice: number,
-      newPrice: number,
-    ) => Promise<boolean>,
   ): Promise<BookingResult[]> {
     if (items.value.length === 0) {
       throw new Error(t('cart.empty'));
@@ -129,7 +126,6 @@ export function useCart() {
       }
 
       try {
-        // Step 1: select — validates availability and returns current_net_rate
         const rooms = (item.searchParams.rooms ?? [{ adults: 2, children: [] }]).map((r) => ({
           adults: r.adults,
           children: r.children.length,
@@ -138,53 +134,42 @@ export function useCart() {
           ),
         }));
 
-        const bookingFlow = await apiFetch<{
-          id: number;
-          current_net_rate: string;
-          status: string;
-        }>('/api/hotel/booking-flow/select', {
-          method: 'POST',
-          body: {
-            rate_key: item.room.rate_key,
-            check_in: item.searchParams.checkIn,
-            check_out: item.searchParams.checkOut,
-            rooms,
-            // DEV-ONLY: metadata for mock backend to persist realistic bookings
-            _mockPrice: item.room.price,
-            _mockHotel: {
-              id: String(item.hotel.id),
-              name: item.hotel.name,
-              stars: item.hotel.stars,
-              image: item.hotel.image,
-              address: item.hotel.location ?? item.hotel.address ?? '',
+        // Reuse pre-check flow ID if available, otherwise run select
+        let bookingFlowId: number;
+        if (preCheckResults?.[item.id]) {
+          bookingFlowId = preCheckResults![item.id]!.bookingFlowId;
+        } else {
+          const bookingFlow = await apiFetch<{ id: number; current_net_rate: string; status: string }>(
+            '/api/hotel/booking-flow/select',
+            {
+              method: 'POST',
+              body: {
+                rate_key: item.room.rate_key,
+                check_in: item.searchParams.checkIn,
+                check_out: item.searchParams.checkOut,
+                rooms,
+                // DEV-ONLY: metadata for mock backend to persist realistic bookings
+                _mockPrice: item.room.price,
+                _mockHotel: {
+                  id: String(item.hotel.id),
+                  name: item.hotel.name,
+                  stars: item.hotel.stars,
+                  image: item.hotel.image,
+                  address: item.hotel.location ?? item.hotel.address ?? '',
+                },
+                _mockRoom: {
+                  id: String(item.room.id ?? item.room.rate_key ?? 'room-1'),
+                  name: item.room.name,
+                  regimen: item.room.regimen ?? 'SA',
+                  cancellation: item.room.cancellation ?? '',
+                },
+              },
             },
-            _mockRoom: {
-              id: String(item.room.id ?? item.room.rate_key ?? 'room-1'),
-              name: item.room.name,
-              regimen: item.room.regimen ?? 'SA',
-              cancellation: item.room.cancellation ?? '',
-            },
-          },
-        });
-
-        // Step 2: check for price change
-        const currentNetRate = parseFloat(bookingFlow.current_net_rate);
-        if (currentNetRate !== item.room.price && onPriceChange) {
-          const accepted = await onPriceChange(item, item.room.price, currentNetRate);
-          if (!accepted) {
-            results.push({
-              cartItemId: item.id,
-              orderRef,
-              status: 'unavailable',
-              hotelName: item.hotel.name,
-              error: 'Omitido por cambio de precio',
-            });
-            continue;
-          }
+          );
+          bookingFlowId = bookingFlow.id;
         }
 
-        // Step 3: pre-book with titular as lead passenger
-        await apiFetch(`/api/hotel/booking-flow/${bookingFlow.id}/pre-book`, {
+        await apiFetch(`/api/hotel/booking-flow/${bookingFlowId}/pre-book`, {
           method: 'POST',
           body: {
             passengers: [
@@ -194,15 +179,16 @@ export function useCart() {
                 is_child: false,
               },
             ],
+            special_requests: specialRequests[item.id] ?? '',
           },
         });
 
-        // Step 4: confirm with shared orderRef
+        // Confirm with shared orderRef
         const confirmed = await apiFetch<{
           id: number;
           status: string;
           booking: { id: number; pnr: string; order_ref: string } | null;
-        }>(`/api/hotel/booking-flow/${bookingFlow.id}/confirm`, {
+        }>(`/api/hotel/booking-flow/${bookingFlowId}/confirm`, {
           method: 'POST',
           body: { order_ref: orderRef },
         });
