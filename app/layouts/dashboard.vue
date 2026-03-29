@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import AddToItineraryModal from "~/components/b2b/quoter/AddToItineraryModal.vue";
+import AddToItineraryModal from '~/components/b2b/quoter/AddToItineraryModal.vue';
+import CartDrawer from '~/components/b2b/cart/CartDrawer.vue';
 </script>
 
 <template>
@@ -13,5 +14,6 @@ import AddToItineraryModal from "~/components/b2b/quoter/AddToItineraryModal.vue
     <AppFooter />
 
     <AddToItineraryModal />
+    <CartDrawer />
   </div>
 </template>
