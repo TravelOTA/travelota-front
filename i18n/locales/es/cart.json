@@ -1,0 +1,53 @@
+{
+  "cart": {
+    "drawerTitle": "Tu carrito",
+    "empty": "Tu carrito está vacío",
+    "emptyDescription": "Busca hoteles y agrégalos al carrito para reservar o cotizar.",
+    "addToCart": "Agregar al carrito",
+    "addedToCart": "Habitación agregada al carrito",
+    "removeItem": "Eliminar",
+    "itemsCount": "{n} item | {n} items",
+    "total": "Total estimado",
+    "goToCheckout": "Ir al checkout",
+    "createQuote": "Crear cotización",
+    "exportedToQuoter": "Items exportados al cotizador",
+    "maxItemsError": "El carrito no puede tener más de 10 items",
+    "checkIn": "Entrada",
+    "checkOut": "Salida",
+    "checkout": {
+      "title": "Confirmar reservas",
+      "backToCart": "Volver al carrito",
+      "titular": "Titular de la reserva",
+      "titularName": "Nombre",
+      "titularLastName": "Apellido",
+      "agencyRef": "Referencia de agencia",
+      "observations": "Observaciones",
+      "payment": "Método de pago",
+      "confirmAll": "Confirmar todas las reservas",
+      "processing": "Procesando reservas...",
+      "summaryTitle": "Resumen del pedido",
+      "priceChangedTitle": "El precio ha cambiado",
+      "priceChangedDescription": "El precio de {roomName} cambió de ${oldPrice} a ${newPrice}. ¿Deseas continuar con el nuevo precio?",
+      "priceChangedConfirm": "Continuar con nuevo precio",
+      "priceChangedSkip": "Omitir este item",
+      "noRateKeyWarning": "Este item no tiene una tarifa válida y será omitido."
+    },
+    "confirmation": {
+      "title": "Resultado de reservas",
+      "orderRef": "Referencia de orden",
+      "confirmed": "Confirmada",
+      "failed": "Fallida",
+      "unavailable": "No disponible",
+      "pnr": "PNR",
+      "viewBooking": "Ver reserva",
+      "newSearch": "Nueva búsqueda",
+      "allConfirmed": "¡Todas las reservas fueron confirmadas!",
+      "partialError": "Algunas reservas no pudieron completarse.",
+      "allFailed": "No se pudo completar ninguna reserva."
+    },
+    "orderGroup": {
+      "title": "Otras reservas de este pedido",
+      "orderRef": "Orden"
+    }
+  }
+}

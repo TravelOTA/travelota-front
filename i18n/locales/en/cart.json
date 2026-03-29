@@ -1,0 +1,53 @@
+{
+  "cart": {
+    "drawerTitle": "Your cart",
+    "empty": "Your cart is empty",
+    "emptyDescription": "Search for hotels and add them to the cart to book or quote.",
+    "addToCart": "Add to cart",
+    "addedToCart": "Room added to cart",
+    "removeItem": "Remove",
+    "itemsCount": "{n} item | {n} items",
+    "total": "Estimated total",
+    "goToCheckout": "Go to checkout",
+    "createQuote": "Create quote",
+    "exportedToQuoter": "Items exported to quoter",
+    "maxItemsError": "Cart cannot have more than 10 items",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "checkout": {
+      "title": "Confirm bookings",
+      "backToCart": "Back to cart",
+      "titular": "Lead passenger",
+      "titularName": "First name",
+      "titularLastName": "Last name",
+      "agencyRef": "Agency reference",
+      "observations": "Observations",
+      "payment": "Payment method",
+      "confirmAll": "Confirm all bookings",
+      "processing": "Processing bookings...",
+      "summaryTitle": "Order summary",
+      "priceChangedTitle": "Price has changed",
+      "priceChangedDescription": "The price for {roomName} changed from ${oldPrice} to ${newPrice}. Do you want to continue with the new price?",
+      "priceChangedConfirm": "Continue with new price",
+      "priceChangedSkip": "Skip this item",
+      "noRateKeyWarning": "This item has no valid rate and will be skipped."
+    },
+    "confirmation": {
+      "title": "Booking results",
+      "orderRef": "Order reference",
+      "confirmed": "Confirmed",
+      "failed": "Failed",
+      "unavailable": "Unavailable",
+      "pnr": "PNR",
+      "viewBooking": "View booking",
+      "newSearch": "New search",
+      "allConfirmed": "All bookings were confirmed!",
+      "partialError": "Some bookings could not be completed.",
+      "allFailed": "No bookings could be completed."
+    },
+    "orderGroup": {
+      "title": "Other bookings in this order",
+      "orderRef": "Order"
+    }
+  }
+}

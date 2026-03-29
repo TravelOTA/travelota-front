@@ -7,6 +7,7 @@ export interface HotelRoomOffer {
   cancellation: string; // display label (kept for UI)
   cancellationPolicy: ICancellationPolicy; // structured data for logic
   price: number;
+  rate_key?: string; // required for real API booking-flow; absent in mock data
   onRequest?: boolean;
 }
 
