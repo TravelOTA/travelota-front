@@ -75,6 +75,7 @@ const hotel = ref<Hotel>({
         penalties: [{ from: "2026-04-15", percentage: 100, amount: 3027.93 }],
       },
       price: 3027.93,
+      rate_key: "MOCK-HB-1-001",
     },
     {
       name: "Twin/double room - premium",
@@ -86,6 +87,7 @@ const hotel = ref<Hotel>({
         penalties: [{ from: "2026-04-15", percentage: 100, amount: 3186.43 }],
       },
       price: 3186.43,
+      rate_key: "MOCK-HB-1-002",
     },
     {
       name: "Premium double room (full double bed)",
@@ -97,6 +99,7 @@ const hotel = ref<Hotel>({
         penalties: [{ from: "2026-03-16", percentage: 100, amount: 3253.48 }],
       },
       price: 3253.48,
+      rate_key: "MOCK-HB-1-003",
     },
     {
       name: "Premium room with tropical view",
@@ -108,6 +111,7 @@ const hotel = ref<Hotel>({
         penalties: [{ from: "2026-04-15", percentage: 100, amount: 3433.94 }],
       },
       price: 3433.94,
+      rate_key: "MOCK-HB-1-004",
       onRequest: true,
     },
     {
@@ -120,6 +124,7 @@ const hotel = ref<Hotel>({
         penalties: [{ from: "2026-04-15", percentage: 100, amount: 4181.59 }],
       },
       price: 4181.59,
+      rate_key: "MOCK-HB-1-005",
     },
   ],
 });
