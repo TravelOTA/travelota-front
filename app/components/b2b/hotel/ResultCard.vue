@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { navigateTo } from "#imports";
-import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
-import { useCart } from "~/composables/useCart";
-import { useHotelSearch } from "~/composables/useHotelSearch";
+import type { Hotel } from "~/composables/useHotels";
 import ResultHotelSummary from "./ResultHotelSummary.vue";
 import ResultRoomList from "./ResultRoomList.vue";
 
@@ -14,27 +11,6 @@ const emit = defineEmits<{
 }>();
 
 const isExpanded = ref(true); // Simulate that by default the first 2 are shown expanded
-
-const { addItem } = useCart();
-const { searchParams } = useHotelSearch();
-
-async function handleReserve(room: HotelRoomOffer) {
-  addItem(
-    "hotel",
-    {
-      hotel: {
-        id: props.hotel.id,
-        name: props.hotel.name,
-        stars: props.hotel.stars,
-        image: props.hotel.image,
-        address: props.hotel.location,
-      },
-      room,
-      searchParams: searchParams.value,
-    }
-  );
-  await navigateTo("/dashboard/cart/checkout");
-}
 </script>
 
 <template>
@@ -48,7 +24,6 @@ async function handleReserve(room: HotelRoomOffer) {
       :rooms="hotel.rooms"
       :hotel="hotel"
       :is-expanded="isExpanded"
-      @reserve="handleReserve"
     />
   </div>
 </template>

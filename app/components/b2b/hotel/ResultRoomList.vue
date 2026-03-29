@@ -27,10 +27,6 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits<{
-  (e: "reserve", room: HotelRoomOffer): void;
-}>();
-
 const showAllRooms = ref(props.defaultExpandedRooms);
 
 const sortedRooms = computed(() => {
@@ -163,16 +159,10 @@ function handleAddToCart(room: HotelRoomOffer) {
           variant="outline"
           size="sm"
           icon="i-heroicons-shopping-cart"
+          class="font-bold w-36 justify-center"
           @click="handleAddToCart(room)"
         >
           {{ t('cart.addToCart') }}
-        </UButton>
-        <UButton
-          color="primary"
-          class="font-bold w-24 justify-center"
-          @click="emit('reserve', room)"
-        >
-          {{ t('hotels.rooms.reserve') }}
         </UButton>
       </div>
     </div>

@@ -18,11 +18,13 @@ const visibleRooms = computed(() => {
   return showAllRooms.value ? sortedRooms.value : sortedRooms.value.slice(0, 3);
 });
 
-const { addItem } = useQuoter();
+const { addItem: addQuoteItem } = useQuoter();
+const { addItem: addCartItem } = useCart();
+const { searchParams } = useHotelSearch();
 const toast = useToast();
 
 const addToQuote = (room: HotelRoomOffer) => {
-  addItem({
+  addQuoteItem({
     hotelId: "HOTEL-CURRENT", // Mock ID since hotel detail is not passed down here
     hotelName: "Hotel Seleccionado", // Mock Name
     hotelImage:
@@ -37,6 +39,20 @@ const addToQuote = (room: HotelRoomOffer) => {
     description: t('hotels.rooms.roomAddedDescription', { roomName: room.name }),
     icon: "i-heroicons-check-circle",
     color: "primary",
+  });
+};
+
+const addToCart = (room: HotelRoomOffer) => {
+  addCartItem('hotel', {
+    hotel: {
+      id: "HOTEL-CURRENT",
+      name: "Hotel Seleccionado",
+      stars: 4,
+      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
+      location: "Ubicación del Hotel",
+    },
+    room,
+    searchParams: searchParams.value,
   });
 };
 </script>
@@ -147,10 +163,13 @@ const addToQuote = (room: HotelRoomOffer) => {
           />
           <UButton
             color="primary"
-            class="font-bold w-24 justify-center"
-            to="/dashboard/hotels/checkout"
+            variant="outline"
+            size="sm"
+            icon="i-heroicons-shopping-cart"
+            class="font-bold w-36 justify-center"
+            @click="addToCart(room)"
           >
-            {{ t('hotels.rooms.reserve') }}
+            {{ t('cart.addToCart') }}
           </UButton>
         </div>
       </div>
