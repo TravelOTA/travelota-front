@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { navigateTo } from "#imports";
 import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
-import { useCheckout } from "~/composables/useCheckout";
+import { useCart } from "~/composables/useCart";
 import { useHotelSearch } from "~/composables/useHotelSearch";
 import ResultHotelSummary from "./ResultHotelSummary.vue";
 import ResultRoomList from "./ResultRoomList.vue";
@@ -15,22 +15,25 @@ const emit = defineEmits<{
 
 const isExpanded = ref(true); // Simulate that by default the first 2 are shown expanded
 
-const { selectRoom } = useCheckout();
+const { addItem } = useCart();
 const { searchParams } = useHotelSearch();
 
 async function handleReserve(room: HotelRoomOffer) {
-  selectRoom(
+  addItem(
+    "hotel",
     {
-      id: props.hotel.id,
-      name: props.hotel.name,
-      stars: props.hotel.stars,
-      image: props.hotel.image,
-      address: props.hotel.location,
-    },
-    room,
-    searchParams.value,
+      hotel: {
+        id: props.hotel.id,
+        name: props.hotel.name,
+        stars: props.hotel.stars,
+        image: props.hotel.image,
+        address: props.hotel.location,
+      },
+      room,
+      searchParams: searchParams.value,
+    }
   );
-  await navigateTo("/dashboard/hotels/checkout");
+  await navigateTo("/dashboard/cart/checkout");
 }
 </script>
 
