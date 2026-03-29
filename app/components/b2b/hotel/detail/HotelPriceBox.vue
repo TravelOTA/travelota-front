@@ -5,6 +5,7 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: "open-map"): void;
+  (e: "add-to-cart"): void;
 }>();
 
 const { t } = useI18n();
@@ -32,6 +33,15 @@ const { t } = useI18n();
           })
         }}
       </p>
+      <UButton
+        color="primary"
+        block
+        icon="i-heroicons-shopping-cart"
+        class="mt-3"
+        @click="emit('add-to-cart')"
+      >
+        {{ t('cart.addToCart') }}
+      </UButton>
     </div>
 
     <!-- Map Box -->

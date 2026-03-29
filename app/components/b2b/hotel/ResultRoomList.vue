@@ -3,6 +3,8 @@ import { ref, computed } from "vue";
 import type { PropType } from "vue";
 import { useItinerary } from "~/composables/useItinerary";
 import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
+import { useCart } from '~/composables/useCart';
+import { useHotelSearch } from '~/composables/useHotelSearch';
 
 const { t } = useI18n();
 
@@ -42,6 +44,8 @@ const visibleRooms = computed(() => {
   return showAllRooms.value ? sortedRooms.value : sortedRooms.value.slice(0, 1);
 });
 const { triggerAddOption } = useItinerary();
+const { addItem: addToCart } = useCart();
+const { searchParams } = useHotelSearch();
 
 const addToItinerary = (room: HotelRoomOffer) => {
   triggerAddOption({
@@ -54,6 +58,14 @@ const addToItinerary = (room: HotelRoomOffer) => {
     isManual: false,
   });
 };
+
+function handleAddToCart(room: HotelRoomOffer) {
+  addToCart('hotel', {
+    hotel: props.hotel,
+    room,
+    searchParams: searchParams.value,
+  });
+}
 </script>
 
 <template>
@@ -146,6 +158,15 @@ const addToItinerary = (room: HotelRoomOffer) => {
           icon="i-heroicons-document-plus"
           @click="addToItinerary(room)"
         />
+        <UButton
+          color="primary"
+          variant="outline"
+          size="sm"
+          icon="i-heroicons-shopping-cart"
+          @click="handleAddToCart(room)"
+        >
+          {{ t('cart.addToCart') }}
+        </UButton>
         <UButton
           color="primary"
           class="font-bold w-24 justify-center"

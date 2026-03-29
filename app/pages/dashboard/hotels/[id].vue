@@ -3,7 +3,7 @@ import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
 import { navigateTo } from "#imports";
 import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
-import { useCheckout } from "~/composables/useCheckout";
+import { useCart } from "~/composables/useCart";
 import { useHotelSearch } from "~/composables/useHotelSearch";
 import SearchSummaryBar from "~/components/b2b/hotel/SearchSummaryBar.vue";
 import ResultHotelSummary from "~/components/b2b/hotel/ResultHotelSummary.vue";
@@ -21,16 +21,28 @@ const router = useRouter();
 const isMapOpen = ref(false);
 const hotelId = route.params.id as string;
 
-const { selectRoom } = useCheckout();
+const { addItem: addToCart } = useCart();
 const { searchParams } = useHotelSearch();
 
 function handleReserve(room: HotelRoomOffer) {
-  selectRoom(
-    { ...hotel.value, address: hotel.value.location },
+  addToCart('hotel', {
+    hotel: hotel.value,
     room,
-    searchParams.value,
-  );
-  navigateTo("/dashboard/hotels/checkout");
+    searchParams: searchParams.value,
+  });
+  navigateTo("/dashboard/cart/checkout");
+}
+
+function handleAddToCart() {
+  if (!hotel.value.rooms.length) return;
+  const cheapestRoom = hotel.value.rooms.reduce((min, r) => (min && r.price < min.price ? r : min), hotel.value.rooms[0] as HotelRoomOffer);
+  if (cheapestRoom) {
+    addToCart('hotel', {
+      hotel: hotel.value,
+      room: cheapestRoom,
+      searchParams: searchParams.value,
+    });
+  }
 }
 
 // Mock images
