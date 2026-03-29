@@ -37,8 +37,10 @@ const {
   sellerOptions: composableSellerOptions,
 } = useBookings();
 
-onMounted(() => {
-  fetchBookings();
+onMounted(async () => {
+  await fetchBookings();
+  filteredBookings.value = [...bookings.value];
+  hasSearched.value = true;
 });
 
 // Search state
@@ -62,7 +64,8 @@ const orderRefFilter = ref('');
 
 const handleOrderRefSearch = async () => {
   await fetchBookings(orderRefFilter.value);
-  handleSearch(activeFilters.value);
+  filteredBookings.value = [...bookings.value];
+  hasSearched.value = true;
 };
 
 // Pagination
