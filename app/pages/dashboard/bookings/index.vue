@@ -58,6 +58,13 @@ const activeFilters = ref<SearchFilters>({
   seller: "",
 });
 
+const orderRefFilter = ref('');
+
+const handleOrderRefSearch = async () => {
+  await fetchBookings(orderRefFilter.value);
+  handleSearch(activeFilters.value);
+};
+
 // Pagination
 const PAGE_SIZE = 10;
 const currentPage = ref(1);
@@ -294,7 +301,20 @@ const resultStats = computed(() => {
     </div>
 
     <!-- Search Filters -->
-    <div class="mb-8">
+    <div class="mb-8 flex flex-col gap-4">
+      <div class="flex items-center justify-end">
+        <UInput
+          v-model="orderRefFilter"
+          :placeholder="t('cart.confirmation.orderRef') + '...'"
+          icon="i-heroicons-tag"
+          clearable
+          size="sm"
+          class="w-64"
+          @keyup.enter="handleOrderRefSearch"
+          @blur="handleOrderRefSearch"
+          @clear="handleOrderRefSearch"
+        />
+      </div>
       <BookingSearchFilters
         :show-seller-filter="true"
         :seller-options="sellerOptions"

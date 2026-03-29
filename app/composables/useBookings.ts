@@ -84,11 +84,12 @@ export function useBookings() {
   const loading = useState<boolean>("bookings:loading", () => false);
   const error = useState<string | null>("bookings:error", () => null);
 
-  async function fetchBookings() {
+  async function fetchBookings(orderRef?: string) {
     loading.value = true;
     error.value = null;
     try {
-      const data = await apiFetch<IBooking[]>("/api/bookings");
+      const qs = orderRef ? `?order_ref=${orderRef}` : "";
+      const data = await apiFetch<IBooking[]>(`/api/bookings${qs}`);
       bookings.value = data.map(toBookingRow);
     } catch (err) {
       error.value =
