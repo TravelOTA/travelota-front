@@ -149,6 +149,21 @@ export function useCart() {
             check_in: item.searchParams.checkIn,
             check_out: item.searchParams.checkOut,
             rooms,
+            // DEV-ONLY: metadata for mock backend to persist realistic bookings
+            _mockPrice: item.room.price,
+            _mockHotel: {
+              id: String(item.hotel.id),
+              name: item.hotel.name,
+              stars: item.hotel.stars,
+              image: item.hotel.image,
+              address: item.hotel.location ?? item.hotel.address ?? '',
+            },
+            _mockRoom: {
+              id: String(item.room.id ?? item.room.rate_key ?? 'room-1'),
+              name: item.room.name,
+              regimen: item.room.regimen ?? 'SA',
+              cancellation: item.room.cancellation ?? '',
+            },
           },
         });
 
