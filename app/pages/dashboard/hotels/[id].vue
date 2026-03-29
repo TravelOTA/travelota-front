@@ -10,6 +10,7 @@ import ResultHotelSummary from "~/components/b2b/hotel/ResultHotelSummary.vue";
 import HotelGallery from "~/components/b2b/hotel/detail/HotelGallery.vue";
 import ResultRoomList from "~/components/b2b/hotel/ResultRoomList.vue";
 import HotelInfo from "~/components/b2b/hotel/detail/HotelInfo.vue";
+import HotelPriceBox from "~/components/b2b/hotel/detail/HotelPriceBox.vue";
 import HotelMap from "~/components/b2b/hotel/HotelMap.vue";
 
 definePageMeta({
@@ -151,14 +152,25 @@ useHead({
       <!-- 2. Middle Gallery -->
       <HotelGallery :images="hotelImages" />
 
-      <!-- 3. Bottom Room List (Reused from Results) -->
-      <ResultRoomList
-        :rooms="hotel.rooms"
-        :hotel="hotel"
-        :is-expanded="true"
-        :default-expanded-rooms="true"
-        @reserve="handleReserve"
-      />
+      <!-- 3. Room List + Price Sidebar -->
+      <div class="flex gap-6 items-start">
+        <div class="flex-1 min-w-0">
+          <ResultRoomList
+            :rooms="hotel.rooms"
+            :hotel="hotel"
+            :is-expanded="true"
+            :default-expanded-rooms="true"
+            @reserve="handleReserve"
+          />
+        </div>
+        <div class="w-72 shrink-0">
+          <HotelPriceBox
+            :best-price="hotel.bestPrice"
+            @add-to-cart="handleAddToCart"
+            @open-map="isMapOpen = true"
+          />
+        </div>
+      </div>
 
       <!-- Info Section -->
       <HotelInfo />
