@@ -1,12 +1,19 @@
-<!-- app/components/b2b/cart/CartDrawer.vue -->
 <script setup lang="ts">
+import { computed } from 'vue';
 import { navigateTo } from '#imports';
 import { useCart } from '~/composables/useCart';
 import CartEmpty from '~/components/b2b/cart/CartEmpty.vue';
 import CartItemCard from '~/components/b2b/cart/CartItemCard.vue';
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+
 
 const { t } = useI18n();
 const { items, isDrawerOpen, itemCount, total, removeItem, exportToQuoter } = useCart();
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+const totalSalePrice = computed(() => salePrice(total.value));
+
 
 function handleExportToQuoter() {
   exportToQuoter();
@@ -52,12 +59,19 @@ function handleGoToCheckout() {
     <template v-if="itemCount > 0" #footer>
       <div class="flex flex-col gap-3 w-full">
         <!-- Total -->
-        <div class="flex items-center justify-between text-sm font-semibold text-gray-900 dark:text-white px-1">
-          <span>{{ t('cart.total') }}</span>
-          <span class="text-primary-600 dark:text-primary-400">
-            ${{ total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
-          </span>
+        <div class="flex flex-col gap-0.5 font-semibold text-gray-900 dark:text-white px-1">
+          <div class="flex items-center justify-between text-base">
+            <span>{{ t('cart.total') }}</span>
+            <span class="text-primary-600 dark:text-primary-400">
+              ${{ totalSalePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+            </span>
+          </div>
+          <div v-if="netPriceVisible" class="flex items-center justify-between text-[11px] text-gray-400 font-normal">
+            <span>neto</span>
+            <span>${{ total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+          </div>
         </div>
+
         <!-- Actions -->
         <UButton
           color="primary"

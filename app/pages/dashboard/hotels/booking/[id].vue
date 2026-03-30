@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+
 const { t } = useI18n();
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+
 import CheckoutSidebarSummary from "~/components/b2b/hotel/checkout/CheckoutSidebarSummary.vue";
 import BookingStatusHero from "~/components/b2b/hotel/checkout/BookingStatusHero.vue";
 import BookingCancellation from "~/components/b2b/hotel/checkout/BookingCancellation.vue";
@@ -83,7 +89,8 @@ const reservationProp = computed(() =>
                 return parts.join(", ");
               })
               .join(" / "),
-            price: booking.value.totalPrice,
+            price: salePrice(booking.value.totalPrice),
+            netPrice: booking.value.totalPrice,
           },
         ],
       }

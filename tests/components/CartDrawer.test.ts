@@ -31,6 +31,20 @@ vi.mock('#imports', () => ({
   useI18n: () => ({ t: (key: string) => key }),
 }));
 
+vi.mock('~/composables/useNetPrice', () => ({
+  useNetPrice: () => ({
+    netPriceVisible: ref(false),
+    toggle: vi.fn(),
+  }),
+}));
+
+vi.mock('~/composables/useSalePrice', () => ({
+  useSalePrice: () => ({
+    salePrice: (net: number) => net * 1.1, // assuming 10% markup for tests
+    markup: ref(10),
+  }),
+}));
+
 vi.mock('~/components/b2b/cart/CartEmpty.vue', () => ({
   default: { template: '<div data-testid="cart-empty" />' },
 }));
