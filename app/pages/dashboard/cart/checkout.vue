@@ -8,8 +8,12 @@ import type { CartItemHotel } from '~/composables/useCart';
 import { apiFetch } from '~/composables/useApi';
 import CartCheckoutSummary from '~/components/b2b/cart/checkout/CartCheckoutSummary.vue';
 import CartCheckoutTitularForm from '~/components/b2b/cart/checkout/CartCheckoutTitularForm.vue';
-import CartCheckoutPayment from '~/components/b2b/cart/checkout/CartCheckoutPayment.vue';
 import CartCheckoutItemBlock from '~/components/b2b/cart/checkout/CartCheckoutItemBlock.vue';
+import PaymentMethodSelector from '~/components/b2b/hotel/checkout/PaymentMethodSelector.vue';
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+import type { ICancellationPolicy } from '#shared/types/booking';
+
 
 definePageMeta({ layout: 'dashboard' });
 
@@ -105,6 +109,19 @@ useHead({
   title: computed(() => `${t('cart.checkout.title')} - TravelOTA B2B`),
 });
 
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+const selectedPaymentMethod = ref<string>('wallet');
+
+const cartCancellationPolicy = computed((): ICancellationPolicy | undefined => {
+  const hotelItems = items.value.filter((i): i is CartItemHotel => i.type === 'hotel');
+  const nonRefundable = hotelItems.find((i) => !i.room.cancellationPolicy?.refundable);
+  return nonRefundable?.room.cancellationPolicy ?? hotelItems[0]?.room.cancellationPolicy;
+});
+
+const totalSalePrice = computed(() => salePrice(total.value));
+
+
 // ── Price change modal ───────────────────────────────────────────────────────
 
 const priceChangeModal = ref<{
@@ -129,8 +146,8 @@ function resolvePriceChange(accepted: boolean) {
 // ── Confirm ──────────────────────────────────────────────────────────────────
 
 const titularFormRef = ref<InstanceType<typeof CartCheckoutTitularForm>>();
-const paymentRef = ref<InstanceType<typeof CartCheckoutPayment>>();
 const isProcessing = ref(false);
+
 const confirmError = ref<string | null>(null);
 
 async function handleConfirmAll() {
@@ -159,7 +176,8 @@ async function handleConfirmAll() {
     }
   }
 
-  const paymentMethod = paymentRef.value?.selectedMethod ?? 'WALLET';
+  const paymentMethod = selectedPaymentMethod.value;
+
   confirmError.value = null;
   isProcessing.value = true;
 
@@ -237,7 +255,39 @@ const preCheckForItem = (id: string): PreCheckState =>
 
         <!-- Titular + payment + confirm -->
         <CartCheckoutTitularForm ref="titularFormRef" />
-        <CartCheckoutPayment ref="paymentRef" />
+        
+        <!-- Payment method -->
+        <UCard>
+          <template #header>
+            <h3 class="font-bold text-gray-900 dark:text-white text-sm">
+              {{ t('cart.checkout.payment') }}
+            </h3>
+          </template>
+          <div class="flex flex-col gap-4">
+            <PaymentMethodSelector
+              v-model="selectedPaymentMethod"
+              :show-pay-later="true"
+              :total-price="total"
+              :cancellation-policy="cartCancellationPolicy"
+            />
+            <!-- Price summary -->
+            <div class="border-t border-gray-100 dark:border-gray-800 pt-4 flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500 dark:text-gray-400">{{ t('cart.checkout.totalSalePrice') }}</span>
+                <span class="text-xl font-black text-primary-600 dark:text-primary-400">
+                  ${{ totalSalePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                </span>
+              </div>
+              <div v-if="netPriceVisible" class="flex items-center justify-between">
+                <span class="text-xs text-gray-400">{{ t('cart.checkout.totalNetPrice') }}</span>
+                <span class="text-sm font-semibold text-gray-400">
+                  ${{ total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </UCard>
+
 
         <UAlert
           v-if="confirmError"

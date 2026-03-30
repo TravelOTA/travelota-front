@@ -27,6 +27,8 @@
       "confirmAll": "Confirm all bookings",
       "processing": "Processing bookings...",
       "summaryTitle": "Order summary",
+      "totalSalePrice": "Total sale price",
+      "totalNetPrice": "Your net price",
       "priceChangedTitle": "Price has changed",
       "priceChangedDescription": "The price for {roomName} changed from ${oldPrice} to ${newPrice}. Do you want to continue with the new price?",
       "priceChangedConfirm": "Continue with new price",
