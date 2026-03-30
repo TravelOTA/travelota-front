@@ -26,6 +26,22 @@ export function useWallet() {
   }
 
   const balance = computed(() => wallet.value?.balance ?? 0);
+  const creditLine = computed(() => wallet.value?.credit_line ?? null);
+  const totalCapacity = computed(
+    () => balance.value + (creditLine.value?.available ?? 0),
+  );
+  const usageLevel = computed(() => {
+    if (!creditLine.value || creditLine.value.limit === 0) return 0;
+    return (creditLine.value.used / creditLine.value.limit) * 100;
+  });
+  const isCreditBlocked = computed(
+    () => creditLine.value?.status === "blocked",
+  );
+
+  function hasSufficientCredit(amount: number): boolean {
+    return totalCapacity.value >= amount;
+  }
+
   const lowBalanceThreshold = computed(
     () => wallet.value?.lowBalanceThreshold ?? 0,
   );
@@ -44,6 +60,10 @@ export function useWallet() {
     loading,
     error,
     balance,
+    creditLine,
+    totalCapacity,
+    usageLevel,
+    isCreditBlocked,
     lowBalanceThreshold,
     isLowBalance,
     isZeroBalance,
@@ -54,5 +74,6 @@ export function useWallet() {
     transactions,
     fetchWallet,
     hasSufficientFunds,
+    hasSufficientCredit,
   };
 }
