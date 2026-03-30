@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { useItinerary } from "~/composables/useItinerary";
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+
 
 const { t } = useI18n();
 
@@ -26,6 +29,10 @@ const addToItinerary = () => {
     netPrice: props.hotel.bestPrice,
   });
 };
+
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+
 </script>
 
 <template>
@@ -88,12 +95,16 @@ const addToItinerary = () => {
       >
         <span class="font-bold">$</span>
         {{
-          hotel.bestPrice.toLocaleString("en-US", {
+          salePrice(hotel.bestPrice).toLocaleString("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })
         }}
       </p>
+      <p v-if="netPriceVisible" class="text-xs text-gray-400 mb-2">
+        neto ${{ hotel.bestPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+      </p>
+
 
       <UButton
         color="neutral"

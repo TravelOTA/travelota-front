@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import type { HotelRoomOffer } from "~/composables/useHotels";
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+
 
 const { t } = useI18n();
 
@@ -22,6 +25,9 @@ const { addItem: addQuoteItem } = useQuoter();
 const { addItem: addCartItem } = useCart();
 const { searchParams } = useHotelSearch();
 const toast = useToast();
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+
 
 const addToQuote = (room: HotelRoomOffer) => {
   addQuoteItem({
@@ -142,16 +148,19 @@ const addToCart = (room: HotelRoomOffer) => {
         </div>
 
         <div
-          class="w-32 text-right font-bold text-gray-900 dark:text-white flex items-center justify-end gap-1"
+          class="w-32 text-right font-bold text-gray-900 dark:text-white flex flex-col items-end"
         >
-          $
-          {{
-            room.price.toLocaleString("en-US", {
+          <span>${{
+            salePrice(room.price).toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })
-          }}
+          }}</span>
+          <span v-if="netPriceVisible" class="block text-[10px] text-gray-400 font-normal">
+            neto ${{ room.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+          </span>
         </div>
+
 
         <!-- Acciones: Cotizar y Reservar -->
         <div class="w-auto flex items-center justify-end gap-2 ml-4">

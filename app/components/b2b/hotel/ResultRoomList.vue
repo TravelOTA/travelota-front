@@ -5,6 +5,9 @@ import { useItinerary } from "~/composables/useItinerary";
 import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
 import { useCart } from '~/composables/useCart';
 import { useHotelSearch } from '~/composables/useHotelSearch';
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+
 
 const { t } = useI18n();
 
@@ -42,6 +45,9 @@ const visibleRooms = computed(() => {
 const { triggerAddOption } = useItinerary();
 const { addItem: addToCart } = useCart();
 const { searchParams } = useHotelSearch();
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+
 
 const addToItinerary = (room: HotelRoomOffer) => {
   triggerAddOption({
@@ -136,15 +142,18 @@ function handleAddToCart(room: HotelRoomOffer) {
         </UBadge>
       </div>
 
-      <div class="w-32 text-right font-bold text-gray-900 dark:text-white">
-        $
-        {{
-          room.price.toLocaleString("en-US", {
+      <div class="w-32 text-right font-bold text-gray-900 dark:text-white flex flex-col items-end">
+        <span>${{
+          salePrice(room.price).toLocaleString("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })
-        }}
+        }}</span>
+        <span v-if="netPriceVisible" class="block text-[10px] text-gray-400 font-normal">
+          neto ${{ room.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+        </span>
       </div>
+
 
       <!-- Acciones: Cotizar y Reservar -->
       <div class="w-auto flex items-center justify-end gap-2 ml-4">

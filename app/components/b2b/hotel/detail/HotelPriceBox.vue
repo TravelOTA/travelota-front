@@ -1,7 +1,13 @@
-<script setup lang="ts">
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+
 defineProps<{
   bestPrice: number;
 }>();
+
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+
 
 const emit = defineEmits<{
   (e: "open-map"): void;
@@ -27,12 +33,16 @@ const { t } = useI18n();
       >
         <span class="font-bold">$</span>
         {{
-          bestPrice.toLocaleString("en-US", {
+          salePrice(bestPrice).toLocaleString("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })
         }}
       </p>
+      <p v-if="netPriceVisible" class="text-xs text-gray-400 mb-2">
+        neto ${{ bestPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+      </p>
+
       <UButton
         color="primary"
         block
