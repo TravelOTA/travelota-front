@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useAuth } from "~/composables/useAuth";
 import { useCart } from "~/composables/useCart";
+import { useNetPrice } from '~/composables/useNetPrice';
+
 
 const appConfig = useAppConfig();
 
@@ -108,6 +110,9 @@ const userLinks = computed(() => {
   return baseLinks;
 });
 
+const { netPriceVisible, toggle: toggleNetPrice } = useNetPrice();
+
+
 </script>
 
 <template>
@@ -169,6 +174,16 @@ const userLinks = computed(() => {
         <AppLocaleSwitcher />
 
         <UColorModeButton />
+        
+        <!-- Net price toggle -->
+        <UButton
+          :color="netPriceVisible ? 'primary' : 'neutral'"
+          variant="ghost"
+          :icon="netPriceVisible ? 'i-heroicons-lock-open' : 'i-heroicons-lock-closed'"
+          :aria-label="netPriceVisible ? 'Ocultar precio neto' : 'Mostrar precio neto'"
+          @click="toggleNetPrice"
+        />
+
 
         <div
           class="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2 hidden sm:block"
