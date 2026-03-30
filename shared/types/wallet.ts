@@ -25,6 +25,14 @@ export interface ITransaction {
   balanceAfter: number; // resulting balance after this transaction
 }
 
+export interface ICreditLine {
+  limit: number;
+  used: number;
+  available: number;
+  debt: number;
+  status: 'active' | 'blocked';
+}
+
 export interface IWallet {
   balance: number; // current available funds
   lowBalanceThreshold: number; // alert threshold (configured per agency group by SUPER_ADMIN)
@@ -33,4 +41,5 @@ export interface IWallet {
   totalConsumed: number; // historical sum of all charges
   lastUpdatedAt: string; // ISO datetime — for "updated N min ago" display
   transactions: ITransaction[];
+  credit_line?: ICreditLine; // New field for agency credit line
 }
