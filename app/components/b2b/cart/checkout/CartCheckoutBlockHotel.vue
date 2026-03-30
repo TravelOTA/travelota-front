@@ -3,8 +3,10 @@
 import type { CartItemHotel } from '~/composables/useCart';
 import { getRegimenLabel } from '~/utils/regimen';
 import { computed } from 'vue';
-import { differenceInCalendarDays, parseISO, format } from 'date-fns';
+import { differenceInCalendarDays, parseISO, format, subDays } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
 
 type PreCheckState =
   | { status: 'loading' }
@@ -25,6 +27,8 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
 
 const nights = computed(() =>
   differenceInCalendarDays(
@@ -33,8 +37,29 @@ const nights = computed(() =>
   ),
 );
 
+const rooms = computed(() => props.item.searchParams.rooms ?? [{ adults: 2, children: [] }]);
+
+const pricePerRoom = computed(() => {
+  const net = props.preCheck.status === 'ready'
+    ? props.preCheck.currentPrice
+    : props.item.room.price;
+  return net / rooms.value.length;
+});
+
+const totalNetPrice = computed(() =>
+  props.preCheck.status === 'ready' ? props.preCheck.currentPrice : props.item.room.price,
+);
+
+const totalSalePrice = computed(() => salePrice(totalNetPrice.value));
+
 function fmtDate(iso: string): string {
   return format(parseISO(iso), 'd MMM yyyy', { locale: es });
+}
+
+function fmtChildren(children: Array<number | { age: number }>): string {
+  if (!children.length) return '';
+  const ages = children.map((c) => (typeof c === 'number' ? c : c.age));
+  return ` · ${ages.length} ${ages.length === 1 ? t('hotels.search.child') : t('hotels.search.children')} (${ages.join(', ')})`;
 }
 
 const cancellationBadge = computed(() => {
@@ -52,17 +77,63 @@ const cancellationBadge = computed(() => {
   return { color: 'success' as const, text: t('hotels.freeCancellation') };
 });
 
-const displayPrice = computed(() =>
-  props.preCheck.status === 'ready' ? props.preCheck.currentPrice : props.item.room.price,
-);
+type PolicyRow = {
+  label: string;
+  color: 'success' | 'warning' | 'error';
+  from: string;
+  to: string;
+  amount: string;
+};
+
+const policyRows = computed((): PolicyRow[] => {
+  const p = props.item.room.cancellationPolicy;
+  if (!p.refundable) {
+    return [{
+      label: t('hotels.nonRefundable'),
+      color: 'error',
+      from: '—',
+      to: '—',
+      amount: `$${totalNetPrice.value.toFixed(2)}`,
+    }];
+  }
+  if (!p.penaltyFrom) {
+    return [{
+      label: t('hotels.freeCancellation'),
+      color: 'success',
+      from: t('cart.checkout.blocks.cancellationNow'),
+      to: fmtDate(props.item.searchParams.checkIn),
+      amount: '$0.00',
+    }];
+  }
+  const freeTo = fmtDate(format(subDays(parseISO(p.penaltyFrom), 1), 'yyyy-MM-dd'));
+  const rows: PolicyRow[] = [
+    {
+      label: t('hotels.freeCancellation'),
+      color: 'success',
+      from: t('cart.checkout.blocks.cancellationNow'),
+      to: freeTo,
+      amount: '$0.00',
+    },
+  ];
+  p.penalties.forEach((pen) => {
+    rows.push({
+      label: t('cart.checkout.blocks.cancellationFees'),
+      color: 'warning',
+      from: fmtDate(pen.from),
+      to: fmtDate(props.item.searchParams.checkIn),
+      amount: `$${pen.amount.toFixed(2)} (${pen.percentage}%)`,
+    });
+  });
+  return rows;
+});
 </script>
 
 <template>
-  <UCard :ui="{ body: 'p-0' }">
-    <!-- Header band -->
+  <UCard>
+    <!-- Header band — full width via UCard native header -->
     <template #header>
-      <div class="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 -mx-4 -mt-4 px-4 py-2.5 rounded-t-lg border-b border-green-200 dark:border-green-800">
-        <UIcon name="i-heroicons-building-office-2" class="w-4 h-4 text-green-700 dark:text-green-400" />
+      <div class="flex items-center gap-2">
+        <UIcon name="i-heroicons-building-office-2" class="w-4 h-4 text-green-600 dark:text-green-400" />
         <span class="text-xs font-bold text-green-700 dark:text-green-400 uppercase tracking-wide">
           {{ t('cart.checkout.blocks.hotel') }}
         </span>
@@ -80,17 +151,16 @@ const displayPrice = computed(() =>
       </div>
     </template>
 
-    <!-- Body -->
-    <div class="p-4 flex flex-col gap-3">
-      <!-- Photo + name + address + room -->
+    <div class="flex flex-col gap-4">
+
+      <!-- Hotel identity: photo + stars + name + address -->
       <div class="flex gap-3">
         <img
           :src="item.hotel.image"
           :alt="item.hotel.name"
-          class="w-18 h-18 object-cover rounded-lg shrink-0"
+          class="w-20 h-20 object-cover rounded-lg shrink-0"
         />
         <div class="flex-1 min-w-0">
-          <!-- Stars above name -->
           <div class="flex gap-0.5 mb-1">
             <UIcon
               v-for="n in item.hotel.stars"
@@ -105,9 +175,6 @@ const displayPrice = computed(() =>
           <p v-if="item.hotel.address" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 flex items-center gap-1">
             <UIcon name="i-heroicons-map-pin" class="w-3 h-3 shrink-0" />
             {{ item.hotel.address }}
-          </p>
-          <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mt-1.5">
-            {{ item.room.name }}
           </p>
         </div>
       </div>
@@ -132,7 +199,33 @@ const displayPrice = computed(() =>
         </div>
       </div>
 
-      <!-- Cancellation badge -->
+      <!-- Room rows: one per pax entry -->
+      <div class="flex flex-col gap-2">
+        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">{{ t('cart.checkout.blocks.rooms') }}</p>
+        <div
+          v-for="(room, i) in rooms"
+          :key="i"
+          class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-800 rounded-lg px-3 py-2"
+        >
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold text-gray-900 dark:text-white">{{ item.room.name }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              {{ room.adults }} {{ room.adults !== 1 ? t('hotels.search.adults') : t('hotels.search.adult') }}{{ fmtChildren(room.children) }}
+            </p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-xs text-gray-400">{{ t('cart.checkout.blocks.netPrice', { n: nights }) }}</p>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">
+              ${{ salePrice(pricePerRoom).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+            </p>
+            <p v-if="netPriceVisible" class="text-[10px] text-gray-400">
+              neto ${{ pricePerRoom.toFixed(2) }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cancellation summary badge -->
       <UAlert
         :color="cancellationBadge.color"
         variant="soft"
@@ -141,31 +234,36 @@ const displayPrice = computed(() =>
         :ui="{ description: 'text-xs' }"
       />
 
-      <!-- Important info (remarks) -->
-      <template v-if="preCheck.status === 'loading'">
-        <div class="text-xs text-gray-400 dark:text-gray-500 italic animate-pulse">
-          {{ t('cart.checkout.blocks.verifying') }}
-        </div>
-      </template>
-      <template v-else-if="preCheck.status === 'error'">
-        <p class="text-xs text-gray-400 dark:text-gray-500 italic">
-          {{ t('cart.checkout.blocks.verifyError') }}
-        </p>
-      </template>
-      <template v-else-if="preCheck.status === 'ready' && preCheck.remarks.length > 0">
-        <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-          <p class="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1.5">
-            {{ t('cart.checkout.blocks.importantInfo') }}
-          </p>
-          <ul class="list-disc list-inside space-y-0.5">
-            <li v-for="(remark, i) in preCheck.remarks" :key="i" class="text-xs text-blue-800 dark:text-blue-200">
-              {{ remark }}
-            </li>
-          </ul>
-        </div>
-      </template>
+      <!-- Full cancellation policy table -->
+      <div>
+        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide mb-2">{{ t('cart.checkout.blocks.cancellationPolicy') }}</p>
+        <table class="w-full text-xs border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-900/40">
+              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">{{ t('cart.checkout.blocks.cancellationStatus') }}</th>
+              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">{{ t('cart.checkout.blocks.cancellationFrom') }}</th>
+              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">{{ t('cart.checkout.blocks.cancellationTo') }}</th>
+              <th class="text-right px-3 py-1.5 font-semibold text-gray-500">{{ t('cart.checkout.blocks.cancellationAmount') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(row, i) in policyRows"
+              :key="i"
+              class="border-t border-gray-100 dark:border-gray-800"
+            >
+              <td class="px-3 py-1.5">
+                <UBadge :color="row.color" variant="soft" size="xs">{{ row.label }}</UBadge>
+              </td>
+              <td class="px-3 py-1.5 text-gray-600 dark:text-gray-400">{{ row.from }}</td>
+              <td class="px-3 py-1.5 text-gray-600 dark:text-gray-400">{{ row.to }}</td>
+              <td class="px-3 py-1.5 text-right text-gray-700 dark:text-gray-300">{{ row.amount }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <!-- Price changed inline badge -->
+      <!-- Price changed alert -->
       <UAlert
         v-if="preCheck.status === 'ready' && preCheck.priceChanged"
         color="warning"
@@ -175,29 +273,62 @@ const displayPrice = computed(() =>
         :ui="{ description: 'text-xs' }"
       />
 
-      <!-- Special requests -->
+      <!-- Provider remarks: collapsible, only when ready + has content -->
+      <details
+        v-if="preCheck.status === 'ready' && preCheck.remarks.length > 0"
+        class="border border-blue-200 dark:border-blue-800 rounded-lg overflow-hidden"
+      >
+        <summary class="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 px-3 py-2.5 cursor-pointer list-none">
+          <UIcon name="i-heroicons-information-circle" class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+          <span class="text-xs font-semibold text-blue-700 dark:text-blue-300">
+            {{ t('cart.checkout.blocks.importantInfo') }}
+          </span>
+          <UIcon name="i-heroicons-chevron-down" class="w-3.5 h-3.5 text-blue-500 ml-auto" />
+        </summary>
+        <div class="px-3 py-2.5 bg-white dark:bg-gray-900">
+          <ul class="list-disc list-inside space-y-1">
+            <li
+              v-for="(remark, i) in preCheck.remarks"
+              :key="i"
+              class="text-xs text-blue-800 dark:text-blue-200"
+            >
+              {{ remark }}
+            </li>
+          </ul>
+        </div>
+      </details>
+
+      <!-- Special requests — full width -->
       <UFormField
         :label="t('cart.checkout.blocks.specialRequests')"
         :hint="t('cart.checkout.blocks.specialRequestsHint')"
+        class="w-full"
       >
         <UTextarea
           :model-value="specialRequest"
           :placeholder="t('cart.checkout.blocks.specialRequestsPlaceholder')"
           :rows="2"
+          class="w-full"
           @update:model-value="emit('update:specialRequest', item.id, $event)"
         />
       </UFormField>
+
     </div>
 
-    <!-- Footer: price -->
+    <!-- Footer: sale price total -->
     <template #footer>
       <div class="flex items-center justify-between">
         <span class="text-xs text-gray-500 dark:text-gray-400">
-          {{ t('cart.checkout.blocks.netPrice', { n: nights }) }}
+          {{ t('cart.checkout.blocks.salePrice', { n: nights }) }}
         </span>
-        <span class="text-lg font-black text-primary-600 dark:text-primary-400">
-          ${{ displayPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
-        </span>
+        <div class="text-right">
+          <p class="text-lg font-black text-primary-600 dark:text-primary-400">
+            ${{ totalSalePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+          </p>
+          <p v-if="netPriceVisible" class="text-xs text-gray-400">
+            {{ t('cart.checkout.blocks.netPrice', { n: nights }) }}: ${{ totalNetPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+          </p>
+        </div>
       </div>
     </template>
   </UCard>
