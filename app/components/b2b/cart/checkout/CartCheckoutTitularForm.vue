@@ -7,7 +7,7 @@ const form = reactive({
   nombre: '',
   apellido: '',
   refAgencia: '',
-  notas: '',
+  email: '',
 });
 
 defineExpose({ form });
@@ -20,18 +20,26 @@ defineExpose({ form });
         {{ t('cart.checkout.titular') }}
       </h3>
     </template>
-    <div class="grid grid-cols-2 gap-4">
-      <UFormField :label="t('cart.checkout.titularName')" required>
-        <UInput v-model="form.nombre" :placeholder="t('cart.checkout.titularName')" />
-      </UFormField>
-      <UFormField :label="t('cart.checkout.titularLastName')" required>
-        <UInput v-model="form.apellido" :placeholder="t('cart.checkout.titularLastName')" />
-      </UFormField>
-      <UFormField :label="t('cart.checkout.agencyRef')" class="col-span-2">
-        <UInput v-model="form.refAgencia" :placeholder="t('cart.checkout.agencyRef')" />
-      </UFormField>
-      <UFormField :label="t('cart.checkout.observations')" class="col-span-2">
-        <UTextarea v-model="form.notas" :placeholder="t('cart.checkout.observations')" :rows="3" />
+    <div class="flex flex-col gap-4">
+      <!-- Row 1: 3 columns -->
+      <div class="grid grid-cols-3 gap-4">
+        <UFormField :label="t('cart.checkout.titularName')" required>
+          <UInput v-model="form.nombre" :placeholder="t('cart.checkout.titularName')" />
+        </UFormField>
+        <UFormField :label="t('cart.checkout.titularLastName')" required>
+          <UInput v-model="form.apellido" :placeholder="t('cart.checkout.titularLastName')" />
+        </UFormField>
+        <UFormField :label="t('cart.checkout.agencyRef')">
+          <UInput v-model="form.refAgencia" :placeholder="t('cart.checkout.agencyRef')" />
+        </UFormField>
+      </div>
+      <!-- Row 2: email full width -->
+      <UFormField :label="t('cart.checkout.titularEmail')" required>
+        <UInput
+          v-model="form.email"
+          type="email"
+          :placeholder="t('cart.checkout.titularEmail')"
+        />
       </UFormField>
     </div>
   </UCard>

@@ -31,7 +31,7 @@ export type TitularData = {
   nombre: string;
   apellido: string;
   refAgencia?: string;
-  notas?: string;
+  email: string;
 };
 
 const MAX_CART_ITEMS = 10;

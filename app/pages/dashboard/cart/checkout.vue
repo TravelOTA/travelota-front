@@ -135,8 +135,8 @@ const confirmError = ref<string | null>(null);
 
 async function handleConfirmAll() {
   const titular = titularFormRef.value?.form;
-  if (!titular?.nombre || !titular.apellido) {
-    confirmError.value = t('hotels.checkout.errorNameRequired') || 'Nombre requerido';
+  if (!titular?.nombre || !titular.apellido || !titular.email) {
+    confirmError.value = t('hotels.checkout.errorNameRequired') || 'Nombre y email requeridos';
     return;
   }
 
@@ -165,7 +165,7 @@ async function handleConfirmAll() {
 
   try {
     const results = await confirmAll(
-      { nombre: titular.nombre, apellido: titular.apellido, refAgencia: titular.refAgencia, notas: titular.notas },
+      { nombre: titular.nombre, apellido: titular.apellido, refAgencia: titular.refAgencia, email: titular.email },
       paymentMethod,
       specialRequestsMap.value,
       acceptedPreCheck,
