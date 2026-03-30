@@ -1,20 +1,24 @@
 <!-- app/components/b2b/cart/checkout/CartCheckoutSummary.vue -->
 <script setup lang="ts">
 import type { CartItem } from '~/composables/useCart';
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
 
-defineProps<{
+const props = defineProps<{
   items: CartItem[];
   total: number;
 }>();
 
 const { t } = useI18n();
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
 
 function itemName(item: CartItem): string {
   if (item.type === 'hotel') return item.hotel.name;
   return item.type;
 }
 
-function itemPrice(item: CartItem): number {
+function itemNetPrice(item: CartItem): number {
   if (item.type === 'hotel') return item.room.price;
   return 0;
 }
@@ -36,17 +40,28 @@ function itemPrice(item: CartItem): number {
         <span class="text-xs text-gray-600 dark:text-gray-300 truncate flex-1">
           {{ itemName(item) }}
         </span>
-        <span class="text-xs font-bold text-primary-600 dark:text-primary-400 shrink-0">
-          ${{ itemPrice(item).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
-        </span>
+        <div class="text-right shrink-0">
+          <p class="text-xs font-bold text-primary-600 dark:text-primary-400">
+            ${{ salePrice(itemNetPrice(item)).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+          </p>
+          <p v-if="netPriceVisible" class="text-[10px] text-gray-400">
+            ${{ itemNetPrice(item).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+          </p>
+        </div>
       </div>
     </div>
     <template #footer>
-      <div class="flex items-center justify-between font-bold text-gray-900 dark:text-white">
-        <span>{{ t('cart.total') }}</span>
-        <span class="text-primary-600 dark:text-primary-400">
-          ${{ total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
-        </span>
+      <div class="flex flex-col gap-0.5">
+        <div class="flex items-center justify-between font-bold text-gray-900 dark:text-white">
+          <span>{{ t('cart.total') }}</span>
+          <span class="text-primary-600 dark:text-primary-400">
+            ${{ salePrice(total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+          </span>
+        </div>
+        <div v-if="netPriceVisible" class="flex items-center justify-between text-xs text-gray-400">
+          <span>{{ t('cart.checkout.totalNetPrice') }}</span>
+          <span>${{ total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+        </div>
       </div>
     </template>
   </UCard>
