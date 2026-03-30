@@ -3,6 +3,11 @@ import { ref, computed } from "vue";
 import type { PropType } from "vue";
 import { useItinerary } from "~/composables/useItinerary";
 import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
+import { useCart } from '~/composables/useCart';
+import { useHotelSearch } from '~/composables/useHotelSearch';
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+
 
 const { t } = useI18n();
 
@@ -25,10 +30,6 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits<{
-  (e: "reserve", room: HotelRoomOffer): void;
-}>();
-
 const showAllRooms = ref(props.defaultExpandedRooms);
 
 const sortedRooms = computed(() => {
@@ -42,6 +43,11 @@ const visibleRooms = computed(() => {
   return showAllRooms.value ? sortedRooms.value : sortedRooms.value.slice(0, 1);
 });
 const { triggerAddOption } = useItinerary();
+const { addItem: addToCart } = useCart();
+const { searchParams } = useHotelSearch();
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+
 
 const addToItinerary = (room: HotelRoomOffer) => {
   triggerAddOption({
@@ -54,6 +60,14 @@ const addToItinerary = (room: HotelRoomOffer) => {
     isManual: false,
   });
 };
+
+function handleAddToCart(room: HotelRoomOffer) {
+  addToCart('hotel', {
+    hotel: props.hotel,
+    room,
+    searchParams: searchParams.value,
+  });
+}
 </script>
 
 <template>
@@ -128,15 +142,18 @@ const addToItinerary = (room: HotelRoomOffer) => {
         </UBadge>
       </div>
 
-      <div class="w-32 text-right font-bold text-gray-900 dark:text-white">
-        $
-        {{
-          room.price.toLocaleString("en-US", {
+      <div class="w-32 text-right font-bold text-gray-900 dark:text-white flex flex-col items-end">
+        <span>${{
+          salePrice(room.price).toLocaleString("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })
-        }}
+        }}</span>
+        <span v-if="netPriceVisible" class="block text-[10px] text-gray-400 font-normal">
+          neto ${{ room.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+        </span>
       </div>
+
 
       <!-- Acciones: Cotizar y Reservar -->
       <div class="w-auto flex items-center justify-end gap-2 ml-4">
@@ -148,10 +165,13 @@ const addToItinerary = (room: HotelRoomOffer) => {
         />
         <UButton
           color="primary"
-          class="font-bold w-24 justify-center"
-          @click="emit('reserve', room)"
+          variant="outline"
+          size="sm"
+          icon="i-heroicons-shopping-cart"
+          class="font-bold w-36 justify-center"
+          @click="handleAddToCart(room)"
         >
-          {{ t('hotels.rooms.reserve') }}
+          {{ t('cart.addToCart') }}
         </UButton>
       </div>
     </div>

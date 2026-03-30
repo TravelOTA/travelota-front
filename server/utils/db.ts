@@ -13,6 +13,13 @@ const WALLET_SEED: IWallet = {
   totalDeposited: 15000,
   totalConsumed: 8700,
   lastUpdatedAt: "2026-03-22T09:00:00.000Z",
+  credit_line: {
+    limit: 10000,
+    used: 3200,
+    available: 6800,
+    debt: 3200,
+    status: 'active'
+  },
   transactions: [
     {
       id: "TXN-004",
@@ -54,7 +61,8 @@ const WALLET_SEED: IWallet = {
 
 export async function readBookings(): Promise<IBooking[]> {
   const storage = useStorage("data");
-  return (await storage.getItem<IBooking[]>("bookings")) ?? [];
+  const stored = await storage.getItem("bookings");
+  return Array.isArray(stored) ? (stored as IBooking[]) : [];
 }
 
 export async function writeBookings(bookings: IBooking[]): Promise<void> {

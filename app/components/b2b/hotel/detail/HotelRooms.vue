@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import type { HotelRoomOffer } from "~/composables/useHotels";
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+
 
 const { t } = useI18n();
 
@@ -18,11 +21,16 @@ const visibleRooms = computed(() => {
   return showAllRooms.value ? sortedRooms.value : sortedRooms.value.slice(0, 3);
 });
 
-const { addItem } = useQuoter();
+const { addItem: addQuoteItem } = useQuoter();
+const { addItem: addCartItem } = useCart();
+const { searchParams } = useHotelSearch();
 const toast = useToast();
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+
 
 const addToQuote = (room: HotelRoomOffer) => {
-  addItem({
+  addQuoteItem({
     hotelId: "HOTEL-CURRENT", // Mock ID since hotel detail is not passed down here
     hotelName: "Hotel Seleccionado", // Mock Name
     hotelImage:
@@ -37,6 +45,20 @@ const addToQuote = (room: HotelRoomOffer) => {
     description: t('hotels.rooms.roomAddedDescription', { roomName: room.name }),
     icon: "i-heroicons-check-circle",
     color: "primary",
+  });
+};
+
+const addToCart = (room: HotelRoomOffer) => {
+  addCartItem('hotel', {
+    hotel: {
+      id: "HOTEL-CURRENT",
+      name: "Hotel Seleccionado",
+      stars: 4,
+      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
+      location: "Ubicación del Hotel",
+    },
+    room,
+    searchParams: searchParams.value,
   });
 };
 </script>
@@ -126,16 +148,19 @@ const addToQuote = (room: HotelRoomOffer) => {
         </div>
 
         <div
-          class="w-32 text-right font-bold text-gray-900 dark:text-white flex items-center justify-end gap-1"
+          class="w-32 text-right font-bold text-gray-900 dark:text-white flex flex-col items-end"
         >
-          $
-          {{
-            room.price.toLocaleString("en-US", {
+          <span>${{
+            salePrice(room.price).toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })
-          }}
+          }}</span>
+          <span v-if="netPriceVisible" class="block text-[10px] text-gray-400 font-normal">
+            neto ${{ room.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+          </span>
         </div>
+
 
         <!-- Acciones: Cotizar y Reservar -->
         <div class="w-auto flex items-center justify-end gap-2 ml-4">
@@ -147,10 +172,13 @@ const addToQuote = (room: HotelRoomOffer) => {
           />
           <UButton
             color="primary"
-            class="font-bold w-24 justify-center"
-            to="/dashboard/hotels/checkout"
+            variant="outline"
+            size="sm"
+            icon="i-heroicons-shopping-cart"
+            class="font-bold w-36 justify-center"
+            @click="addToCart(room)"
           >
-            {{ t('hotels.rooms.reserve') }}
+            {{ t('cart.addToCart') }}
           </UButton>
         </div>
       </div>

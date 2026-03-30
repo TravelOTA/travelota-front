@@ -7,6 +7,7 @@ export interface HotelRoomOffer {
   cancellation: string; // display label (kept for UI)
   cancellationPolicy: ICancellationPolicy; // structured data for logic
   price: number;
+  rate_key?: string; // required for real API booking-flow; absent in mock data
   onRequest?: boolean;
 }
 
@@ -19,6 +20,7 @@ export interface Hotel {
   image: string;
   bestPrice: number;
   rooms: HotelRoomOffer[];
+  address?: string;   // street-level; optional — hidden in UI when absent
 }
 
 export interface HotelFilterState {
@@ -511,7 +513,15 @@ const MOCK_HOTELS: Hotel[] = [
 ];
 
 export function useHotels() {
-  const hotels = useState<Hotel[]>("hotels", () => MOCK_HOTELS);
+  const hotels = useState<Hotel[]>("hotels", () =>
+    MOCK_HOTELS.map((h) => ({
+      ...h,
+      rooms: h.rooms.map((r, i) => ({
+        ...r,
+        rate_key: r.rate_key ?? `MOCK-H${h.id}-${String(i + 1).padStart(3, '0')}`,
+      })),
+    })),
+  );
 
   function getHotelById(id: number | string): Hotel | undefined {
     const numericId = typeof id === "string" ? parseInt(id, 10) : id;

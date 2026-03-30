@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { useAuth } from "~/composables/useAuth";
+import { useCart } from "~/composables/useCart";
+import { useNetPrice } from '~/composables/useNetPrice';
+
 
 const appConfig = useAppConfig();
 
@@ -41,6 +44,12 @@ const userDisplayName = computed(() => {
 const userEmail = computed(() => currentUser.value?.email ?? null);
 const userAvatar = computed(() => currentUser.value?.avatar ?? null);
 const { agency } = useAgency();
+
+const { itemCount, isDrawerOpen } = useCart();
+
+function openCart() {
+  isDrawerOpen.value = true;
+}
 
 const isInternalRole = computed(() =>
   ["SUPER_ADMIN", "SUPPORT"].includes(userRole.value),
@@ -100,6 +109,9 @@ const userLinks = computed(() => {
 
   return baseLinks;
 });
+
+const { netPriceVisible, toggle: toggleNetPrice } = useNetPrice();
+
 
 </script>
 
@@ -162,10 +174,38 @@ const userLinks = computed(() => {
         <AppLocaleSwitcher />
 
         <UColorModeButton />
+        
+        <!-- Net price toggle -->
+        <UButton
+          :color="netPriceVisible ? 'primary' : 'neutral'"
+          variant="ghost"
+          :icon="netPriceVisible ? 'i-heroicons-lock-open' : 'i-heroicons-lock-closed'"
+          :aria-label="netPriceVisible ? 'Ocultar precio neto' : 'Mostrar precio neto'"
+          @click="toggleNetPrice"
+        />
+
 
         <div
           class="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2 hidden sm:block"
         ></div>
+
+        <UButton
+          color="neutral"
+          variant="ghost"
+          :aria-label="t('cart.drawerTitle')"
+          class="relative"
+          @click="openCart"
+        >
+          <UIcon name="i-heroicons-shopping-cart" class="w-5 h-5" />
+          <UBadge
+            v-if="itemCount > 0"
+            :label="String(itemCount)"
+            color="primary"
+            variant="solid"
+            size="xs"
+            class="absolute -top-1 -right-1"
+          />
+        </UButton>
 
         <div class="flex items-center gap-3">
           <div v-if="userDisplayName" class="hidden sm:block text-right">

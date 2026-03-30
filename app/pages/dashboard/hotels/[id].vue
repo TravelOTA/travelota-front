@@ -3,13 +3,14 @@ import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
 import { navigateTo } from "#imports";
 import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
-import { useCheckout } from "~/composables/useCheckout";
+import { useCart } from "~/composables/useCart";
 import { useHotelSearch } from "~/composables/useHotelSearch";
 import SearchSummaryBar from "~/components/b2b/hotel/SearchSummaryBar.vue";
 import ResultHotelSummary from "~/components/b2b/hotel/ResultHotelSummary.vue";
 import HotelGallery from "~/components/b2b/hotel/detail/HotelGallery.vue";
 import ResultRoomList from "~/components/b2b/hotel/ResultRoomList.vue";
 import HotelInfo from "~/components/b2b/hotel/detail/HotelInfo.vue";
+import HotelPriceBox from "~/components/b2b/hotel/detail/HotelPriceBox.vue";
 import HotelMap from "~/components/b2b/hotel/HotelMap.vue";
 
 definePageMeta({
@@ -21,16 +22,28 @@ const router = useRouter();
 const isMapOpen = ref(false);
 const hotelId = route.params.id as string;
 
-const { selectRoom } = useCheckout();
+const { addItem: addToCart } = useCart();
 const { searchParams } = useHotelSearch();
 
 function handleReserve(room: HotelRoomOffer) {
-  selectRoom(
-    { ...hotel.value, address: hotel.value.location },
+  addToCart('hotel', {
+    hotel: hotel.value,
     room,
-    searchParams.value,
-  );
-  navigateTo("/dashboard/hotels/checkout");
+    searchParams: searchParams.value,
+  });
+  navigateTo("/dashboard/cart/checkout");
+}
+
+function handleAddToCart() {
+  if (!hotel.value.rooms.length) return;
+  const cheapestRoom = hotel.value.rooms.reduce((min, r) => (min && r.price < min.price ? r : min), hotel.value.rooms[0] as HotelRoomOffer);
+  if (cheapestRoom) {
+    addToCart('hotel', {
+      hotel: hotel.value,
+      room: cheapestRoom,
+      searchParams: searchParams.value,
+    });
+  }
 }
 
 // Mock images
@@ -62,6 +75,7 @@ const hotel = ref<Hotel>({
         penalties: [{ from: "2026-04-15", percentage: 100, amount: 3027.93 }],
       },
       price: 3027.93,
+      rate_key: "MOCK-HB-1-001",
     },
     {
       name: "Twin/double room - premium",
@@ -73,6 +87,7 @@ const hotel = ref<Hotel>({
         penalties: [{ from: "2026-04-15", percentage: 100, amount: 3186.43 }],
       },
       price: 3186.43,
+      rate_key: "MOCK-HB-1-002",
     },
     {
       name: "Premium double room (full double bed)",
@@ -84,6 +99,7 @@ const hotel = ref<Hotel>({
         penalties: [{ from: "2026-03-16", percentage: 100, amount: 3253.48 }],
       },
       price: 3253.48,
+      rate_key: "MOCK-HB-1-003",
     },
     {
       name: "Premium room with tropical view",
@@ -95,6 +111,7 @@ const hotel = ref<Hotel>({
         penalties: [{ from: "2026-04-15", percentage: 100, amount: 3433.94 }],
       },
       price: 3433.94,
+      rate_key: "MOCK-HB-1-004",
       onRequest: true,
     },
     {
@@ -107,6 +124,7 @@ const hotel = ref<Hotel>({
         penalties: [{ from: "2026-04-15", percentage: 100, amount: 4181.59 }],
       },
       price: 4181.59,
+      rate_key: "MOCK-HB-1-005",
     },
   ],
 });
@@ -139,14 +157,25 @@ useHead({
       <!-- 2. Middle Gallery -->
       <HotelGallery :images="hotelImages" />
 
-      <!-- 3. Bottom Room List (Reused from Results) -->
-      <ResultRoomList
-        :rooms="hotel.rooms"
-        :hotel="hotel"
-        :is-expanded="true"
-        :default-expanded-rooms="true"
-        @reserve="handleReserve"
-      />
+      <!-- 3. Room List + Price Sidebar -->
+      <div class="flex gap-6 items-start">
+        <div class="flex-1 min-w-0">
+          <ResultRoomList
+            :rooms="hotel.rooms"
+            :hotel="hotel"
+            :is-expanded="true"
+            :default-expanded-rooms="true"
+            @reserve="handleReserve"
+          />
+        </div>
+        <div class="w-72 shrink-0">
+          <HotelPriceBox
+            :best-price="hotel.bestPrice"
+            @add-to-cart="handleAddToCart"
+            @open-map="isMapOpen = true"
+          />
+        </div>
+      </div>
 
       <!-- Info Section -->
       <HotelInfo />

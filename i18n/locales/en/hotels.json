@@ -238,6 +238,9 @@
       "backToBookings": "Back to My Bookings",
       "newSearch": "New Search",
       "requestedDetail": "Requested Detail"
-    }
+    },
+    "nonRefundable": "Non-refundable",
+    "cancellationFees": "Cancellation fees from",
+    "freeCancellation": "Free cancellation"
   }
 }

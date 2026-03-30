@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+
 const { t } = useI18n();
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+
 import CheckoutSidebarSummary from "~/components/b2b/hotel/checkout/CheckoutSidebarSummary.vue";
 import BookingStatusHero from "~/components/b2b/hotel/checkout/BookingStatusHero.vue";
 import BookingCancellation from "~/components/b2b/hotel/checkout/BookingCancellation.vue";
 import BookingPayment from "~/components/b2b/hotel/checkout/BookingPayment.vue";
 import VoucherPreviewModal from "~/components/b2b/hotel/checkout/VoucherPreviewModal.vue";
 import { useBookings } from "~/composables/useBookings";
+import { apiFetch } from "~/composables/useApi";
 import type { IBooking } from "#shared/types/booking";
 
 definePageMeta({
@@ -30,9 +37,12 @@ const loading = ref(true);
 const notFound = ref(false);
 
 onMounted(async () => {
-  booking.value = await getBookingById(bookingId);
-  if (!booking.value) notFound.value = true;
-  loading.value = false;
+  try {
+    booking.value = await getBookingById(bookingId);
+    if (!booking.value) notFound.value = true;
+  } finally {
+    loading.value = false;
+  }
 });
 
 const bookingStatusLabel = computed(() =>
@@ -79,7 +89,8 @@ const reservationProp = computed(() =>
                 return parts.join(", ");
               })
               .join(" / "),
-            price: booking.value.totalPrice,
+            price: salePrice(booking.value.totalPrice),
+            netPrice: booking.value.totalPrice,
           },
         ],
       }
@@ -89,7 +100,7 @@ const reservationProp = computed(() =>
 // Cancellation policies derived from IBooking
 const cancellationPolicies = computed(() => {
   if (!booking.value) return [];
-  return booking.value.room.cancellationPolicy.penalties.map((p) => ({
+  return (booking.value.room.cancellationPolicy?.penalties ?? []).map((p) => ({
     status: t('hotels.cancellation.percentOfTotal', { percentage: p.percentage }),
     fromDate: p.from,
     toDate: p.from,
@@ -128,6 +139,30 @@ const openDocument = (mode: "voucher" | "invoice") => {
   documentMode.value = mode;
   isVoucherModalOpen.value = true;
 };
+
+const siblingBookings = ref<{ id: string | number; pnr: string; hotel_name: string; order_ref: string }[]>([]);
+
+watch(
+  () => (booking.value as { order_ref?: string } | null)?.order_ref,
+  async (orderRef) => {
+    if (!orderRef) {
+      siblingBookings.value = [];
+      return;
+    }
+    try {
+      const data = await apiFetch<{ results?: { id: string | number; pnr: string; hotel_name: string; order_ref: string }[] }>(
+        `/api/agency/bookings?order_ref=${orderRef}`,
+      );
+      const currentId = route.params.id;
+      siblingBookings.value = (data?.results ?? []).filter(
+        (b) => String(b.id) !== String(currentId),
+      );
+    } catch {
+      siblingBookings.value = [];
+    }
+  },
+  { immediate: true },
+);
 
 useHead({
   title: `Reserva ${bookingId} - TravelOTA B2B`,
@@ -362,6 +397,35 @@ useHead({
               </UButton>
             </div>
           </div>
+
+          <!-- Other bookings in this order -->
+          <UCard v-if="siblingBookings.length > 0" class="mt-6">
+            <template #header>
+              <div class="flex items-center gap-2">
+                <UIcon name="i-heroicons-squares-2x2" class="w-4 h-4 text-primary-500" />
+                <h3 class="font-semibold text-sm text-gray-900 dark:text-white">
+                  {{ t('cart.orderGroup.title') }}
+                  <span class="text-gray-500 dark:text-gray-400 font-normal ml-1">
+                    ({{ t('cart.orderGroup.orderRef') }}: {{ siblingBookings[0]?.order_ref }})
+                  </span>
+                </h3>
+              </div>
+            </template>
+            <div class="flex flex-col gap-2">
+              <NuxtLink
+                v-for="sibling in siblingBookings"
+                :key="sibling.id"
+                :to="`/dashboard/hotels/booking/${sibling.id}`"
+                class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+              >
+                <div>
+                  <p class="text-sm font-medium text-gray-900 dark:text-white">{{ sibling.hotel_name }}</p>
+                  <p class="text-xs text-gray-500 font-mono">{{ sibling.pnr }}</p>
+                </div>
+                <UIcon name="i-heroicons-arrow-right" class="w-4 h-4 text-gray-400" />
+              </NuxtLink>
+            </div>
+          </UCard>
         </div>
 
         <!-- Right Column: Hotel Summary (Reusing Sidebar) -->

@@ -11,6 +11,9 @@ export default defineEventHandler(async (event) => {
   if (query.paymentStatus) {
     bookings = bookings.filter((b) => b.paymentStatus === query.paymentStatus);
   }
+  if (query.order_ref) {
+    bookings = bookings.filter((b: any) => b.order_ref === query.order_ref);
+  }
 
   return bookings;
 });

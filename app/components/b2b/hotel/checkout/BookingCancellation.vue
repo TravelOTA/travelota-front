@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
 
 const { t } = useI18n();
 
-defineProps<{
+const props = defineProps<{
   bookingStatus: string;
   totalPrice: number;
   policies: {
@@ -18,6 +20,9 @@ defineProps<{
 const emit = defineEmits<{
   (e: "cancel"): void;
 }>();
+
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
 
 const showConfirmModal = ref(false);
 const isCancelling = ref(false);
@@ -67,16 +72,20 @@ const handleCancel = () => {
     <!-- Si la reserva está activa: Mostrar tabla de gastos y botón de cancelar -->
     <template v-else>
       <!-- Tabla de gastos de cancelación -->
-      <div class="mb-4">
-        <span class="text-sm text-gray-600 dark:text-gray-400">{{ t('hotels.cancellationPolicy.total') }} </span>
-        <span class="font-bold text-gray-900 dark:text-white"
-          >${{
-            totalPrice.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })
-          }}</span
-        >
+      <div class="mb-4 flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-600 dark:text-gray-400">{{ t('hotels.cancellationPolicy.total') }} </span>
+          <span class="font-bold text-gray-900 dark:text-white"
+            >${{
+              salePrice(totalPrice).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            }}</span>
+        </div>
+        <span v-if="netPriceVisible" class="text-[10px] text-gray-400 font-medium">
+          neto ${{ totalPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+        </span>
       </div>
 
       <div class="overflow-x-auto mb-6">
@@ -104,13 +113,20 @@ const handleCancel = () => {
               <td class="py-2.5 pr-4">{{ policy.fromDate }}</td>
               <td class="py-2.5 pr-4">{{ policy.toDate }}</td>
               <td class="py-2.5 pr-4">{{ policy.time }}</td>
-              <td class="py-2.5 font-bold text-gray-900 dark:text-white">
-                ${{
-                  policy.price.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
-                }}
+              <td class="py-2.5">
+                <div class="flex flex-col text-right">
+                  <span class="font-bold text-gray-900 dark:text-white">
+                    ${{
+                      salePrice(policy.price).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })
+                    }}
+                  </span>
+                  <span v-if="netPriceVisible" class="text-[10px] text-gray-400 font-normal">
+                    neto ${{ policy.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                  </span>
+                </div>
               </td>
             </tr>
           </tbody>

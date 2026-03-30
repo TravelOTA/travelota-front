@@ -1,13 +1,22 @@
 <script setup lang="ts">
+import { useNetPrice } from '~/composables/useNetPrice';
+import { useSalePrice } from '~/composables/useSalePrice';
+
+const { t } = useI18n();
+
 defineProps<{
   bestPrice: number;
 }>();
 
+const { netPriceVisible } = useNetPrice();
+const { salePrice } = useSalePrice();
+
+
 const emit = defineEmits<{
   (e: "open-map"): void;
+  (e: "add-to-cart"): void;
 }>();
 
-const { t } = useI18n();
 </script>
 
 <template>
@@ -26,12 +35,25 @@ const { t } = useI18n();
       >
         <span class="font-bold">$</span>
         {{
-          bestPrice.toLocaleString("en-US", {
+          salePrice(bestPrice).toLocaleString("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })
         }}
       </p>
+      <p v-if="netPriceVisible" class="text-xs text-gray-400 mb-2">
+        neto ${{ bestPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+      </p>
+
+      <UButton
+        color="primary"
+        block
+        icon="i-heroicons-shopping-cart"
+        class="mt-3"
+        @click="emit('add-to-cart')"
+      >
+        {{ t('cart.addToCart') }}
+      </UButton>
     </div>
 
     <!-- Map Box -->

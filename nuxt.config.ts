@@ -38,6 +38,7 @@ export default defineNuxtConfig({
           "es/validation.json",
           "es/errors.json",
           "es/templates.json",
+          "es/cart.json",
         ],
       },
       {
@@ -54,6 +55,7 @@ export default defineNuxtConfig({
           "en/validation.json",
           "en/errors.json",
           "en/templates.json",
+          "en/cart.json",
         ],
       },
     ],

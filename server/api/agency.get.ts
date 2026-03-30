@@ -16,5 +16,6 @@ export default defineEventHandler((): Agency => {
     usersCount: 8,
     bookingsCount: 312,
     nextSettlement: "2026-04-01",
+    markupPercentage: 10,
   };
 });
