@@ -103,6 +103,7 @@ export function useCart() {
     specialRequests: Record<string, string> = {},
     preCheckResults?: Record<string, { bookingFlowId: number; currentPrice: number }>,
     cardData?: { number: string; expiry: string; cvv: string },
+    skipIds?: Set<string>,
   ): Promise<BookingResult[]> {
     if (items.value.length === 0) {
       throw new Error(t('cart.empty'));
@@ -113,6 +114,7 @@ export function useCart() {
 
     for (const item of items.value) {
       if (item.type !== 'hotel') continue;
+      if (skipIds?.has(item.id)) continue;
 
       if (!item.room.rate_key) {
         results.push({
@@ -162,6 +164,7 @@ export function useCart() {
                   name: item.room.name,
                   regimen: item.room.regimen ?? 'SA',
                   cancellation: item.room.cancellation ?? '',
+                  cancellationPolicy: item.room.cancellationPolicy,
                 },
               },
             },

@@ -37,7 +37,16 @@ export default defineEventHandler(async (event) => {
       image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
       address: "Destino Simulado",
     },
-    room: session.mockRoom || {
+    room: session.mockRoom ? {
+      id: session.mockRoom.id,
+      name: session.mockRoom.name,
+      regime: session.mockRoom.regimen ?? "SA",
+      cancellationPolicy: session.mockRoom.cancellationPolicy ?? {
+        refundable: false,
+        penaltyFrom: null,
+        penalties: [],
+      },
+    } : {
       id: "mock-room-001",
       name: "Habitación Genérica (Mock)",
       regime: "SA",
@@ -73,7 +82,7 @@ export default defineEventHandler(async (event) => {
     id: session.id,
     status: "confirmed",
     booking: {
-      id: Math.floor(Math.random() * 9000), // Este ID interno de B2B provider
+      id: pnr,
       pnr: pnr,
       order_ref: body.order_ref,
     },

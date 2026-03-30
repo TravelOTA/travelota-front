@@ -43,7 +43,7 @@
         "specialRequests": "Special requests",
         "specialRequestsHint": "(not guaranteed)",
         "specialRequestsPlaceholder": "E.g.: high floor, extra bed, late arrival...",
-        "netPrice": "Net price ({n} {nights})",
+        "netPrice": "Net price ({n} nights)",
         "verifying": "verifying availability...",
         "verifyError": "Could not verify availability",
         "priceChanged": "Price changed from ${old} to ${new}"

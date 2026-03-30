@@ -238,6 +238,9 @@
       "backToBookings": "Volver a Mis Reservas",
       "newSearch": "Nueva Búsqueda",
       "requestedDetail": "Detalle Solicitado"
-    }
+    },
+    "nonRefundable": "No reembolsable",
+    "cancellationFees": "Gastos de cancelación a partir del",
+    "freeCancellation": "Cancelación gratuita"
   }
 }

@@ -8,7 +8,7 @@ import BookingCancellation from "~/components/b2b/hotel/checkout/BookingCancella
 import BookingPayment from "~/components/b2b/hotel/checkout/BookingPayment.vue";
 import VoucherPreviewModal from "~/components/b2b/hotel/checkout/VoucherPreviewModal.vue";
 import { useBookings } from "~/composables/useBookings";
-import { useApi } from "~/composables/useApi";
+import { apiFetch } from "~/composables/useApi";
 import type { IBooking } from "#shared/types/booking";
 
 definePageMeta({
@@ -31,9 +31,12 @@ const loading = ref(true);
 const notFound = ref(false);
 
 onMounted(async () => {
-  booking.value = await getBookingById(bookingId);
-  if (!booking.value) notFound.value = true;
-  loading.value = false;
+  try {
+    booking.value = await getBookingById(bookingId);
+    if (!booking.value) notFound.value = true;
+  } finally {
+    loading.value = false;
+  }
 });
 
 const bookingStatusLabel = computed(() =>
@@ -90,7 +93,7 @@ const reservationProp = computed(() =>
 // Cancellation policies derived from IBooking
 const cancellationPolicies = computed(() => {
   if (!booking.value) return [];
-  return booking.value.room.cancellationPolicy.penalties.map((p) => ({
+  return (booking.value.room.cancellationPolicy?.penalties ?? []).map((p) => ({
     status: t('hotels.cancellation.percentOfTotal', { percentage: p.percentage }),
     fromDate: p.from,
     toDate: p.from,
@@ -140,11 +143,11 @@ watch(
       return;
     }
     try {
-      const { data } = await useApi<{ results?: { id: string | number; pnr: string; hotel_name: string; order_ref: string }[] }>(
+      const data = await apiFetch<{ results?: { id: string | number; pnr: string; hotel_name: string; order_ref: string }[] }>(
         `/api/agency/bookings?order_ref=${orderRef}`,
       );
       const currentId = route.params.id;
-      siblingBookings.value = (data.value?.results ?? []).filter(
+      siblingBookings.value = (data?.results ?? []).filter(
         (b) => String(b.id) !== String(currentId),
       );
     } catch {

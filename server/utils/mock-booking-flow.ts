@@ -26,7 +26,10 @@ export type MockBookingSession = {
 
 export async function getMockBookingSessions(): Promise<Record<number, MockBookingSession>> {
   const storage = useStorage("data");
-  return (await storage.getItem<Record<number, MockBookingSession>>("mock_booking_sessions")) ?? {};
+  const stored = await storage.getItem("mock_booking_sessions");
+  return (stored && typeof stored === "object" && !Array.isArray(stored))
+    ? (stored as Record<number, MockBookingSession>)
+    : {};
 }
 
 export async function getMockBookingSession(id: number): Promise<MockBookingSession | null> {

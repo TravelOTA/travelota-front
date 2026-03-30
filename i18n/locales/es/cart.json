@@ -43,7 +43,7 @@
         "specialRequests": "Peticiones especiales",
         "specialRequestsHint": "(no garantizadas)",
         "specialRequestsPlaceholder": "Ej: habitación en planta alta, cama extra, llegada tarde...",
-        "netPrice": "Precio neto ({n} {nights})",
+        "netPrice": "Precio neto ({n} noches)",
         "verifying": "verificando disponibilidad...",
         "verifyError": "No se pudo verificar disponibilidad",
         "priceChanged": "El precio cambió de ${old} a ${new}"

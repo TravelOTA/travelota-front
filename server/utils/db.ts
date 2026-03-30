@@ -54,7 +54,8 @@ const WALLET_SEED: IWallet = {
 
 export async function readBookings(): Promise<IBooking[]> {
   const storage = useStorage("data");
-  return (await storage.getItem<IBooking[]>("bookings")) ?? [];
+  const stored = await storage.getItem("bookings");
+  return Array.isArray(stored) ? (stored as IBooking[]) : [];
 }
 
 export async function writeBookings(bookings: IBooking[]): Promise<void> {

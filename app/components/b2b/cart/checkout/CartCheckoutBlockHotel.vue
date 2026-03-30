@@ -193,7 +193,7 @@ const displayPrice = computed(() =>
     <template #footer>
       <div class="flex items-center justify-between">
         <span class="text-xs text-gray-500 dark:text-gray-400">
-          {{ t('cart.checkout.blocks.netPrice', { n: nights, nights: nights === 1 ? 'noche' : 'noches' }) }}
+          {{ t('cart.checkout.blocks.netPrice', { n: nights }) }}
         </span>
         <span class="text-lg font-black text-primary-600 dark:text-primary-400">
           ${{ displayPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}

@@ -63,6 +63,7 @@ async function runPreCheck(item: CartItemHotel): Promise<void> {
           name: item.room.name,
           regimen: item.room.regimen ?? 'SA',
           cancellation: item.room.cancellation ?? '',
+          cancellationPolicy: item.room.cancellationPolicy,
         },
       },
     });
@@ -168,6 +169,8 @@ async function handleConfirmAll() {
       paymentMethod,
       specialRequestsMap.value,
       acceptedPreCheck,
+      undefined,
+      skippedIds,
     );
 
     const confirmationResults = useState<typeof results>('cart:confirmation-results', () => []);
