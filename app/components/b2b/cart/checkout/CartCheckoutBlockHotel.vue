@@ -105,7 +105,7 @@ const policyRows = computed((): PolicyRow[] => {
       amount: '$0.00',
     }];
   }
-  const freeTo = fmtDate(format(subDays(parseISO(p.penaltyFrom), 1), 'yyyy-MM-dd'));
+  const freeTo = format(subDays(parseISO(p.penaltyFrom), 1), 'd MMM yyyy', { locale: es });
   const rows: PolicyRow[] = [
     {
       label: t('hotels.freeCancellation'),
@@ -214,12 +214,12 @@ const policyRows = computed((): PolicyRow[] => {
             </p>
           </div>
           <div class="text-right shrink-0">
-            <p class="text-xs text-gray-400">{{ t('cart.checkout.blocks.netPrice', { n: nights }) }}</p>
+            <p class="text-xs text-gray-400">{{ t('cart.checkout.blocks.salePrice', { n: nights }) }}</p>
             <p class="text-sm font-bold text-gray-900 dark:text-white">
               ${{ salePrice(pricePerRoom).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
             </p>
             <p v-if="netPriceVisible" class="text-[10px] text-gray-400">
-              neto ${{ pricePerRoom.toFixed(2) }}
+              {{ t('cart.checkout.blocks.netPrice', { n: nights }) }}: ${{ pricePerRoom.toFixed(2) }}
             </p>
           </div>
         </div>

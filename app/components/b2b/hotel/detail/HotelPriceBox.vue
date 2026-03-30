@@ -1,5 +1,8 @@
+<script setup lang="ts">
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
+
+const { t } = useI18n();
 
 defineProps<{
   bestPrice: number;
@@ -14,7 +17,6 @@ const emit = defineEmits<{
   (e: "add-to-cart"): void;
 }>();
 
-const { t } = useI18n();
 </script>
 
 <template>

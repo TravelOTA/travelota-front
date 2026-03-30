@@ -7,16 +7,15 @@ import CartItemCard from '~/components/b2b/cart/CartItemCard.vue';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
 
-
 const { t } = useI18n();
 const { items, isDrawerOpen, itemCount, total, removeItem, exportToQuoter } = useCart();
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 const totalSalePrice = computed(() => salePrice(total.value));
 
-
 function handleExportToQuoter() {
   exportToQuoter();
+  isDrawerOpen.value = false;
   navigateTo('/dashboard/quoter/builder');
 }
 
