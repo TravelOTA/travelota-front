@@ -16,6 +16,7 @@ export const agencySchema = z.object({
   usersCount: z.number(),
   bookingsCount: z.number(),
   nextSettlement: z.string(),
+  markupPercentage: z.number().default(0),
 });
 
 export type Agency = z.infer<typeof agencySchema>;

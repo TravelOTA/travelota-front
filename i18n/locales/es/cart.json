@@ -21,6 +21,7 @@
       "titularName": "Nombre",
       "titularLastName": "Apellido",
       "agencyRef": "Referencia de agencia",
+      "titularEmail": "Correo electrónico",
       "observations": "Observaciones",
       "payment": "Método de pago",
       "confirmAll": "Confirmar todas las reservas",
@@ -44,6 +45,7 @@
         "specialRequestsHint": "(no garantizadas)",
         "specialRequestsPlaceholder": "Ej: habitación en planta alta, cama extra, llegada tarde...",
         "netPrice": "Precio neto ({n} noches)",
+        "salePrice": "Precio venta ({n} noches)",
         "verifying": "verificando disponibilidad...",
         "verifyError": "No se pudo verificar disponibilidad",
         "priceChanged": "El precio cambió de ${old} a ${new}"

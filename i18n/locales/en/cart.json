@@ -21,6 +21,7 @@
       "titularName": "First name",
       "titularLastName": "Last name",
       "agencyRef": "Agency reference",
+      "titularEmail": "Email",
       "observations": "Observations",
       "payment": "Payment method",
       "confirmAll": "Confirm all bookings",
@@ -44,6 +45,7 @@
         "specialRequestsHint": "(not guaranteed)",
         "specialRequestsPlaceholder": "E.g.: high floor, extra bed, late arrival...",
         "netPrice": "Net price ({n} nights)",
+        "salePrice": "Sale price ({n} nights)",
         "verifying": "verifying availability...",
         "verifyError": "Could not verify availability",
         "priceChanged": "Price changed from ${old} to ${new}"
