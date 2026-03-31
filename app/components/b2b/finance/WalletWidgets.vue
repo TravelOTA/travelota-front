@@ -4,6 +4,9 @@ const emit = defineEmits<{ "request-recharge": [] }>();
 const { t, locale } = useI18n();
 const {
   balance,
+  creditLine,
+  usageLevel,
+  isCreditBlocked,
   lowBalanceThreshold,
   isLowBalance,
   currency,
@@ -56,30 +59,107 @@ const updatedAgo = computed(() => {
       </template>
     </UAlert>
 
-    <!-- Main balance card -->
+    <!-- Two-panel grid -->
     <div
-      class="rounded-xl bg-gradient-to-br from-indigo-600 to-violet-700 p-6 text-white flex items-center justify-between gap-4"
+      :class="[
+        'grid gap-6',
+        creditLine ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1',
+      ]"
     >
-      <div>
-        <p class="text-xs font-medium uppercase tracking-wider text-indigo-200">
-          {{ t("agency.wallet.balance") }}
-        </p>
-        <p class="mt-1 text-4xl font-extrabold tracking-tight">
-          {{ formatCurrency(balance) }}
-        </p>
-        <p v-if="updatedAgo" class="mt-1 text-xs text-indigo-300">
-          {{ currency }} · {{ updatedAgo }}
-        </p>
-      </div>
-      <UButton
-        variant="outline"
-        color="white"
-        size="md"
-        icon="i-heroicons-plus"
-        @click="emit('request-recharge')"
+      <!-- Wallet Panel (Left) -->
+      <div
+        class="rounded-xl bg-gradient-to-br from-indigo-600 to-violet-700 p-6 text-white flex flex-col justify-between gap-4"
       >
-        {{ t("agency.wallet.requestRecharge") }}
-      </UButton>
+        <div>
+          <p class="text-xs font-medium uppercase tracking-wider text-indigo-200">
+            {{ t("agency.wallet.balance") }}
+          </p>
+          <p class="mt-1 text-4xl font-extrabold tracking-tight">
+            {{ formatCurrency(balance) }}
+          </p>
+          <p v-if="updatedAgo" class="mt-1 text-xs text-indigo-300">
+            {{ currency }} · {{ updatedAgo }}
+          </p>
+        </div>
+        <div>
+          <UButton
+            variant="outline"
+            color="white"
+            size="md"
+            icon="i-heroicons-plus"
+            @click="emit('request-recharge')"
+          >
+            {{ t("agency.wallet.requestRecharge") }}
+          </UButton>
+        </div>
+      </div>
+
+      <!-- Credit Facility Panel (Right) -->
+      <UCard v-if="creditLine" :ui="{ body: { padding: 'p-6' } }">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold flex items-center gap-2">
+            <UIcon
+              name="i-heroicons-credit-card"
+              class="text-primary-500"
+            />
+            {{ t("agency.wallet.credit.title") }}
+          </h3>
+          <UBadge
+            :color="isCreditBlocked ? 'error' : 'success'"
+            variant="soft"
+          >
+            {{
+              isCreditBlocked
+                ? t("agency.wallet.credit.status") + ": BLOCKED"
+                : "ACTIVE"
+            }}
+          </UBadge>
+        </div>
+
+        <!-- Usage progress bar -->
+        <div class="mb-4">
+          <UProgress :value="usageLevel" color="primary" />
+          <p class="text-xs text-gray-500 mt-1">
+            {{ Math.round(usageLevel) }}% {{ t("agency.wallet.credit.used") }}
+          </p>
+        </div>
+
+        <!-- Stats grid -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-xs font-medium uppercase tracking-wider text-gray-500">
+              {{ t("agency.wallet.credit.available") }}
+            </p>
+            <p class="text-xl font-bold text-primary-600">
+              {{ formatCurrency(creditLine.available ?? 0) }}
+            </p>
+          </div>
+          <div>
+            <p class="text-xs font-medium uppercase tracking-wider text-gray-500">
+              {{ t("agency.wallet.credit.limit") }}
+            </p>
+            <p class="text-xl font-bold text-gray-900 dark:text-white">
+              {{ formatCurrency(creditLine.limit ?? 0) }}
+            </p>
+          </div>
+          <div>
+            <p class="text-xs font-medium uppercase tracking-wider text-gray-500">
+              {{ t("agency.wallet.credit.used") }}
+            </p>
+            <p class="text-xl font-bold text-gray-700 dark:text-gray-200">
+              {{ formatCurrency(creditLine.used ?? 0) }}
+            </p>
+          </div>
+          <div>
+            <p class="text-xs font-medium uppercase tracking-wider text-gray-500">
+              {{ t("agency.wallet.credit.debt") }}
+            </p>
+            <p class="text-xl font-bold text-orange-500">
+              {{ formatCurrency(creditLine.debt ?? 0) }}
+            </p>
+          </div>
+        </div>
+      </UCard>
     </div>
 
     <!-- Mini stats -->
