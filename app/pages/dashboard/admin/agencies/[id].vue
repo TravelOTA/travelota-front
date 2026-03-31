@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useAgencies, type AdminAgencyUser } from "~/composables/useAgencies";
+import type { ICreditLine } from '#shared/types/wallet';
+import AgencyCreditModal from "~/components/b2b/admin/AgencyCreditModal.vue";
 
 definePageMeta({ layout: "dashboard" });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const agencyId = route.params.id as string;
 
@@ -14,6 +16,7 @@ const {
   updateAgency,
   updateWhitelabel,
   updateUserStatus,
+  updateCreditLine,
 } = useAgencies();
 const agency = computed(() => getAgencyById(agencyId) ?? null);
 
@@ -184,6 +187,23 @@ const userColumns = [
   { accessorKey: "status", header: "Estado" },
   { accessorKey: "userActions", header: "" },
 ];
+
+// ── Credit modal ───────────────────────────────────────────────────────────
+const isCreditDetailOpen = ref(false);
+
+function updateAgencyCreditLine(updated: ICreditLine) {
+  updateCreditLine(agencyId, updated);
+  isCreditDetailOpen.value = false;
+}
+
+function formatAdminCurrency(amount: number): string {
+  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD' }).format(amount);
+}
+
+const usagePercent = computed(() => {
+  if (!agency.value?.credit_line?.limit) return 0;
+  return Math.min((agency.value.credit_line.used / agency.value.credit_line.limit) * 100, 100);
+});
 </script>
 
 <template>
@@ -497,6 +517,36 @@ const userColumns = [
                 </div>
               </div>
             </UCard>
+
+            <!-- Credit Line Card -->
+            <UCard v-if="agency.credit_line">
+              <template #header>
+                <div class="flex items-center justify-between">
+                  <h3 class="text-sm font-bold flex items-center gap-2">
+                    <UIcon name="i-heroicons-credit-card" class="w-4 h-4 text-primary-500" />
+                    {{ t('agency.wallet.credit.title') }}
+                  </h3>
+                  <UButton size="xs" variant="ghost" @click="isCreditDetailOpen = true">
+                    {{ t('agency.wallet.credit.manage') }}
+                  </UButton>
+                </div>
+              </template>
+              <div class="space-y-3">
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-500">{{ t('agency.wallet.credit.limit') }}</span>
+                  <span class="font-bold">{{ formatAdminCurrency(agency.credit_line.limit) }}</span>
+                </div>
+                <UProgress
+                  v-model="usagePercent"
+                  color="primary"
+                  animation="none"
+                />
+                <div class="flex justify-between text-xs text-gray-500">
+                  <span>{{ t('agency.wallet.credit.used') }}: {{ formatAdminCurrency(agency.credit_line.used) }}</span>
+                  <span>{{ t('agency.wallet.credit.available') }}: {{ formatAdminCurrency(agency.credit_line.available) }}</span>
+                </div>
+              </div>
+            </UCard>
           </div>
         </div>
       </div>
@@ -804,6 +854,22 @@ const userColumns = [
               @click="saveWhitelabel"
             />
           </div>
+        </template>
+      </UModal>
+
+      <!-- Credit Modal -->
+      <UModal
+        v-if="agency.credit_line"
+        v-model:open="isCreditDetailOpen"
+        :title="`${agency.name} — ${t('agency.wallet.credit.title')}`"
+        size="3xl"
+      >
+        <template #body>
+          <AgencyCreditModal
+            :credit-line="agency.credit_line"
+            :agency-name="agency.name"
+            @save="updateAgencyCreditLine"
+          />
         </template>
       </UModal>
     </template>

@@ -194,6 +194,7 @@
         "group": "Group",
         "description": "Description",
         "baseMarkup": "Base Markup",
+        "baseCreditLimit": "Credit Limit",
         "assignedAgencies": "Assigned Agencies"
       },
       "noResults": "No agency groups found.",
@@ -210,6 +211,7 @@
           "description": "Description",
           "descriptionExample": "Brief description of the group...",
           "baseMarkup": "Base Markup (%)",
+          "baseCreditLimit": "Base Credit Limit (USD)",
           "alert": "This markup will be applied to all agencies belonging to this group in an inherited way.",
           "cancel": "Cancel",
           "create": "Create Group"
@@ -219,6 +221,7 @@
           "groupName": "Group Name",
           "description": "Description",
           "baseMarkup": "Base Markup (%)",
+          "baseCreditLimit": "Base Credit Limit (USD)",
           "cancel": "Cancel",
           "save": "Save changes"
         }

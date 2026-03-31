@@ -194,6 +194,7 @@
         "group": "Grupo",
         "description": "Descripción",
         "baseMarkup": "Markup Base",
+        "baseCreditLimit": "Límite de Crédito",
         "assignedAgencies": "Agencias Asignadas"
       },
       "noResults": "No se encontraron grupos de agencia.",
@@ -210,6 +211,7 @@
           "description": "Descripción",
           "descriptionExample": "Breve descripción del grupo...",
           "baseMarkup": "Markup Base (%)",
+          "baseCreditLimit": "Límite de Crédito Base (USD)",
           "alert": "Este markup se aplicará a todas las agencias pertenecientes a este grupo de forma heredada.",
           "cancel": "Cancelar",
           "create": "Crear Grupo"
@@ -219,6 +221,7 @@
           "groupName": "Nombre del Grupo",
           "description": "Descripción",
           "baseMarkup": "Markup Base (%)",
+          "baseCreditLimit": "Límite de Crédito Base (USD)",
           "cancel": "Cancelar",
           "save": "Guardar cambios"
         }

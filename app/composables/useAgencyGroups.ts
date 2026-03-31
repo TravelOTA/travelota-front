@@ -5,6 +5,7 @@ export interface AgencyGroup {
   name: string;
   description: string;
   baseMarkup: number;
+  baseCreditLimit: number;
   agenciesCount: number;
 }
 
@@ -14,6 +15,7 @@ const MOCK_GROUPS: AgencyGroup[] = [
     name: "Grupo VIP",
     description: "Agencias con volumen alto de ventas y soporte 24/7.",
     baseMarkup: 12,
+    baseCreditLimit: 10000,
     agenciesCount: 2,
   },
   {
@@ -21,6 +23,7 @@ const MOCK_GROUPS: AgencyGroup[] = [
     name: "Grupo Mayorista",
     description: "Distribuidores a gran escala.",
     baseMarkup: 10,
+    baseCreditLimit: 8000,
     agenciesCount: 1,
   },
   {
@@ -28,6 +31,7 @@ const MOCK_GROUPS: AgencyGroup[] = [
     name: "Grupo Estándar",
     description: "Agencias minoristas comunes.",
     baseMarkup: 15,
+    baseCreditLimit: 5000,
     agenciesCount: 3,
   },
   {
@@ -35,6 +39,7 @@ const MOCK_GROUPS: AgencyGroup[] = [
     name: "Corpo",
     description: "Cuentas corporativas.",
     baseMarkup: 8,
+    baseCreditLimit: 15000,
     agenciesCount: 0,
   },
 ];

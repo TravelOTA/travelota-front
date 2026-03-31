@@ -1,6 +1,7 @@
 import { useState, computed } from "#imports";
 import type { RegisterInput } from "~/utils/schemas";
 import type { AgencyGroup } from "~/composables/useAgencyGroups";
+import type { ICreditLine } from '#shared/types/wallet';
 
 export interface AdminAgencyUser {
   id: string;
@@ -35,6 +36,7 @@ export interface AdminAgency {
   users: AdminAgencyUser[];
   logo: string;
   colorPrimario: string;
+  credit_line?: ICreditLine;
 }
 
 const MOCK_AGENCIES: AdminAgency[] = [
@@ -57,6 +59,13 @@ const MOCK_AGENCIES: AdminAgency[] = [
     status: "Activa",
     logo: "",
     colorPrimario: "teal",
+    credit_line: {
+      limit: 10000,
+      used: 3200,
+      available: 6800,
+      debt: 3200,
+      status: 'active',
+    },
     users: [
       {
         id: "1",
@@ -103,6 +112,13 @@ const MOCK_AGENCIES: AdminAgency[] = [
     status: "Activa",
     logo: "",
     colorPrimario: "blue",
+    credit_line: {
+      limit: 5000,
+      used: 1800,
+      available: 3200,
+      debt: 1800,
+      status: 'active' as const,
+    },
     users: [
       {
         id: "1",
@@ -162,6 +178,13 @@ const MOCK_AGENCIES: AdminAgency[] = [
     status: "Activa",
     logo: "",
     colorPrimario: "indigo",
+    credit_line: {
+      limit: 8000,
+      used: 500,
+      available: 7500,
+      debt: 500,
+      status: 'active' as const,
+    },
     users: [
       {
         id: "1",
@@ -272,6 +295,14 @@ export function useAgencies() {
     agency.markup = group.baseMarkup;
     agency.publicEmail = agency.email;
     agency.publicPhone = agency.phone;
+    // Inherit base credit limit from group
+    agency.credit_line = {
+      limit: group.baseCreditLimit,
+      used: 0,
+      available: group.baseCreditLimit,
+      debt: 0,
+      status: 'active',
+    };
     agency.users.push({
       id: crypto.randomUUID(),
       name: agency.nombreContacto,
@@ -369,6 +400,11 @@ export function useAgencies() {
     if (agency) Object.assign(agency, data);
   }
 
+  function updateCreditLine(id: string, creditLine: ICreditLine) {
+    const agency = agencies.value.find((a) => a.id === id);
+    if (agency) agency.credit_line = creditLine;
+  }
+
   return {
     agencies,
     agencyStats,
@@ -382,5 +418,6 @@ export function useAgencies() {
     updateAgency,
     updateWhitelabel,
     updateUserStatus,
+    updateCreditLine,
   };
 }

@@ -22,17 +22,18 @@ const columns = computed(() => [
   { accessorKey: "name", header: t('admin.agencyGroups.tableHeaders.group') },
   { accessorKey: "description", header: t('admin.agencyGroups.tableHeaders.description') },
   { accessorKey: "baseMarkup", header: t('admin.agencyGroups.tableHeaders.baseMarkup') },
+  { accessorKey: "baseCreditLimit", header: t('admin.agencyGroups.tableHeaders.baseCreditLimit') },
   { accessorKey: "agenciesCount", header: t('admin.agencyGroups.tableHeaders.assignedAgencies') },
   { accessorKey: "actions", header: "" },
 ]);
 
 // ── Create Modal ──
 const isCreateOpen = ref(false);
-const newGroup = ref({ name: "", description: "", baseMarkup: 10 });
+const newGroup = ref({ name: "", description: "", baseMarkup: 10, baseCreditLimit: 5000 });
 const isCreateValid = computed(() => newGroup.value.name.trim() !== "");
 
 function openCreate() {
-  newGroup.value = { name: "", description: "", baseMarkup: 10 };
+  newGroup.value = { name: "", description: "", baseMarkup: 10, baseCreditLimit: 5000 };
   isCreateOpen.value = true;
 }
 
@@ -42,6 +43,7 @@ function saveGroup() {
     name: newGroup.value.name,
     description: newGroup.value.description,
     baseMarkup: newGroup.value.baseMarkup,
+    baseCreditLimit: newGroup.value.baseCreditLimit,
   });
   isCreateOpen.value = false;
 }
@@ -61,6 +63,7 @@ function saveEdit() {
     name: editGroup.value.name,
     description: editGroup.value.description,
     baseMarkup: editGroup.value.baseMarkup,
+    baseCreditLimit: editGroup.value.baseCreditLimit,
   });
   isEditOpen.value = false;
 }
@@ -133,6 +136,13 @@ function handleDelete(id: string) {
           <UBadge color="primary" variant="subtle" class="font-bold">
             {{ row.original.baseMarkup }}% Base
           </UBadge>
+        </template>
+
+        <!-- Credit limit cell -->
+        <template #baseCreditLimit-cell="{ row }">
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            ${{ row.original.baseCreditLimit.toLocaleString() }}
+          </span>
         </template>
 
         <!-- Agencies count cell -->
@@ -212,6 +222,18 @@ function handleDelete(id: string) {
               >
             </UInput>
           </UFormField>
+          <UFormField :label="t('admin.agencyGroups.modals.create.baseCreditLimit')" name="creditLimit" required>
+            <UInput
+              v-model.number="newGroup.baseCreditLimit"
+              type="number"
+              min="0"
+              step="1000"
+            >
+              <template #leading
+                ><span class="text-gray-400 text-sm">$</span></template
+              >
+            </UInput>
+          </UFormField>
           <UAlert
             icon="i-heroicons-information-circle"
             color="info"
@@ -259,6 +281,18 @@ function handleDelete(id: string) {
             >
               <template #trailing
                 ><span class="text-gray-400 text-sm">%</span></template
+              >
+            </UInput>
+          </UFormField>
+          <UFormField :label="t('admin.agencyGroups.modals.edit.baseCreditLimit')" name="edit-creditLimit" required>
+            <UInput
+              v-model.number="editGroup.baseCreditLimit"
+              type="number"
+              min="0"
+              step="1000"
+            >
+              <template #leading
+                ><span class="text-gray-400 text-sm">$</span></template
               >
             </UInput>
           </UFormField>
