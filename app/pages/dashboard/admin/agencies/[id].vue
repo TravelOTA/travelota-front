@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAgencies, type AdminAgencyUser } from "~/composables/useAgencies";
 import type { ICreditLine } from '#shared/types/wallet';
+import AgencyCreditModal from "~/components/b2b/admin/AgencyCreditModal.vue";
 
 definePageMeta({ layout: "dashboard" });
 
@@ -855,7 +856,7 @@ function formatAdminCurrency(amount: number): string {
         v-if="agency.credit_line"
         v-model:open="isCreditDetailOpen"
         :title="`${agency.name} — ${t('agency.wallet.credit.title')}`"
-        size="xl"
+        size="3xl"
       >
         <template #body>
           <AgencyCreditModal
