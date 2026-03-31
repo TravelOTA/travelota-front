@@ -76,6 +76,12 @@ export async function readWallet(): Promise<IWallet> {
     await storage.setItem("wallet", WALLET_SEED);
     return WALLET_SEED;
   }
+  // Backfill credit_line if the cached object predates this field
+  if (!stored.credit_line && WALLET_SEED.credit_line) {
+    const updated = { ...stored, credit_line: WALLET_SEED.credit_line };
+    await storage.setItem("wallet", updated);
+    return updated;
+  }
   return stored;
 }
 
