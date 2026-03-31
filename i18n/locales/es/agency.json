@@ -80,7 +80,10 @@
         "status": "Estado de la línea",
         "statusActive": "Activo",
         "statusBlocked": "Bloqueado",
-        "manage": "Gestionar Crédito"
+        "manage": "Gestionar Crédito",
+        "adjustTitle": "Ajustar Límite",
+        "newLimit": "Nuevo límite (USD)",
+        "save": "Guardar"
       },
       "lowBalance": {
         "title": "Saldo bajo",

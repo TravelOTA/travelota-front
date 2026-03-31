@@ -15,6 +15,7 @@ const {
   updateAgency,
   updateWhitelabel,
   updateUserStatus,
+  updateCreditLine,
 } = useAgencies();
 const agency = computed(() => getAgencyById(agencyId) ?? null);
 
@@ -189,7 +190,8 @@ const userColumns = [
 // ── Credit modal ───────────────────────────────────────────────────────────
 const isCreditDetailOpen = ref(false);
 
-function updateAgencyCreditLine(_updated: ICreditLine) {
+function updateAgencyCreditLine(updated: ICreditLine) {
+  updateCreditLine(agencyId, updated);
   isCreditDetailOpen.value = false;
 }
 

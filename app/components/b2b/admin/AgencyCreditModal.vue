@@ -21,20 +21,22 @@ const open = computed({
 
 const newLimit = ref(props.creditLine.limit);
 
+watch(() => props.creditLine.limit, (val) => { newLimit.value = val; });
+
 const mockLedger = [
-  { date: '2026-03-10', description: 'Reserva HB-4921', type: 'Cargo', amount: -800, balance: 9200 },
-  { date: '2026-03-15', description: 'Reserva HB-5102', type: 'Cargo', amount: -1200, balance: 8000 },
-  { date: '2026-03-18', description: 'Ajuste manual', type: 'Crédito', amount: 500, balance: 8500 },
-  { date: '2026-03-22', description: 'Reserva HB-5310', type: 'Cargo', amount: -1700, balance: 6800 },
+  { date: '2026-03-10', description: 'Reserva HB-4921', type: 'charge', amount: -800, balance: 9200 },
+  { date: '2026-03-15', description: 'Reserva HB-5102', type: 'charge', amount: -1200, balance: 8000 },
+  { date: '2026-03-18', description: 'Ajuste manual', type: 'deposit', amount: 500, balance: 8500 },
+  { date: '2026-03-22', description: 'Reserva HB-5310', type: 'charge', amount: -1700, balance: 6800 },
 ];
 
-const ledgerColumns = [
-  { accessorKey: 'date', header: 'Fecha' },
-  { accessorKey: 'description', header: 'Descripción' },
-  { accessorKey: 'type', header: 'Tipo' },
-  { accessorKey: 'amount', header: 'Monto' },
-  { accessorKey: 'balance', header: 'Disponible' },
-];
+const ledgerColumns = computed(() => [
+  { accessorKey: 'date', header: t('agency.wallet.movements.date') },
+  { accessorKey: 'description', header: t('agency.wallet.movements.description') },
+  { accessorKey: 'type', header: t('agency.wallet.movements.type') },
+  { accessorKey: 'amount', header: t('agency.wallet.movements.amount') },
+  { accessorKey: 'balance', header: t('agency.wallet.movements.balanceAfter') },
+]);
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD' }).format(amount);
@@ -102,20 +104,20 @@ function saveLimit() {
         </template>
         <template #type-cell="{ row }">
           <UBadge
-            :color="row.original.type === 'Cargo' ? 'error' : 'success'"
-            variant="subtle"
+            :color="row.original.type === 'charge' ? 'error' : 'success'"
+            variant="soft"
             size="xs"
           >
-            {{ row.original.type }}
+            {{ t(`agency.wallet.type.${row.original.type}`) }}
           </UBadge>
         </template>
       </UTable>
 
       <!-- 3. Adjust limit form -->
       <div class="mt-6 border-t border-gray-200 dark:border-gray-800 pt-4">
-        <h4 class="font-bold text-sm mb-3">Ajustar Límite</h4>
+        <h4 class="font-bold text-sm mb-3">{{ t('agency.wallet.credit.adjustTitle') }}</h4>
         <div class="flex items-end gap-3">
-          <UFormField label="Nuevo límite (USD)" class="flex-1">
+          <UFormField :label="t('agency.wallet.credit.newLimit')" class="flex-1">
             <UInput v-model.number="newLimit" type="number" :min="0" />
           </UFormField>
           <UButton
@@ -123,7 +125,7 @@ function saveLimit() {
             :disabled="!newLimit || newLimit === creditLine.limit"
             @click="saveLimit"
           >
-            Guardar
+            {{ t('agency.wallet.credit.save') }}
           </UButton>
         </div>
       </div>

@@ -58,7 +58,10 @@
         "status": "Line Status",
         "statusActive": "Active",
         "statusBlocked": "Blocked",
-        "manage": "Manage Credit"
+        "manage": "Manage Credit",
+        "adjustTitle": "Adjust Limit",
+        "newLimit": "New limit (USD)",
+        "save": "Save"
       },
       "lowBalance": {
         "title": "Low balance",

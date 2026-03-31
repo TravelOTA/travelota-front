@@ -378,6 +378,11 @@ export function useAgencies() {
     if (agency) Object.assign(agency, data);
   }
 
+  function updateCreditLine(id: string, creditLine: ICreditLine) {
+    const agency = agencies.value.find((a) => a.id === id);
+    if (agency) agency.credit_line = creditLine;
+  }
+
   return {
     agencies,
     agencyStats,
@@ -391,5 +396,6 @@ export function useAgencies() {
     updateAgency,
     updateWhitelabel,
     updateUserStatus,
+    updateCreditLine,
   };
 }
