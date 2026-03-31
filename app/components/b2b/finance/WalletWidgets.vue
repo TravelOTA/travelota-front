@@ -110,8 +110,8 @@ const updatedAgo = computed(() => {
           >
             {{
               isCreditBlocked
-                ? t("agency.wallet.credit.status") + ": BLOCKED"
-                : "ACTIVE"
+                ? t("agency.wallet.credit.statusBlocked")
+                : t("agency.wallet.credit.statusActive")
             }}
           </UBadge>
         </div>

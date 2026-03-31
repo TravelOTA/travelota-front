@@ -78,6 +78,8 @@
         "used": "Crédito Utilizado",
         "debt": "Deuda Pendiente",
         "status": "Estado de la línea",
+        "statusActive": "Activo",
+        "statusBlocked": "Bloqueado",
         "manage": "Gestionar Crédito"
       },
       "lowBalance": {

@@ -56,6 +56,8 @@
         "used": "Credit Used",
         "debt": "Outstanding Debt",
         "status": "Line Status",
+        "statusActive": "Active",
+        "statusBlocked": "Blocked",
         "manage": "Manage Credit"
       },
       "lowBalance": {
