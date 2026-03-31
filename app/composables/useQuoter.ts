@@ -1,5 +1,5 @@
-import { computed } from "vue";
-import { useState } from "#imports";
+import { computed } from 'vue';
+import { useState } from '#imports';
 
 export interface QuoteItem {
   id: string;
@@ -14,14 +14,14 @@ export interface QuoteItem {
 }
 
 export const useQuoter = () => {
-  const items = useState<QuoteItem[]>("quoter-items", () => []);
+  const items = useState<QuoteItem[]>('quoter-items', () => []);
   const globalMarkupPercentage = useState<number>(
-    "quoter-global-markup",
+    'quoter-global-markup',
     () => 15,
   );
 
   const addItem = (
-    item: Omit<QuoteItem, "id" | "markupPercentage" | "markupFixed">,
+    item: Omit<QuoteItem, 'id' | 'markupPercentage' | 'markupFixed'>,
   ) => {
     const newItem: QuoteItem = {
       ...item,

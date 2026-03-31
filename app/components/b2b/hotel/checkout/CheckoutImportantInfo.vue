@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const { t } = useI18n();
 
@@ -20,7 +20,9 @@ const isOpen = ref(false);
     >
       <div class="flex items-center gap-2 text-blue-800 dark:text-blue-300">
         <UIcon name="i-heroicons-information-circle" class="w-5 h-5 shrink-0" />
-        <span class="font-bold text-sm">{{ t('hotels.checkout.importantHotelInfo') }}</span>
+        <span class="font-bold text-sm">{{
+          t('hotels.checkout.importantHotelInfo')
+        }}</span>
       </div>
       <UIcon
         :name="isOpen ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'"

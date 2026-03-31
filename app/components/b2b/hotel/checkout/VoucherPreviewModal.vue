@@ -4,18 +4,18 @@ defineProps<{
   bookingId: string;
   hotelName: string;
   reservation: Record<string, unknown>;
-  mode?: "voucher" | "invoice";
+  mode?: 'voucher' | 'invoice';
 }>();
 
-const emit = defineEmits(["update:isOpen"]);
+const emit = defineEmits(['update:isOpen']);
 const { t } = useI18n();
 
 // Mock Agency Data
 const agency = {
-  name: "Viajes El Corte Inglés",
-  logo: "https://ui-avatars.com/api/?name=V+C&color=0284c7&background=e0f2fe",
-  phone: "+34 91 418 88 00",
-  email: "b2b@elcorteingles.es",
+  name: 'Viajes El Corte Inglés',
+  logo: 'https://ui-avatars.com/api/?name=V+C&color=0284c7&background=e0f2fe',
+  phone: '+34 91 418 88 00',
+  email: 'b2b@elcorteingles.es',
 };
 
 function printVoucher() {
@@ -42,7 +42,11 @@ function printVoucher() {
             "
             class="w-5 h-5"
           />
-          {{ mode === "invoice" ? t('hotels.voucher.invoiceTitle') : t('hotels.voucher.reservationTitle') }}
+          {{
+            mode === 'invoice'
+              ? t('hotels.voucher.invoiceTitle')
+              : t('hotels.voucher.reservationTitle')
+          }}
           - {{ bookingId }}
         </h3>
         <div class="flex items-center gap-2 print:hidden">
@@ -93,15 +97,19 @@ function printVoucher() {
             <h1
               class="text-3xl font-black text-primary-600 tracking-tighter uppercase"
             >
-              {{ mode === "invoice" ? t('hotels.voucher.invoiceTitle').toUpperCase() : t('hotels.voucher.reservationTitle').toUpperCase() }}
+              {{
+                mode === 'invoice'
+                  ? t('hotels.voucher.invoiceTitle').toUpperCase()
+                  : t('hotels.voucher.reservationTitle').toUpperCase()
+              }}
             </h1>
             <p class="font-medium text-gray-600 mt-1 mb-2">
               {{ t('hotels.bookingStatus.confirmationCode') }}
               <span class="text-gray-900 font-bold ml-1">{{ bookingId }}</span>
             </p>
-            <UBadge color="success" variant="subtle" size="lg"
-              >{{ t('hotels.voucher.confirmed') }}</UBadge
-            >
+            <UBadge color="success" variant="subtle" size="lg">{{
+              t('hotels.voucher.confirmed')
+            }}</UBadge>
           </div>
         </div>
 
@@ -133,15 +141,15 @@ function printVoucher() {
               </h3>
               <div class="space-y-3">
                 <p class="text-gray-800">
-                  <span class="font-medium text-gray-500 w-24 inline-block"
-                    >{{ t('hotels.voucher.checkIn') }}</span
-                  >
+                  <span class="font-medium text-gray-500 w-24 inline-block">{{
+                    t('hotels.voucher.checkIn')
+                  }}</span>
                   <span class="font-bold">{{ reservation.checkIn }}</span>
                 </p>
                 <p class="text-gray-800">
-                  <span class="font-medium text-gray-500 w-24 inline-block"
-                    >{{ t('hotels.voucher.checkOut') }}</span
-                  >
+                  <span class="font-medium text-gray-500 w-24 inline-block">{{
+                    t('hotels.voucher.checkOut')
+                  }}</span>
                   <span class="font-bold">{{ reservation.checkOut }}</span>
                 </p>
               </div>
@@ -188,10 +196,10 @@ function printVoucher() {
                   >
                     ${{
                       room.price
-                        ? room.price.toLocaleString("en-US", {
+                        ? room.price.toLocaleString('en-US', {
                             minimumFractionDigits: 2,
                           })
-                        : "0.00"
+                        : '0.00'
                     }}
                   </p>
                 </div>
@@ -213,7 +221,7 @@ function printVoucher() {
                           (a: any, b: any) => a + (b.price || 0),
                           0,
                         ) * 0.9
-                      ).toLocaleString("en-US", { minimumFractionDigits: 2 })
+                      ).toLocaleString('en-US', { minimumFractionDigits: 2 })
                     }}</span
                   >
                 </div>
@@ -226,7 +234,7 @@ function printVoucher() {
                           (a: any, b: any) => a + (b.price || 0),
                           0,
                         ) * 0.1
-                      ).toLocaleString("en-US", { minimumFractionDigits: 2 })
+                      ).toLocaleString('en-US', { minimumFractionDigits: 2 })
                     }}</span
                   >
                 </div>
@@ -238,7 +246,7 @@ function printVoucher() {
                     >${{
                       reservation.rooms
                         .reduce((a: any, b: any) => a + (b.price || 0), 0)
-                        .toLocaleString("en-US", { minimumFractionDigits: 2 })
+                        .toLocaleString('en-US', { minimumFractionDigits: 2 })
                     }}</span
                   >
                 </div>
@@ -253,7 +261,12 @@ function printVoucher() {
               {{ t('hotels.voucher.disclaimer') }}
             </p>
             <p class="mt-1">
-              {{ t('hotels.voucher.printedBy', { agent: reservation.agent, date: new Date().toLocaleDateString() }) }}
+              {{
+                t('hotels.voucher.printedBy', {
+                  agent: reservation.agent,
+                  date: new Date().toLocaleDateString(),
+                })
+              }}
             </p>
           </div>
         </div>
@@ -303,7 +316,7 @@ function printVoucher() {
   }
 
   /* Force a white background on the dialog itself */
-  div[role="dialog"] {
+  div[role='dialog'] {
     background: white !important;
   }
 

@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useAuth } from "~/composables/useAuth";
-import { useTemplates } from "~/composables/useTemplates";
-import type { ItineraryTemplate } from "~/composables/useTemplates";
+import { ref, computed } from 'vue';
+import { useAuth } from '~/composables/useAuth';
+import { useTemplates } from '~/composables/useTemplates';
+import type { ItineraryTemplate } from '~/composables/useTemplates';
 
 defineProps<{ isOpen: boolean }>();
-const emit = defineEmits<{ "update:isOpen": [value: boolean] }>();
+const emit = defineEmits<{ 'update:isOpen': [value: boolean] }>();
 
 const { t } = useI18n();
 const toast = useToast();
 const { role } = useAuth();
 const { saveTemplate } = useTemplates();
 
-const name = ref("");
-const description = ref("");
-const destination = ref("");
-const scope = ref<ItineraryTemplate["scope"]>("personal");
+const name = ref('');
+const description = ref('');
+const destination = ref('');
+const scope = ref<ItineraryTemplate['scope']>('personal');
 const loading = ref(false);
 
 // Scope options the current user is allowed to choose
 const scopeOptions = computed(() => {
-  const opts: { label: string; value: ItineraryTemplate["scope"] }[] = [
-    { label: t("templates.saveModal.scopePersonal"), value: "personal" },
+  const opts: { label: string; value: ItineraryTemplate['scope'] }[] = [
+    { label: t('templates.saveModal.scopePersonal'), value: 'personal' },
   ];
-  if (role.value === "AGENCY_ADMIN") {
-    opts.push({ label: t("templates.saveModal.scopeAgency"), value: "agency" });
+  if (role.value === 'AGENCY_ADMIN') {
+    opts.push({ label: t('templates.saveModal.scopeAgency'), value: 'agency' });
   }
-  if (role.value === "SUPPORT" || role.value === "SUPER_ADMIN") {
+  if (role.value === 'SUPPORT' || role.value === 'SUPER_ADMIN') {
     opts.push({
-      label: t("templates.saveModal.scopePlatform"),
-      value: "platform",
+      label: t('templates.saveModal.scopePlatform'),
+      value: 'platform',
     });
   }
   return opts;
@@ -48,15 +48,15 @@ const handleSubmit = async () => {
       scope: scope.value,
     });
     toast.add({
-      title: t("templates.saveModal.successToast"),
-      color: "primary",
-      icon: "i-heroicons-check-circle",
+      title: t('templates.saveModal.successToast'),
+      color: 'primary',
+      icon: 'i-heroicons-check-circle',
     });
-    emit("update:isOpen", false);
-    name.value = "";
-    description.value = "";
-    destination.value = "";
-    scope.value = "personal";
+    emit('update:isOpen', false);
+    name.value = '';
+    description.value = '';
+    destination.value = '';
+    scope.value = 'personal';
   } finally {
     loading.value = false;
   }
@@ -115,7 +115,7 @@ const handleSubmit = async () => {
           variant="ghost"
           @click="emit('update:isOpen', false)"
         >
-          {{ t("itinerary.cancelButton") }}
+          {{ t('itinerary.cancelButton') }}
         </UButton>
         <UButton
           color="primary"
@@ -123,7 +123,7 @@ const handleSubmit = async () => {
           :loading="loading"
           @click="handleSubmit"
         >
-          {{ t("templates.saveModal.saveButton") }}
+          {{ t('templates.saveModal.saveButton') }}
         </UButton>
       </div>
     </template>

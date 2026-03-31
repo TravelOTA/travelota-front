@@ -3,26 +3,32 @@ import {
   writeDepositRequests,
   readWallet,
   writeWallet,
-} from "../../../../utils/db";
+} from '../../../../utils/db';
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
+  const id = getRouterParam(event, 'id');
   const requests = await readDepositRequests();
   const idx = requests.findIndex((r) => r.id === id);
 
   if (idx === -1) {
-    throw createError({ statusCode: 404, message: "Deposit request not found" });
+    throw createError({
+      statusCode: 404,
+      message: 'Deposit request not found',
+    });
   }
-  if (requests[idx].status !== "pending") {
-    throw createError({ statusCode: 409, message: "Request already processed" });
+  if (requests[idx].status !== 'pending') {
+    throw createError({
+      statusCode: 409,
+      message: 'Request already processed',
+    });
   }
 
   // Mark as confirmed
   requests[idx] = {
     ...requests[idx],
-    status: "confirmed",
+    status: 'confirmed',
     processedAt: new Date().toISOString(),
-    processedBy: "admin@travelota.com", // MVP: hardcoded; will come from auth session
+    processedBy: 'admin@travelota.com', // MVP: hardcoded; will come from auth session
   };
   await writeDepositRequests(requests);
 
@@ -32,7 +38,7 @@ export default defineEventHandler(async (event) => {
   const newBalance = wallet.balance + req.amount;
   const newTransaction = {
     id: `TXN-${Date.now()}`,
-    type: "deposit" as const,
+    type: 'deposit' as const,
     amount: req.amount,
     description: `Depósito confirmado — ${req.concept}`,
     date: new Date().toISOString(),

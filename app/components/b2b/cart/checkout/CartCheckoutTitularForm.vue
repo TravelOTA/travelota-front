@@ -24,13 +24,22 @@ defineExpose({ form });
       <!-- Row 1: 3 columns -->
       <div class="grid grid-cols-3 gap-4">
         <UFormField :label="t('cart.checkout.titularName')" required>
-          <UInput v-model="form.nombre" :placeholder="t('cart.checkout.titularName')" />
+          <UInput
+            v-model="form.nombre"
+            :placeholder="t('cart.checkout.titularName')"
+          />
         </UFormField>
         <UFormField :label="t('cart.checkout.titularLastName')" required>
-          <UInput v-model="form.apellido" :placeholder="t('cart.checkout.titularLastName')" />
+          <UInput
+            v-model="form.apellido"
+            :placeholder="t('cart.checkout.titularLastName')"
+          />
         </UFormField>
         <UFormField :label="t('cart.checkout.agencyRef')">
-          <UInput v-model="form.refAgencia" :placeholder="t('cart.checkout.agencyRef')" />
+          <UInput
+            v-model="form.refAgencia"
+            :placeholder="t('cart.checkout.agencyRef')"
+          />
         </UFormField>
       </div>
       <!-- Row 2: email full width -->

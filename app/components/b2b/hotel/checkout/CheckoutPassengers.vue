@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed } from 'vue';
 
 const { t } = useI18n();
 
@@ -13,8 +13,8 @@ const includeMode = ref(1);
 const passengers = ref(
   Array.from({ length: props.totalPax }).map((_, i) => ({
     id: i + 1,
-    name: "",
-    lastname: "",
+    name: '',
+    lastname: '',
   })),
 );
 
@@ -61,10 +61,16 @@ const visiblePassengers = computed(() => {
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <UFormField :label="t('hotels.checkout.name')">
-            <UInput v-model="pax.name" :placeholder="t('hotels.checkout.namePlaceholder')" />
+            <UInput
+              v-model="pax.name"
+              :placeholder="t('hotels.checkout.namePlaceholder')"
+            />
           </UFormField>
           <UFormField :label="t('hotels.checkout.lastName')">
-            <UInput v-model="pax.lastname" :placeholder="t('hotels.checkout.lastNamePlaceholder')" />
+            <UInput
+              v-model="pax.lastname"
+              :placeholder="t('hotels.checkout.lastNamePlaceholder')"
+            />
           </UFormField>
         </div>
       </div>

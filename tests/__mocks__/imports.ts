@@ -2,8 +2,8 @@
  * Mock de #imports de Nuxt para tests unitarios con Vitest.
  * Reemplaza useState con ref normal, y provee stubs de composables de router/cookie.
  */
-import { ref, computed, watch, reactive, onMounted, onUnmounted } from "vue";
-import { vi } from "vitest";
+import { ref, computed, watch, reactive, onMounted, onUnmounted } from 'vue';
+import { vi } from 'vitest';
 
 export { ref, computed, watch, reactive, onMounted, onUnmounted };
 
@@ -24,7 +24,7 @@ export const useRouter = () => ({
 export const useRoute = () => ({
   query: {} as Record<string, string>,
   params: {} as Record<string, string>,
-  path: "/",
+  path: '/',
   name: undefined,
 });
 
@@ -43,7 +43,7 @@ export const navigateTo = vi.fn().mockResolvedValue(undefined);
 
 export const useRuntimeConfig = () => ({
   public: {
-    apiBaseUrl: "http://localhost:3000",
+    apiBaseUrl: 'http://localhost:3000',
   },
 });
 

@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { useItinerary } from "~/composables/useItinerary";
-import { useConfig } from "~/composables/useConfig";
-import ItineraryPreviewModal from "~/components/b2b/quoter/ItineraryPreviewModal.vue";
-import ManualOptionModal from "~/components/b2b/quoter/ManualOptionModal.vue";
-import SaveTemplateModal from "~/components/b2b/quoter/SaveTemplateModal.vue";
-import TemplatePickerModal from "~/components/b2b/quoter/TemplatePickerModal.vue";
-import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
-import type { DateValue } from "@internationalized/date";
-import type { ItineraryBlock } from "~/composables/useItinerary";
+import { ref, watch } from 'vue';
+import { useItinerary } from '~/composables/useItinerary';
+import { useConfig } from '~/composables/useConfig';
+import ItineraryPreviewModal from '~/components/b2b/quoter/ItineraryPreviewModal.vue';
+import ManualOptionModal from '~/components/b2b/quoter/ManualOptionModal.vue';
+import SaveTemplateModal from '~/components/b2b/quoter/SaveTemplateModal.vue';
+import TemplatePickerModal from '~/components/b2b/quoter/TemplatePickerModal.vue';
+import { getLocalTimeZone, today as todayDate } from '@internationalized/date';
+import type { DateValue } from '@internationalized/date';
+import type { ItineraryBlock } from '~/composables/useItinerary';
 
 const formatDate = (date: DateValue): string => {
   const d = date.toDate(getLocalTimeZone());
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
   const yy = String(d.getFullYear()).slice(-2);
   return `${dd}/${mm}/${yy}`;
 };
 
-definePageMeta({ layout: "dashboard" });
+definePageMeta({ layout: 'dashboard' });
 
 const { t } = useI18n();
 
@@ -39,15 +39,15 @@ const { nationalities: nationalityOptions } = useConfig();
 // For adding / editing blocks
 const isAddBlockModalOpen = ref(false);
 const newBlockType = ref<
-  "hotel" | "flight" | "transfer" | "excursion" | "extra"
->("hotel");
-const newBlockTitle = ref("");
+  'hotel' | 'flight' | 'transfer' | 'excursion' | 'extra'
+>('hotel');
+const newBlockTitle = ref('');
 const editingBlock = ref<ItineraryBlock | null>(null);
 const dateRangeChanged = ref(false);
 
 // For manual option entry
 const isManualModalOpen = ref(false);
-const manualModalBlockId = ref("");
+const manualModalBlockId = ref('');
 
 const dateRange = ref({
   start: todayDate(getLocalTimeZone()),
@@ -57,10 +57,16 @@ const dateRange = ref({
 // Only flag date as changed when the modal is already open (not during pre-fill).
 // flush: 'sync' ensures the watcher runs before isAddBlockModalOpen is set to true
 // in openEditModal, so the pre-fill assignment doesn't incorrectly mark the date as changed.
-watch(dateRange, () => { if (isAddBlockModalOpen.value) dateRangeChanged.value = true; }, { deep: true, flush: 'sync' });
+watch(
+  dateRange,
+  () => {
+    if (isAddBlockModalOpen.value) dateRangeChanged.value = true;
+  },
+  { deep: true, flush: 'sync' },
+);
 
 const resetBlockModal = () => {
-  newBlockTitle.value = "";
+  newBlockTitle.value = '';
   editingBlock.value = null;
   dateRangeChanged.value = false;
   dateRange.value = {
@@ -71,7 +77,7 @@ const resetBlockModal = () => {
 
 const openAddModal = () => {
   resetBlockModal();
-  newBlockType.value = "hotel";
+  newBlockType.value = 'hotel';
   isAddBlockModalOpen.value = true;
 };
 
@@ -97,7 +103,7 @@ const handleConfirmBlock = () => {
       ? editingBlock.value.date
       : dateRange.value.start && dateRange.value.end
         ? `${formatDate(dateRange.value.start)} - ${formatDate(dateRange.value.end)}`
-        : "";
+        : '';
 
   if (editingBlock.value) {
     updateBlock(editingBlock.value.id, newBlockTitle.value, dateStr);
@@ -119,9 +125,9 @@ const isSaveTemplateOpen = ref(false);
 const isPickerOpen = ref(false);
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'USD',
   }).format(amount);
 };
 </script>
@@ -170,7 +176,7 @@ const formatCurrency = (amount: number) => {
               }"
             />
             <span class="text-xs font-bold text-gray-500">{{
-              t("itinerary.paxLabel")
+              t('itinerary.paxLabel')
             }}</span>
           </span>
           <span
@@ -187,7 +193,7 @@ const formatCurrency = (amount: number) => {
               class="w-32 bg-transparent border-0 border-b border-dashed border-gray-300 dark:border-gray-700 text-xs px-1 py-0.5 focus:ring-0 cursor-pointer outline-none"
             >
               <option value="" disabled selected>
-                {{ t("itinerary.originPlaceholder") }}
+                {{ t('itinerary.originPlaceholder') }}
               </option>
               <option
                 v-for="country in nationalityOptions"
@@ -239,17 +245,17 @@ const formatCurrency = (amount: number) => {
             class="w-12 h-12 mx-auto text-gray-400 mb-4"
           />
           <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">
-            {{ t("itinerary.emptyStateTitle") }}
+            {{ t('itinerary.emptyStateTitle') }}
           </h3>
           <p class="text-gray-500 mb-6">
-            {{ t("itinerary.emptyStateDescription") }}
+            {{ t('itinerary.emptyStateDescription') }}
           </p>
           <UButton
             icon="i-heroicons-plus"
             color="primary"
             @click="openAddModal()"
           >
-            {{ t("itinerary.addBlockButton") }}
+            {{ t('itinerary.addBlockButton') }}
           </UButton>
           <UButton
             icon="i-heroicons-document-duplicate"
@@ -257,7 +263,7 @@ const formatCurrency = (amount: number) => {
             variant="outline"
             @click="isPickerOpen = true"
           >
-            {{ t("templates.builder.useTemplateButton") }}
+            {{ t('templates.builder.useTemplateButton') }}
           </UButton>
         </div>
 
@@ -308,7 +314,7 @@ const formatCurrency = (amount: number) => {
                     {{ block.title }}
                   </h4>
                   <p class="text-xs text-gray-500 font-medium font-mono mt-0.5">
-                    {{ block.date || t("itinerary.blockDatesOptional") }}
+                    {{ block.date || t('itinerary.blockDatesOptional') }}
                   </p>
                 </div>
                 <div class="flex items-center gap-2">
@@ -317,10 +323,10 @@ const formatCurrency = (amount: number) => {
                     color="primary"
                     variant="subtle"
                     >{{ block.options.length }} / 5
-                    {{ t("itinerary.optionsBadge") }}</UBadge
+                    {{ t('itinerary.optionsBadge') }}</UBadge
                   >
                   <UBadge v-else color="warning" variant="subtle">{{
-                    t("itinerary.emptyBlock")
+                    t('itinerary.emptyBlock')
                   }}</UBadge>
                   <UButton
                     icon="i-heroicons-pencil"
@@ -348,7 +354,7 @@ const formatCurrency = (amount: number) => {
                   class="border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6 text-center"
                 >
                   <p class="text-sm text-gray-500 mb-3">
-                    {{ t("itinerary.noOptionsYet") }}
+                    {{ t('itinerary.noOptionsYet') }}
                   </p>
                   <div class="flex items-center justify-center gap-2">
                     <UButton
@@ -358,7 +364,7 @@ const formatCurrency = (amount: number) => {
                       variant="solid"
                       icon="i-heroicons-magnifying-glass"
                       to="/dashboard/hotels/results"
-                      >{{ t("itinerary.searchHotelButton") }}</UButton
+                      >{{ t('itinerary.searchHotelButton') }}</UButton
                     >
                     <UButton
                       size="xs"
@@ -366,7 +372,7 @@ const formatCurrency = (amount: number) => {
                       variant="outline"
                       icon="i-heroicons-pencil-square"
                       @click="openManualModal(block.id)"
-                      >{{ t("itinerary.addManualOptionButton") }}</UButton
+                      >{{ t('itinerary.addManualOptionButton') }}</UButton
                     >
                   </div>
                 </div>
@@ -413,7 +419,7 @@ const formatCurrency = (amount: number) => {
                           color="neutral"
                           variant="subtle"
                           size="xs"
-                          >{{ t("itinerary.manualBadge") }}</UBadge
+                          >{{ t('itinerary.manualBadge') }}</UBadge
                         >
                       </div>
                       <p class="text-xs text-gray-500 truncate">
@@ -424,7 +430,7 @@ const formatCurrency = (amount: number) => {
                       <p
                         class="text-xs text-gray-400 uppercase tracking-widest mb-0.5"
                       >
-                        {{ t("itinerary.pvpClient") }}
+                        {{ t('itinerary.pvpClient') }}
                       </p>
                       <p
                         class="font-bold text-primary-600 dark:text-primary-400 font-mono"
@@ -457,7 +463,7 @@ const formatCurrency = (amount: number) => {
                     variant="ghost"
                     icon="i-heroicons-magnifying-glass"
                     to="/dashboard/hotels/results"
-                    >{{ t("itinerary.searchHotelButton") }}</UButton
+                    >{{ t('itinerary.searchHotelButton') }}</UButton
                   >
                   <UButton
                     size="xs"
@@ -465,7 +471,7 @@ const formatCurrency = (amount: number) => {
                     variant="ghost"
                     icon="i-heroicons-pencil-square"
                     @click="openManualModal(block.id)"
-                    >{{ t("itinerary.addManualOptionButton") }}</UButton
+                    >{{ t('itinerary.addManualOptionButton') }}</UButton
                   >
                 </div>
               </div>
@@ -480,7 +486,7 @@ const formatCurrency = (amount: number) => {
             variant="outline"
             @click="openAddModal()"
           >
-            {{ t("itinerary.addNextBlock") }}
+            {{ t('itinerary.addNextBlock') }}
           </UButton>
         </div>
       </div>
@@ -498,7 +504,7 @@ const formatCurrency = (amount: number) => {
                 name="i-heroicons-cog-8-tooth"
                 class="w-5 h-5 text-gray-500"
               />
-              {{ t("itinerary.pricingRulesHeader") }}
+              {{ t('itinerary.pricingRulesHeader') }}
             </h3>
           </template>
 
@@ -509,7 +515,7 @@ const formatCurrency = (amount: number) => {
               <label
                 class="text-xs font-bold text-primary-700 dark:text-primary-400 uppercase tracking-wider block mb-3"
               >
-                {{ t("itinerary.globalMarkupLabel") }}
+                {{ t('itinerary.globalMarkupLabel') }}
               </label>
               <div class="flex items-center gap-3">
                 <USlider
@@ -525,7 +531,7 @@ const formatCurrency = (amount: number) => {
                 </span>
               </div>
               <p class="text-[10px] text-primary-600/70 mt-3 leading-snug">
-                {{ t("itinerary.globalMarkupHint") }}
+                {{ t('itinerary.globalMarkupHint') }}
               </p>
             </div>
 
@@ -535,7 +541,7 @@ const formatCurrency = (amount: number) => {
               <p
                 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2"
               >
-                {{ t("itinerary.minimumPriceLabel") }}
+                {{ t('itinerary.minimumPriceLabel') }}
               </p>
               <p
                 class="text-3xl font-black text-gray-900 dark:text-white font-mono tracking-tighter"
@@ -543,7 +549,7 @@ const formatCurrency = (amount: number) => {
                 {{ formatCurrency(minItineraryPrice) }}
               </p>
               <p class="text-xs text-gray-500 mt-1 leading-snug">
-                {{ t("itinerary.minimumPriceHint") }}
+                {{ t('itinerary.minimumPriceHint') }}
               </p>
             </div>
           </div>
@@ -554,7 +560,11 @@ const formatCurrency = (amount: number) => {
     <!-- Modal Add Block -->
     <UModal
       v-model:open="isAddBlockModalOpen"
-      :title="editingBlock ? t('itinerary.editBlockModalTitle') : t('itinerary.addBlockModalTitle')"
+      :title="
+        editingBlock
+          ? t('itinerary.editBlockModalTitle')
+          : t('itinerary.addBlockModalTitle')
+      "
     >
       <template #body>
         <div class="space-y-4">
@@ -588,7 +598,11 @@ const formatCurrency = (amount: number) => {
               v-if="editingBlock && !dateRangeChanged"
               class="mb-2 text-xs text-gray-500"
             >
-              {{ t("itinerary.blockCurrentDate", { date: editingBlock.date || "—" }) }}
+              {{
+                t('itinerary.blockCurrentDate', {
+                  date: editingBlock.date || '—',
+                })
+              }}
             </p>
             <UPopover class="w-full">
               <UButton
@@ -617,7 +631,7 @@ const formatCurrency = (amount: number) => {
                   </template>
                 </template>
                 <template v-else>
-                  {{ t("itinerary.blockDatesOptional") }}
+                  {{ t('itinerary.blockDatesOptional') }}
                 </template>
               </UButton>
 
@@ -644,14 +658,21 @@ const formatCurrency = (amount: number) => {
           <UButton
             color="neutral"
             variant="ghost"
-            @click="isAddBlockModalOpen = false; resetBlockModal()"
-            >{{ t("itinerary.cancelButton") }}</UButton
+            @click="
+              isAddBlockModalOpen = false;
+              resetBlockModal();
+            "
+            >{{ t('itinerary.cancelButton') }}</UButton
           >
           <UButton
             color="primary"
             :disabled="!newBlockTitle"
             @click="handleConfirmBlock"
-            >{{ editingBlock ? t("itinerary.editBlockConfirm") : t("itinerary.addBlockConfirm") }}</UButton
+            >{{
+              editingBlock
+                ? t('itinerary.editBlockConfirm')
+                : t('itinerary.addBlockConfirm')
+            }}</UButton
           >
         </div>
       </template>

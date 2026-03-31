@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { useAuth } from "~/composables/useAuth";
-import { useCart } from "~/composables/useCart";
+import { useAuth } from '~/composables/useAuth';
+import { useCart } from '~/composables/useCart';
 import { useNetPrice } from '~/composables/useNetPrice';
-
 
 const appConfig = useAppConfig();
 
 const hexThemeStyles = computed(() => {
   const color = appConfig.ui?.colors?.primary;
-  if (color && color.startsWith("#")) {
+  if (color && color.startsWith('#')) {
     return `
       :root, .dark, html.dark {
         --ui-color-primary-50: color-mix(in srgb, ${color}, white 90%);
@@ -25,7 +24,7 @@ const hexThemeStyles = computed(() => {
       }
     `;
   }
-  return "";
+  return '';
 });
 
 useHead(() => ({
@@ -38,7 +37,9 @@ const { role: userRole, logout, currentUser } = useAuth();
 const userDisplayName = computed(() => {
   if (!currentUser.value) return null;
   const { first_name, last_name } = currentUser.value;
-  return [first_name, last_name].filter(Boolean).join(" ") || currentUser.value.email;
+  return (
+    [first_name, last_name].filter(Boolean).join(' ') || currentUser.value.email
+  );
 });
 
 const userEmail = computed(() => currentUser.value?.email ?? null);
@@ -52,58 +53,58 @@ function openCart() {
 }
 
 const isInternalRole = computed(() =>
-  ["SUPER_ADMIN", "SUPPORT"].includes(userRole.value),
+  ['SUPER_ADMIN', 'SUPPORT'].includes(userRole.value),
 );
 
 const userLinks = computed(() => {
   const baseLinks = [
     {
-      label: t("nav.hotels"),
-      icon: "i-heroicons-building-office-2",
-      to: "/dashboard",
+      label: t('nav.hotels'),
+      icon: 'i-heroicons-building-office-2',
+      to: '/dashboard',
     },
     {
-      label: t("nav.quoterB2B"),
-      icon: "i-heroicons-calculator",
-      to: "/dashboard/quoter/builder",
+      label: t('nav.quoterB2B'),
+      icon: 'i-heroicons-calculator',
+      to: '/dashboard/quoter/builder',
     },
     {
-      label: t("nav.transfers"),
-      icon: "i-heroicons-truck",
-      to: "#",
-      badge: t("nav.comingSoon"),
+      label: t('nav.transfers'),
+      icon: 'i-heroicons-truck',
+      to: '#',
+      badge: t('nav.comingSoon'),
     },
   ];
 
   if (!isInternalRole.value) {
     baseLinks.push({
-      label: t("nav.myBookings"),
-      icon: "i-heroicons-briefcase",
-      to: "/dashboard/bookings",
+      label: t('nav.myBookings'),
+      icon: 'i-heroicons-briefcase',
+      to: '/dashboard/bookings',
     });
   }
 
-  if (userRole.value === "AGENCY_ADMIN") {
+  if (userRole.value === 'AGENCY_ADMIN') {
     baseLinks.push({
-      label: t("nav.myAgency"),
-      icon: "i-heroicons-building-storefront",
-      to: "/dashboard/agency",
+      label: t('nav.myAgency'),
+      icon: 'i-heroicons-building-storefront',
+      to: '/dashboard/agency',
     });
   }
 
-  if (userRole.value === "SUPER_ADMIN") {
+  if (userRole.value === 'SUPER_ADMIN') {
     baseLinks.push({
-      label: t("nav.administration"),
-      icon: "i-heroicons-shield-check",
-      to: "/dashboard/admin",
+      label: t('nav.administration'),
+      icon: 'i-heroicons-shield-check',
+      to: '/dashboard/admin',
     });
   }
 
-  if (userRole.value === "SUPPORT") {
+  if (userRole.value === 'SUPPORT') {
     baseLinks.push({
-      label: t("nav.administration"),
-      icon: "i-heroicons-shield-check",
-      to: "/dashboard/admin/bookings",
+      label: t('nav.administration'),
+      icon: 'i-heroicons-shield-check',
+      to: '/dashboard/admin/bookings',
     });
   }
 
@@ -111,8 +112,6 @@ const userLinks = computed(() => {
 });
 
 const { netPriceVisible, toggle: toggleNetPrice } = useNetPrice();
-
-
 </script>
 
 <template>
@@ -138,9 +137,9 @@ const { netPriceVisible, toggle: toggleNetPrice } = useNetPrice();
             >
           </template>
           <template v-else>
-            <span class="text-xl font-black tracking-tight text-primary"
-              >{{ t('nav.adminBrand') }}</span
-            >
+            <span class="text-xl font-black tracking-tight text-primary">{{
+              t('nav.adminBrand')
+            }}</span>
           </template>
         </NuxtLink>
 
@@ -174,16 +173,21 @@ const { netPriceVisible, toggle: toggleNetPrice } = useNetPrice();
         <AppLocaleSwitcher />
 
         <UColorModeButton />
-        
+
         <!-- Net price toggle -->
         <UButton
           :color="netPriceVisible ? 'primary' : 'neutral'"
           variant="ghost"
-          :icon="netPriceVisible ? 'i-heroicons-lock-open' : 'i-heroicons-lock-closed'"
-          :aria-label="netPriceVisible ? 'Ocultar precio neto' : 'Mostrar precio neto'"
+          :icon="
+            netPriceVisible
+              ? 'i-heroicons-lock-open'
+              : 'i-heroicons-lock-closed'
+          "
+          :aria-label="
+            netPriceVisible ? 'Ocultar precio neto' : 'Mostrar precio neto'
+          "
           @click="toggleNetPrice"
         />
-
 
         <div
           class="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2 hidden sm:block"

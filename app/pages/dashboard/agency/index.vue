@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import WalletWidgets from "~/components/b2b/finance/WalletWidgets.vue";
-import AgencyTransactions from "~/components/b2b/finance/AgencyTransactions.vue";
-import RechargeRequestModal from "~/components/b2b/finance/RechargeRequestModal.vue";
-import ExportTransactionsModal from "~/components/b2b/finance/ExportTransactionsModal.vue";
+import WalletWidgets from '~/components/b2b/finance/WalletWidgets.vue';
+import AgencyTransactions from '~/components/b2b/finance/AgencyTransactions.vue';
+import RechargeRequestModal from '~/components/b2b/finance/RechargeRequestModal.vue';
+import ExportTransactionsModal from '~/components/b2b/finance/ExportTransactionsModal.vue';
 
-definePageMeta({ layout: "dashboard" });
+definePageMeta({ layout: 'dashboard' });
 const { t } = useI18n();
 const appConfig = useAppConfig();
 const { agency, updateAgency } = useAgency();
@@ -18,23 +18,23 @@ const isExportModalOpen = ref(false);
 const formAgency = ref({ ...agency.value });
 
 const colorMap: Record<string, string> = {
-  red: "#ef4444",
-  orange: "#f97316",
-  amber: "#f59e0b",
-  yellow: "#eab308",
-  lime: "#84cc16",
-  green: "#22c55e",
-  emerald: "#10b981",
-  teal: "#14b8a6",
-  cyan: "#06b6d4",
-  sky: "#0ea5e9",
-  blue: "#3b82f6",
-  indigo: "#6366f1",
-  violet: "#8b5cf6",
-  purple: "#a855f7",
-  fuchsia: "#d946ef",
-  pink: "#ec4899",
-  rose: "#f43f5e",
+  red: '#ef4444',
+  orange: '#f97316',
+  amber: '#f59e0b',
+  yellow: '#eab308',
+  lime: '#84cc16',
+  green: '#22c55e',
+  emerald: '#10b981',
+  teal: '#14b8a6',
+  cyan: '#06b6d4',
+  sky: '#0ea5e9',
+  blue: '#3b82f6',
+  indigo: '#6366f1',
+  violet: '#8b5cf6',
+  purple: '#a855f7',
+  fuchsia: '#d946ef',
+  pink: '#ec4899',
+  rose: '#f43f5e',
 };
 const themeColors = Object.keys(colorMap);
 
@@ -141,7 +141,9 @@ function saveAgency() {
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
               {{ t('agency.dashboard.quickStats.benefitsAndMarkup') }}
             </p>
-            <p class="text-2xl font-bold">{{ t('agency.dashboard.quickStats.active') }}</p>
+            <p class="text-2xl font-bold">
+              {{ t('agency.dashboard.quickStats.active') }}
+            </p>
           </div>
         </div>
         <template #footer>
@@ -196,7 +198,8 @@ function saveAgency() {
             {{ agency.status }}
           </UBadge>
           <p class="text-xs text-gray-500 mt-2 text-center">
-            {{ t('agency.dashboard.profile.registered') }} {{ agency.registeredAt }}
+            {{ t('agency.dashboard.profile.registered') }}
+            {{ agency.registeredAt }}
           </p>
         </div>
 
@@ -263,7 +266,9 @@ function saveAgency() {
 
     <!-- Wallet -->
     <div class="mt-8">
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+      <h2
+        class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2"
+      >
         <UIcon name="i-heroicons-wallet" class="w-6 h-6 text-indigo-500" />
         {{ t('agency.wallet.title') }}
       </h2>
@@ -281,7 +286,10 @@ function saveAgency() {
     />
 
     <!-- Modal Formulario de Branding -->
-    <UModal v-model:open="isEditModalOpen" :title="t('agency.dashboard.whiteLabelModal.title')">
+    <UModal
+      v-model:open="isEditModalOpen"
+      :title="t('agency.dashboard.whiteLabelModal.title')"
+    >
       <template #body>
         <div class="space-y-4">
           <UFormField
@@ -309,7 +317,9 @@ function saveAgency() {
           <UFormField
             :label="t('agency.dashboard.whiteLabelModal.primaryColor')"
             name="primaryColor"
-            :description="t('agency.dashboard.whiteLabelModal.primaryColorDescription')"
+            :description="
+              t('agency.dashboard.whiteLabelModal.primaryColorDescription')
+            "
           >
             <div class="flex flex-col gap-4 mt-2">
               <div class="flex flex-wrap gap-2">
@@ -348,7 +358,10 @@ function saveAgency() {
             </div>
           </UFormField>
 
-          <UFormField :label="t('agency.dashboard.whiteLabelModal.publicEmail')" name="email">
+          <UFormField
+            :label="t('agency.dashboard.whiteLabelModal.publicEmail')"
+            name="email"
+          >
             <UInput
               v-model="formAgency.email"
               type="email"
@@ -356,7 +369,10 @@ function saveAgency() {
             />
           </UFormField>
 
-          <UFormField :label="t('agency.dashboard.whiteLabelModal.publicPhone')" name="phone">
+          <UFormField
+            :label="t('agency.dashboard.whiteLabelModal.publicPhone')"
+            name="phone"
+          >
             <UInput v-model="formAgency.phone" icon="i-heroicons-phone" />
           </UFormField>
         </div>

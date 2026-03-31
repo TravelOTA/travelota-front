@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch } from 'vue';
+import type { SearchRoomDistribution } from '~/composables/useItinerary';
 
 const { t } = useI18n();
-import type { SearchRoomDistribution } from "~/composables/useItinerary";
 
 const rooms = defineModel<SearchRoomDistribution[]>({
   default: () => [{ adults: 2, children: [] }],
@@ -28,9 +28,9 @@ const summaryLabel = computed(() => {
   );
 
   let label = `${totalRooms} Hab`;
-  label += ` · ${totalAdults} Adulto${totalAdults > 1 ? "s" : ""}`;
+  label += ` · ${totalAdults} Adulto${totalAdults > 1 ? 's' : ''}`;
   if (totalChildren > 0) {
-    label += ` · ${totalChildren} Niño${totalChildren > 1 ? "s" : ""}`;
+    label += ` · ${totalChildren} Niño${totalChildren > 1 ? 's' : ''}`;
   }
   return label;
 });

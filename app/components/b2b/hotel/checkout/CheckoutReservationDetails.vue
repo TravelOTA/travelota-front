@@ -69,14 +69,14 @@ defineProps<{
         </div>
 
         <div class="w-full sm:w-auto text-right mt-2 sm:mt-0">
-          <span class="block text-xs text-gray-500 dark:text-gray-400 mb-0.5"
-            >{{ t('hotels.checkout.pricePerRoom') }}</span
-          >
+          <span class="block text-xs text-gray-500 dark:text-gray-400 mb-0.5">{{
+            t('hotels.checkout.pricePerRoom')
+          }}</span>
           <span
             class="font-bold text-lg text-primary-600 dark:text-primary-400"
           >
             ${{
-              room.price.toLocaleString("en-US", {
+              room.price.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })

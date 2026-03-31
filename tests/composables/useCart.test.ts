@@ -1,8 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { ref } from 'vue';
 
+import { useCart } from '~/composables/useCart';
+import type { CartItemHotel } from '~/composables/useCart';
+
 vi.mock('#imports', () => ({
-  useState: (_key: string, init?: () => unknown) => ref(init ? init() : undefined),
+  useState: (_key: string, init?: () => unknown) =>
+    ref(init ? init() : undefined),
   useI18n: () => ({ t: (key: string) => key }),
 }));
 
@@ -20,11 +24,9 @@ vi.mock('~/composables/useApi', () => ({
   apiFetch: vi.fn(),
 }));
 
-import { useCart } from '~/composables/useCart';
-import type { CartItemHotel } from '~/composables/useCart';
-import { useQuoter } from '~/composables/useQuoter';
-
-const makeHotelData = (overrides: Partial<Omit<CartItemHotel, 'id' | 'type' | 'addedAt'>> = {}): Omit<CartItemHotel, 'id' | 'type' | 'addedAt'> => ({
+const makeHotelData = (
+  overrides: Partial<Omit<CartItemHotel, 'id' | 'type' | 'addedAt'>> = {},
+): Omit<CartItemHotel, 'id' | 'type' | 'addedAt'> => ({
   hotel: {
     id: 1,
     name: 'Hotel Test',
@@ -75,7 +77,10 @@ describe('useCart', () => {
     it('rejects when itemCount reaches 10', () => {
       const { addItem } = useCart();
       for (let i = 0; i < 10; i++) {
-        addItem('hotel', makeHotelData({ room: { ...makeHotelData().room, price: i * 100 } }));
+        addItem(
+          'hotel',
+          makeHotelData({ room: { ...makeHotelData().room, price: i * 100 } }),
+        );
       }
       expect(() => addItem('hotel', makeHotelData())).toThrow();
     });
@@ -112,14 +117,23 @@ describe('useCart', () => {
     it('itemCount reflects array length reactively', () => {
       const { itemCount, addItem } = useCart();
       expect(itemCount.value).toBe(0);
-      addItem('hotel', makeHotelData({ room: { ...makeHotelData().room, price: 500 } }));
+      addItem(
+        'hotel',
+        makeHotelData({ room: { ...makeHotelData().room, price: 500 } }),
+      );
       expect(itemCount.value).toBe(1);
     });
 
     it('total sums room prices', () => {
       const { total, addItem } = useCart();
-      addItem('hotel', makeHotelData({ room: { ...makeHotelData().room, price: 500 } }));
-      addItem('hotel', makeHotelData({ room: { ...makeHotelData().room, price: 300 } }));
+      addItem(
+        'hotel',
+        makeHotelData({ room: { ...makeHotelData().room, price: 500 } }),
+      );
+      addItem(
+        'hotel',
+        makeHotelData({ room: { ...makeHotelData().room, price: 300 } }),
+      );
       expect(total.value).toBe(800);
     });
   });
@@ -147,7 +161,7 @@ describe('useCart', () => {
     it('throws if cart is empty', async () => {
       const { confirmAll } = useCart();
       await expect(
-        confirmAll({ nombre: 'Juan', apellido: 'García' }, 'WALLET', {})
+        confirmAll({ nombre: 'Juan', apellido: 'García' }, 'WALLET', {}),
       ).rejects.toThrow();
     });
 
@@ -155,8 +169,12 @@ describe('useCart', () => {
       const { apiFetch } = await import('~/composables/useApi');
       vi.mocked(apiFetch)
         // select is SKIPPED when preCheckResults has the item — mock only pre-book + confirm:
-        .mockResolvedValueOnce({ id: 1, status: 'pre_booked' })                                          // pre-book
-        .mockResolvedValueOnce({ id: 1, status: 'confirmed', booking: { id: 10, pnr: 'ABC12345', order_ref: 'ORD-2026-0001' } }); // confirm
+        .mockResolvedValueOnce({ id: 1, status: 'pre_booked' }) // pre-book
+        .mockResolvedValueOnce({
+          id: 1,
+          status: 'confirmed',
+          booking: { id: 10, pnr: 'ABC12345', order_ref: 'ORD-2026-0001' },
+        }); // confirm
 
       const { items, addItem, confirmAll } = useCart();
       addItem('hotel', makeHotelData());
@@ -164,8 +182,8 @@ describe('useCart', () => {
       const results = await confirmAll(
         { nombre: 'Juan', apellido: 'García' },
         'WALLET',
-        {},  // specialRequests
-        { [itemId]: { bookingFlowId: 1, currentPrice: 500 } },  // preCheckResults — skips select
+        {}, // specialRequests
+        { [itemId]: { bookingFlowId: 1, currentPrice: 500 } }, // preCheckResults — skips select
       );
 
       expect(results).toHaveLength(1);
@@ -176,10 +194,14 @@ describe('useCart', () => {
       const { apiFetch } = await import('~/composables/useApi');
       vi.mocked(apiFetch)
         // Item 1 pre-check provided → goes straight to pre-book (fails)
-        .mockRejectedValueOnce(new Error('Unavailable'))                                              // pre-book item 1 fails
+        .mockRejectedValueOnce(new Error('Unavailable')) // pre-book item 1 fails
         // Item 2 pre-check provided → goes straight to pre-book (succeeds)
-        .mockResolvedValueOnce({ id: 2, status: 'pre_booked' })                                      // pre-book item 2
-        .mockResolvedValueOnce({ id: 2, status: 'confirmed', booking: { id: 20, pnr: 'XYZ98765', order_ref: 'ORD-2026-0001' } });
+        .mockResolvedValueOnce({ id: 2, status: 'pre_booked' }) // pre-book item 2
+        .mockResolvedValueOnce({
+          id: 2,
+          status: 'confirmed',
+          booking: { id: 20, pnr: 'XYZ98765', order_ref: 'ORD-2026-0001' },
+        });
 
       const { items, addItem, confirmAll } = useCart();
       addItem('hotel', makeHotelData());
@@ -189,7 +211,10 @@ describe('useCart', () => {
         { nombre: 'Juan', apellido: 'García' },
         'WALLET',
         {},
-        { [ids[0]!]: { bookingFlowId: 1, currentPrice: 500 }, [ids[1]!]: { bookingFlowId: 2, currentPrice: 500 } },
+        {
+          [ids[0]!]: { bookingFlowId: 1, currentPrice: 500 },
+          [ids[1]!]: { bookingFlowId: 2, currentPrice: 500 },
+        },
       );
 
       expect(results).toHaveLength(2);
@@ -201,7 +226,11 @@ describe('useCart', () => {
       const { apiFetch } = await import('~/composables/useApi');
       vi.mocked(apiFetch)
         .mockResolvedValueOnce({ id: 1, status: 'pre_booked' })
-        .mockResolvedValueOnce({ id: 1, status: 'confirmed', booking: { id: 10, pnr: 'ABC', order_ref: 'ORD-2026-0001' } });
+        .mockResolvedValueOnce({
+          id: 1,
+          status: 'confirmed',
+          booking: { id: 10, pnr: 'ABC', order_ref: 'ORD-2026-0001' },
+        });
 
       const { items, addItem, confirmAll } = useCart();
       addItem('hotel', makeHotelData());
@@ -215,7 +244,9 @@ describe('useCart', () => {
       );
 
       const preBookCall = vi.mocked(apiFetch).mock.calls[0]!;
-      expect(preBookCall[1]?.body).toMatchObject({ special_requests: 'Planta alta por favor' });
+      expect(preBookCall[1]?.body).toMatchObject({
+        special_requests: 'Planta alta por favor',
+      });
     });
   });
 });

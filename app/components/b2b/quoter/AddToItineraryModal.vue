@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
-import { useItinerary } from "~/composables/useItinerary";
-import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
-import type { DateValue } from "@internationalized/date";
+import { ref, computed, watch } from 'vue';
+import { useItinerary } from '~/composables/useItinerary';
+import { getLocalTimeZone, today as todayDate } from '@internationalized/date';
+import type { DateValue } from '@internationalized/date';
 
 const formatDate = (date: DateValue): string => {
   const d = date.toDate(getLocalTimeZone());
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
   const yy = String(d.getFullYear()).slice(-2);
   return `${dd}/${mm}/${yy}`;
 };
@@ -23,11 +23,13 @@ const {
 const { t } = useI18n();
 
 // Local state for modal flow
-const selectedBlockId = ref("");
+const selectedBlockId = ref('');
 const showNewBlockForm = ref(false);
 
-const newBlockType = ref<"hotel" | "flight" | "transfer" | "excursion" | "extra">("hotel");
-const newBlockTitle = ref("");
+const newBlockType = ref<
+  'hotel' | 'flight' | 'transfer' | 'excursion' | 'extra'
+>('hotel');
+const newBlockTitle = ref('');
 
 const dateRange = ref({
   start: todayDate(getLocalTimeZone()),
@@ -43,14 +45,14 @@ const availableBlocks = computed(() => {
 // Resets internal state when opening modal
 watch(isAddOptionModalOpen, (isOpen) => {
   if (isOpen) {
-    selectedBlockId.value = "";
+    selectedBlockId.value = '';
     showNewBlockForm.value = itinerary.value.blocks.length === 0;
-    newBlockTitle.value = "";
+    newBlockTitle.value = '';
     dateRange.value = {
       start: todayDate(getLocalTimeZone()),
       end: todayDate(getLocalTimeZone()).add({ days: 2 }),
     };
-    newBlockType.value = "hotel";
+    newBlockType.value = 'hotel';
   }
 });
 
@@ -63,9 +65,9 @@ const handleConfirm = () => {
     if (showNewBlockForm.value) {
       if (!newBlockTitle.value) {
         toast.add({
-          title: "Error",
-          description: t("itinerary.errorBlockTitleRequired"),
-          color: "error",
+          title: 'Error',
+          description: t('itinerary.errorBlockTitleRequired'),
+          color: 'error',
         });
         return;
       }
@@ -73,7 +75,7 @@ const handleConfirm = () => {
       const dateStr =
         dateRange.value.start && dateRange.value.end
           ? `${formatDate(dateRange.value.start)} - ${formatDate(dateRange.value.end)}`
-          : "";
+          : '';
 
       targetBlockId = addBlock(
         newBlockType.value,
@@ -84,9 +86,9 @@ const handleConfirm = () => {
 
     if (!targetBlockId) {
       toast.add({
-        title: "Error",
-        description: t("itinerary.errorSelectValidBlock"),
-        color: "error",
+        title: 'Error',
+        description: t('itinerary.errorSelectValidBlock'),
+        color: 'error',
       });
       return;
     }
@@ -94,21 +96,23 @@ const handleConfirm = () => {
     addOptionToBlock(targetBlockId, pendingOption.value);
 
     toast.add({
-      title: t("itinerary.toastAddedTitle"),
-      description: t("itinerary.successAddedToItinerary"),
-      icon: "i-heroicons-check-circle",
-      color: "primary",
+      title: t('itinerary.toastAddedTitle'),
+      description: t('itinerary.successAddedToItinerary'),
+      icon: 'i-heroicons-check-circle',
+      color: 'primary',
     });
 
     isAddOptionModalOpen.value = false;
   } catch (err: unknown) {
     const errorMessage =
-      err instanceof Error ? err.message : t("itinerary.errorAddingToItinerary");
+      err instanceof Error
+        ? err.message
+        : t('itinerary.errorAddingToItinerary');
     toast.add({
-      title: t("itinerary.errorAddTitle"),
+      title: t('itinerary.errorAddTitle'),
       description: errorMessage,
-      icon: "i-heroicons-exclamation-triangle",
-      color: "error",
+      icon: 'i-heroicons-exclamation-triangle',
+      color: 'error',
     });
   }
 };
@@ -122,7 +126,7 @@ const handleConfirm = () => {
     <template #body>
       <div v-if="pendingOption" class="mb-4">
         <p class="text-sm text-gray-500">
-          {{ t("itinerary.addOptionIntro") }}:
+          {{ t('itinerary.addOptionIntro') }}:
           <strong class="text-gray-900 dark:text-white">{{
             pendingOption.name
           }}</strong>
@@ -144,7 +148,7 @@ const handleConfirm = () => {
             "
             @click="showNewBlockForm = false"
           >
-            {{ t("itinerary.existingBlockTab") }}
+            {{ t('itinerary.existingBlockTab') }}
           </button>
           <button
             class="flex-1 py-1.5 text-sm font-medium rounded-md transition-colors"
@@ -155,7 +159,7 @@ const handleConfirm = () => {
             "
             @click="showNewBlockForm = true"
           >
-            {{ t("itinerary.newBlockTab") }}
+            {{ t('itinerary.newBlockTab') }}
           </button>
         </div>
 
@@ -166,7 +170,9 @@ const handleConfirm = () => {
               v-model="selectedBlockId"
               class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-select rounded-md font-medium text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
             >
-              <option value="" disabled selected>{{ t("itinerary.selectBlockPlaceholder") }}</option>
+              <option value="" disabled selected>
+                {{ t('itinerary.selectBlockPlaceholder') }}
+              </option>
               <option
                 v-for="block in availableBlocks"
                 :key="block.id"
@@ -179,7 +185,7 @@ const handleConfirm = () => {
               v-if="availableBlocks.length === 0"
               class="text-xs text-red-500 mt-2"
             >
-              {{ t("itinerary.blockMaxOptionsWarning") }}
+              {{ t('itinerary.blockMaxOptionsWarning') }}
             </p>
           </UFormField>
         </div>
@@ -193,10 +199,19 @@ const handleConfirm = () => {
             <USelect
               v-model="newBlockType"
               :items="[
-                { label: t('itinerary.serviceTypeAccommodation'), value: 'hotel' },
+                {
+                  label: t('itinerary.serviceTypeAccommodation'),
+                  value: 'hotel',
+                },
                 { label: t('itinerary.serviceTypeFlight'), value: 'flight' },
-                { label: t('itinerary.serviceTypeTransfer'), value: 'transfer' },
-                { label: t('itinerary.serviceTypeExcursion'), value: 'excursion' },
+                {
+                  label: t('itinerary.serviceTypeTransfer'),
+                  value: 'transfer',
+                },
+                {
+                  label: t('itinerary.serviceTypeExcursion'),
+                  value: 'excursion',
+                },
                 { label: t('itinerary.serviceTypeExtra'), value: 'extra' },
               ]"
             />
@@ -224,7 +239,9 @@ const handleConfirm = () => {
                     {{ formatDate(dateRange.start) }}
                   </template>
                 </template>
-                <template v-else> {{ t("itinerary.stayDatesPlaceholder") }} </template>
+                <template v-else>
+                  {{ t('itinerary.stayDatesPlaceholder') }}
+                </template>
               </UButton>
 
               <template #content>
@@ -252,10 +269,10 @@ const handleConfirm = () => {
           color="neutral"
           variant="ghost"
           @click="isAddOptionModalOpen = false"
-          >{{ t("itinerary.cancelButton") }}</UButton
+          >{{ t('itinerary.cancelButton') }}</UButton
         >
         <UButton color="primary" @click="handleConfirm">
-          {{ t("itinerary.addToItineraryButton") }}
+          {{ t('itinerary.addToItineraryButton') }}
         </UButton>
       </div>
     </template>

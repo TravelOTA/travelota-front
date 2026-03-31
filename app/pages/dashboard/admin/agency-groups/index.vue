@@ -1,12 +1,12 @@
 <script setup lang="ts">
-definePageMeta({ layout: "dashboard" });
-useHead({ title: "Grupos de Agencia - TravelOTA Admin" });
+definePageMeta({ layout: 'dashboard' });
+useHead({ title: 'Grupos de Agencia - TravelOTA Admin' });
 
 const { t } = useI18n();
 const { groups, addGroup, updateGroup, deleteGroup } = useAgencyGroups();
 
 // ── Search & Filter ──
-const searchQuery = ref("");
+const searchQuery = ref('');
 const filteredGroups = computed(() => {
   if (!searchQuery.value) return groups.value;
   const lowerSearch = searchQuery.value.toLowerCase();
@@ -19,21 +19,43 @@ const filteredGroups = computed(() => {
 
 // ── Columns ──
 const columns = computed(() => [
-  { accessorKey: "name", header: t('admin.agencyGroups.tableHeaders.group') },
-  { accessorKey: "description", header: t('admin.agencyGroups.tableHeaders.description') },
-  { accessorKey: "baseMarkup", header: t('admin.agencyGroups.tableHeaders.baseMarkup') },
-  { accessorKey: "baseCreditLimit", header: t('admin.agencyGroups.tableHeaders.baseCreditLimit') },
-  { accessorKey: "agenciesCount", header: t('admin.agencyGroups.tableHeaders.assignedAgencies') },
-  { accessorKey: "actions", header: "" },
+  { accessorKey: 'name', header: t('admin.agencyGroups.tableHeaders.group') },
+  {
+    accessorKey: 'description',
+    header: t('admin.agencyGroups.tableHeaders.description'),
+  },
+  {
+    accessorKey: 'baseMarkup',
+    header: t('admin.agencyGroups.tableHeaders.baseMarkup'),
+  },
+  {
+    accessorKey: 'baseCreditLimit',
+    header: t('admin.agencyGroups.tableHeaders.baseCreditLimit'),
+  },
+  {
+    accessorKey: 'agenciesCount',
+    header: t('admin.agencyGroups.tableHeaders.assignedAgencies'),
+  },
+  { accessorKey: 'actions', header: '' },
 ]);
 
 // ── Create Modal ──
 const isCreateOpen = ref(false);
-const newGroup = ref({ name: "", description: "", baseMarkup: 10, baseCreditLimit: 5000 });
-const isCreateValid = computed(() => newGroup.value.name.trim() !== "");
+const newGroup = ref({
+  name: '',
+  description: '',
+  baseMarkup: 10,
+  baseCreditLimit: 5000,
+});
+const isCreateValid = computed(() => newGroup.value.name.trim() !== '');
 
 function openCreate() {
-  newGroup.value = { name: "", description: "", baseMarkup: 10, baseCreditLimit: 5000 };
+  newGroup.value = {
+    name: '',
+    description: '',
+    baseMarkup: 10,
+    baseCreditLimit: 5000,
+  };
   isCreateOpen.value = true;
 }
 
@@ -85,7 +107,8 @@ function handleDelete(id: string) {
           to="/dashboard/admin"
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('admin.agencyGroups.backToPanel') }}
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
+          {{ t('admin.agencyGroups.backToPanel') }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
           {{ t('admin.agencyGroups.title') }}
@@ -193,23 +216,39 @@ function handleDelete(id: string) {
     </UCard>
 
     <!-- Create Modal -->
-    <UModal v-model:open="isCreateOpen" :title="t('admin.agencyGroups.modals.create.title')">
+    <UModal
+      v-model:open="isCreateOpen"
+      :title="t('admin.agencyGroups.modals.create.title')"
+    >
       <template #body>
         <div class="space-y-4">
-          <UFormField :label="t('admin.agencyGroups.modals.create.groupName')" name="name" required>
+          <UFormField
+            :label="t('admin.agencyGroups.modals.create.groupName')"
+            name="name"
+            required
+          >
             <UInput
               v-model="newGroup.name"
               :placeholder="t('admin.agencyGroups.modals.create.groupExample')"
               icon="i-heroicons-user-group"
             />
           </UFormField>
-          <UFormField :label="t('admin.agencyGroups.modals.create.description')" name="desc">
+          <UFormField
+            :label="t('admin.agencyGroups.modals.create.description')"
+            name="desc"
+          >
             <UInput
               v-model="newGroup.description"
-              :placeholder="t('admin.agencyGroups.modals.create.descriptionExample')"
+              :placeholder="
+                t('admin.agencyGroups.modals.create.descriptionExample')
+              "
             />
           </UFormField>
-          <UFormField :label="t('admin.agencyGroups.modals.create.baseMarkup')" name="markup" required>
+          <UFormField
+            :label="t('admin.agencyGroups.modals.create.baseMarkup')"
+            name="markup"
+            required
+          >
             <UInput
               v-model="newGroup.baseMarkup"
               type="number"
@@ -222,7 +261,11 @@ function handleDelete(id: string) {
               >
             </UInput>
           </UFormField>
-          <UFormField :label="t('admin.agencyGroups.modals.create.baseCreditLimit')" name="creditLimit" required>
+          <UFormField
+            :label="t('admin.agencyGroups.modals.create.baseCreditLimit')"
+            name="creditLimit"
+            required
+          >
             <UInput
               v-model.number="newGroup.baseCreditLimit"
               type="number"
@@ -262,16 +305,30 @@ function handleDelete(id: string) {
     </UModal>
 
     <!-- Edit Modal -->
-    <UModal v-model:open="isEditOpen" :title="t('admin.agencyGroups.modals.edit.title')">
+    <UModal
+      v-model:open="isEditOpen"
+      :title="t('admin.agencyGroups.modals.edit.title')"
+    >
       <template #body>
         <div v-if="editGroup" class="space-y-4">
-          <UFormField :label="t('admin.agencyGroups.modals.edit.groupName')" name="edit-name" required>
+          <UFormField
+            :label="t('admin.agencyGroups.modals.edit.groupName')"
+            name="edit-name"
+            required
+          >
             <UInput v-model="editGroup.name" icon="i-heroicons-user-group" />
           </UFormField>
-          <UFormField :label="t('admin.agencyGroups.modals.edit.description')" name="edit-desc">
+          <UFormField
+            :label="t('admin.agencyGroups.modals.edit.description')"
+            name="edit-desc"
+          >
             <UInput v-model="editGroup.description" />
           </UFormField>
-          <UFormField :label="t('admin.agencyGroups.modals.edit.baseMarkup')" name="edit-markup" required>
+          <UFormField
+            :label="t('admin.agencyGroups.modals.edit.baseMarkup')"
+            name="edit-markup"
+            required
+          >
             <UInput
               v-model="editGroup.baseMarkup"
               type="number"
@@ -284,7 +341,11 @@ function handleDelete(id: string) {
               >
             </UInput>
           </UFormField>
-          <UFormField :label="t('admin.agencyGroups.modals.edit.baseCreditLimit')" name="edit-creditLimit" required>
+          <UFormField
+            :label="t('admin.agencyGroups.modals.edit.baseCreditLimit')"
+            name="edit-creditLimit"
+            required
+          >
             <UInput
               v-model.number="editGroup.baseCreditLimit"
               type="number"

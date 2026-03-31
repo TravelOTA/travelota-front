@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed } from 'vue';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
+import PaymentMethodSelector from '~/components/b2b/hotel/checkout/PaymentMethodSelector.vue';
 
 const { t } = useI18n();
-import PaymentMethodSelector from "~/components/b2b/hotel/checkout/PaymentMethodSelector.vue";
 
 const props = defineProps<{
   paymentStatus: string; // 'Pagada' | 'Pendiente Pago'
@@ -14,15 +14,15 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "pay"): void;
+  (e: 'pay'): void;
 }>();
 
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 
-const isPaid = computed(() => props.paymentStatus === "Pagada");
+const isPaid = computed(() => props.paymentStatus === 'Pagada');
 
-const selectedMethod = ref("credit_card");
+const selectedMethod = ref('credit_card');
 const isProcessing = ref(false);
 
 const handlePay = () => {
@@ -30,7 +30,7 @@ const handlePay = () => {
   // TODO: Emulate payment call
   setTimeout(() => {
     isProcessing.value = false;
-    emit("pay");
+    emit('pay');
   }, 1500);
 };
 </script>
@@ -74,19 +74,29 @@ const handlePay = () => {
       <div
         class="mt-4 pt-3 border-t border-green-200 dark:border-green-800 flex flex-col items-center justify-center gap-1"
       >
-        <div class="flex items-center gap-2 text-sm text-green-700 dark:text-green-300">
+        <div
+          class="flex items-center gap-2 text-sm text-green-700 dark:text-green-300"
+        >
           <span class="font-medium">{{ t('hotels.payment.paidAmount') }}</span>
           <span class="font-black text-lg text-green-800 dark:text-green-400">
             ${{
-              salePrice(totalPrice).toLocaleString("en-US", {
+              salePrice(totalPrice).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })
             }}
           </span>
         </div>
-        <span v-if="netPriceVisible" class="text-[10px] text-green-600/70 dark:text-green-400/50 font-medium">
-          neto ${{ totalPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+        <span
+          v-if="netPriceVisible"
+          class="text-[10px] text-green-600/70 dark:text-green-400/50 font-medium"
+        >
+          neto ${{
+            totalPrice.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })
+          }}
         </span>
       </div>
     </div>
@@ -116,20 +126,29 @@ const handlePay = () => {
       <div
         class="flex items-center justify-between mb-5 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg"
       >
-        <span class="text-sm font-bold text-gray-500 uppercase tracking-wider"
+        <span
+          class="text-sm font-bold text-gray-500 uppercase tracking-wider"
           >{{ t('hotels.payment.pendingAmount') }}</span
         >
         <div class="text-right">
           <p class="text-2xl font-black text-primary-600 dark:text-primary-400">
             ${{
-              salePrice(totalPrice).toLocaleString("en-US", {
+              salePrice(totalPrice).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })
             }}
           </p>
-          <p v-if="netPriceVisible" class="text-xs text-gray-400 font-medium mt-0.5">
-            neto ${{ totalPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+          <p
+            v-if="netPriceVisible"
+            class="text-xs text-gray-400 font-medium mt-0.5"
+          >
+            neto ${{
+              totalPrice.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            }}
           </p>
         </div>
       </div>

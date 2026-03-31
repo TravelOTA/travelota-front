@@ -4,24 +4,24 @@ import {
   LTileLayer,
   LCircleMarker,
   LTooltip,
-} from "@vue-leaflet/vue-leaflet";
-import "leaflet/dist/leaflet.css";
+} from '@vue-leaflet/vue-leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const zoom = 2;
 const center: [number, number] = [25, 0];
 
 const locations: { name: string; coords: [number, number] }[] = [
-  { name: "España", coords: [40.4168, -3.7038] },
-  { name: "Portugal", coords: [38.7223, -9.1393] },
-  { name: "Cabo Verde", coords: [14.9305, -23.5133] },
-  { name: "Marruecos", coords: [33.9716, -6.8498] },
-  { name: "Turquía", coords: [39.9334, 32.8597] },
-  { name: "México", coords: [19.4326, -99.1332] },
-  { name: "Cuba", coords: [23.1136, -82.3666] },
-  { name: "Finlandia", coords: [60.1699, 24.9384] },
-  { name: "Jamaica", coords: [17.997, -76.7936] },
-  { name: "Egipto", coords: [30.0444, 31.2357] },
-  { name: "República Dominicana", coords: [18.4861, -69.9312] },
+  { name: 'España', coords: [40.4168, -3.7038] },
+  { name: 'Portugal', coords: [38.7223, -9.1393] },
+  { name: 'Cabo Verde', coords: [14.9305, -23.5133] },
+  { name: 'Marruecos', coords: [33.9716, -6.8498] },
+  { name: 'Turquía', coords: [39.9334, 32.8597] },
+  { name: 'México', coords: [19.4326, -99.1332] },
+  { name: 'Cuba', coords: [23.1136, -82.3666] },
+  { name: 'Finlandia', coords: [60.1699, 24.9384] },
+  { name: 'Jamaica', coords: [17.997, -76.7936] },
+  { name: 'Egipto', coords: [30.0444, 31.2357] },
+  { name: 'República Dominicana', coords: [18.4861, -69.9312] },
 ];
 </script>
 

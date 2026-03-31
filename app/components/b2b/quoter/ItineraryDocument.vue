@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { useItinerary } from "~/composables/useItinerary";
+import { computed } from 'vue';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { useItinerary } from '~/composables/useItinerary';
 import type {
   ItineraryBlock,
   SearchRoomDistribution,
   ItineraryOption,
-} from "~/composables/useItinerary";
-import { useAgency } from "~/composables/useAgency";
-import ItineraryBlockHotel from "~/components/b2b/quoter/ItineraryBlockHotel.vue";
-import ItineraryBlockTransfer from "~/components/b2b/quoter/ItineraryBlockTransfer.vue";
-import ItineraryBlockFlight from "~/components/b2b/quoter/ItineraryBlockFlight.vue";
-import ItineraryBlockExcursion from "~/components/b2b/quoter/ItineraryBlockExcursion.vue";
-import ItineraryBlockExtra from "~/components/b2b/quoter/ItineraryBlockExtra.vue";
+} from '~/composables/useItinerary';
+import { useAgency } from '~/composables/useAgency';
+import ItineraryBlockHotel from '~/components/b2b/quoter/ItineraryBlockHotel.vue';
+import ItineraryBlockTransfer from '~/components/b2b/quoter/ItineraryBlockTransfer.vue';
+import ItineraryBlockFlight from '~/components/b2b/quoter/ItineraryBlockFlight.vue';
+import ItineraryBlockExcursion from '~/components/b2b/quoter/ItineraryBlockExcursion.vue';
+import ItineraryBlockExtra from '~/components/b2b/quoter/ItineraryBlockExtra.vue';
 
 const {
   itinerary,
@@ -30,9 +30,9 @@ const currentDate = computed(() => {
 });
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'USD',
   }).format(amount);
 };
 </script>
@@ -48,7 +48,7 @@ const formatCurrency = (amount: number) => {
     >
       <div>
         <p class="text-sm font-bold text-gray-500 mb-2">
-          {{ t("itinerary.documentDateIssued") }}: {{ currentDate }}
+          {{ t('itinerary.documentDateIssued') }}: {{ currentDate }}
         </p>
         <h1 class="text-3xl font-black text-primary-600 mb-4 tracking-tight">
           {{ itinerary.title }}
@@ -56,39 +56,48 @@ const formatCurrency = (amount: number) => {
 
         <!-- Cliente, Pax, Origen -->
         <p class="text-sm text-gray-700 font-medium mb-3">
-          {{ t("itinerary.documentClient") }}:
+          {{ t('itinerary.documentClient') }}:
           <span class="font-bold text-gray-900">{{
-            itinerary.clientName || t("itinerary.documentNotSpecified")
+            itinerary.clientName || t('itinerary.documentNotSpecified')
           }}</span>
-          &nbsp;—&nbsp; {{ t("itinerary.documentPax") }}:
+          &nbsp;—&nbsp; {{ t('itinerary.documentPax') }}:
           <span class="font-bold text-gray-900">{{ totalPax }}</span>
           <template v-if="itinerary.origin">
-            &nbsp;—&nbsp; {{ t("itinerary.documentOrigin") }}:
+            &nbsp;—&nbsp; {{ t('itinerary.documentOrigin') }}:
             <span class="font-bold text-gray-900">{{ itinerary.origin }}</span>
           </template>
         </p>
 
         <!-- Enumeración de Habitaciones -->
         <div>
-          <p class="text-sm text-gray-700 font-medium mb-1">{{ t("itinerary.documentRoomsHeader") }}:</p>
+          <p class="text-sm text-gray-700 font-medium mb-1">
+            {{ t('itinerary.documentRoomsHeader') }}:
+          </p>
           <ul class="text-sm text-gray-600 space-y-1 pl-1">
             <li
-              v-for="(room, rIdx) in itinerary.rooms as SearchRoomDistribution[]"
+              v-for="(
+                room, rIdx
+              ) in itinerary.rooms as SearchRoomDistribution[]"
               :key="rIdx"
               class="flex items-center gap-2"
             >
               <span class="font-bold text-gray-800"
-                >{{ t("itinerary.documentRoomNumber") }} {{ rIdx + 1 }}:</span
+                >{{ t('itinerary.documentRoomNumber') }} {{ rIdx + 1 }}:</span
               >
-              <span>{{ room.adults }} {{ t("itinerary.documentAdults") }}</span>
+              <span>{{ room.adults }} {{ t('itinerary.documentAdults') }}</span>
 
               <template v-if="room.children.length > 0">
                 <span class="text-gray-400">•</span>
                 <span>
-                  {{ room.children.length }} {{ room.children.length > 1 ? t("itinerary.documentChildrenPlural") : t("itinerary.documentChildren") }}
+                  {{ room.children.length }}
+                  {{
+                    room.children.length > 1
+                      ? t('itinerary.documentChildrenPlural')
+                      : t('itinerary.documentChildren')
+                  }}
                   <span class="text-xs text-gray-500">
-                    ({{ t("itinerary.documentChildrenAges") }}:
-                    {{ room.children.map((c) => c.age).join(", ") }})
+                    ({{ t('itinerary.documentChildrenAges') }}:
+                    {{ room.children.map((c) => c.age).join(', ') }})
                   </span>
                 </span>
               </template>
@@ -119,7 +128,12 @@ const formatCurrency = (amount: number) => {
         class="w-5 h-5 text-primary-500 mt-0.5 shrink-0"
       />
       <p class="text-sm text-gray-700 leading-relaxed">
-        {{ t("itinerary.documentWarning", { clientName: itinerary.clientName || t("itinerary.documentNotSpecified") }) }}
+        {{
+          t('itinerary.documentWarning', {
+            clientName:
+              itinerary.clientName || t('itinerary.documentNotSpecified'),
+          })
+        }}
       </p>
     </div>
 
@@ -129,7 +143,7 @@ const formatCurrency = (amount: number) => {
         v-if="itinerary.blocks.length === 0"
         class="text-center text-gray-500 py-10"
       >
-        {{ t("itinerary.documentNoBlocks") }}
+        {{ t('itinerary.documentNoBlocks') }}
       </div>
 
       <div
@@ -149,7 +163,7 @@ const formatCurrency = (amount: number) => {
               {{ block.title }}
             </h2>
             <p class="text-sm text-gray-500 font-semibold">
-              {{ block.date || t("itinerary.documentDatesPending") }}
+              {{ block.date || t('itinerary.documentDatesPending') }}
             </p>
           </div>
         </div>
@@ -160,7 +174,7 @@ const formatCurrency = (amount: number) => {
             v-if="block.options.length === 0"
             class="text-sm text-gray-400 italic"
           >
-            {{ t("itinerary.documentNoOptions") }}
+            {{ t('itinerary.documentNoOptions') }}
           </div>
           <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div
@@ -196,7 +210,7 @@ const formatCurrency = (amount: number) => {
                 <div
                   class="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider backdrop-blur-sm"
                 >
-                  {{ t("itinerary.documentOptionLabel") }} {{ oIndex + 1 }}
+                  {{ t('itinerary.documentOptionLabel') }} {{ oIndex + 1 }}
                 </div>
                 <UBadge
                   v-if="opt.isManual"
@@ -204,21 +218,42 @@ const formatCurrency = (amount: number) => {
                   variant="solid"
                   size="xs"
                   class="absolute top-2 right-2"
-                >{{ t("itinerary.manualBadge") }}</UBadge>
+                  >{{ t('itinerary.manualBadge') }}</UBadge
+                >
               </div>
               <div class="p-4 flex-1 flex flex-col justify-between bg-white">
                 <div>
-                  <h4 class="font-bold text-gray-900 text-sm mb-1 leading-tight">
+                  <h4
+                    class="font-bold text-gray-900 text-sm mb-1 leading-tight"
+                  >
                     {{ opt.name }}
                   </h4>
                   <template v-if="opt.isManual && opt.metadata">
-                    <ItineraryBlockHotel v-if="opt.metadata.type === 'hotel'" :option="opt" />
-                    <ItineraryBlockTransfer v-else-if="opt.metadata.type === 'transfer'" :option="opt" />
-                    <ItineraryBlockFlight v-else-if="opt.metadata.type === 'flight'" :option="opt" />
-                    <ItineraryBlockExcursion v-else-if="opt.metadata.type === 'excursion'" :option="opt" />
-                    <ItineraryBlockExtra v-else-if="opt.metadata.type === 'extra'" :option="opt" />
+                    <ItineraryBlockHotel
+                      v-if="opt.metadata.type === 'hotel'"
+                      :option="opt"
+                    />
+                    <ItineraryBlockTransfer
+                      v-else-if="opt.metadata.type === 'transfer'"
+                      :option="opt"
+                    />
+                    <ItineraryBlockFlight
+                      v-else-if="opt.metadata.type === 'flight'"
+                      :option="opt"
+                    />
+                    <ItineraryBlockExcursion
+                      v-else-if="opt.metadata.type === 'excursion'"
+                      :option="opt"
+                    />
+                    <ItineraryBlockExtra
+                      v-else-if="opt.metadata.type === 'extra'"
+                      :option="opt"
+                    />
                   </template>
-                  <p v-else class="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                  <p
+                    v-else
+                    class="text-xs text-gray-500 line-clamp-2 leading-relaxed"
+                  >
                     {{ opt.description }}
                   </p>
                   <p v-if="opt.notes" class="text-xs text-gray-400 mt-1 italic">
@@ -229,7 +264,7 @@ const formatCurrency = (amount: number) => {
                   <p
                     class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-0.5"
                   >
-                    {{ t("itinerary.documentSellPrice") }}
+                    {{ t('itinerary.documentSellPrice') }}
                   </p>
                   <p
                     class="text-lg font-black text-primary-600 font-mono tracking-tight"
@@ -252,7 +287,7 @@ const formatCurrency = (amount: number) => {
       <h3
         class="text-xl font-bold text-gray-900 mb-6 border-b-2 border-gray-200 pb-2"
       >
-        {{ t("itinerary.documentSummaryTitle") }}
+        {{ t('itinerary.documentSummaryTitle') }}
       </h3>
       <div class="overflow-hidden border border-gray-200 rounded-lg">
         <table class="min-w-full text-sm text-left">
@@ -261,25 +296,25 @@ const formatCurrency = (amount: number) => {
           >
             <tr>
               <th scope="col" class="px-6 py-3 border-b border-gray-200">
-                {{ t("itinerary.documentService") }}
+                {{ t('itinerary.documentService') }}
               </th>
               <th
                 scope="col"
                 class="px-6 py-3 border-b border-gray-200 text-right"
               >
-                {{ t("itinerary.documentAdultPrice") }}
+                {{ t('itinerary.documentAdultPrice') }}
               </th>
               <th
                 scope="col"
                 class="px-6 py-3 border-b border-gray-200 text-right"
               >
-                {{ t("itinerary.documentChildPrice") }}
+                {{ t('itinerary.documentChildPrice') }}
               </th>
               <th
                 scope="col"
                 class="px-6 py-3 border-b border-gray-200 text-right"
               >
-                {{ t("itinerary.documentTotalPrice") }}
+                {{ t('itinerary.documentTotalPrice') }}
               </th>
             </tr>
           </thead>
@@ -297,7 +332,9 @@ const formatCurrency = (amount: number) => {
                 >
                   {{ bIndex + 1 }}. {{ block.title }}
                   <span class="font-normal text-xs text-gray-500 ml-2"
-                    >({{ block.date || t("itinerary.documentDatesPending") }})</span
+                    >({{
+                      block.date || t('itinerary.documentDatesPending')
+                    }})</span
                   >
                 </td>
               </tr>
@@ -308,7 +345,7 @@ const formatCurrency = (amount: number) => {
                   colspan="4"
                   class="px-6 py-3 text-gray-400 italic text-center"
                 >
-                  {{ t("itinerary.documentNoOptions") }}
+                  {{ t('itinerary.documentNoOptions') }}
                 </td>
               </tr>
               <tr
@@ -319,7 +356,8 @@ const formatCurrency = (amount: number) => {
                 <td class="px-6 py-3">
                   <div class="flex flex-col">
                     <span class="font-semibold text-gray-800"
-                      >{{ t("itinerary.documentOptionLabel") }} {{ oIndex + 1 }}: {{ opt.name }}</span
+                      >{{ t('itinerary.documentOptionLabel') }}
+                      {{ oIndex + 1 }}: {{ opt.name }}</span
                     >
                   </div>
                 </td>
@@ -360,7 +398,7 @@ const formatCurrency = (amount: number) => {
         <p
           class="text-sm text-gray-500 font-bold uppercase tracking-widest mb-1"
         >
-          {{ t("itinerary.documentMinimumEstimate") }}
+          {{ t('itinerary.documentMinimumEstimate') }}
         </p>
         <p class="text-4xl font-black text-gray-900 font-mono tracking-tighter">
           {{ formatCurrency(minItineraryPrice) }}
@@ -373,10 +411,10 @@ const formatCurrency = (amount: number) => {
       class="border-t border-gray-200 pt-6 mt-12 text-center text-xs text-gray-400"
     >
       <p class="mb-1">
-        {{ t("itinerary.documentFooter1") }} {{ agency.name }}.
+        {{ t('itinerary.documentFooter1') }} {{ agency.name }}.
       </p>
       <p>
-        {{ t("itinerary.documentFooter2") }}
+        {{ t('itinerary.documentFooter2') }}
       </p>
     </div>
   </div>

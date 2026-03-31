@@ -14,19 +14,25 @@ import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
 import type { ICancellationPolicy } from '#shared/types/booking';
 
-
 definePageMeta({ layout: 'dashboard' });
 
 const { t } = useI18n();
 const router = useRouter();
-const { items, itemCount, total, confirmAll, clearCart, removeItem } = useCart();
+const { items, itemCount, total, confirmAll, clearCart, removeItem } =
+  useCart();
 
 // ── Pre-check state ──────────────────────────────────────────────────────────
 
 type PreCheckState =
   | { status: 'loading' }
   | { status: 'error'; message: string }
-  | { status: 'ready'; bookingFlowId: number; remarks: string[]; currentPrice: number; priceChanged: boolean };
+  | {
+      status: 'ready';
+      bookingFlowId: number;
+      remarks: string[];
+      currentPrice: number;
+      priceChanged: boolean;
+    };
 
 const preCheckMap = ref<Record<string, PreCheckState>>({});
 const specialRequestsMap = ref<Record<string, string>>({});
@@ -34,7 +40,9 @@ const specialRequestsMap = ref<Record<string, string>>({});
 async function runPreCheck(item: CartItemHotel): Promise<void> {
   preCheckMap.value[item.id] = { status: 'loading' };
   try {
-    const rooms = (item.searchParams.rooms ?? [{ adults: 2, children: [] }]).map((r) => ({
+    const rooms = (
+      item.searchParams.rooms ?? [{ adults: 2, children: [] }]
+    ).map((r) => ({
       adults: r.adults,
       children: r.children.length,
       children_ages: r.children.map((c) =>
@@ -63,7 +71,7 @@ async function runPreCheck(item: CartItemHotel): Promise<void> {
           address: item.hotel.location ?? item.hotel.address ?? '',
         },
         _mockRoom: {
-          id: String((item.room as any).id ?? item.room.rate_key ?? 'room-1'),
+          id: String(item.room.rate_key ?? 'room-1'),
           name: item.room.name,
           regimen: item.room.regimen ?? 'SA',
           cancellation: item.room.cancellation ?? '',
@@ -100,7 +108,9 @@ onMounted(async () => {
   // Pre-check all items in parallel
   await Promise.allSettled(
     items.value
-      .filter((i): i is CartItemHotel => i.type === 'hotel' && !!i.room.rate_key)
+      .filter(
+        (i): i is CartItemHotel => i.type === 'hotel' && !!i.room.rate_key,
+      )
       .map(runPreCheck),
   );
 });
@@ -114,13 +124,19 @@ const { salePrice } = useSalePrice();
 const selectedPaymentMethod = ref<string>('wallet');
 
 const cartCancellationPolicy = computed((): ICancellationPolicy | undefined => {
-  const hotelItems = items.value.filter((i): i is CartItemHotel => i.type === 'hotel');
-  const nonRefundable = hotelItems.find((i) => !i.room.cancellationPolicy?.refundable);
-  return nonRefundable?.room.cancellationPolicy ?? hotelItems[0]?.room.cancellationPolicy;
+  const hotelItems = items.value.filter(
+    (i): i is CartItemHotel => i.type === 'hotel',
+  );
+  const nonRefundable = hotelItems.find(
+    (i) => !i.room.cancellationPolicy?.refundable,
+  );
+  return (
+    nonRefundable?.room.cancellationPolicy ??
+    hotelItems[0]?.room.cancellationPolicy
+  );
 });
 
 const totalSalePrice = computed(() => salePrice(total.value));
-
 
 // ── Price change modal ───────────────────────────────────────────────────────
 
@@ -132,15 +148,31 @@ const priceChangeModal = ref<{
   resolve: ((accepted: boolean) => void) | null;
 }>({ visible: false, item: null, oldPrice: 0, newPrice: 0, resolve: null });
 
-function askPriceChange(item: CartItemHotel, oldPrice: number, newPrice: number): Promise<boolean> {
+function askPriceChange(
+  item: CartItemHotel,
+  oldPrice: number,
+  newPrice: number,
+): Promise<boolean> {
   return new Promise((resolve) => {
-    priceChangeModal.value = { visible: true, item, oldPrice, newPrice, resolve };
+    priceChangeModal.value = {
+      visible: true,
+      item,
+      oldPrice,
+      newPrice,
+      resolve,
+    };
   });
 }
 
 function resolvePriceChange(accepted: boolean) {
   priceChangeModal.value.resolve?.(accepted);
-  priceChangeModal.value = { visible: false, item: null, oldPrice: 0, newPrice: 0, resolve: null };
+  priceChangeModal.value = {
+    visible: false,
+    item: null,
+    oldPrice: 0,
+    newPrice: 0,
+    resolve: null,
+  };
 }
 
 // ── Confirm ──────────────────────────────────────────────────────────────────
@@ -153,12 +185,16 @@ const confirmError = ref<string | null>(null);
 async function handleConfirmAll() {
   const titular = titularFormRef.value?.form;
   if (!titular?.nombre || !titular.apellido || !titular.email) {
-    confirmError.value = t('hotels.checkout.errorNameRequired') || 'Nombre y email requeridos';
+    confirmError.value =
+      t('hotels.checkout.errorNameRequired') || 'Nombre y email requeridos';
     return;
   }
 
   // Build accepted preCheckResults (skip items with price change that user rejects)
-  const acceptedPreCheck: Record<string, { bookingFlowId: number; currentPrice: number }> = {};
+  const acceptedPreCheck: Record<
+    string,
+    { bookingFlowId: number; currentPrice: number }
+  > = {};
   const skippedIds = new Set<string>();
 
   for (const item of items.value) {
@@ -166,13 +202,20 @@ async function handleConfirmAll() {
     const pc = preCheckMap.value[item.id];
     if (pc?.status === 'ready') {
       if (pc.priceChanged) {
-        const accepted = await askPriceChange(item as CartItemHotel, item.room.price, pc.currentPrice);
+        const accepted = await askPriceChange(
+          item as CartItemHotel,
+          item.room.price,
+          pc.currentPrice,
+        );
         if (!accepted) {
           skippedIds.add(item.id);
           continue;
         }
       }
-      acceptedPreCheck[item.id] = { bookingFlowId: pc.bookingFlowId, currentPrice: pc.currentPrice };
+      acceptedPreCheck[item.id] = {
+        bookingFlowId: pc.bookingFlowId,
+        currentPrice: pc.currentPrice,
+      };
     }
   }
 
@@ -183,7 +226,12 @@ async function handleConfirmAll() {
 
   try {
     const results = await confirmAll(
-      { nombre: titular.nombre, apellido: titular.apellido, refAgencia: titular.refAgencia, email: titular.email },
+      {
+        nombre: titular.nombre,
+        apellido: titular.apellido,
+        refAgencia: titular.refAgencia,
+        email: titular.email,
+      },
       paymentMethod,
       specialRequestsMap.value,
       acceptedPreCheck,
@@ -191,13 +239,19 @@ async function handleConfirmAll() {
       skippedIds,
     );
 
-    const confirmationResults = useState<typeof results>('cart:confirmation-results', () => []);
+    const confirmationResults = useState<typeof results>(
+      'cart:confirmation-results',
+      () => [],
+    );
     confirmationResults.value = results;
 
     clearCart();
     await navigateTo('/dashboard/cart/confirmation');
   } catch (err) {
-    confirmError.value = err instanceof Error ? err.message : t('hotels.checkout.errorConfirm') || 'Error al confirmar';
+    confirmError.value =
+      err instanceof Error
+        ? err.message
+        : t('hotels.checkout.errorConfirm') || 'Error al confirmar';
   } finally {
     isProcessing.value = false;
   }
@@ -205,8 +259,10 @@ async function handleConfirmAll() {
 
 function handleRemoveItem(id: string) {
   removeItem(id);
-  delete preCheckMap.value[id];
-  delete specialRequestsMap.value[id];
+  const { [id]: _pc, ...restPc } = preCheckMap.value;
+  preCheckMap.value = restPc;
+  const { [id]: _sr, ...restSr } = specialRequestsMap.value;
+  specialRequestsMap.value = restSr;
   if (itemCount.value === 0) navigateTo('/dashboard');
 }
 
@@ -222,10 +278,17 @@ const preCheckForItem = (id: string): PreCheckState =>
   <div class="max-w-[1000px] mx-auto pb-12 pt-6">
     <!-- Header -->
     <div class="mb-6 flex items-center justify-between">
-      <UButton color="neutral" variant="ghost" icon="i-heroicons-arrow-left" @click="router.back()">
+      <UButton
+        color="neutral"
+        variant="ghost"
+        icon="i-heroicons-arrow-left"
+        @click="router.back()"
+      >
         {{ t('cart.checkout.backToCart') }}
       </UButton>
-      <h1 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight">
+      <h1
+        class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight"
+      >
         {{ t('cart.checkout.title') }}
       </h1>
     </div>
@@ -255,7 +318,7 @@ const preCheckForItem = (id: string): PreCheckState =>
 
         <!-- Titular + payment + confirm -->
         <CartCheckoutTitularForm ref="titularFormRef" />
-        
+
         <!-- Payment method -->
         <UCard>
           <template #header>
@@ -271,23 +334,43 @@ const preCheckForItem = (id: string): PreCheckState =>
               :cancellation-policy="cartCancellationPolicy"
             />
             <!-- Price summary -->
-            <div class="border-t border-gray-100 dark:border-gray-800 pt-4 flex flex-col gap-1">
+            <div
+              class="border-t border-gray-100 dark:border-gray-800 pt-4 flex flex-col gap-1"
+            >
               <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500 dark:text-gray-400">{{ t('cart.checkout.totalSalePrice') }}</span>
-                <span class="text-xl font-black text-primary-600 dark:text-primary-400">
-                  ${{ totalSalePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                <span class="text-sm text-gray-500 dark:text-gray-400">{{
+                  t('cart.checkout.totalSalePrice')
+                }}</span>
+                <span
+                  class="text-xl font-black text-primary-600 dark:text-primary-400"
+                >
+                  ${{
+                    totalSalePrice.toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  }}
                 </span>
               </div>
-              <div v-if="netPriceVisible" class="flex items-center justify-between">
-                <span class="text-xs text-gray-400">{{ t('cart.checkout.totalNetPrice') }}</span>
+              <div
+                v-if="netPriceVisible"
+                class="flex items-center justify-between"
+              >
+                <span class="text-xs text-gray-400">{{
+                  t('cart.checkout.totalNetPrice')
+                }}</span>
                 <span class="text-sm font-semibold text-gray-400">
-                  ${{ total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                  ${{
+                    total.toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  }}
                 </span>
               </div>
             </div>
           </div>
         </UCard>
-
 
         <UAlert
           v-if="confirmError"
@@ -304,13 +387,20 @@ const preCheckForItem = (id: string): PreCheckState =>
           :disabled="isProcessing"
           @click="handleConfirmAll"
         >
-          {{ isProcessing ? t('cart.checkout.processing') : t('cart.checkout.confirmAll') }}
+          {{
+            isProcessing
+              ? t('cart.checkout.processing')
+              : t('cart.checkout.confirmAll')
+          }}
         </UButton>
       </div>
     </div>
 
     <!-- Price change modal -->
-    <UModal v-model:open="priceChangeModal.visible" :title="t('cart.checkout.priceChangedTitle')">
+    <UModal
+      v-model:open="priceChangeModal.visible"
+      :title="t('cart.checkout.priceChangedTitle')"
+    >
       <template #body>
         <p class="text-sm text-gray-600 dark:text-gray-300">
           {{
@@ -324,7 +414,11 @@ const preCheckForItem = (id: string): PreCheckState =>
       </template>
       <template #footer>
         <div class="flex gap-3 justify-end">
-          <UButton color="neutral" variant="outline" @click="resolvePriceChange(false)">
+          <UButton
+            color="neutral"
+            variant="outline"
+            @click="resolvePriceChange(false)"
+          >
             {{ t('cart.checkout.priceChangedSkip') }}
           </UButton>
           <UButton color="primary" @click="resolvePriceChange(true)">

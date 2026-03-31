@@ -1,4 +1,4 @@
-import { useState } from "#imports";
+import { useState } from '#imports';
 
 export interface AgencyGroup {
   id: string;
@@ -11,33 +11,33 @@ export interface AgencyGroup {
 
 const MOCK_GROUPS: AgencyGroup[] = [
   {
-    id: "GRP-001",
-    name: "Grupo VIP",
-    description: "Agencias con volumen alto de ventas y soporte 24/7.",
+    id: 'GRP-001',
+    name: 'Grupo VIP',
+    description: 'Agencias con volumen alto de ventas y soporte 24/7.',
     baseMarkup: 12,
     baseCreditLimit: 10000,
     agenciesCount: 2,
   },
   {
-    id: "GRP-002",
-    name: "Grupo Mayorista",
-    description: "Distribuidores a gran escala.",
+    id: 'GRP-002',
+    name: 'Grupo Mayorista',
+    description: 'Distribuidores a gran escala.',
     baseMarkup: 10,
     baseCreditLimit: 8000,
     agenciesCount: 1,
   },
   {
-    id: "GRP-003",
-    name: "Grupo Estándar",
-    description: "Agencias minoristas comunes.",
+    id: 'GRP-003',
+    name: 'Grupo Estándar',
+    description: 'Agencias minoristas comunes.',
     baseMarkup: 15,
     baseCreditLimit: 5000,
     agenciesCount: 3,
   },
   {
-    id: "GRP-004",
-    name: "Corpo",
-    description: "Cuentas corporativas.",
+    id: 'GRP-004',
+    name: 'Corpo',
+    description: 'Cuentas corporativas.',
     baseMarkup: 8,
     baseCreditLimit: 15000,
     agenciesCount: 0,
@@ -45,16 +45,16 @@ const MOCK_GROUPS: AgencyGroup[] = [
 ];
 
 export function useAgencyGroups() {
-  const groups = useState<AgencyGroup[]>("agency-groups", () => MOCK_GROUPS);
+  const groups = useState<AgencyGroup[]>('agency-groups', () => MOCK_GROUPS);
 
-  function addGroup(group: Omit<AgencyGroup, "id" | "agenciesCount">) {
-    const nextId = `GRP-${String(groups.value.length + 1).padStart(3, "0")}`;
+  function addGroup(group: Omit<AgencyGroup, 'id' | 'agenciesCount'>) {
+    const nextId = `GRP-${String(groups.value.length + 1).padStart(3, '0')}`;
     groups.value.push({ id: nextId, ...group, agenciesCount: 0 });
   }
 
   function updateGroup(
     id: string,
-    groupData: Omit<AgencyGroup, "id" | "agenciesCount">,
+    groupData: Omit<AgencyGroup, 'id' | 'agenciesCount'>,
   ) {
     const index = groups.value.findIndex((g) => g.id === id);
     if (index !== -1) {

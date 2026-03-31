@@ -14,8 +14,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "update:filters", filters: FilterState): void;
-  (e: "open-map"): void;
+  (e: 'update:filters', filters: FilterState): void;
+  (e: 'open-map'): void;
 }>();
 
 interface FilterState {
@@ -29,7 +29,7 @@ interface FilterState {
 }
 
 // Reactive filter state
-const hotelName = ref("");
+const hotelName = ref('');
 
 // Derive price bounds from actual hotel data
 const PRICE_FLOOR = computed(() =>
@@ -137,29 +137,29 @@ const barInRange = (barIndex: number): boolean => {
 // Category filters – compute counts from hotel data
 const categories = computed(() => [
   {
-    label: "★★★★★",
+    label: '★★★★★',
     count: props.hotels.filter((h) => h.stars === 5).length,
-    value: "5",
+    value: '5',
   },
   {
-    label: "★★★★",
+    label: '★★★★',
     count: props.hotels.filter((h) => h.stars === 4).length,
-    value: "4",
+    value: '4',
   },
   {
-    label: "★★★",
+    label: '★★★',
     count: props.hotels.filter((h) => h.stars === 3).length,
-    value: "3",
+    value: '3',
   },
   {
-    label: "★★",
+    label: '★★',
     count: props.hotels.filter((h) => h.stars === 2).length,
-    value: "2",
+    value: '2',
   },
   {
-    label: "★",
+    label: '★',
     count: props.hotels.filter((h) => h.stars === 1).length,
-    value: "1",
+    value: '1',
   },
 ]);
 const selectedCategories = ref<string[]>([]);
@@ -167,11 +167,11 @@ const selectedCategories = ref<string[]>([]);
 // Board/regime filters
 const regimes = computed(() => {
   const baseRegimes = [
-    { label: t('hotels.results.soleLodging'), value: "SA" },
-    { label: t('hotels.results.lodgingAndBreakfast'), value: "CP" },
-    { label: t('hotels.results.halfBoard'), value: "MP" },
-    { label: t('hotels.results.fullBoard'), value: "PC" },
-    { label: t('hotels.results.allInclusive'), value: "TI" },
+    { label: t('hotels.results.soleLodging'), value: 'SA' },
+    { label: t('hotels.results.lodgingAndBreakfast'), value: 'CP' },
+    { label: t('hotels.results.halfBoard'), value: 'MP' },
+    { label: t('hotels.results.fullBoard'), value: 'PC' },
+    { label: t('hotels.results.allInclusive'), value: 'TI' },
   ];
 
   return baseRegimes.map((reg) => {
@@ -199,7 +199,7 @@ watch(
     hideOR,
   ],
   () => {
-    emit("update:filters", {
+    emit('update:filters', {
       hotelName: hotelName.value,
       priceMin: priceMin.value,
       priceMax: priceMax.value,

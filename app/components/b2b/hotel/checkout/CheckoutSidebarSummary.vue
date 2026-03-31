@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
-
 
 const { t } = useI18n();
 
@@ -36,7 +35,6 @@ const nights = computed(() => {
 
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
-
 </script>
 
 <template>
@@ -127,7 +125,7 @@ const { salePrice } = useSalePrice();
             <div class="text-right">
               <p class="font-bold text-gray-800 dark:text-gray-300">
                 ${{
-                  salePrice(room.price).toLocaleString("en-US", {
+                  salePrice(room.price).toLocaleString('en-US', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })
@@ -135,14 +133,13 @@ const { salePrice } = useSalePrice();
               </p>
               <p v-if="netPriceVisible" class="text-[10px] text-gray-400">
                 neto ${{
-                  room.price.toLocaleString("en-US", {
+                  room.price.toLocaleString('en-US', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })
                 }}
               </p>
             </div>
-
           </div>
         </div>
       </div>
@@ -151,25 +148,23 @@ const { salePrice } = useSalePrice();
 
       <!-- Total -->
       <div class="flex flex-col items-end gap-1 pt-1">
-        <span class="text-sm font-bold text-gray-500 uppercase tracking-wider"
+        <span
+          class="text-sm font-bold text-gray-500 uppercase tracking-wider"
           >{{ t('hotels.detail.totalReservation') }}</span
         >
         <span
           class="text-3xl font-black text-primary-600 dark:text-primary-400"
         >
           ${{
-            salePrice(totalPrice).toLocaleString("en-US", {
+            salePrice(totalPrice).toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })
           }}
         </span>
-        <span
-          v-if="netPriceVisible"
-          class="text-xs text-gray-400 font-medium"
-        >
+        <span v-if="netPriceVisible" class="text-xs text-gray-400 font-medium">
           neto ${{
-            totalPrice.toLocaleString("en-US", {
+            totalPrice.toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })

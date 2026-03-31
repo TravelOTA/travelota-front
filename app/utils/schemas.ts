@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // --- Domain schemas ---
 
@@ -33,7 +33,7 @@ const itineraryOptionSchema = z.object({
 
 const itineraryBlockSchema = z.object({
   id: z.string(),
-  type: z.enum(["hotel", "flight", "transfer", "activity"]),
+  type: z.enum(['hotel', 'flight', 'transfer', 'activity']),
   title: z.string(),
   date: z.string(),
   options: z.array(itineraryOptionSchema),
@@ -62,25 +62,27 @@ type T = (key: string, params?: Record<string, unknown>) => string;
 
 export const createLoginSchema = (t: T) =>
   z.object({
-    email: z.string().email(t("validation.emailInvalid")),
-    password: z.string().min(6, t("validation.passwordMinLength", { min: 6 })),
+    email: z.string().email(t('validation.emailInvalid')),
+    password: z.string().min(6, t('validation.passwordMinLength', { min: 6 })),
     rememberMe: z.boolean().optional(),
   });
 
 export const createRegisterSchema = (t: T) =>
   z.object({
-    nombreComercial: z.string().min(2, t("validation.commercialNameRequired")),
-    direccionRegistrada: z
+    nombreComercial: z.string().min(2, t('validation.commercialNameRequired')),
+    direccionRegistrada: z.string().min(2, t('validation.addressRequired')),
+    nif: z.string().min(5, t('validation.nifInvalid')),
+    telefono: z.string().min(9, t('validation.phoneInvalid')),
+    email: z.string().email(t('validation.emailInvalid')),
+    web: z
       .string()
-      .min(2, t("validation.addressRequired")),
-    nif: z.string().min(5, t("validation.nifInvalid")),
-    telefono: z.string().min(9, t("validation.phoneInvalid")),
-    email: z.string().email(t("validation.emailInvalid")),
-    web: z.string().url(t("validation.urlInvalid")).optional().or(z.literal("")),
-    pais: z.string().min(1, t("validation.countryRequired")),
-    nombreContacto: z.string().min(2, t("validation.contactNameRequired")),
+      .url(t('validation.urlInvalid'))
+      .optional()
+      .or(z.literal('')),
+    pais: z.string().min(1, t('validation.countryRequired')),
+    nombreContacto: z.string().min(2, t('validation.contactNameRequired')),
     aceptaPrivacidad: z.boolean().refine((val) => val === true, {
-      message: t("validation.privacyRequired"),
+      message: t('validation.privacyRequired'),
     }),
   });
 
@@ -91,16 +93,16 @@ export const createCardSchema = (t: T) =>
   z.object({
     number: z
       .string()
-      .min(1, t("validation.cardNumberRequired"))
-      .regex(/^\d{16}$/, t("validation.cardNumberInvalid")),
+      .min(1, t('validation.cardNumberRequired'))
+      .regex(/^\d{16}$/, t('validation.cardNumberInvalid')),
     expiry: z
       .string()
-      .min(1, t("validation.cardExpiryRequired"))
-      .regex(/^(0[1-9]|1[0-2])\/\d{2}$/, t("validation.cardExpiryInvalid")),
+      .min(1, t('validation.cardExpiryRequired'))
+      .regex(/^(0[1-9]|1[0-2])\/\d{2}$/, t('validation.cardExpiryInvalid')),
     cvv: z
       .string()
-      .min(1, t("validation.cardCvvRequired"))
-      .regex(/^\d{3,4}$/, t("validation.cardCvvInvalid")),
+      .min(1, t('validation.cardCvvRequired'))
+      .regex(/^\d{3,4}$/, t('validation.cardCvvInvalid')),
   });
 
 export type CardInput = z.infer<ReturnType<typeof createCardSchema>>;

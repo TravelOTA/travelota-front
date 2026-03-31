@@ -1,25 +1,31 @@
 import {
   readDepositRequests,
   writeDepositRequests,
-} from "../../../../utils/db";
+} from '../../../../utils/db';
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
+  const id = getRouterParam(event, 'id');
   const requests = await readDepositRequests();
   const idx = requests.findIndex((r) => r.id === id);
 
   if (idx === -1) {
-    throw createError({ statusCode: 404, message: "Deposit request not found" });
+    throw createError({
+      statusCode: 404,
+      message: 'Deposit request not found',
+    });
   }
-  if (requests[idx].status !== "pending") {
-    throw createError({ statusCode: 409, message: "Request already processed" });
+  if (requests[idx].status !== 'pending') {
+    throw createError({
+      statusCode: 409,
+      message: 'Request already processed',
+    });
   }
 
   requests[idx] = {
     ...requests[idx],
-    status: "rejected",
+    status: 'rejected',
     processedAt: new Date().toISOString(),
-    processedBy: "admin@travelota.com",
+    processedBy: 'admin@travelota.com',
   };
   await writeDepositRequests(requests);
 

@@ -1,10 +1,10 @@
 // shared/types/payment.ts
-export type PaymentMethod = "card" | "agency_credit" | "deferred" | "transfer";
+export type PaymentMethod = 'card' | 'agency_credit' | 'deferred' | 'transfer';
 export type PaymentStatus =
-  | "paid"
-  | "pending_payment"
-  | "pending_transfer"
-  | "deferred";
+  | 'paid'
+  | 'pending_payment'
+  | 'pending_transfer'
+  | 'deferred';
 
 export interface IPaymentRequest {
   bookingId: string;

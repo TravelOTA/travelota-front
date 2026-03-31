@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Motion } from "motion-v";
+import { Motion } from 'motion-v';
+
 const { t } = useI18n();
 </script>
 
@@ -30,7 +31,9 @@ const { t } = useI18n();
             class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl drop-shadow-md uppercase"
           >
             <span class="block">{{ t('auth.landing.heroLine1') }}</span>
-            <span class="block text-primary-400">{{ t('auth.landing.heroLine2') }}</span>
+            <span class="block text-primary-400">{{
+              t('auth.landing.heroLine2')
+            }}</span>
             <span class="block">{{ t('auth.landing.heroLine3') }}</span>
           </h1>
           <div

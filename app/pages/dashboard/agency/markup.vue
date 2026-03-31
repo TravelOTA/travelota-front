@@ -1,8 +1,8 @@
 <script setup lang="ts">
-useHead({ title: "Markup de Agencia - TravelOTA" });
+useHead({ title: 'Markup de Agencia - TravelOTA' });
 const { t } = useI18n();
 
-const markupType = ref("global");
+const markupType = ref('global');
 const globalPercentage = ref(15);
 
 interface Rule {
@@ -13,23 +13,23 @@ interface Rule {
 }
 
 const rules = ref<Rule[]>([
-  { id: 1, type: "Destino", value: "Todos", percentage: 12 },
-  { id: 2, type: "Destino", value: "Punta Cana", percentage: 20 },
-  { id: 3, type: "Hotel", value: "Melia Caribe Beach", percentage: 18 },
+  { id: 1, type: 'Destino', value: 'Todos', percentage: 12 },
+  { id: 2, type: 'Destino', value: 'Punta Cana', percentage: 20 },
+  { id: 3, type: 'Hotel', value: 'Melia Caribe Beach', percentage: 18 },
 ]);
 
 // ── Modal State ──
 const isRuleModalOpen = ref(false);
-const newRule = ref({ type: "Destino", value: "", percentage: 10 });
+const newRule = ref({ type: 'Destino', value: '', percentage: 10 });
 
 // Para destinos, sugeriremos opciones comunes y "Todos"
 const popularDestinations = [
-  "Todos",
-  "Punta Cana",
-  "Cancún",
-  "Miami",
-  "Madrid",
-  "Roma",
+  'Todos',
+  'Punta Cana',
+  'Cancún',
+  'Miami',
+  'Madrid',
+  'Roma',
 ];
 
 function deleteRule(id: number) {
@@ -37,7 +37,7 @@ function deleteRule(id: number) {
 }
 
 function openAddRule() {
-  newRule.value = { type: "Destino", value: "Todos", percentage: 10 };
+  newRule.value = { type: 'Destino', value: 'Todos', percentage: 10 };
   isRuleModalOpen.value = true;
 }
 
@@ -61,7 +61,8 @@ function saveRule() {
         to="/dashboard/agency"
         class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
       >
-        <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('agency.markup.backToAgency') }}
+        <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
+        {{ t('agency.markup.backToAgency') }}
       </NuxtLink>
       <div class="flex items-center gap-2 mb-1">
         <UIcon
@@ -165,7 +166,10 @@ function saveRule() {
     </UCard>
 
     <!-- Modal: Nueva Regla -->
-    <UModal v-model:open="isRuleModalOpen" :title="t('agency.markup.modalTitle')">
+    <UModal
+      v-model:open="isRuleModalOpen"
+      :title="t('agency.markup.modalTitle')"
+    >
       <template #body>
         <div class="space-y-4">
           <UFormField :label="t('agency.markup.applyRuleTo')" name="rule-type">

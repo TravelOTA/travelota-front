@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import ItineraryDocument from "./ItineraryDocument.vue";
-import { useItinerary } from "~/composables/useItinerary";
-import { toPng } from "html-to-image";
+import ItineraryDocument from './ItineraryDocument.vue';
+import { useItinerary } from '~/composables/useItinerary';
+import { toPng } from 'html-to-image';
 
 defineProps<{
   isOpen: boolean;
 }>();
 
-const emit = defineEmits(["update:isOpen"]);
+const emit = defineEmits(['update:isOpen']);
 
 const { t } = useI18n();
 const { itinerary } = useItinerary();
 
 const downloadImage = async () => {
-  const node = document.getElementById("itinerary-document");
+  const node = document.getElementById('itinerary-document');
   if (!node) return;
 
   try {
     const dataUrl = await toPng(node, {
-      backgroundColor: "#ffffff",
+      backgroundColor: '#ffffff',
       cacheBust: true,
     });
-    const link = document.createElement("a");
-    link.download = `itinerary-${itinerary.value.clientName || "travel"}.png`;
+    const link = document.createElement('a');
+    link.download = `itinerary-${itinerary.value.clientName || 'travel'}.png`;
     link.href = dataUrl;
     link.click();
   } catch (err) {
-    console.error("Oops, something went wrong!", err);
+    console.error('Oops, something went wrong!', err);
   }
 };
 </script>
@@ -47,7 +47,7 @@ const downloadImage = async () => {
             @click="emit('update:isOpen', false)"
           />
           <h3 class="text-lg font-bold text-gray-900 dark:text-white">
-            {{ t("itinerary.previewModalTitle") }}
+            {{ t('itinerary.previewModalTitle') }}
           </h3>
         </div>
         <UButton

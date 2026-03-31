@@ -1,6 +1,6 @@
-import { useState, useRouter, useRoute } from "#imports";
+import { useState, useRouter, useRoute } from '#imports';
 
-import type { SearchRoomDistribution } from "./useItinerary";
+import type { SearchRoomDistribution } from './useItinerary';
 
 export interface HotelSearchParams {
   destination: string;
@@ -12,17 +12,17 @@ export interface HotelSearchParams {
 }
 
 const DEFAULT_PARAMS: HotelSearchParams = {
-  destination: "",
-  checkIn: "",
-  checkOut: "",
-  nationality: "Estados Unidos",
-  distribution: "1 Habitación, 2 Adultos",
+  destination: '',
+  checkIn: '',
+  checkOut: '',
+  nationality: 'Estados Unidos',
+  distribution: '1 Habitación, 2 Adultos',
   rooms: [{ adults: 2, children: [] }],
 };
 
 export const useHotelSearch = () => {
   const searchParams = useState<HotelSearchParams>(
-    "hotel-search-params",
+    'hotel-search-params',
     () => ({ ...DEFAULT_PARAMS }),
   );
 
@@ -49,7 +49,7 @@ export const useHotelSearch = () => {
     }
 
     await router.push({
-      path: "/dashboard/hotels/results",
+      path: '/dashboard/hotels/results',
       query,
     });
   };
@@ -68,16 +68,16 @@ export const useHotelSearch = () => {
         try {
           rooms = JSON.parse(String(q.rooms));
         } catch (e) {
-          console.error("Error parsing rooms from query", e);
+          console.error('Error parsing rooms from query', e);
         }
       }
 
       searchParams.value = {
-        destination: String(q.destination || ""),
-        checkIn: String(q.checkIn || ""),
-        checkOut: String(q.checkOut || ""),
-        nationality: String(q.nationality || "Estados Unidos"),
-        distribution: String(q.distribution || "1 Habitación, 2 Adultos"),
+        destination: String(q.destination || ''),
+        checkIn: String(q.checkIn || ''),
+        checkOut: String(q.checkOut || ''),
+        nationality: String(q.nationality || 'Estados Unidos'),
+        distribution: String(q.distribution || '1 Habitación, 2 Adultos'),
         rooms,
       };
     }

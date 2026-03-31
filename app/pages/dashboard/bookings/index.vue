@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import BookingSearchFilters from "~/components/b2b/hotel/checkout/BookingSearchFilters.vue";
-import BookingMassPayment from "~/components/b2b/hotel/checkout/BookingMassPayment.vue";
-import VoucherPreviewModal from "~/components/b2b/hotel/checkout/VoucherPreviewModal.vue";
-import { useBookings } from "~/composables/useBookings";
-import type { BookingRow } from "~/composables/useBookings";
+import { ref, computed, onMounted } from 'vue';
+import BookingSearchFilters from '~/components/b2b/hotel/checkout/BookingSearchFilters.vue';
+import BookingMassPayment from '~/components/b2b/hotel/checkout/BookingMassPayment.vue';
+import VoucherPreviewModal from '~/components/b2b/hotel/checkout/VoucherPreviewModal.vue';
+import { useBookings } from '~/composables/useBookings';
+import type { BookingRow } from '~/composables/useBookings';
 
 const { t } = useI18n();
 
 definePageMeta({
-  layout: "dashboard",
+  layout: 'dashboard',
 });
 
 useHead({
-  title: () => t("bookings.pageTitle"),
+  title: () => t('bookings.pageTitle'),
 });
 
 interface SearchFilters {
@@ -47,17 +47,17 @@ onMounted(async () => {
 const hasSearched = ref(false);
 const filteredBookings = ref<BookingRow[]>([]);
 const activeFilters = ref<SearchFilters>({
-  pnr: "",
-  titular: "",
-  destination: "",
+  pnr: '',
+  titular: '',
+  destination: '',
   statuses: [],
   paymentStatuses: [],
-  createdFrom: "",
-  createdTo: "",
-  checkInFrom: "",
-  checkInTo: "",
-  agency: "",
-  seller: "",
+  createdFrom: '',
+  createdTo: '',
+  checkInFrom: '',
+  checkInTo: '',
+  agency: '',
+  seller: '',
 });
 
 const orderRefFilter = ref('');
@@ -142,7 +142,7 @@ const handleSearch = (filters: SearchFilters) => {
   }
 
   // Seller filter
-  if (filters.seller && filters.seller !== "Todos") {
+  if (filters.seller && filters.seller !== 'Todos') {
     results = results.filter((b) => b.seller === filters.seller);
   }
 
@@ -156,17 +156,17 @@ const handleClear = () => {
   hasSearched.value = false;
   filteredBookings.value = [];
   activeFilters.value = {
-    pnr: "",
-    titular: "",
-    destination: "",
+    pnr: '',
+    titular: '',
+    destination: '',
     statuses: [],
     paymentStatuses: [],
-    createdFrom: "",
-    createdTo: "",
-    checkInFrom: "",
-    checkInTo: "",
-    agency: "",
-    seller: "",
+    createdFrom: '',
+    createdTo: '',
+    checkInFrom: '',
+    checkInTo: '',
+    agency: '',
+    seller: '',
   };
   selectedIds.value = new Set();
 };
@@ -174,7 +174,7 @@ const handleClear = () => {
 // Pending payment bookings in current results
 const pendingPaymentBookings = computed(() => {
   return filteredBookings.value.filter(
-    (b) => b.paymentStatus === "Pendiente de Pago",
+    (b) => b.paymentStatus === 'Pendiente de Pago',
   );
 });
 
@@ -223,31 +223,34 @@ const openVoucher = (booking: BookingRow) => {
 
 // Table Columns
 const columns = computed(() => [
-  { accessorKey: "actions", header: "" },
-  { accessorKey: "select", header: "" },
-  { accessorKey: "id", header: t("bookings.tableColumns.pnr") },
-  { accessorKey: "status", header: t("bookings.tableColumns.status") },
-  { accessorKey: "paymentStatus", header: t("bookings.tableColumns.payment") },
-  { accessorKey: "prices", header: t("bookings.tableColumns.prices") },
-  { accessorKey: "createdAt", header: t("bookings.tableColumns.createdAt") },
-  { accessorKey: "titular", header: t("bookings.tableColumns.titular") },
-  { accessorKey: "destination", header: t("bookings.tableColumns.destination") },
-  { accessorKey: "dates", header: t("bookings.tableColumns.dates") },
-  { accessorKey: "seller", header: t("bookings.tableColumns.seller") },
+  { accessorKey: 'actions', header: '' },
+  { accessorKey: 'select', header: '' },
+  { accessorKey: 'id', header: t('bookings.tableColumns.pnr') },
+  { accessorKey: 'status', header: t('bookings.tableColumns.status') },
+  { accessorKey: 'paymentStatus', header: t('bookings.tableColumns.payment') },
+  { accessorKey: 'prices', header: t('bookings.tableColumns.prices') },
+  { accessorKey: 'createdAt', header: t('bookings.tableColumns.createdAt') },
+  { accessorKey: 'titular', header: t('bookings.tableColumns.titular') },
+  {
+    accessorKey: 'destination',
+    header: t('bookings.tableColumns.destination'),
+  },
+  { accessorKey: 'dates', header: t('bookings.tableColumns.dates') },
+  { accessorKey: 'seller', header: t('bookings.tableColumns.seller') },
 ]);
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "Confirmada":
-      return "success";
-    case "Pendiente de Pago":
-      return "warning";
-    case "Cancelada":
-      return "error";
-    case "Vencida":
-      return "neutral";
+    case 'Confirmada':
+      return 'success';
+    case 'Pendiente de Pago':
+      return 'warning';
+    case 'Cancelada':
+      return 'error';
+    case 'Vencida':
+      return 'neutral';
     default:
-      return "primary";
+      return 'primary';
   }
 };
 
@@ -255,11 +258,11 @@ const getStatusColor = (status: string) => {
 const resultStats = computed(() => {
   const total = filteredBookings.value.length;
   const confirmed = filteredBookings.value.filter(
-    (b) => b.status === "Confirmada",
+    (b) => b.status === 'Confirmada',
   ).length;
   const pending = pendingPaymentBookings.value.length;
   const cancelled = filteredBookings.value.filter(
-    (b) => b.status === "Cancelada",
+    (b) => b.status === 'Cancelada',
   ).length;
   const totalAmount = filteredBookings.value.reduce(
     (acc, b) => acc + b.total,
@@ -338,37 +341,49 @@ const resultStats = computed(() => {
               name="i-heroicons-document-text"
               class="w-5 h-5 text-gray-400"
             />
-            <span class="text-sm text-gray-600 dark:text-gray-400"
-              >{{ t('bookings.resultsLabel') }}</span
-            >
+            <span class="text-sm text-gray-600 dark:text-gray-400">{{
+              t('bookings.resultsLabel')
+            }}</span>
             <span class="text-sm font-bold text-gray-900 dark:text-white">{{
               resultStats.total
             }}</span>
           </div>
           <div class="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
           <div class="flex items-center gap-2">
-            <UBadge color="success" variant="subtle" class="text-xs font-bold"
-              >{{ t('bookings.badgeConfirmed', { count: resultStats.confirmed }) }}</UBadge
+            <UBadge
+              color="success"
+              variant="subtle"
+              class="text-xs font-bold"
+              >{{
+                t('bookings.badgeConfirmed', { count: resultStats.confirmed })
+              }}</UBadge
             >
-            <UBadge color="warning" variant="subtle" class="text-xs font-bold"
-              >{{ t('bookings.badgePending', { count: resultStats.pending }) }}</UBadge
+            <UBadge
+              color="warning"
+              variant="subtle"
+              class="text-xs font-bold"
+              >{{
+                t('bookings.badgePending', { count: resultStats.pending })
+              }}</UBadge
             >
             <UBadge
               v-if="resultStats.cancelled > 0"
               color="error"
               variant="subtle"
               class="text-xs font-bold"
-              >{{ t('bookings.badgeCancelled', { count: resultStats.cancelled }) }}</UBadge
+              >{{
+                t('bookings.badgeCancelled', { count: resultStats.cancelled })
+              }}</UBadge
             >
           </div>
           <div class="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
           <div class="flex items-center gap-2">
-            <span class="text-sm text-gray-600 dark:text-gray-400"
-              >{{ t('bookings.totalVolume') }}</span
-            >
+            <span class="text-sm text-gray-600 dark:text-gray-400">{{
+              t('bookings.totalVolume')
+            }}</span>
             <span class="text-sm font-bold text-gray-900 dark:text-white"
               >${{
-                resultStats.totalAmount.toLocaleString("en-US", {
+                resultStats.totalAmount.toLocaleString('en-US', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })
@@ -379,12 +394,12 @@ const resultStats = computed(() => {
             v-if="resultStats.pendingAmount > 0"
             class="flex items-center gap-2"
           >
-            <span class="text-sm text-amber-600 dark:text-amber-400"
-              >{{ t('bookings.pendingAmount') }}</span
-            >
+            <span class="text-sm text-amber-600 dark:text-amber-400">{{
+              t('bookings.pendingAmount')
+            }}</span>
             <span class="text-sm font-bold text-amber-700 dark:text-amber-300"
               >${{
-                resultStats.pendingAmount.toLocaleString("en-US", {
+                resultStats.pendingAmount.toLocaleString('en-US', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })
@@ -472,9 +487,11 @@ const resultStats = computed(() => {
               <span class="block text-gray-900 dark:text-white">{{
                 (row as any).original.checkIn
               }}</span>
-              <span class="block text-xs text-gray-500"
-                >{{ t('bookings.checkoutUntil', { date: (row as any).original.checkOut }) }}</span
-              >
+              <span class="block text-xs text-gray-500">{{
+                t('bookings.checkoutUntil', {
+                  date: (row as any).original.checkOut,
+                })
+              }}</span>
             </div>
           </template>
 
@@ -495,12 +512,14 @@ const resultStats = computed(() => {
           <template #prices-cell="{ row }">
             <div class="text-xs space-y-0.5">
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-gray-400 w-12">{{ t('bookings.colCost') }}</span>
+                <span class="font-semibold text-gray-400 w-12">{{
+                  t('bookings.colCost')
+                }}</span>
                 <span
                   class="font-bold text-gray-900 dark:text-white tabular-nums"
                 >
                   ${{
-                    (row as any).original.total.toLocaleString("en-US", {
+                    (row as any).original.total.toLocaleString('en-US', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })
@@ -508,12 +527,14 @@ const resultStats = computed(() => {
                 </span>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-primary-500 w-12">{{ t('bookings.colSale') }}</span>
+                <span class="font-semibold text-primary-500 w-12">{{
+                  t('bookings.colSale')
+                }}</span>
                 <span
                   class="font-bold text-primary-600 dark:text-primary-400 tabular-nums"
                 >
                   ${{
-                    (row as any).original.salePrice.toLocaleString("en-US", {
+                    (row as any).original.salePrice.toLocaleString('en-US', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })

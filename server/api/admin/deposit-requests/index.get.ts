@@ -1,4 +1,4 @@
-import { readDepositRequests } from "../../../utils/db";
+import { readDepositRequests } from '../../../utils/db';
 
 export default defineEventHandler(async () => {
   const requests = await readDepositRequests();

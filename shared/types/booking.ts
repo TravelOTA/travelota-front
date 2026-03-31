@@ -1,7 +1,7 @@
 // shared/types/booking.ts
-import type { PaymentMethod, PaymentStatus } from "./payment";
+import type { PaymentMethod, PaymentStatus } from './payment';
 
-export type BookingStatus = "confirmed" | "cancelled" | "expired";
+export type BookingStatus = 'confirmed' | 'cancelled' | 'expired';
 
 export interface ICancellationPolicy {
   refundable: boolean;
@@ -48,4 +48,5 @@ export interface IBooking {
   agencyId: string; // set by server, never by client
   createdBy: string; // set by server, never by client
   createdAt: string; // ISO datetime
+  order_ref?: string; // used to group multiple bookings in the same transaction
 }

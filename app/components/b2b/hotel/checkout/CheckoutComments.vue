@@ -2,9 +2,9 @@
 const { t } = useI18n();
 
 const hotelComments = ref(
-  "Estimado cliente, las habitaciones estándar están sujetas a disponibilidad y asignadas al momento del Check-in. No se garantizan peticiones especiales previas a la llegada.",
+  'Estimado cliente, las habitaciones estándar están sujetas a disponibilidad y asignadas al momento del Check-in. No se garantizan peticiones especiales previas a la llegada.',
 );
-const userComments = ref("");
+const userComments = ref('');
 </script>
 
 <template>

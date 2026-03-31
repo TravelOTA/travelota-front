@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import PaymentMethodSelector from "~/components/b2b/hotel/checkout/PaymentMethodSelector.vue";
+import { ref, computed } from 'vue';
+import PaymentMethodSelector from '~/components/b2b/hotel/checkout/PaymentMethodSelector.vue';
 
 const props = defineProps<{
   selectedBookings: {
@@ -12,12 +12,12 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "selectAll" | "deselectAll" | "pay"): void;
+  (e: 'selectAll' | 'deselectAll' | 'pay'): void;
 }>();
 
 const showConfirmModal = ref(false);
 const isProcessing = ref(false);
-const selectedMethod = ref("credit_card");
+const selectedMethod = ref('credit_card');
 
 const totalAmount = computed(() => {
   return props.selectedBookings.reduce((acc, b) => acc + b.total, 0);
@@ -29,7 +29,7 @@ const handlePay = () => {
   setTimeout(() => {
     isProcessing.value = false;
     showConfirmModal.value = false;
-    emit("pay");
+    emit('pay');
   }, 2000);
 };
 </script>
@@ -58,8 +58,8 @@ const handlePay = () => {
                 {{ selectedBookings.length }}
                 {{
                   selectedBookings.length === 1
-                    ? "reserva seleccionada"
-                    : "reservas seleccionadas"
+                    ? 'reserva seleccionada'
+                    : 'reservas seleccionadas'
                 }}
               </p>
               <p class="text-xs text-gray-500 dark:text-gray-400">
@@ -103,7 +103,7 @@ const handlePay = () => {
               class="text-2xl font-black text-primary-600 dark:text-primary-400"
             >
               ${{
-                totalAmount.toLocaleString("en-US", {
+                totalAmount.toLocaleString('en-US', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })
@@ -149,7 +149,7 @@ const handlePay = () => {
             class="text-3xl font-black text-primary-600 dark:text-primary-400 mt-2"
           >
             ${{
-              totalAmount.toLocaleString("en-US", {
+              totalAmount.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })
@@ -182,7 +182,7 @@ const handlePay = () => {
             </div>
             <span class="font-bold text-xs text-gray-900 dark:text-white"
               >${{
-                booking.total.toLocaleString("en-US", {
+                booking.total.toLocaleString('en-US', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })

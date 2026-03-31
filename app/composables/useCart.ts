@@ -101,7 +101,10 @@ export function useCart() {
     titular: TitularData,
     paymentMethod: string,
     specialRequests: Record<string, string> = {},
-    preCheckResults?: Record<string, { bookingFlowId: number; currentPrice: number }>,
+    preCheckResults?: Record<
+      string,
+      { bookingFlowId: number; currentPrice: number }
+    >,
     cardData?: { number: string; expiry: string; cvv: string },
     skipIds?: Set<string>,
   ): Promise<BookingResult[]> {
@@ -128,7 +131,9 @@ export function useCart() {
       }
 
       try {
-        const rooms = (item.searchParams.rooms ?? [{ adults: 2, children: [] }]).map((r) => ({
+        const rooms = (
+          item.searchParams.rooms ?? [{ adults: 2, children: [] }]
+        ).map((r) => ({
           adults: r.adults,
           children: r.children.length,
           children_ages: r.children.map((c) =>
@@ -141,34 +146,35 @@ export function useCart() {
         if (preCheckResults?.[item.id]) {
           bookingFlowId = preCheckResults![item.id]!.bookingFlowId;
         } else {
-          const bookingFlow = await apiFetch<{ id: number; current_net_rate: string; status: string }>(
-            '/api/hotel/booking-flow/select',
-            {
-              method: 'POST',
-              body: {
-                rate_key: item.room.rate_key,
-                check_in: item.searchParams.checkIn,
-                check_out: item.searchParams.checkOut,
-                rooms,
-                // DEV-ONLY: metadata for mock backend to persist realistic bookings
-                _mockPrice: item.room.price,
-                _mockHotel: {
-                  id: String(item.hotel.id),
-                  name: item.hotel.name,
-                  stars: item.hotel.stars,
-                  image: item.hotel.image,
-                  address: item.hotel.location ?? item.hotel.address ?? '',
-                },
-                _mockRoom: {
-                  id: String(item.room.id ?? item.room.rate_key ?? 'room-1'),
-                  name: item.room.name,
-                  regimen: item.room.regimen ?? 'SA',
-                  cancellation: item.room.cancellation ?? '',
-                  cancellationPolicy: item.room.cancellationPolicy,
-                },
+          const bookingFlow = await apiFetch<{
+            id: number;
+            current_net_rate: string;
+            status: string;
+          }>('/api/hotel/booking-flow/select', {
+            method: 'POST',
+            body: {
+              rate_key: item.room.rate_key,
+              check_in: item.searchParams.checkIn,
+              check_out: item.searchParams.checkOut,
+              rooms,
+              // DEV-ONLY: metadata for mock backend to persist realistic bookings
+              _mockPrice: item.room.price,
+              _mockHotel: {
+                id: String(item.hotel.id),
+                name: item.hotel.name,
+                stars: item.hotel.stars,
+                image: item.hotel.image,
+                address: item.hotel.location ?? item.hotel.address ?? '',
+              },
+              _mockRoom: {
+                id: String(item.room.rate_key ?? 'room-1'),
+                name: item.room.name,
+                regimen: item.room.regimen ?? 'SA',
+                cancellation: item.room.cancellation ?? '',
+                cancellationPolicy: item.room.cancellationPolicy,
               },
             },
-          );
+          });
           bookingFlowId = bookingFlow.id;
         }
 
@@ -198,7 +204,9 @@ export function useCart() {
 
         results.push({
           cartItemId: item.id,
-          bookingId: confirmed.booking ? String(confirmed.booking.id) : undefined,
+          bookingId: confirmed.booking
+            ? String(confirmed.booking.id)
+            : undefined,
           pnr: confirmed.booking?.pnr,
           orderRef,
           status: 'confirmed',

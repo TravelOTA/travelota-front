@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { useHotels, type HotelFilterState } from "~/composables/useHotels";
+import { describe, expect, it } from 'vitest';
+import { useHotels, type HotelFilterState } from '~/composables/useHotels';
 
 const DEFAULT_FILTERS: HotelFilterState = {
-  hotelName: "",
+  hotelName: '',
   priceMin: 0,
   priceMax: Infinity,
   categories: [],
@@ -11,53 +11,53 @@ const DEFAULT_FILTERS: HotelFilterState = {
   hideOR: false,
 };
 
-describe("useHotels", () => {
-  describe("getHotelById", () => {
-    it("devuelve el hotel por id numérico", () => {
+describe('useHotels', () => {
+  describe('getHotelById', () => {
+    it('devuelve el hotel por id numérico', () => {
       const { getHotelById } = useHotels();
       const hotel = getHotelById(1);
 
       expect(hotel).toBeDefined();
       expect(hotel!.id).toBe(1);
-      expect(hotel!.name).toBe("Serenade Punta Cana Beach & Spa Resort");
+      expect(hotel!.name).toBe('Serenade Punta Cana Beach & Spa Resort');
     });
 
-    it("devuelve el hotel por id como string", () => {
+    it('devuelve el hotel por id como string', () => {
       const { getHotelById } = useHotels();
-      const hotel = getHotelById("2");
+      const hotel = getHotelById('2');
 
       expect(hotel).toBeDefined();
       expect(hotel!.id).toBe(2);
     });
 
-    it("devuelve undefined para un id inexistente", () => {
+    it('devuelve undefined para un id inexistente', () => {
       const { getHotelById } = useHotels();
       expect(getHotelById(9999)).toBeUndefined();
     });
   });
 
-  describe("filterHotels", () => {
-    it("sin filtros devuelve todos los hoteles", () => {
+  describe('filterHotels', () => {
+    it('sin filtros devuelve todos los hoteles', () => {
       const { hotels, filterHotels } = useHotels();
       const result = filterHotels(DEFAULT_FILTERS);
 
       expect(result.length).toBe(hotels.value.length);
     });
 
-    it("filtra por nombre parcial (case-insensitive)", () => {
+    it('filtra por nombre parcial (case-insensitive)', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({
         ...DEFAULT_FILTERS,
-        hotelName: "punta cana",
+        hotelName: 'punta cana',
       });
 
       expect(result.length).toBeGreaterThan(0);
       result.forEach((h) => {
-        expect(h.name.toLowerCase()).toContain("punta cana");
+        expect(h.name.toLowerCase()).toContain('punta cana');
       });
     });
 
-    it("filtra por rango de precio", () => {
+    it('filtra por rango de precio', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({
         ...DEFAULT_FILTERS,
@@ -72,50 +72,50 @@ describe("useHotels", () => {
       });
     });
 
-    it("filtra por categoría (estrellas)", () => {
+    it('filtra por categoría (estrellas)', () => {
       const { filterHotels } = useHotels();
-      const result = filterHotels({ ...DEFAULT_FILTERS, categories: ["3"] });
+      const result = filterHotels({ ...DEFAULT_FILTERS, categories: ['3'] });
 
       expect(result.length).toBeGreaterThan(0);
       result.forEach((h) => {
-        expect(String(h.stars)).toBe("3");
+        expect(String(h.stars)).toBe('3');
       });
     });
 
-    it("filtra por régimen", () => {
+    it('filtra por régimen', () => {
       const { filterHotels } = useHotels();
-      const result = filterHotels({ ...DEFAULT_FILTERS, regimes: ["TI"] });
+      const result = filterHotels({ ...DEFAULT_FILTERS, regimes: ['TI'] });
 
       result.forEach((h) => {
         const regimes = h.rooms.map((r) => r.regimen);
-        expect(regimes).toContain("TI");
+        expect(regimes).toContain('TI');
       });
     });
 
-    it("hideNR elimina hoteles sin habitaciones reembolsables", () => {
+    it('hideNR elimina hoteles sin habitaciones reembolsables', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({ ...DEFAULT_FILTERS, hideNR: true });
 
       result.forEach((h) => {
         const hasRefundable = h.rooms.some(
-          (r) => !r.cancellation.toLowerCase().includes("no reembolsable"),
+          (r) => !r.cancellation.toLowerCase().includes('no reembolsable'),
         );
         expect(hasRefundable).toBe(true);
       });
     });
 
-    it("hideNR elimina habitaciones no reembolsables de los resultados", () => {
+    it('hideNR elimina habitaciones no reembolsables de los resultados', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({ ...DEFAULT_FILTERS, hideNR: true });
 
       result.forEach((h) => {
         h.rooms.forEach((r) => {
-          expect(r.cancellation.toLowerCase()).not.toContain("no reembolsable");
+          expect(r.cancellation.toLowerCase()).not.toContain('no reembolsable');
         });
       });
     });
 
-    it("hideOR elimina hoteles sin habitaciones de confirmación inmediata", () => {
+    it('hideOR elimina hoteles sin habitaciones de confirmación inmediata', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({ ...DEFAULT_FILTERS, hideOR: true });
 
@@ -125,7 +125,7 @@ describe("useHotels", () => {
       });
     });
 
-    it("hideOR elimina habitaciones on-request de los resultados", () => {
+    it('hideOR elimina habitaciones on-request de los resultados', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({ ...DEFAULT_FILTERS, hideOR: true });
 
@@ -136,11 +136,11 @@ describe("useHotels", () => {
       });
     });
 
-    it("combina múltiples filtros", () => {
+    it('combina múltiples filtros', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({
         ...DEFAULT_FILTERS,
-        categories: ["5"],
+        categories: ['5'],
         priceMin: 1000,
         priceMax: 2000,
         hideNR: true,
@@ -151,12 +151,12 @@ describe("useHotels", () => {
         expect(h.bestPrice).toBeGreaterThanOrEqual(1000);
         expect(h.bestPrice).toBeLessThanOrEqual(2000);
         h.rooms.forEach((r) => {
-          expect(r.cancellation.toLowerCase()).not.toContain("no reembolsable");
+          expect(r.cancellation.toLowerCase()).not.toContain('no reembolsable');
         });
       });
     });
 
-    it("devuelve array vacío si ningún hotel cumple los filtros", () => {
+    it('devuelve array vacío si ningún hotel cumple los filtros', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({
         ...DEFAULT_FILTERS,

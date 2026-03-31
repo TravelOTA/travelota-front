@@ -1,12 +1,12 @@
 // server/api/bookings/index.post.ts
-import { z } from "zod";
-import { readBookings, writeBookings, MOCK_SESSION } from "../../utils/db";
-import { generatePNR } from "../../utils/pnr";
-import type { IBooking } from "../../../shared/types/booking";
+import { z } from 'zod';
+import { readBookings, writeBookings, MOCK_SESSION } from '../../utils/db';
+import { generatePNR } from '../../utils/pnr';
+import type { IBooking } from '../../../shared/types/booking';
 
 const TitularSchema = z.object({
-  nombre: z.string().min(2, "Mínimo 2 caracteres"),
-  apellido: z.string().min(2, "Mínimo 2 caracteres"),
+  nombre: z.string().min(2, 'Mínimo 2 caracteres'),
+  apellido: z.string().min(2, 'Mínimo 2 caracteres'),
   refAgencia: z.string().optional(),
   notas: z.string().max(500).optional(),
 });
@@ -44,7 +44,7 @@ const BodySchema = z.object({
     z.object({ adults: z.number(), children: z.array(z.number()) }),
   ),
   totalPrice: z.number().positive(),
-  currency: z.string().default("USD"),
+  currency: z.string().default('USD'),
 });
 
 export default defineEventHandler(async (event) => {
@@ -54,14 +54,14 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     throw createError({
       statusCode: 422,
-      message: parsed.error.issues.map((issue) => issue.message).join(", "),
+      message: parsed.error.issues.map((issue) => issue.message).join(', '),
     });
   }
 
   const newBooking: IBooking = {
     id: generatePNR(),
-    status: "confirmed",
-    paymentStatus: "pending_payment",
+    status: 'confirmed',
+    paymentStatus: 'pending_payment',
     titular: parsed.data.titular,
     hotel: parsed.data.hotel,
     room: parsed.data.room,

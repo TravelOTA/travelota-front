@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import type { PropType } from "vue";
-import { useItinerary } from "~/composables/useItinerary";
-import type { Hotel, HotelRoomOffer } from "~/composables/useHotels";
+import { ref, computed } from 'vue';
+import type { PropType } from 'vue';
+import { useItinerary } from '~/composables/useItinerary';
+import type { Hotel, HotelRoomOffer } from '~/composables/useHotels';
 import { useCart } from '~/composables/useCart';
 import { useHotelSearch } from '~/composables/useHotelSearch';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
-
 
 const { t } = useI18n();
 
@@ -48,13 +47,12 @@ const { searchParams } = useHotelSearch();
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 
-
 const addToItinerary = (room: HotelRoomOffer) => {
   triggerAddOption({
-    providerId: "HOTEL-CURRENT",
-    name: "Alojamiento",
+    providerId: 'HOTEL-CURRENT',
+    name: 'Alojamiento',
     image:
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
     description: `${room.name} (${room.regimen})`,
     netPrice: room.price,
     isManual: false,
@@ -142,18 +140,29 @@ function handleAddToCart(room: HotelRoomOffer) {
         </UBadge>
       </div>
 
-      <div class="w-32 text-right font-bold text-gray-900 dark:text-white flex flex-col items-end">
-        <span>${{
-          salePrice(room.price).toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })
-        }}</span>
-        <span v-if="netPriceVisible" class="block text-[10px] text-gray-400 font-normal">
-          neto ${{ room.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+      <div
+        class="w-32 text-right font-bold text-gray-900 dark:text-white flex flex-col items-end"
+      >
+        <span
+          >${{
+            salePrice(room.price).toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })
+          }}</span
+        >
+        <span
+          v-if="netPriceVisible"
+          class="block text-[10px] text-gray-400 font-normal"
+        >
+          neto ${{
+            room.price.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })
+          }}
         </span>
       </div>
-
 
       <!-- Acciones: Cotizar y Reservar -->
       <div class="w-auto flex items-center justify-end gap-2 ml-4">
@@ -193,7 +202,11 @@ function handleAddToCart(room: HotelRoomOffer) {
           "
           class="w-5 h-5 mr-2"
         />
-        {{ showAllRooms ? t('hotels.rooms.seeLessOptions') : t('hotels.rooms.seeMoreOptions') }}
+        {{
+          showAllRooms
+            ? t('hotels.rooms.seeLessOptions')
+            : t('hotels.rooms.seeMoreOptions')
+        }}
       </button>
     </div>
   </div>

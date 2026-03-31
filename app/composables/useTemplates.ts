@@ -1,10 +1,10 @@
-import { computed } from "vue";
-import { apiFetch } from "~/composables/useApi";
-import { useItinerary, type Itinerary } from "~/composables/useItinerary";
+import { computed } from 'vue';
+import { apiFetch } from '~/composables/useApi';
+import { useItinerary, type Itinerary } from '~/composables/useItinerary';
 
 export interface ItineraryTemplate {
   id: number;
-  scope: "personal" | "agency" | "platform";
+  scope: 'personal' | 'agency' | 'platform';
   name: string;
   description: string;
   destination: string;
@@ -18,7 +18,7 @@ export interface SaveTemplatePayload {
   name: string;
   description: string;
   destination: string;
-  scope: ItineraryTemplate["scope"];
+  scope: ItineraryTemplate['scope'];
 }
 
 export interface UpdateTemplatePayload {
@@ -28,22 +28,22 @@ export interface UpdateTemplatePayload {
 }
 
 export const useTemplates = () => {
-  const templates = useState<ItineraryTemplate[]>("quoter-templates", () => []);
+  const templates = useState<ItineraryTemplate[]>('quoter-templates', () => []);
   const { itinerary, clearItinerary } = useItinerary();
 
   const personalTemplates = computed(() =>
-    templates.value.filter((t) => t.scope === "personal"),
+    templates.value.filter((t) => t.scope === 'personal'),
   );
   const agencyTemplates = computed(() =>
-    templates.value.filter((t) => t.scope === "agency"),
+    templates.value.filter((t) => t.scope === 'agency'),
   );
   const platformTemplates = computed(() =>
-    templates.value.filter((t) => t.scope === "platform"),
+    templates.value.filter((t) => t.scope === 'platform'),
   );
 
   const fetchTemplates = async (): Promise<void> => {
     const data = await apiFetch<ItineraryTemplate[]>(
-      "/api/quotation/templates",
+      '/api/quotation/templates',
     );
     templates.value = data;
   };
@@ -52,7 +52,7 @@ export const useTemplates = () => {
     // Strip options from all blocks; clear clientName
     const skeleton: Itinerary = {
       ...itinerary.value,
-      clientName: "",
+      clientName: '',
       blocks: itinerary.value.blocks.map((block) => ({
         ...block,
         options: [],
@@ -60,9 +60,9 @@ export const useTemplates = () => {
     };
 
     const created = await apiFetch<ItineraryTemplate>(
-      "/api/quotation/templates",
+      '/api/quotation/templates',
       {
-        method: "POST",
+        method: 'POST',
         body: { ...payload, itinerary: skeleton },
       },
     );
@@ -76,13 +76,13 @@ export const useTemplates = () => {
   ): Promise<void> => {
     const updated = await apiFetch<ItineraryTemplate>(
       `/api/quotation/templates/${id}`,
-      { method: "PATCH", body: payload },
+      { method: 'PATCH', body: payload },
     );
     templates.value = templates.value.map((t) => (t.id === id ? updated : t));
   };
 
   const deleteTemplate = async (id: number): Promise<void> => {
-    await apiFetch(`/api/quotation/templates/${id}`, { method: "DELETE" });
+    await apiFetch(`/api/quotation/templates/${id}`, { method: 'DELETE' });
     templates.value = templates.value.filter((t) => t.id !== id);
   };
 
@@ -90,7 +90,7 @@ export const useTemplates = () => {
     clearItinerary();
     itinerary.value = {
       ...template.itinerary,
-      clientName: "",
+      clientName: '',
       // give each block a fresh UUID so the builder treats them as new
       blocks: template.itinerary.blocks.map((block) => ({
         ...block,

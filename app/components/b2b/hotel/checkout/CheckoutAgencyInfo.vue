@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const { t } = useI18n();
 
-const agencyName = ref("ONE CLICK ADVENTURES INC");
-const email = ref("sales@oneclickadventures.com");
-const reference = ref("");
+const agencyName = ref('ONE CLICK ADVENTURES INC');
+const email = ref('sales@oneclickadventures.com');
+const reference = ref('');
 </script>
 
 <template>
@@ -30,7 +30,10 @@ const reference = ref("");
       </UFormField>
 
       <UFormField :label="t('hotels.checkout.agencyReferenceLabel')" required>
-        <UInput v-model="reference" :placeholder="t('hotels.checkout.referencePlaceholder')" />
+        <UInput
+          v-model="reference"
+          :placeholder="t('hotels.checkout.referencePlaceholder')"
+        />
       </UFormField>
     </div>
   </div>

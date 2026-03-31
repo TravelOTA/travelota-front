@@ -1,24 +1,22 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useNetPrice } from '~/composables/useNetPrice';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useSalePrice } from '~/composables/useSalePrice';
 
+import CheckoutSidebarSummary from '~/components/b2b/hotel/checkout/CheckoutSidebarSummary.vue';
+import BookingStatusHero from '~/components/b2b/hotel/checkout/BookingStatusHero.vue';
+import BookingCancellation from '~/components/b2b/hotel/checkout/BookingCancellation.vue';
+import BookingPayment from '~/components/b2b/hotel/checkout/BookingPayment.vue';
+import VoucherPreviewModal from '~/components/b2b/hotel/checkout/VoucherPreviewModal.vue';
+import { useBookings } from '~/composables/useBookings';
+import { apiFetch } from '~/composables/useApi';
+import type { IBooking } from '#shared/types/booking';
+
 const { t } = useI18n();
-const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 
-import CheckoutSidebarSummary from "~/components/b2b/hotel/checkout/CheckoutSidebarSummary.vue";
-import BookingStatusHero from "~/components/b2b/hotel/checkout/BookingStatusHero.vue";
-import BookingCancellation from "~/components/b2b/hotel/checkout/BookingCancellation.vue";
-import BookingPayment from "~/components/b2b/hotel/checkout/BookingPayment.vue";
-import VoucherPreviewModal from "~/components/b2b/hotel/checkout/VoucherPreviewModal.vue";
-import { useBookings } from "~/composables/useBookings";
-import { apiFetch } from "~/composables/useApi";
-import type { IBooking } from "#shared/types/booking";
-
 definePageMeta({
-  layout: "dashboard",
+  layout: 'dashboard',
 });
 
 const route = useRoute();
@@ -26,7 +24,7 @@ const router = useRouter();
 
 // Determine origin: 'confirmation' (from checkout) vs 'detail' (from bookings list)
 const origin = computed(() =>
-  route.query.from === "confirmation" ? "confirmation" : "detail",
+  route.query.from === 'confirmation' ? 'confirmation' : 'detail',
 );
 
 const bookingId = route.params.id as string;
@@ -47,13 +45,19 @@ onMounted(async () => {
 
 const bookingStatusLabel = computed(() =>
   booking.value
-    ? t(`hotels.bookingStatusLabel.${booking.value.status}`, booking.value.status)
-    : "",
+    ? t(
+        `hotels.bookingStatusLabel.${booking.value.status}`,
+        booking.value.status,
+      )
+    : '',
 );
 const paymentStatusLabel = computed(() =>
   booking.value
-    ? t(`hotels.paymentStatusLabel.${booking.value.paymentStatus}`, booking.value.paymentStatus)
-    : "",
+    ? t(
+        `hotels.paymentStatusLabel.${booking.value.paymentStatus}`,
+        booking.value.paymentStatus,
+      )
+    : '',
 );
 
 // Computed props for child components
@@ -81,14 +85,16 @@ const reservationProp = computed(() =>
               .map((g) => {
                 const parts = [];
                 if (g.adults)
-                  parts.push(`${g.adults} ${g.adults !== 1 ? t('hotels.search.adults') : t('hotels.search.adult')}`);
+                  parts.push(
+                    `${g.adults} ${g.adults !== 1 ? t('hotels.search.adults') : t('hotels.search.adult')}`,
+                  );
                 if (g.children.length)
                   parts.push(
                     `${g.children.length} ${g.children.length !== 1 ? t('hotels.search.children') : t('hotels.search.child')}`,
                   );
-                return parts.join(", ");
+                return parts.join(', ');
               })
-              .join(" / "),
+              .join(' / '),
             price: salePrice(booking.value.totalPrice),
             netPrice: booking.value.totalPrice,
           },
@@ -101,10 +107,12 @@ const reservationProp = computed(() =>
 const cancellationPolicies = computed(() => {
   if (!booking.value) return [];
   return (booking.value.room.cancellationPolicy?.penalties ?? []).map((p) => ({
-    status: t('hotels.cancellation.percentOfTotal', { percentage: p.percentage }),
+    status: t('hotels.cancellation.percentOfTotal', {
+      percentage: p.percentage,
+    }),
     fromDate: p.from,
     toDate: p.from,
-    time: "23:59 CET",
+    time: '23:59 CET',
     price: p.amount,
   }));
 });
@@ -112,18 +120,18 @@ const cancellationPolicies = computed(() => {
 // Computed flags for conditional rendering
 const showCancellation = computed(
   () =>
-    booking.value?.status !== "cancelled" &&
-    booking.value?.status !== "expired",
+    booking.value?.status !== 'cancelled' &&
+    booking.value?.status !== 'expired',
 );
 
 const paidDate = computed(() =>
   booking.value?.paidAt
-    ? new Date(booking.value.paidAt).toLocaleString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+    ? new Date(booking.value.paidAt).toLocaleString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
       })
     : undefined,
 );
@@ -133,14 +141,16 @@ const paymentDeadline = computed(
 );
 
 const isVoucherModalOpen = ref(false);
-const documentMode = ref<"voucher" | "invoice">("voucher");
+const documentMode = ref<'voucher' | 'invoice'>('voucher');
 
-const openDocument = (mode: "voucher" | "invoice") => {
+const openDocument = (mode: 'voucher' | 'invoice') => {
   documentMode.value = mode;
   isVoucherModalOpen.value = true;
 };
 
-const siblingBookings = ref<{ id: string | number; pnr: string; hotel_name: string; order_ref: string }[]>([]);
+const siblingBookings = ref<
+  { id: string | number; pnr: string; hotel_name: string; order_ref: string }[]
+>([]);
 
 watch(
   () => (booking.value as { order_ref?: string } | null)?.order_ref,
@@ -150,9 +160,14 @@ watch(
       return;
     }
     try {
-      const data = await apiFetch<{ results?: { id: string | number; pnr: string; hotel_name: string; order_ref: string }[] }>(
-        `/api/agency/bookings?order_ref=${orderRef}`,
-      );
+      const data = await apiFetch<{
+        results?: {
+          id: string | number;
+          pnr: string;
+          hotel_name: string;
+          order_ref: string;
+        }[];
+      }>(`/api/agency/bookings?order_ref=${orderRef}`);
       const currentId = route.params.id;
       siblingBookings.value = (data?.results ?? []).filter(
         (b) => String(b.id) !== String(currentId),
@@ -270,7 +285,7 @@ useHead({
                   {{ t('hotels.bookingDetail.agencyReference') }}
                 </p>
                 <p class="font-bold text-gray-900 dark:text-white text-lg">
-                  {{ booking.titular.refAgencia || "N/A" }}
+                  {{ booking.titular.refAgencia || 'N/A' }}
                 </p>
               </div>
               <div>
@@ -312,7 +327,7 @@ useHead({
                     name="i-heroicons-calendar-days"
                     class="w-4 h-4 text-gray-400"
                   />
-                  {{ new Date(booking.createdAt).toLocaleDateString("es-ES") }}
+                  {{ new Date(booking.createdAt).toLocaleDateString('es-ES') }}
                 </p>
               </div>
             </div>
@@ -352,8 +367,11 @@ useHead({
                 @click="openDocument('voucher')"
               >
                 <div class="text-left">
-                  <span class="block">{{ t('hotels.bookingDetail.downloadVoucher') }}</span>
-                  <span class="block text-[10px] font-normal opacity-80 mt-0.5"
+                  <span class="block">{{
+                    t('hotels.bookingDetail.downloadVoucher')
+                  }}</span>
+                  <span
+                    class="block text-[10px] font-normal opacity-80 mt-0.5"
                     >{{ t('hotels.bookingDetail.voucherSubtitle') }}</span
                   >
                 </div>
@@ -368,8 +386,11 @@ useHead({
                 @click="openDocument('invoice')"
               >
                 <div class="text-left">
-                  <span class="block">{{ t('hotels.bookingDetail.downloadInvoice') }}</span>
-                  <span class="block text-[10px] font-normal opacity-90 mt-0.5"
+                  <span class="block">{{
+                    t('hotels.bookingDetail.downloadInvoice')
+                  }}</span>
+                  <span
+                    class="block text-[10px] font-normal opacity-90 mt-0.5"
                     >{{ t('hotels.bookingDetail.invoiceSubtitle') }}</span
                   >
                 </div>
@@ -402,11 +423,17 @@ useHead({
           <UCard v-if="siblingBookings.length > 0" class="mt-6">
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-heroicons-squares-2x2" class="w-4 h-4 text-primary-500" />
+                <UIcon
+                  name="i-heroicons-squares-2x2"
+                  class="w-4 h-4 text-primary-500"
+                />
                 <h3 class="font-semibold text-sm text-gray-900 dark:text-white">
                   {{ t('cart.orderGroup.title') }}
-                  <span class="text-gray-500 dark:text-gray-400 font-normal ml-1">
-                    ({{ t('cart.orderGroup.orderRef') }}: {{ siblingBookings[0]?.order_ref }})
+                  <span
+                    class="text-gray-500 dark:text-gray-400 font-normal ml-1"
+                  >
+                    ({{ t('cart.orderGroup.orderRef') }}:
+                    {{ siblingBookings[0]?.order_ref }})
                   </span>
                 </h3>
               </div>
@@ -419,10 +446,17 @@ useHead({
                 class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
               >
                 <div>
-                  <p class="text-sm font-medium text-gray-900 dark:text-white">{{ sibling.hotel_name }}</p>
-                  <p class="text-xs text-gray-500 font-mono">{{ sibling.pnr }}</p>
+                  <p class="text-sm font-medium text-gray-900 dark:text-white">
+                    {{ sibling.hotel_name }}
+                  </p>
+                  <p class="text-xs text-gray-500 font-mono">
+                    {{ sibling.pnr }}
+                  </p>
                 </div>
-                <UIcon name="i-heroicons-arrow-right" class="w-4 h-4 text-gray-400" />
+                <UIcon
+                  name="i-heroicons-arrow-right"
+                  class="w-4 h-4 text-gray-400"
+                />
               </NuxtLink>
             </div>
           </UCard>

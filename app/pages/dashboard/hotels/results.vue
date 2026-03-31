@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import SearchSummaryBar from "~/components/b2b/hotel/SearchSummaryBar.vue";
-
-const { t } = useI18n();
-import FiltersSidebar from "~/components/b2b/hotel/FiltersSidebar.vue";
-import ResultCard from "~/components/b2b/hotel/ResultCard.vue";
-import HotelMap from "~/components/b2b/hotel/HotelMap.vue";
-import { useHotels, type HotelFilterState } from "~/composables/useHotels";
-import { useHotelSearch } from "~/composables/useHotelSearch";
+import SearchSummaryBar from '~/components/b2b/hotel/SearchSummaryBar.vue';
+import FiltersSidebar from '~/components/b2b/hotel/FiltersSidebar.vue';
+import ResultCard from '~/components/b2b/hotel/ResultCard.vue';
+import HotelMap from '~/components/b2b/hotel/HotelMap.vue';
+import { useHotels, type HotelFilterState } from '~/composables/useHotels';
+import { useHotelSearch } from '~/composables/useHotelSearch';
 
 definePageMeta({
-  layout: "dashboard",
+  layout: 'dashboard',
 });
 
 const { hotels: mockHotels, filterHotels } = useHotels();
@@ -20,7 +18,7 @@ useHead(
   computed(() => ({
     title: searchParams.value.destination
       ? `Resultados: ${searchParams.value.destination} - TravelOTA B2B`
-      : "Resultados de búsqueda - TravelOTA B2B",
+      : 'Resultados de búsqueda - TravelOTA B2B',
   })),
 );
 
@@ -28,26 +26,26 @@ useHead(
 const showMobileFilters = ref(false);
 
 // Sort state: field + direction
-const sortField = ref<"price" | "stars" | "name" | null>(null);
-const sortDirection = ref<"asc" | "desc">("asc");
+const sortField = ref<'price' | 'stars' | 'name' | null>(null);
+const sortDirection = ref<'asc' | 'desc'>('asc');
 
-const toggleSort = (field: "price" | "stars" | "name") => {
+const toggleSort = (field: 'price' | 'stars' | 'name') => {
   if (sortField.value === field) {
     // Same field clicked: toggle direction
-    sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
   } else {
     // New field: set it and default to ascending
     sortField.value = field;
-    sortDirection.value = "asc";
+    sortDirection.value = 'asc';
   }
 };
 
 // Sort icon helper
 const sortIcon = (field: string): string => {
-  if (sortField.value !== field) return "i-heroicons-chevron-up-down";
-  return sortDirection.value === "asc"
-    ? "i-heroicons-chevron-up"
-    : "i-heroicons-chevron-down";
+  if (sortField.value !== field) return 'i-heroicons-chevron-up-down';
+  return sortDirection.value === 'asc'
+    ? 'i-heroicons-chevron-up'
+    : 'i-heroicons-chevron-down';
 };
 
 const isMapOpen = ref(false);
@@ -64,7 +62,7 @@ const handleOpenMap = (hotel?: Record<string, unknown>) => {
 
 // Filter state from sidebar
 const activeFilters = ref<HotelFilterState>({
-  hotelName: "",
+  hotelName: '',
   priceMin: 0,
   priceMax: 999999,
   categories: [],
@@ -86,14 +84,14 @@ const sortedHotels = computed(() => {
   const list = [...filteredHotels.value];
   if (!sortField.value) return list;
 
-  const dir = sortDirection.value === "asc" ? 1 : -1;
+  const dir = sortDirection.value === 'asc' ? 1 : -1;
   return list.sort((a, b) => {
     switch (sortField.value) {
-      case "price":
+      case 'price':
         return (a.bestPrice - b.bestPrice) * dir;
-      case "stars":
+      case 'stars':
         return (a.stars - b.stars) * dir;
-      case "name":
+      case 'name':
         return a.name.localeCompare(b.name) * dir;
       default:
         return 0;
@@ -120,7 +118,7 @@ const paginatedHotels = computed(() => {
 });
 const goToPage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) currentPage.value = page;
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 // Reset page when sort or filters change
 watch(
@@ -156,10 +154,11 @@ watch(
         <p
           class="text-sm text-primary-600 dark:text-primary-400 font-medium mb-3"
         >
-          <span class="font-bold">{{ filteredHotels.length }}</span> {{ $t('hotels.results.hotelsFoundFrom') }}
+          <span class="font-bold">{{ filteredHotels.length }}</span>
+          {{ $t('hotels.results.hotelsFoundFrom') }}
           <span class="font-bold"
             >${{
-              minPrice.toLocaleString("en-US", {
+              minPrice.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })
@@ -215,7 +214,12 @@ watch(
           class="flex items-center justify-between mb-4"
         >
           <span class="text-xs text-gray-500">
-            {{ $t('hotels.results.pageOf', { current: currentPage, total: totalPages }) }}
+            {{
+              $t('hotels.results.pageOf', {
+                current: currentPage,
+                total: totalPages,
+              })
+            }}
           </span>
           <div class="flex items-center gap-1">
             <UButton
@@ -265,7 +269,12 @@ watch(
           class="flex items-center justify-between mt-6"
         >
           <span class="text-xs text-gray-500">
-            {{ $t('hotels.results.pageOf', { current: currentPage, total: totalPages }) }}
+            {{
+              $t('hotels.results.pageOf', {
+                current: currentPage,
+                total: totalPages,
+              })
+            }}
           </span>
           <div class="flex items-center gap-1">
             <UButton

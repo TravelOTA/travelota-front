@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NuxtError } from "#app";
+import type { NuxtError } from '#app';
 
 const props = defineProps<{ error: NuxtError }>();
 const { t } = useI18n();
@@ -8,21 +8,21 @@ const is404 = computed(() => props.error.statusCode === 404);
 const is500 = computed(() => (props.error.statusCode ?? 500) >= 500);
 
 const title = computed(() => {
-  if (is404.value) return t("errors.notFound.title");
-  if (is500.value) return t("errors.serverErrorPage.title");
-  return t("errors.generic.title");
+  if (is404.value) return t('errors.notFound.title');
+  if (is500.value) return t('errors.serverErrorPage.title');
+  return t('errors.generic.title');
 });
 
 const description = computed(() => {
-  if (is404.value) return t("errors.notFound.description");
-  if (is500.value) return t("errors.serverErrorPage.description");
-  return t("errors.generic.description");
+  if (is404.value) return t('errors.notFound.description');
+  if (is500.value) return t('errors.serverErrorPage.description');
+  return t('errors.generic.description');
 });
 
 const icon = computed(() => {
-  if (is404.value) return "i-heroicons-map-pin";
-  if (is500.value) return "i-heroicons-server";
-  return "i-heroicons-exclamation-triangle";
+  if (is404.value) return 'i-heroicons-map-pin';
+  if (is500.value) return 'i-heroicons-server';
+  return 'i-heroicons-exclamation-triangle';
 });
 
 function handleRetry() {
@@ -60,7 +60,7 @@ function handleRetry() {
           icon="i-heroicons-arrow-path"
           @click="handleRetry"
         >
-          {{ t("errors.retry") }}
+          {{ t('errors.retry') }}
         </UButton>
         <UButton
           :color="is500 ? 'neutral' : 'primary'"
@@ -68,7 +68,7 @@ function handleRetry() {
           icon="i-heroicons-home"
           to="/"
         >
-          {{ t("errors.backHome") }}
+          {{ t('errors.backHome') }}
         </UButton>
       </div>
     </div>

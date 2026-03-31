@@ -1,28 +1,32 @@
 <script setup lang="ts">
-import { z } from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import { apiFetch } from "~/composables/useApi";
+import { z } from 'zod';
+import type { FormSubmitEvent } from '@nuxt/ui';
+import { apiFetch } from '~/composables/useApi';
 
 const emit = defineEmits<{ success: [] }>();
 const { t } = useI18n();
 
 const schema = computed(() =>
-  z.object({
-    verification_code: z
-      .string()
-      .length(6, t("auth.resetPassword.errorCodeInvalid")),
-    password: z.string().min(8, t("validation.passwordMinLength", { min: 8 })),
-    confirm_password: z.string().min(1),
-  }).refine((data) => data.password === data.confirm_password, {
-    message: t("auth.resetPassword.errorPasswordMismatch"),
-    path: ["confirm_password"],
-  }),
+  z
+    .object({
+      verification_code: z
+        .string()
+        .length(6, t('auth.resetPassword.errorCodeInvalid')),
+      password: z
+        .string()
+        .min(8, t('validation.passwordMinLength', { min: 8 })),
+      confirm_password: z.string().min(1),
+    })
+    .refine((data) => data.password === data.confirm_password, {
+      message: t('auth.resetPassword.errorPasswordMismatch'),
+      path: ['confirm_password'],
+    }),
 );
 
 const form = reactive({
-  verification_code: "",
-  password: "",
-  confirm_password: "",
+  verification_code: '',
+  password: '',
+  confirm_password: '',
 });
 const isSubmitting = ref(false);
 const error = ref<string | null>(null);
@@ -31,13 +35,13 @@ async function onSubmit(event: FormSubmitEvent<typeof form>) {
   isSubmitting.value = true;
   error.value = null;
   try {
-    await apiFetch("/api/auth/reset-password", {
-      method: "POST",
+    await apiFetch('/api/auth/reset-password', {
+      method: 'POST',
       body: event.data,
     });
-    emit("success");
+    emit('success');
   } catch {
-    error.value = t("auth.resetPassword.errorCodeInvalid");
+    error.value = t('auth.resetPassword.errorCodeInvalid');
   } finally {
     isSubmitting.value = false;
   }
@@ -47,7 +51,9 @@ async function onSubmit(event: FormSubmitEvent<typeof form>) {
 <template>
   <UCard>
     <template #header>
-      <h2 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wider text-center">
+      <h2
+        class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wider text-center"
+      >
         {{ t('auth.resetPassword.title') }}
       </h2>
       <p class="text-sm text-gray-500 dark:text-gray-400 text-center mt-1">
@@ -56,7 +62,10 @@ async function onSubmit(event: FormSubmitEvent<typeof form>) {
     </template>
 
     <UForm :schema="schema" :state="form" class="space-y-5" @submit="onSubmit">
-      <UFormField :label="t('auth.resetPassword.codeLabel')" name="verification_code">
+      <UFormField
+        :label="t('auth.resetPassword.codeLabel')"
+        name="verification_code"
+      >
         <UInput
           v-model="form.verification_code"
           :placeholder="t('auth.resetPassword.codePlaceholder')"
@@ -67,7 +76,10 @@ async function onSubmit(event: FormSubmitEvent<typeof form>) {
         />
       </UFormField>
 
-      <UFormField :label="t('auth.resetPassword.passwordLabel')" name="password">
+      <UFormField
+        :label="t('auth.resetPassword.passwordLabel')"
+        name="password"
+      >
         <UInput
           v-model="form.password"
           type="password"
@@ -78,7 +90,10 @@ async function onSubmit(event: FormSubmitEvent<typeof form>) {
         />
       </UFormField>
 
-      <UFormField :label="t('auth.resetPassword.confirmPasswordLabel')" name="confirm_password">
+      <UFormField
+        :label="t('auth.resetPassword.confirmPasswordLabel')"
+        name="confirm_password"
+      >
         <UInput
           v-model="form.confirm_password"
           type="password"
@@ -89,12 +104,7 @@ async function onSubmit(event: FormSubmitEvent<typeof form>) {
         />
       </UFormField>
 
-      <UAlert
-        v-if="error"
-        color="error"
-        variant="soft"
-        :description="error"
-      />
+      <UAlert v-if="error" color="error" variant="soft" :description="error" />
 
       <UButton
         type="submit"
