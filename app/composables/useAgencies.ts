@@ -295,6 +295,14 @@ export function useAgencies() {
     agency.markup = group.baseMarkup;
     agency.publicEmail = agency.email;
     agency.publicPhone = agency.phone;
+    // Inherit base credit limit from group
+    agency.credit_line = {
+      limit: group.baseCreditLimit,
+      used: 0,
+      available: group.baseCreditLimit,
+      debt: 0,
+      status: 'active',
+    };
     agency.users.push({
       id: crypto.randomUUID(),
       name: agency.nombreContacto,
