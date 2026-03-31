@@ -71,6 +71,15 @@
       "updatedMinute": "Actualizado hace 1 min",
       "updatedMinutes": "Actualizado hace {n} min",
       "updatedHours": "Actualizado hace {n} h",
+      "credit": {
+        "title": "Línea de Crédito",
+        "limit": "Límite Total",
+        "available": "Crédito Disponible",
+        "used": "Crédito Utilizado",
+        "debt": "Deuda Pendiente",
+        "status": "Estado de la línea",
+        "manage": "Gestionar Crédito"
+      },
       "lowBalance": {
         "title": "Saldo bajo",
         "description": "Tu saldo está por debajo del mínimo requerido ({threshold}). Recarga para seguir operando sin interrupciones."

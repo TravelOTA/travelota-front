@@ -49,6 +49,15 @@
       "updatedMinute": "Updated 1 min ago",
       "updatedMinutes": "Updated {n} min ago",
       "updatedHours": "Updated {n} h ago",
+      "credit": {
+        "title": "Credit Line",
+        "limit": "Total Limit",
+        "available": "Available Credit",
+        "used": "Credit Used",
+        "debt": "Outstanding Debt",
+        "status": "Line Status",
+        "manage": "Manage Credit"
+      },
       "lowBalance": {
         "title": "Low balance",
         "description": "Your balance is below the minimum required ({threshold}). Top up to keep operating without interruptions."
