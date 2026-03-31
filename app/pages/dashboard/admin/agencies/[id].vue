@@ -3,7 +3,7 @@ import { useAgencies, type AdminAgencyUser } from "~/composables/useAgencies";
 
 definePageMeta({ layout: "dashboard" });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const agencyId = route.params.id as string;
 
@@ -189,7 +189,7 @@ const userColumns = [
 const isCreditDetailOpen = ref(false);
 
 function formatAdminCurrency(amount: number): string {
-  return new Intl.NumberFormat('es', { style: 'currency', currency: 'USD' }).format(amount);
+  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD' }).format(amount);
 }
 </script>
 
