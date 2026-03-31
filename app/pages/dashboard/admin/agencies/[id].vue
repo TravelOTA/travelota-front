@@ -851,13 +851,20 @@ function formatAdminCurrency(amount: number): string {
       </UModal>
 
       <!-- Credit Modal -->
-      <AgencyCreditModal
+      <UModal
         v-if="agency.credit_line"
-        v-model="isCreditDetailOpen"
-        :credit-line="agency.credit_line"
-        :agency-name="agency.name"
-        @update:credit-line="updateAgencyCreditLine"
-      />
+        v-model:open="isCreditDetailOpen"
+        :title="`${agency.name} — ${t('agency.wallet.credit.title')}`"
+        size="xl"
+      >
+        <template #body>
+          <AgencyCreditModal
+            :credit-line="agency.credit_line"
+            :agency-name="agency.name"
+            @save="updateAgencyCreditLine"
+          />
+        </template>
+      </UModal>
     </template>
   </div>
 </template>
