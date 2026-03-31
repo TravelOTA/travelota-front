@@ -112,6 +112,13 @@ const MOCK_AGENCIES: AdminAgency[] = [
     status: "Activa",
     logo: "",
     colorPrimario: "blue",
+    credit_line: {
+      limit: 5000,
+      used: 1800,
+      available: 3200,
+      debt: 1800,
+      status: 'active' as const,
+    },
     users: [
       {
         id: "1",
@@ -171,6 +178,13 @@ const MOCK_AGENCIES: AdminAgency[] = [
     status: "Activa",
     logo: "",
     colorPrimario: "indigo",
+    credit_line: {
+      limit: 8000,
+      used: 500,
+      available: 7500,
+      debt: 500,
+      status: 'active' as const,
+    },
     users: [
       {
         id: "1",
