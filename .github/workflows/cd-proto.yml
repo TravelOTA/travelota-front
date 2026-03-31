@@ -1,0 +1,44 @@
+# https://github.com/actions/deploy-pages#usage
+# NOTE: This workflows is used to deploy the site prototype to github pages who is not suitable for production
+
+name: Deploy Prototype to GitHub Pages
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - prototype
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+
+      - name: Install and Build static site with PNPM
+        uses: pnpm/action-setup@v4
+      - run: pnpm install
+      - run: NUXT_APP_BASE_URL=/travelota-front/ pnpm nuxt build --preset github_pages
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./.output/public
+
+  deploy:
+    needs: build
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

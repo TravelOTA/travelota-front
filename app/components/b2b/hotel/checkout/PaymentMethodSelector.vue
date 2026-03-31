@@ -1,0 +1,250 @@
+<script setup lang="ts">
+/**
+ * PaymentMethodSelector — Componente reutilizable de selección de método de pago.
+ *
+ * Uso básico (3 opciones: tarjeta, transferencia, crédito):
+ *   <PaymentMethodSelector v-model="selectedMethod" />
+ *
+ * Con opción "Reservar y no Pagar Ahora" (checkout):
+ *   <PaymentMethodSelector v-model="selectedMethod" show-pay-later
+ *     :total-price="6281.41" payment-deadline="01/03/2026" cancellation-deadline="25/02/2026" />
+ */
+import { computed } from "vue";
+import type { ICancellationPolicy } from "#shared/types/booking";
+
+const props = defineProps<{
+  modelValue: string;
+  /** Show "Reservar y no Pagar Ahora" option (only for checkout confirmation) */
+  showPayLater?: boolean;
+  /** Required when showPayLater is true */
+  totalPrice?: number;
+  paymentDeadline?: string;
+  cancellationDeadline?: string;
+  cancellationPolicy?: ICancellationPolicy;
+}>();
+
+const emit = defineEmits<{
+  (e: "update:modelValue", value: string): void;
+}>();
+
+const { hasSufficientCredit } = useWallet();
+
+const isCreditSufficient = computed(() => {
+  if (!props.totalPrice) return true;
+  return hasSufficientCredit(props.totalPrice);
+});
+
+function todayStr(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function addDaysStr(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+const isDeferredDisabled = computed(() => {
+  const p = props.cancellationPolicy;
+  if (!p) return false;
+  return !p.refundable || p.penaltyFrom === null || p.penaltyFrom <= todayStr();
+});
+
+const isTransferDisabled = computed(() => {
+  const p = props.cancellationPolicy;
+  if (!p) return false;
+  return (
+    !p.refundable || p.penaltyFrom === null || p.penaltyFrom <= addDaysStr(3)
+  );
+});
+
+const select = (key: string) => {
+  if (!isCreditSufficient.value && key === "agency_credit") return;
+  if (isDeferredDisabled.value && key === "deferred") return;
+  if (isTransferDisabled.value && key === "transfer") return;
+  emit("update:modelValue", key);
+};
+
+const { paymentMethods: baseMethods } = useConfig();
+
+const { t } = useI18n();
+
+const formatPrice = (price: number) => {
+  return price.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+</script>
+
+<template>
+  <div class="space-y-3">
+    <!-- Pay Later option (only at checkout) -->
+    <div v-if="props.showPayLater">
+    <div
+      class="border rounded-lg p-4 transition-all"
+      :class="[
+        isDeferredDisabled
+          ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800'
+          : 'cursor-pointer',
+        !isDeferredDisabled && modelValue === 'deferred'
+          ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10 shadow-sm'
+          : !isDeferredDisabled
+            ? 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-gray-600'
+            : '',
+      ]"
+      @click="select('deferred')"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-9 h-9 rounded-lg flex items-center justify-center"
+            :class="
+              modelValue === 'deferred'
+                ? 'bg-primary-100 dark:bg-primary-800/30'
+                : 'bg-gray-100 dark:bg-gray-800'
+            "
+          >
+            <UIcon
+              name="i-heroicons-clock"
+              class="w-5 h-5"
+              :class="
+                modelValue === 'deferred'
+                  ? 'text-primary-600 dark:text-primary-400'
+                  : 'text-gray-500'
+              "
+            />
+          </div>
+          <div>
+            <p
+              class="font-bold text-sm"
+              :class="
+                modelValue === 'deferred'
+                  ? 'text-primary-700 dark:text-primary-300'
+                  : 'text-gray-900 dark:text-white'
+              "
+            >
+              {{ t('hotels.checkout.payLater') }}
+            </p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+              <template v-if="totalPrice">
+                {{ t('hotels.checkout.totalAmount') }}
+                <strong class="text-gray-900 dark:text-white"
+                  >${{ formatPrice(totalPrice) }}</strong
+                >.
+              </template>
+              <template v-if="paymentDeadline">
+                {{ t('hotels.checkout.paymentDeadline') }}
+                <strong class="text-gray-900 dark:text-white">{{
+                  paymentDeadline
+                }}</strong
+                >.
+              </template>
+              <template v-if="cancellationDeadline">
+                {{ t('hotels.checkout.freeCancellationUntil') }}
+                <strong class="text-gray-900 dark:text-white">{{
+                  cancellationDeadline
+                }}</strong
+                >.
+              </template>
+            </p>
+          </div>
+        </div>
+        <div
+          class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+          :class="
+            modelValue === 'deferred'
+              ? 'border-primary-500'
+              : 'border-gray-300 dark:border-gray-600'
+          "
+        >
+          <div
+            v-show="modelValue === 'deferred'"
+            class="w-2.5 h-2.5 bg-primary-500 rounded-full"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <p v-if="isDeferredDisabled" class="text-xs text-amber-600 dark:text-amber-400 mt-1 px-1">
+      {{ t('hotels.checkout.cancelPaymentNote') }}
+    </p>
+    </div>
+
+    <!-- Base payment methods -->
+    <div
+      v-for="method in baseMethods"
+      :key="method.key"
+      class="border rounded-lg p-4 transition-all"
+      :class="[
+        (!isCreditSufficient && method.key === 'agency_credit') ||
+        (method.key === 'transfer' && isTransferDisabled)
+          ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800'
+          : 'cursor-pointer',
+        modelValue === method.key
+          ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10 shadow-sm'
+          : 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-gray-600',
+      ]"
+      @click="select(method.key)"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-9 h-9 rounded-lg flex items-center justify-center"
+            :class="
+              modelValue === method.key
+                ? 'bg-primary-100 dark:bg-primary-800/30'
+                : 'bg-gray-100 dark:bg-gray-800'
+            "
+          >
+            <UIcon
+              :name="method.icon"
+              class="w-5 h-5"
+              :class="
+                modelValue === method.key
+                  ? 'text-primary-600 dark:text-primary-400'
+                  : 'text-gray-500'
+              "
+            />
+          </div>
+          <div>
+            <p
+              class="font-bold text-sm"
+              :class="
+                modelValue === method.key
+                  ? 'text-primary-700 dark:text-primary-300'
+                  : 'text-gray-900 dark:text-white'
+              "
+            >
+              {{ method.label }}
+              <UBadge
+                v-if="!isCreditSufficient && method.key === 'agency_credit'"
+                color="error"
+                variant="soft"
+                size="xs"
+                class="ml-2"
+                >{{ t('hotels.checkout.insufficientCredit') }}</UBadge
+              >
+            </p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+              {{ method.description }}
+            </p>
+          </div>
+        </div>
+        <div
+          class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+          :class="
+            modelValue === method.key
+              ? 'border-primary-500'
+              : 'border-gray-300 dark:border-gray-600'
+          "
+        >
+          <div
+            v-show="modelValue === method.key"
+            class="w-2.5 h-2.5 bg-primary-500 rounded-full"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

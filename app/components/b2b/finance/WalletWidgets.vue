@@ -1,0 +1,124 @@
+<script setup lang="ts">
+const emit = defineEmits<{ "request-recharge": [] }>();
+
+const { t, locale } = useI18n();
+const {
+  balance,
+  lowBalanceThreshold,
+  isLowBalance,
+  currency,
+  totalDeposited,
+  totalConsumed,
+  lastUpdatedAt,
+} = useWallet();
+
+const formatCurrency = (amount: number) =>
+  new Intl.NumberFormat(locale.value, {
+    style: "currency",
+    currency: currency.value,
+  }).format(amount);
+
+const updatedAgo = computed(() => {
+  if (!lastUpdatedAt.value) return null;
+  const diff = Math.floor(
+    (Date.now() - new Date(lastUpdatedAt.value).getTime()) / 60000,
+  );
+  if (diff < 1) return t("agency.wallet.updatedNow");
+  if (diff === 1) return t("agency.wallet.updatedMinute");
+  if (diff < 60) return t("agency.wallet.updatedMinutes", { n: diff });
+  return t("agency.wallet.updatedHours", { n: Math.floor(diff / 60) });
+});
+</script>
+
+<template>
+  <div class="space-y-4">
+    <!-- Low balance alert -->
+    <UAlert
+      v-if="isLowBalance"
+      icon="i-heroicons-exclamation-triangle"
+      color="warning"
+      variant="soft"
+      :title="t('agency.wallet.lowBalance.title')"
+      :description="
+        t('agency.wallet.lowBalance.description', {
+          threshold: formatCurrency(lowBalanceThreshold),
+        })
+      "
+    >
+      <template #actions>
+        <UButton
+          color="warning"
+          size="sm"
+          @click="emit('request-recharge')"
+        >
+          {{ t("agency.wallet.rechargeNow") }}
+        </UButton>
+      </template>
+    </UAlert>
+
+    <!-- Main balance card -->
+    <div
+      class="rounded-xl bg-gradient-to-br from-indigo-600 to-violet-700 p-6 text-white flex items-center justify-between gap-4"
+    >
+      <div>
+        <p class="text-xs font-medium uppercase tracking-wider text-indigo-200">
+          {{ t("agency.wallet.balance") }}
+        </p>
+        <p class="mt-1 text-4xl font-extrabold tracking-tight">
+          {{ formatCurrency(balance) }}
+        </p>
+        <p v-if="updatedAgo" class="mt-1 text-xs text-indigo-300">
+          {{ currency }} · {{ updatedAgo }}
+        </p>
+      </div>
+      <UButton
+        variant="outline"
+        color="white"
+        size="md"
+        icon="i-heroicons-plus"
+        @click="emit('request-recharge')"
+      >
+        {{ t("agency.wallet.requestRecharge") }}
+      </UButton>
+    </div>
+
+    <!-- Mini stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <UCard :ui="{ body: { padding: 'p-4' } }">
+        <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          {{ t("agency.wallet.totalDeposited") }}
+        </p>
+        <p class="mt-1 text-xl font-bold text-gray-900 dark:text-white">
+          {{ formatCurrency(totalDeposited) }}
+        </p>
+        <p class="mt-0.5 text-xs text-gray-400">
+          {{ t("agency.wallet.historical") }}
+        </p>
+      </UCard>
+
+      <UCard :ui="{ body: { padding: 'p-4' } }">
+        <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          {{ t("agency.wallet.totalConsumed") }}
+        </p>
+        <p class="mt-1 text-xl font-bold text-gray-900 dark:text-white">
+          {{ formatCurrency(totalConsumed) }}
+        </p>
+        <p class="mt-0.5 text-xs text-gray-400">
+          {{ t("agency.wallet.inBookings") }}
+        </p>
+      </UCard>
+
+      <UCard :ui="{ body: { padding: 'p-4' } }">
+        <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          {{ t("agency.wallet.alertThreshold") }}
+        </p>
+        <p class="mt-1 text-xl font-bold text-orange-500">
+          {{ formatCurrency(lowBalanceThreshold) }}
+        </p>
+        <p class="mt-0.5 text-xs text-gray-400">
+          {{ t("agency.wallet.configuredByGroup") }}
+        </p>
+      </UCard>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,20 @@
+{
+  "validation": {
+    "emailInvalid": "Invalid email",
+    "passwordMinLength": "Password must be at least {min} characters",
+    "commercialNameRequired": "Commercial name is required",
+    "addressRequired": "Registered address is required",
+    "nifInvalid": "Invalid NIF/CIF",
+    "phoneInvalid": "Invalid phone number",
+    "urlInvalid": "Invalid URL",
+    "countryRequired": "Please select a country",
+    "contactNameRequired": "Contact name is required",
+    "privacyRequired": "You must accept the privacy policy",
+    "cardNumberRequired": "Card number is required",
+    "cardNumberInvalid": "Card number must have 16 digits",
+    "cardExpiryRequired": "Expiry date is required",
+    "cardExpiryInvalid": "Invalid expiry date",
+    "cardCvvRequired": "CVV is required",
+    "cardCvvInvalid": "CVV must be 3 or 4 digits"
+  }
+}

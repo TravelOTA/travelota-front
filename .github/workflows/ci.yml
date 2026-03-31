@@ -1,4 +1,4 @@
-name: ci
+name: Lint and TypeChecking
 
 on: push
 
@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [22]
+        node: [24]
 
     steps:
       - name: Checkout

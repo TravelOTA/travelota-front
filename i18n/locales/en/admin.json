@@ -1,0 +1,346 @@
+{
+  "admin": {
+    "dashboard": {
+      "title": "System Administrator",
+      "subtitle": "Global overview and performance indicators for TravelOTA B2B.",
+      "stats": {
+        "activeAgencies": "Active Agencies",
+        "monthlyBookings": "Monthly Bookings",
+        "netVolume": "Net Volume",
+        "supportAgents": "Support Agents"
+      },
+      "platformManager": "Platform Manager",
+      "agencies": {
+        "title": "Companies (B2B Agencies)",
+        "description": "Approve registrations, list active agencies and manage their Base MarkUps.",
+        "manage": "Manage Agencies"
+      },
+      "supportUsers": {
+        "title": "Support Users",
+        "description": "Create TravelOTA agents with NET view and access to all bookings.",
+        "manage": "Manage Support"
+      },
+      "allBookings": {
+        "title": "All Bookings",
+        "description": "Multi-provider monitor for closed operations and cancellations at global level.",
+        "manage": "View all"
+      },
+      "agencyGroups": {
+        "title": "Agency Groups",
+        "description": "Define sets of shared commercial rules (Base Markup, conditions) for different agencies.",
+        "manage": "Manage Groups"
+      },
+      "depositRequests": {
+        "title": "Recharge Requests",
+        "description": "Confirm received bank transfers to credit the agency wallet balance.",
+        "manage": "Manage Requests"
+      }
+    },
+    "depositRequests": {
+      "title": "Recharge Requests",
+      "subtitle": "Confirm received bank deposits to credit the wallet balance of each agency.",
+      "pendingBadge": "pending",
+      "results": "requests",
+      "filter": {
+        "all": "All statuses"
+      },
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "rejected": "Rejected"
+      },
+      "col": {
+        "date": "Request date",
+        "agency": "Agency",
+        "amount": "Amount",
+        "concept": "Reference",
+        "note": "Note",
+        "status": "Status",
+        "processedAt": "Processed"
+      },
+      "confirm": "Confirm",
+      "reject": "Reject",
+      "empty": "No recharge requests found.",
+      "cancel": "Cancel",
+      "confirmModal": {
+        "title": "Confirm deposit",
+        "body": "Confirm that you received the deposit of {amount} from {agency} with reference {concept}? The balance will be credited to their wallet immediately.",
+        "warning": "This action cannot be undone.",
+        "action": "Yes, confirm deposit"
+      },
+      "rejectModal": {
+        "title": "Reject request",
+        "body": "Reject the recharge request of {amount} from {agency}? Their balance will not be modified.",
+        "action": "Yes, reject"
+      }
+    },
+    "agencies": {
+      "title": "B2B Agency Management",
+      "backToPanel": "Back to Panel",
+      "subtitle": "Manage registered agencies, approve new access and configure their commercial conditions.",
+      "newAgency": "New Agency",
+      "stats": {
+        "total": "Total",
+        "active": "Active",
+        "pending": "Pending",
+        "blocked": "Blocked"
+      },
+      "alertDescription": "Review registration requests and approve or reject system access.",
+      "search": "Search by name, email or country...",
+      "filterPlaceholder": "Filter status",
+      "tableHeaders": {
+        "agency": "Agency",
+        "country": "Country",
+        "contact": "Contact",
+        "group": "Group",
+        "users": "Users",
+        "bookings": "Bookings",
+        "status": "Status"
+      },
+      "noResults": "No agencies found with applied filters.",
+      "tooltips": {
+        "viewDetail": "View detail",
+        "approve": "Approve access",
+        "deny": "Deny access",
+        "unblock": "Activate",
+        "block": "Block",
+        "delete": "Delete record"
+      },
+      "modals": {
+        "create": {
+          "title": "New Agency",
+          "agencyName": "Agency name",
+          "nameExample": "Ex: Travel Lopez",
+          "country": "Country",
+          "agencyGroup": "Agency Group",
+          "email": "Contact email",
+          "phone": "Phone",
+          "alert": "The agency will be created with Pending status. You must approve it manually to operate.",
+          "cancel": "Cancel",
+          "create": "Create Agency"
+        },
+        "approve": {
+          "title": "Approve Agency",
+          "selectGroup": "Select the group it will belong to",
+          "groupField": "Agency Group",
+          "groupPlaceholder": "Select a group",
+          "markupApplied": "Markup applied:",
+          "cancel": "Cancel",
+          "approve": "Approve"
+        },
+        "deny": {
+          "title": "Deny Agency",
+          "message": "Are you sure you want to deny access to",
+          "cancel": "Cancel",
+          "deny": "Deny"
+        },
+        "delete": {
+          "title": "Delete Agency",
+          "message": "This action will permanently delete the record of",
+          "continue": "Do you want to continue?",
+          "cancel": "Cancel",
+          "delete": "Delete"
+        }
+      }
+    },
+    "agencyDetail": {
+      "backToList": "Back to list",
+      "notFound": "Agency not found",
+      "tabInfo": "General Information",
+      "tabUsers": "Users",
+      "actions": {
+        "approve": "Approve",
+        "activate": "Activate",
+        "block": "Block",
+        "whiteLabel": "White-Label",
+        "edit": "Edit"
+      },
+      "generalInfo": {
+        "title": "Agency Data",
+        "name": "Name",
+        "operatingCountry": "Operating Country",
+        "email": "B2B Email",
+        "phone": "Main Phone",
+        "agencyGroup": "Agency Group",
+        "registrationDate": "Registration Date",
+        "taxId": "Tax ID / Fiscal Identifier",
+        "registeredAddress": "Registered Address",
+        "contactName": "Contact Name",
+        "website": "Website",
+        "users": "Users",
+        "agencyTeam": "Agency Team",
+        "inviteUser": "Invite user",
+        "searchUser": "Search user...",
+        "noUsersRegistered": "No users registered in this agency."
+      },
+      "editModal": {
+        "title": "Edit Agency",
+        "name": "Name",
+        "country": "Country",
+        "agencyGroup": "Agency Group",
+        "email": "Email",
+        "phone": "Phone",
+        "cancel": "Cancel",
+        "save": "Save changes"
+      }
+    },
+    "agencyGroups": {
+      "title": "Agency Groups",
+      "backToPanel": "Back to Panel",
+      "subtitle": "Manage groups to define shared commercial schemes (Markup).",
+      "newGroup": "New Group",
+      "search": "Search groups...",
+      "tableHeaders": {
+        "group": "Group",
+        "description": "Description",
+        "baseMarkup": "Base Markup",
+        "assignedAgencies": "Assigned Agencies"
+      },
+      "noResults": "No agency groups found.",
+      "noDescription": "No description",
+      "tooltips": {
+        "edit": "Edit Group",
+        "delete": "Delete Group"
+      },
+      "modals": {
+        "create": {
+          "title": "New Agency Group",
+          "groupName": "Group Name",
+          "groupExample": "Ex: Latam Wholesalers",
+          "description": "Description",
+          "descriptionExample": "Brief description of the group...",
+          "baseMarkup": "Base Markup (%)",
+          "alert": "This markup will be applied to all agencies belonging to this group in an inherited way.",
+          "cancel": "Cancel",
+          "create": "Create Group"
+        },
+        "edit": {
+          "title": "Edit Group",
+          "groupName": "Group Name",
+          "description": "Description",
+          "baseMarkup": "Base Markup (%)",
+          "cancel": "Cancel",
+          "save": "Save changes"
+        }
+      }
+    },
+    "allBookings": {
+      "title": "All Bookings",
+      "backToPanel": "Admin Panel",
+      "subtitle": "Global monitor. Net prices visible — for internal TravelOTA use only.",
+      "netPriceAlert": "Net price view",
+      "netPriceDescription": "You are viewing the 3 price levels: Net (TravelOTA cost), Agency (agency selling price) and Final sale (client price). This information is confidential.",
+      "search": "Search bookings",
+      "confirmed": "Confirmed",
+      "pendingPayment": "Pend. Payment",
+      "tableHeaders": {
+        "pnr": "PNR Locator",
+        "status": "Status",
+        "payment": "Payment",
+        "prices": "Prices (Net / Agency / Sale)",
+        "createdDate": "Created",
+        "guestName": "Guest",
+        "destination": "Destination / Hotel",
+        "travelDates": "Travel Dates",
+        "agency": "Agency",
+        "seller": "Seller"
+      },
+      "priceLabels": {
+        "net": "NET",
+        "agency": "AGENCY",
+        "sale": "SALE"
+      },
+      "noResults": "No bookings found",
+      "noResultsDescription": "Adjust the search filters and try again.",
+      "initialState": "Search all bookings",
+      "initialStateDescription": "Use filters to search by locator, guest, destination, agency, seller, status or dates.",
+      "pagination": {
+        "showing": "Showing",
+        "of": "of",
+        "bookings": "bookings"
+      },
+      "tooltips": {
+        "viewDetails": "View Details"
+      }
+    },
+    "supportUsers": {
+      "title": "Support Users",
+      "backToPanel": "Back to Panel",
+      "subtitle": "Manage TravelOTA internal agents. They have access to net prices and all system bookings.",
+      "newUser": "New User",
+      "stats": {
+        "total": "Total",
+        "active": "Active",
+        "admins": "Admins",
+        "support": "Support"
+      },
+      "permissionsAlert": "Internal staff permissions",
+      "permissionsDescription": "These users see net prices in all their searches. They cannot confirm bookings. They have no access to 'My Bookings' or 'My Agency'.",
+      "search": "Search user...",
+      "tableHeaders": {
+        "name": "Name",
+        "email": "Email Address",
+        "role": "Role",
+        "lastLogin": "Last Login",
+        "status": "Status"
+      },
+      "roleLabels": {
+        "admin": "Admin",
+        "support": "Support"
+      },
+      "noResults": "No users found with applied filters.",
+      "tooltips": {
+        "deactivate": "Deactivate",
+        "activate": "Activate",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "modals": {
+        "create": {
+          "title": "New Internal User",
+          "warning": "TravelOTA internal user",
+          "warningDescription": "This user will see net prices and have global system visibility. They cannot confirm bookings.",
+          "fullName": "Full name",
+          "email": "Email address (login)",
+          "password": "Password",
+          "passwordHint": "Minimum 8 characters",
+          "role": "Role",
+          "cancel": "Cancel",
+          "create": "Create User"
+        },
+        "edit": {
+          "title": "Edit User",
+          "fullName": "Full name",
+          "email": "Email address (login)",
+          "password": "Password",
+          "passwordHint": "Leave blank to keep unchanged. Minimum 8 characters if modified.",
+          "role": "Role",
+          "status": "Status",
+          "cancel": "Cancel",
+          "save": "Save Changes"
+        }
+      }
+    },
+    "templates": {
+      "panelAdmin": "Administration Panel",
+      "title": "B2B Itinerary Templates",
+      "subtitle": "Manage base \"Promotional Itineraries\". These templates will appear on the travel agency platform so they can clone and adjust them for their clients with a single click.",
+      "createTemplate": "Create New Template",
+      "directory": "Active Templates Directory",
+      "searchPlaceholder": "Search by title...",
+      "blocks": "Blocks",
+      "ref": "Ref:",
+      "pax": "PAX",
+      "testClone": "Test / Clone",
+      "noResults": "No templates found with that criteria.",
+      "dropdownMenu": {
+        "edit": "Edit Template",
+        "deactivate": "Deactivate"
+      },
+      "toastMessage": {
+        "title": "Template Loaded",
+        "description": "The template was injected into your Itinerary Builder. Go there to edit it."
+      }
+    }
+  }
+}

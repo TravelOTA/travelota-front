@@ -1,0 +1,608 @@
+<script setup lang="ts">
+import { useAgencies, type AdminAgency } from "~/composables/useAgencies";
+
+definePageMeta({ layout: "dashboard" });
+useHead({ title: "Gestor de Agencias B2B - TravelOTA" });
+
+const { t } = useI18n();
+
+const {
+  agencies,
+  agencyStats: stats,
+  approveAgency,
+  denyAgency,
+  deleteAgency,
+  toggleBlock,
+  addAgency,
+} = useAgencies();
+const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
+
+// ── Filters ────────────────────────────────────────────────────────────────
+const searchQuery = ref("");
+const statusFilter = ref("Todas");
+
+const filteredAgencies = computed(() => {
+  return agencies.value.filter((a) => {
+    const matchSearch =
+      !searchQuery.value ||
+      a.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      a.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      a.country.toLowerCase().includes(searchQuery.value.toLowerCase());
+    const matchStatus =
+      statusFilter.value === "Todas" || a.status === statusFilter.value;
+    return matchSearch && matchStatus;
+  });
+});
+
+// ── Status helpers ─────────────────────────────────────────────────────────
+function statusColor(s: string) {
+  if (s === "Activa") return "success";
+  if (s === "Pendiente") return "warning";
+  if (s === "Bloqueada") return "error";
+  if (s === "Denegada") return "neutral";
+  return "neutral";
+}
+
+// ── Nueva Agencia modal ────────────────────────────────────────────────────
+const isCreateOpen = ref(false);
+const newAgency = ref({
+  name: "",
+  country: "",
+  email: "",
+  phone: "",
+  agencyGroup: "Grupo Estándar",
+});
+
+const isCreateValid = computed(
+  () =>
+    newAgency.value.name.trim() !== "" &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newAgency.value.email),
+);
+
+const groupNames = computed(() => agencyGroups.value.map((g) => g.name));
+
+function openCreate() {
+  const defaultGroupName = groupNames.value[0] || "Grupo Estándar";
+  newAgency.value = {
+    name: "",
+    country: "",
+    email: "",
+    phone: "",
+    agencyGroup: defaultGroupName,
+  };
+  isCreateOpen.value = true;
+}
+
+function saveAgency() {
+  if (!isCreateValid.value) return;
+  const selectedGroup = agencyGroups.value.find(
+    (g) => g.name === newAgency.value.agencyGroup,
+  );
+  const appliedMarkup = selectedGroup?.baseMarkup || 10;
+  addAgency({
+    name: newAgency.value.name,
+    country: newAgency.value.country,
+    email: newAgency.value.email,
+    phone: newAgency.value.phone,
+    agencyGroup: String(
+      newAgency.value.agencyGroup || groupNames.value[0] || "Grupo Estándar",
+    ),
+    markup: appliedMarkup,
+    registeredAt: new Date().toISOString().split("T")[0]!,
+  });
+  if (selectedGroup) incrementAgencyCount(selectedGroup.name);
+  isCreateOpen.value = false;
+}
+
+// ── Aprobar modal ──────────────────────────────────────────────────────────
+const isApproveOpen = ref(false);
+const agencyToApprove = ref<AdminAgency | null>(null);
+const selectedGroupName = ref<string>("");
+
+const selectedGroup = computed(
+  () =>
+    agencyGroups.value.find((g) => g.name === selectedGroupName.value) ?? null,
+);
+
+function openApprove(agency: AdminAgency) {
+  agencyToApprove.value = agency;
+  selectedGroupName.value = "";
+  isApproveOpen.value = true;
+}
+
+function confirmApprove() {
+  if (!agencyToApprove.value || !selectedGroup.value) return;
+  approveAgency(agencyToApprove.value.id, selectedGroup.value);
+  incrementAgencyCount(selectedGroup.value.name);
+  isApproveOpen.value = false;
+  agencyToApprove.value = null;
+}
+
+// ── Denegar modal ──────────────────────────────────────────────────────────
+const isDenyOpen = ref(false);
+const agencyToDeny = ref<AdminAgency | null>(null);
+
+function openDeny(agency: AdminAgency) {
+  agencyToDeny.value = agency;
+  isDenyOpen.value = true;
+}
+
+function confirmDeny() {
+  if (!agencyToDeny.value) return;
+  denyAgency(agencyToDeny.value.id);
+  isDenyOpen.value = false;
+  agencyToDeny.value = null;
+}
+
+// ── Eliminar modal ─────────────────────────────────────────────────────────
+const isDeleteOpen = ref(false);
+const agencyToDelete = ref<AdminAgency | null>(null);
+
+function openDelete(agency: AdminAgency) {
+  agencyToDelete.value = agency;
+  isDeleteOpen.value = true;
+}
+
+function confirmDelete() {
+  if (!agencyToDelete.value) return;
+  deleteAgency(agencyToDelete.value.id);
+  isDeleteOpen.value = false;
+  agencyToDelete.value = null;
+}
+
+// ── Table columns ──────────────────────────────────────────────────────────
+const columns = computed(() => [
+  { accessorKey: "name", header: t('admin.agencies.tableHeaders.agency') },
+  { accessorKey: "country", header: t('admin.agencies.tableHeaders.country') },
+  { accessorKey: "email", header: t('admin.agencies.tableHeaders.contact') },
+  { accessorKey: "agencyGroup", header: t('admin.agencies.tableHeaders.group') },
+  { accessorKey: "usersCount", header: t('admin.agencies.tableHeaders.users') },
+  { accessorKey: "bookingsCount", header: t('admin.agencies.tableHeaders.bookings') },
+  { accessorKey: "status", header: t('admin.agencies.tableHeaders.status') },
+  { accessorKey: "actions", header: "" },
+]);
+</script>
+
+<template>
+  <div class="max-w-7xl mx-auto pb-16">
+    <!-- Header -->
+    <div
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
+    >
+      <div>
+        <NuxtLink
+          to="/dashboard/admin"
+          class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
+        >
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('admin.agencies.backToPanel') }}
+        </NuxtLink>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ t('admin.agencies.title') }}
+        </h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          {{ t('admin.agencies.subtitle') }}
+        </p>
+      </div>
+      <UButton
+        icon="i-heroicons-plus"
+        color="primary"
+        :label="t('admin.agencies.newAgency')"
+        @click="openCreate"
+      />
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+      <UCard>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600"
+          >
+            <UIcon name="i-heroicons-building-storefront" class="w-5 h-5" />
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.total') }}</p>
+            <p class="text-xl font-bold">{{ stats.total }}</p>
+          </div>
+        </div>
+      </UCard>
+      <UCard>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600"
+          >
+            <UIcon name="i-heroicons-check-circle" class="w-5 h-5" />
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.active') }}</p>
+            <p class="text-xl font-bold">{{ stats.active }}</p>
+          </div>
+        </div>
+      </UCard>
+      <UCard>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600"
+          >
+            <UIcon name="i-heroicons-clock" class="w-5 h-5" />
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.pending') }}</p>
+            <p class="text-xl font-bold">{{ stats.pending }}</p>
+          </div>
+        </div>
+      </UCard>
+      <UCard>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600"
+          >
+            <UIcon name="i-heroicons-no-symbol" class="w-5 h-5" />
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.blocked') }}</p>
+            <p class="text-xl font-bold">{{ stats.blocked }}</p>
+          </div>
+        </div>
+      </UCard>
+    </div>
+
+    <!-- Pending alert -->
+    <UAlert
+      v-if="stats.pending > 0"
+      icon="i-heroicons-exclamation-triangle"
+      color="warning"
+      variant="soft"
+      class="mb-6"
+      :title="`${stats.pending} agencia${stats.pending > 1 ? 's' : ''} pendiente${stats.pending > 1 ? 's' : ''} de aprobación`"
+      :description="t('admin.agencies.alertDescription')"
+    />
+
+    <!-- Table card -->
+    <UCard class="shadow-sm rounded-xl" :ui="{ body: 'p-0 sm:p-0' }">
+      <div
+        class="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between"
+      >
+        <UInput
+          v-model="searchQuery"
+          icon="i-heroicons-magnifying-glass"
+          :placeholder="t('admin.agencies.search')"
+          class="w-full sm:w-80"
+        />
+        <USelectMenu
+          v-model="statusFilter"
+          :items="['Todas', 'Pendiente', 'Activa', 'Bloqueada', 'Denegada']"
+          :placeholder="t('admin.agencies.filterPlaceholder')"
+          class="w-40"
+        />
+      </div>
+
+      <UTable :data="filteredAgencies" :columns="columns as any" class="w-full">
+        <!-- Agency name -->
+        <template #name-cell="{ row }">
+          <div>
+            <p class="font-semibold text-gray-900 dark:text-white">
+              {{ row.original.name }}
+            </p>
+            <p class="text-xs text-gray-400 font-mono">{{ row.original.id }}</p>
+          </div>
+        </template>
+
+        <!-- Contact -->
+        <template #email-cell="{ row }">
+          <div class="text-sm">
+            <p class="text-gray-700 dark:text-gray-300">
+              {{ row.original.email }}
+            </p>
+            <p class="text-xs text-gray-400">{{ row.original.phone }}</p>
+          </div>
+        </template>
+
+        <!-- Contenedor agencyGroup -->
+        <template #agencyGroup-cell="{ row }">
+          <span class="font-medium text-gray-900 dark:text-gray-100">
+            {{ row.original.agencyGroup ?? "—" }}
+          </span>
+        </template>
+
+        <!-- Users -->
+        <template #usersCount-cell="{ row }">
+          <div class="flex items-center gap-1.5">
+            <UIcon name="i-heroicons-users" class="w-3.5 h-3.5 text-gray-400" />
+            <span class="text-sm">{{ row.original.users.length }}</span>
+          </div>
+        </template>
+
+        <!-- Bookings -->
+        <template #bookingsCount-cell="{ row }">
+          <div class="flex items-center gap-1.5">
+            <UIcon
+              name="i-heroicons-briefcase"
+              class="w-3.5 h-3.5 text-gray-400"
+            />
+            <span class="text-sm">{{ row.original.bookingsCount }}</span>
+          </div>
+        </template>
+
+        <!-- Status -->
+        <template #status-cell="{ row }">
+          <UBadge
+            :color="statusColor(row.original.status) as any"
+            variant="subtle"
+            class="font-bold text-[10px] uppercase tracking-wider"
+          >
+            {{ row.original.status }}
+          </UBadge>
+        </template>
+
+        <!-- Actions -->
+        <template #actions-cell="{ row }">
+          <div class="flex items-center justify-end gap-1 pr-2">
+            <UTooltip :text="t('admin.agencies.tooltips.viewDetail')">
+              <UButton
+                icon="i-heroicons-eye"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                :to="`/dashboard/admin/agencies/${row.original.id}`"
+              />
+            </UTooltip>
+
+            <!-- Pendiente: Aprobar + Denegar -->
+            <UTooltip
+              v-if="row.original.status === 'Pendiente'"
+              :text="t('admin.agencies.tooltips.approve')"
+            >
+              <UButton
+                icon="i-heroicons-check-circle"
+                color="success"
+                variant="ghost"
+                size="xs"
+                @click="openApprove(row.original)"
+              />
+            </UTooltip>
+            <UTooltip
+              v-if="row.original.status === 'Pendiente'"
+              :text="t('admin.agencies.tooltips.deny')"
+            >
+              <UButton
+                icon="i-heroicons-x-circle"
+                color="error"
+                variant="ghost"
+                size="xs"
+                @click="openDeny(row.original)"
+              />
+            </UTooltip>
+
+            <!-- Activa / Bloqueada: toggleBlock -->
+            <UTooltip
+              v-if="
+                row.original.status === 'Activa' ||
+                row.original.status === 'Bloqueada'
+              "
+              :text="
+                row.original.status === 'Bloqueada'
+                  ? t('admin.agencies.tooltips.unblock')
+                  : t('admin.agencies.tooltips.block')
+              "
+            >
+              <UButton
+                :icon="
+                  row.original.status === 'Bloqueada'
+                    ? 'i-heroicons-lock-open'
+                    : 'i-heroicons-no-symbol'
+                "
+                :color="
+                  row.original.status === 'Bloqueada' ? 'success' : 'error'
+                "
+                variant="ghost"
+                size="xs"
+                @click="toggleBlock(row.original.id)"
+              />
+            </UTooltip>
+
+            <!-- Denegada: Eliminar -->
+            <UTooltip
+              v-if="row.original.status === 'Denegada'"
+              :text="t('admin.agencies.tooltips.delete')"
+            >
+              <UButton
+                icon="i-heroicons-trash"
+                color="error"
+                variant="ghost"
+                size="xs"
+                @click="openDelete(row.original)"
+              />
+            </UTooltip>
+          </div>
+        </template>
+      </UTable>
+
+      <div
+        v-if="filteredAgencies.length === 0"
+        class="py-16 text-center text-sm text-gray-500"
+      >
+        {{ t('admin.agencies.noResults') }}
+      </div>
+    </UCard>
+
+    <!-- Create modal -->
+    <UModal v-model:open="isCreateOpen" :title="t('admin.agencies.modals.create.title')">
+      <template #body>
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <UFormField
+              :label="t('admin.agencies.modals.create.agencyName')"
+              name="name"
+              required
+              class="sm:col-span-2"
+            >
+              <UInput
+                v-model="newAgency.name"
+                :placeholder="t('admin.agencies.modals.create.nameExample')"
+                icon="i-heroicons-building-storefront"
+              />
+            </UFormField>
+            <UFormField :label="t('admin.agencies.modals.create.country')" name="country" required>
+              <UInput
+                v-model="newAgency.country"
+                placeholder="España"
+                icon="i-heroicons-globe-alt"
+              />
+            </UFormField>
+            <UFormField :label="t('admin.agencies.modals.create.agencyGroup')" name="group" required>
+              <USelectMenu
+                v-model="newAgency.agencyGroup"
+                :items="groupNames"
+                icon="i-heroicons-user-group"
+              />
+            </UFormField>
+            <UFormField
+              :label="t('admin.agencies.modals.create.email')"
+              name="email"
+              required
+              class="sm:col-span-2"
+            >
+              <UInput
+                v-model="newAgency.email"
+                type="email"
+                placeholder="b2b@agencia.com"
+                icon="i-heroicons-envelope"
+              />
+            </UFormField>
+            <UFormField :label="t('admin.agencies.modals.create.phone')" name="phone" class="sm:col-span-2">
+              <UInput
+                v-model="newAgency.phone"
+                placeholder="+34 91 000 00 00"
+                icon="i-heroicons-phone"
+              />
+            </UFormField>
+          </div>
+          <UAlert
+            icon="i-heroicons-information-circle"
+            color="info"
+            variant="soft"
+            :description="t('admin.agencies.modals.create.alert')"
+          />
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            :label="t('admin.agencies.modals.create.cancel')"
+            @click="isCreateOpen = false"
+          />
+          <UButton
+            color="primary"
+            :label="t('admin.agencies.modals.create.create')"
+            icon="i-heroicons-plus"
+            :disabled="!isCreateValid"
+            @click="saveAgency"
+          />
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Aprobar modal -->
+    <UModal v-model:open="isApproveOpen" :title="t('admin.agencies.modals.approve.title')">
+      <template #body>
+        <div class="space-y-4">
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            {{ t('admin.agencies.modals.approve.selectGroup') }}
+            <strong>{{ agencyToApprove?.name }}</strong
+            >.
+          </p>
+          <UFormField :label="t('admin.agencies.modals.approve.groupField')" name="approveGroup" required>
+            <USelectMenu
+              v-model="selectedGroupName"
+              :items="groupNames"
+              :placeholder="t('admin.agencies.modals.approve.groupPlaceholder')"
+              icon="i-heroicons-user-group"
+              class="w-full"
+            />
+          </UFormField>
+          <UAlert
+            v-if="selectedGroup"
+            icon="i-heroicons-information-circle"
+            color="info"
+            variant="soft"
+            :description="`${t('admin.agencies.modals.approve.markupApplied')} ${selectedGroup.baseMarkup}%`"
+          />
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            :label="t('admin.agencies.modals.approve.cancel')"
+            @click="isApproveOpen = false"
+          />
+          <UButton
+            color="success"
+            :label="t('admin.agencies.modals.approve.approve')"
+            icon="i-heroicons-check-circle"
+            :disabled="!selectedGroup"
+            @click="confirmApprove"
+          />
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Denegar modal -->
+    <UModal v-model:open="isDenyOpen" :title="t('admin.agencies.modals.deny.title')">
+      <template #body>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          {{ t('admin.agencies.modals.deny.message') }}
+          <strong>{{ agencyToDeny?.name }}</strong
+          >?
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            :label="t('admin.agencies.modals.deny.cancel')"
+            @click="isDenyOpen = false"
+          />
+          <UButton
+            color="error"
+            :label="t('admin.agencies.modals.deny.deny')"
+            icon="i-heroicons-x-circle"
+            @click="confirmDeny"
+          />
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Eliminar modal -->
+    <UModal v-model:open="isDeleteOpen" :title="t('admin.agencies.modals.delete.title')">
+      <template #body>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          {{ t('admin.agencies.modals.delete.message') }}
+          <strong>{{ agencyToDelete?.name }}</strong
+          >. {{ t('admin.agencies.modals.delete.continue') }}
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            :label="t('admin.agencies.modals.delete.cancel')"
+            @click="isDeleteOpen = false"
+          />
+          <UButton
+            color="error"
+            :label="t('admin.agencies.modals.delete.delete')"
+            icon="i-heroicons-trash"
+            @click="confirmDelete"
+          />
+        </div>
+      </template>
+    </UModal>
+  </div>
+</template>

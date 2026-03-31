@@ -1,0 +1,36 @@
+{
+  "templates": {
+    "saveModal": {
+      "title": "Save as Template",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g. Caribbean Escape 5 nights",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Short description (optional)",
+      "destinationLabel": "Destination",
+      "destinationPlaceholder": "e.g. Caribbean, Europe...",
+      "visibilityLabel": "Visibility",
+      "scopePersonal": "Personal",
+      "scopeAgency": "Agency",
+      "scopePlatform": "Platform",
+      "saveButton": "Save Template",
+      "successToast": "Template saved successfully."
+    },
+    "pickerModal": {
+      "title": "Select Template",
+      "searchPlaceholder": "Search template...",
+      "tabPersonal": "Personal",
+      "tabAgency": "Agency",
+      "tabPlatform": "Platform",
+      "useButton": "Use",
+      "renameAction": "Rename",
+      "deleteAction": "Delete",
+      "deleteConfirm": "Delete this template? This action cannot be undone.",
+      "emptyState": "No templates in this category.",
+      "loadedToast": "Template loaded. Adjust dates and add options.",
+      "blocksCount": "{n} block | {n} blocks"
+    },
+    "builder": {
+      "useTemplateButton": "Use Template"
+    }
+  }
+}

@@ -1,0 +1,673 @@
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import { useItinerary } from "~/composables/useItinerary";
+import { useConfig } from "~/composables/useConfig";
+import ItineraryPreviewModal from "~/components/b2b/quoter/ItineraryPreviewModal.vue";
+import ManualOptionModal from "~/components/b2b/quoter/ManualOptionModal.vue";
+import SaveTemplateModal from "~/components/b2b/quoter/SaveTemplateModal.vue";
+import TemplatePickerModal from "~/components/b2b/quoter/TemplatePickerModal.vue";
+import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
+import type { DateValue } from "@internationalized/date";
+import type { ItineraryBlock } from "~/composables/useItinerary";
+
+const formatDate = (date: DateValue): string => {
+  const d = date.toDate(getLocalTimeZone());
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yy = String(d.getFullYear()).slice(-2);
+  return `${dd}/${mm}/${yy}`;
+};
+
+definePageMeta({ layout: "dashboard" });
+
+const { t } = useI18n();
+
+const {
+  itinerary,
+  totalPax,
+  addBlock,
+  removeBlock,
+  updateBlock,
+  removeOptionFromBlock,
+  calculateOptionSellPrice,
+  minItineraryPrice,
+  clearItinerary,
+} = useItinerary();
+
+const { nationalities: nationalityOptions } = useConfig();
+
+// For adding / editing blocks
+const isAddBlockModalOpen = ref(false);
+const newBlockType = ref<
+  "hotel" | "flight" | "transfer" | "excursion" | "extra"
+>("hotel");
+const newBlockTitle = ref("");
+const editingBlock = ref<ItineraryBlock | null>(null);
+const dateRangeChanged = ref(false);
+
+// For manual option entry
+const isManualModalOpen = ref(false);
+const manualModalBlockId = ref("");
+
+const dateRange = ref({
+  start: todayDate(getLocalTimeZone()),
+  end: todayDate(getLocalTimeZone()).add({ days: 2 }),
+});
+
+// Only flag date as changed when the modal is already open (not during pre-fill).
+// flush: 'sync' ensures the watcher runs before isAddBlockModalOpen is set to true
+// in openEditModal, so the pre-fill assignment doesn't incorrectly mark the date as changed.
+watch(dateRange, () => { if (isAddBlockModalOpen.value) dateRangeChanged.value = true; }, { deep: true, flush: 'sync' });
+
+const resetBlockModal = () => {
+  newBlockTitle.value = "";
+  editingBlock.value = null;
+  dateRangeChanged.value = false;
+  dateRange.value = {
+    start: todayDate(getLocalTimeZone()),
+    end: todayDate(getLocalTimeZone()).add({ days: 2 }),
+  };
+};
+
+const openAddModal = () => {
+  resetBlockModal();
+  newBlockType.value = "hotel";
+  isAddBlockModalOpen.value = true;
+};
+
+const openEditModal = (block: ItineraryBlock) => {
+  // Pre-fill BEFORE opening so the dateRange watcher doesn't flag a change
+  editingBlock.value = block;
+  newBlockTitle.value = block.title;
+  newBlockType.value = block.type;
+  dateRangeChanged.value = false;
+  dateRange.value = {
+    start: todayDate(getLocalTimeZone()),
+    end: todayDate(getLocalTimeZone()).add({ days: 2 }),
+  };
+  isAddBlockModalOpen.value = true;
+};
+
+const handleConfirmBlock = () => {
+  if (!newBlockTitle.value) return;
+
+  // Keep the original date if user didn't touch the calendar in edit mode
+  const dateStr =
+    editingBlock.value && !dateRangeChanged.value
+      ? editingBlock.value.date
+      : dateRange.value.start && dateRange.value.end
+        ? `${formatDate(dateRange.value.start)} - ${formatDate(dateRange.value.end)}`
+        : "";
+
+  if (editingBlock.value) {
+    updateBlock(editingBlock.value.id, newBlockTitle.value, dateStr);
+  } else {
+    addBlock(newBlockType.value, newBlockTitle.value, dateStr);
+  }
+
+  isAddBlockModalOpen.value = false;
+  resetBlockModal();
+};
+
+const openManualModal = (blockId: string) => {
+  manualModalBlockId.value = blockId;
+  isManualModalOpen.value = true;
+};
+
+const isPreviewOpen = ref(false);
+const isSaveTemplateOpen = ref(false);
+const isPickerOpen = ref(false);
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
+};
+</script>
+
+<template>
+  <div class="max-w-7xl mx-auto pb-16">
+    <!-- Header -->
+    <div
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-gray-200 dark:border-gray-800 pb-6"
+    >
+      <div>
+        <div class="flex items-center gap-3">
+          <UIcon name="i-heroicons-map" class="w-8 h-8 text-primary-500" />
+          <UInput
+            v-model="itinerary.title"
+            variant="none"
+            size="xl"
+            class="font-bold text-2xl text-gray-900 dark:text-white p-0 -ml-2"
+            :placeholder="t('itinerary.placeholderTitle')"
+          />
+        </div>
+        <div
+          class="text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-4"
+        >
+          <span class="flex items-center gap-1">
+            <UIcon name="i-heroicons-user" class="w-4 h-4" />
+            <UInput
+              v-model="itinerary.clientName"
+              variant="none"
+              size="xs"
+              :placeholder="t('itinerary.placeholderClient')"
+              class="w-48 border-b border-dashed border-gray-300 dark:border-gray-700"
+            />
+          </span>
+          <span class="flex items-center gap-1">
+            <UIcon name="i-heroicons-users" class="w-4 h-4" />
+            <UInput
+              :model-value="totalPax"
+              readonly
+              variant="none"
+              size="xs"
+              class="w-8 text-center text-primary-600 font-bold bg-transparent pr-0"
+              :ui="{
+                wrapper: 'pr-0',
+                base: 'px-0 text-center font-bold text-primary-600 cursor-default',
+              }"
+            />
+            <span class="text-xs font-bold text-gray-500">{{
+              t("itinerary.paxLabel")
+            }}</span>
+          </span>
+          <span
+            class="flex items-center gap-1 ml-2 border-l pl-4 border-gray-200 dark:border-gray-700"
+          >
+            <B2bHotelRoomDistribution v-model="itinerary.rooms" />
+          </span>
+          <span
+            class="flex items-center gap-1 ml-2 border-l pl-4 border-gray-200 dark:border-gray-700"
+          >
+            <UIcon name="i-heroicons-globe-americas" class="w-4 h-4" />
+            <select
+              v-model="itinerary.origin"
+              class="w-32 bg-transparent border-0 border-b border-dashed border-gray-300 dark:border-gray-700 text-xs px-1 py-0.5 focus:ring-0 cursor-pointer outline-none"
+            >
+              <option value="" disabled selected>
+                {{ t("itinerary.originPlaceholder") }}
+              </option>
+              <option
+                v-for="country in nationalityOptions"
+                :key="country"
+                :value="country"
+              >
+                {{ country }}
+              </option>
+            </select>
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <UButton
+          color="neutral"
+          variant="ghost"
+          icon="i-heroicons-trash"
+          :label="t('itinerary.clearButton')"
+          @click="clearItinerary"
+        />
+        <UButton
+          color="neutral"
+          variant="solid"
+          icon="i-heroicons-document-duplicate"
+          :label="t('itinerary.saveTemplate')"
+          @click="isSaveTemplateOpen = true"
+        />
+        <UButton
+          color="primary"
+          variant="solid"
+          icon="i-heroicons-eye"
+          :label="t('itinerary.previewButton')"
+          @click="isPreviewOpen = true"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Main Canvas Timeline -->
+      <div class="lg:col-span-3 space-y-8">
+        <!-- Empty State -->
+        <div
+          v-if="itinerary.blocks.length === 0"
+          class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-12 text-center"
+        >
+          <UIcon
+            name="i-heroicons-document-plus"
+            class="w-12 h-12 mx-auto text-gray-400 mb-4"
+          />
+          <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">
+            {{ t("itinerary.emptyStateTitle") }}
+          </h3>
+          <p class="text-gray-500 mb-6">
+            {{ t("itinerary.emptyStateDescription") }}
+          </p>
+          <UButton
+            icon="i-heroicons-plus"
+            color="primary"
+            @click="openAddModal()"
+          >
+            {{ t("itinerary.addBlockButton") }}
+          </UButton>
+          <UButton
+            icon="i-heroicons-document-duplicate"
+            color="neutral"
+            variant="outline"
+            @click="isPickerOpen = true"
+          >
+            {{ t("templates.builder.useTemplateButton") }}
+          </UButton>
+        </div>
+
+        <!-- Blocks Render -->
+        <div
+          v-for="(block, index) in itinerary.blocks as ItineraryBlock[]"
+          :key="block.id"
+          class="relative"
+        >
+          <!-- Timeline Vertical Line -->
+          <div
+            v-if="index !== itinerary.blocks.length - 1"
+            class="absolute left-6 top-16 bottom-[-3rem] w-0.5 bg-gray-200 dark:bg-gray-800 z-0"
+          ></div>
+
+          <div class="flex gap-4 relative z-10">
+            <!-- Block Icon Marker -->
+            <div
+              class="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center shrink-0 border-4 border-white dark:border-gray-950 shadow-sm text-primary-600"
+            >
+              <UIcon
+                :name="
+                  block.type === 'hotel'
+                    ? 'i-heroicons-building-office'
+                    : block.type === 'flight'
+                      ? 'i-heroicons-paper-airplane'
+                      : block.type === 'transfer'
+                        ? 'i-heroicons-truck'
+                        : block.type === 'excursion'
+                          ? 'i-heroicons-ticket'
+                          : 'i-heroicons-document-text'
+                "
+                class="w-5 h-5"
+              />
+            </div>
+
+            <!-- Block Content Box -->
+            <div
+              class="flex-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm overflow-hidden"
+            >
+              <div
+                class="px-5 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 flex items-center justify-between"
+              >
+                <div>
+                  <h4
+                    class="font-bold text-gray-900 dark:text-white uppercase text-sm tracking-wide"
+                  >
+                    {{ block.title }}
+                  </h4>
+                  <p class="text-xs text-gray-500 font-medium font-mono mt-0.5">
+                    {{ block.date || t("itinerary.blockDatesOptional") }}
+                  </p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <UBadge
+                    v-if="block.options.length > 0"
+                    color="primary"
+                    variant="subtle"
+                    >{{ block.options.length }} / 5
+                    {{ t("itinerary.optionsBadge") }}</UBadge
+                  >
+                  <UBadge v-else color="warning" variant="subtle">{{
+                    t("itinerary.emptyBlock")
+                  }}</UBadge>
+                  <UButton
+                    icon="i-heroicons-pencil"
+                    color="neutral"
+                    variant="ghost"
+                    size="xs"
+                    :padded="false"
+                    @click="openEditModal(block)"
+                  />
+                  <UButton
+                    icon="i-heroicons-trash"
+                    color="error"
+                    variant="ghost"
+                    size="xs"
+                    :padded="false"
+                    @click="removeBlock(block.id)"
+                  />
+                </div>
+              </div>
+
+              <div class="p-5">
+                <!-- Dropzone / Empty Options -->
+                <div
+                  v-if="block.options.length === 0"
+                  class="border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6 text-center"
+                >
+                  <p class="text-sm text-gray-500 mb-3">
+                    {{ t("itinerary.noOptionsYet") }}
+                  </p>
+                  <div class="flex items-center justify-center gap-2">
+                    <UButton
+                      v-if="block.type === 'hotel'"
+                      size="xs"
+                      color="neutral"
+                      variant="solid"
+                      icon="i-heroicons-magnifying-glass"
+                      to="/dashboard/hotels/results"
+                      >{{ t("itinerary.searchHotelButton") }}</UButton
+                    >
+                    <UButton
+                      size="xs"
+                      color="neutral"
+                      variant="outline"
+                      icon="i-heroicons-pencil-square"
+                      @click="openManualModal(block.id)"
+                      >{{ t("itinerary.addManualOptionButton") }}</UButton
+                    >
+                  </div>
+                </div>
+
+                <!-- Listed Options (Max 5) -->
+                <div v-else class="space-y-3">
+                  <div
+                    v-for="(opt, optIdx) in block.options"
+                    :key="opt.id"
+                    class="flex items-center gap-4 p-3 rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-primary-300 transition-colors group"
+                  >
+                    <span
+                      class="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 text-xs flex items-center justify-center font-bold"
+                    >
+                      #{{ optIdx + 1 }}
+                    </span>
+                    <div
+                      v-if="opt.image"
+                      class="w-16 h-12 rounded overflow-hidden shrink-0"
+                    >
+                      <img
+                        :src="opt.image"
+                        class="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div
+                      v-else
+                      class="w-16 h-12 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0"
+                    >
+                      <UIcon
+                        name="i-heroicons-pencil-square"
+                        class="w-5 h-5 text-gray-400"
+                      />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5 flex-wrap">
+                        <p
+                          class="font-bold text-gray-900 dark:text-white text-sm truncate"
+                        >
+                          {{ opt.name }}
+                        </p>
+                        <UBadge
+                          v-if="opt.isManual"
+                          color="neutral"
+                          variant="subtle"
+                          size="xs"
+                          >{{ t("itinerary.manualBadge") }}</UBadge
+                        >
+                      </div>
+                      <p class="text-xs text-gray-500 truncate">
+                        {{ opt.description }}
+                      </p>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <p
+                        class="text-xs text-gray-400 uppercase tracking-widest mb-0.5"
+                      >
+                        {{ t("itinerary.pvpClient") }}
+                      </p>
+                      <p
+                        class="font-bold text-primary-600 dark:text-primary-400 font-mono"
+                      >
+                        {{
+                          formatCurrency(calculateOptionSellPrice(opt.netPrice))
+                        }}
+                      </p>
+                    </div>
+                    <UButton
+                      icon="i-heroicons-x-mark"
+                      color="error"
+                      variant="ghost"
+                      size="xs"
+                      class="opacity-0 group-hover:opacity-100 transition-opacity"
+                      @click="removeOptionFromBlock(block.id, opt.id)"
+                    />
+                  </div>
+                </div>
+
+                <!-- Add more options actions (when block has options but < 5) -->
+                <div
+                  v-if="block.options.length > 0 && block.options.length < 5"
+                  class="mt-3 flex gap-2"
+                >
+                  <UButton
+                    v-if="block.type === 'hotel'"
+                    size="xs"
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-heroicons-magnifying-glass"
+                    to="/dashboard/hotels/results"
+                    >{{ t("itinerary.searchHotelButton") }}</UButton
+                  >
+                  <UButton
+                    size="xs"
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-heroicons-pencil-square"
+                    @click="openManualModal(block.id)"
+                    >{{ t("itinerary.addManualOptionButton") }}</UButton
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="itinerary.blocks.length > 0" class="pl-16">
+          <UButton
+            icon="i-heroicons-plus"
+            color="neutral"
+            variant="outline"
+            @click="openAddModal()"
+          >
+            {{ t("itinerary.addNextBlock") }}
+          </UButton>
+        </div>
+      </div>
+
+      <!-- Financial Setup Sidebar -->
+      <div class="lg:col-span-1">
+        <UCard
+          class="sticky top-6 shadow-sm border border-gray-200 dark:border-gray-800"
+        >
+          <template #header>
+            <h3
+              class="font-bold text-gray-900 dark:text-white flex items-center gap-2"
+            >
+              <UIcon
+                name="i-heroicons-cog-8-tooth"
+                class="w-5 h-5 text-gray-500"
+              />
+              {{ t("itinerary.pricingRulesHeader") }}
+            </h3>
+          </template>
+
+          <div class="space-y-6">
+            <div
+              class="bg-primary-50 dark:bg-primary-900/10 p-4 rounded-lg border border-primary-100 dark:border-primary-800/50"
+            >
+              <label
+                class="text-xs font-bold text-primary-700 dark:text-primary-400 uppercase tracking-wider block mb-3"
+              >
+                {{ t("itinerary.globalMarkupLabel") }}
+              </label>
+              <div class="flex items-center gap-3">
+                <USlider
+                  v-model="itinerary.markupPercentage"
+                  :min="0"
+                  :max="100"
+                  class="flex-1"
+                />
+                <span
+                  class="font-bold text-lg text-primary-700 dark:text-primary-300 w-12 text-right"
+                >
+                  +{{ itinerary.markupPercentage }}%
+                </span>
+              </div>
+              <p class="text-[10px] text-primary-600/70 mt-3 leading-snug">
+                {{ t("itinerary.globalMarkupHint") }}
+              </p>
+            </div>
+
+            <USeparator />
+
+            <div>
+              <p
+                class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2"
+              >
+                {{ t("itinerary.minimumPriceLabel") }}
+              </p>
+              <p
+                class="text-3xl font-black text-gray-900 dark:text-white font-mono tracking-tighter"
+              >
+                {{ formatCurrency(minItineraryPrice) }}
+              </p>
+              <p class="text-xs text-gray-500 mt-1 leading-snug">
+                {{ t("itinerary.minimumPriceHint") }}
+              </p>
+            </div>
+          </div>
+        </UCard>
+      </div>
+    </div>
+
+    <!-- Modal Add Block -->
+    <UModal
+      v-model:open="isAddBlockModalOpen"
+      :title="editingBlock ? t('itinerary.editBlockModalTitle') : t('itinerary.addBlockModalTitle')"
+    >
+      <template #body>
+        <div class="space-y-4">
+          <UFormField :label="t('itinerary.blockTypeLabel')">
+            <USelect
+              v-model="newBlockType"
+              :disabled="!!editingBlock"
+              :items="[
+                {
+                  label: t('itinerary.blockTypeAccommodation'),
+                  value: 'hotel',
+                },
+                { label: t('itinerary.blockTypeFlight'), value: 'flight' },
+                { label: t('itinerary.blockTypeTransfer'), value: 'transfer' },
+                {
+                  label: t('itinerary.blockTypeExcursion'),
+                  value: 'excursion',
+                },
+                { label: t('itinerary.blockTypeExtra'), value: 'extra' },
+              ]"
+            />
+          </UFormField>
+          <UFormField :label="t('itinerary.blockTitleLabel')">
+            <UInput
+              v-model="newBlockTitle"
+              :placeholder="t('itinerary.blockTitlePlaceholder')"
+            />
+          </UFormField>
+          <UFormField :label="t('itinerary.blockDatesLabel')">
+            <p
+              v-if="editingBlock && !dateRangeChanged"
+              class="mb-2 text-xs text-gray-500"
+            >
+              {{ t("itinerary.blockCurrentDate", { date: editingBlock.date || "—" }) }}
+            </p>
+            <UPopover class="w-full">
+              <UButton
+                color="neutral"
+                icon="i-lucide-calendar"
+                class="w-full justify-start font-normal text-gray-700 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700"
+              >
+                <template v-if="dateRangeChanged && dateRange.start">
+                  <template v-if="dateRange.end">
+                    {{ formatDate(dateRange.start) }}
+                    &nbsp;&rarr;&nbsp;
+                    {{ formatDate(dateRange.end) }}
+                  </template>
+                  <template v-else>
+                    {{ formatDate(dateRange.start) }}
+                  </template>
+                </template>
+                <template v-else-if="!editingBlock && dateRange.start">
+                  <template v-if="dateRange.end">
+                    {{ formatDate(dateRange.start) }}
+                    &nbsp;&rarr;&nbsp;
+                    {{ formatDate(dateRange.end) }}
+                  </template>
+                  <template v-else>
+                    {{ formatDate(dateRange.start) }}
+                  </template>
+                </template>
+                <template v-else>
+                  {{ t("itinerary.blockDatesOptional") }}
+                </template>
+              </UButton>
+
+              <template #content>
+                <UCalendar
+                  v-model="dateRange"
+                  class="p-2"
+                  :number-of-months="2"
+                  :fixed-weeks="false"
+                  :ui="{
+                    cellTrigger:
+                      'data-[outside-view]:opacity-0 data-[outside-view]:pointer-events-none',
+                  }"
+                  range
+                />
+              </template>
+            </UPopover>
+          </UFormField>
+        </div>
+      </template>
+
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            @click="isAddBlockModalOpen = false; resetBlockModal()"
+            >{{ t("itinerary.cancelButton") }}</UButton
+          >
+          <UButton
+            color="primary"
+            :disabled="!newBlockTitle"
+            @click="handleConfirmBlock"
+            >{{ editingBlock ? t("itinerary.editBlockConfirm") : t("itinerary.addBlockConfirm") }}</UButton
+          >
+        </div>
+      </template>
+    </UModal>
+
+    <ItineraryPreviewModal v-model:is-open="isPreviewOpen" />
+    <SaveTemplateModal v-model:is-open="isSaveTemplateOpen" />
+    <TemplatePickerModal v-model:is-open="isPickerOpen" />
+
+    <ManualOptionModal
+      v-model:is-open="isManualModalOpen"
+      :block-id="manualModalBlockId"
+      :block-type="
+        itinerary.blocks.find((b) => b.id === manualModalBlockId)?.type ??
+        'hotel'
+      "
+    />
+  </div>
+</template>
