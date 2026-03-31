@@ -1,6 +1,7 @@
 import { useState, computed } from "#imports";
 import type { RegisterInput } from "~/utils/schemas";
 import type { AgencyGroup } from "~/composables/useAgencyGroups";
+import type { ICreditLine } from '#shared/types/wallet';
 
 export interface AdminAgencyUser {
   id: string;
@@ -35,6 +36,7 @@ export interface AdminAgency {
   users: AdminAgencyUser[];
   logo: string;
   colorPrimario: string;
+  credit_line?: ICreditLine;
 }
 
 const MOCK_AGENCIES: AdminAgency[] = [
@@ -57,6 +59,13 @@ const MOCK_AGENCIES: AdminAgency[] = [
     status: "Activa",
     logo: "",
     colorPrimario: "teal",
+    credit_line: {
+      limit: 10000,
+      used: 3200,
+      available: 6800,
+      debt: 3200,
+      status: 'active',
+    },
     users: [
       {
         id: "1",

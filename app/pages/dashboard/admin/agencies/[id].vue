@@ -184,6 +184,13 @@ const userColumns = [
   { accessorKey: "status", header: "Estado" },
   { accessorKey: "userActions", header: "" },
 ];
+
+// ── Credit modal ───────────────────────────────────────────────────────────
+const isCreditDetailOpen = ref(false);
+
+function formatAdminCurrency(amount: number): string {
+  return new Intl.NumberFormat('es', { style: 'currency', currency: 'USD' }).format(amount);
+}
 </script>
 
 <template>
@@ -494,6 +501,35 @@ const userColumns = [
                   <span class="text-xs text-gray-500 capitalize">{{
                     agency.colorPrimario
                   }}</span>
+                </div>
+              </div>
+            </UCard>
+
+            <!-- Credit Line Card -->
+            <UCard v-if="agency.credit_line">
+              <template #header>
+                <div class="flex items-center justify-between">
+                  <h3 class="text-sm font-bold flex items-center gap-2">
+                    <UIcon name="i-heroicons-credit-card" class="w-4 h-4 text-primary-500" />
+                    {{ t('agency.wallet.credit.title') }}
+                  </h3>
+                  <UButton size="xs" variant="ghost" @click="isCreditDetailOpen = true">
+                    {{ t('agency.wallet.credit.manage') }}
+                  </UButton>
+                </div>
+              </template>
+              <div class="space-y-3">
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-500">{{ t('agency.wallet.credit.limit') }}</span>
+                  <span class="font-bold">{{ formatAdminCurrency(agency.credit_line.limit) }}</span>
+                </div>
+                <UProgress
+                  :value="Math.min((agency.credit_line.used / agency.credit_line.limit) * 100, 100)"
+                  color="primary"
+                />
+                <div class="flex justify-between text-xs text-gray-500">
+                  <span>{{ t('agency.wallet.credit.used') }}: {{ formatAdminCurrency(agency.credit_line.used) }}</span>
+                  <span>{{ t('agency.wallet.credit.available') }}: {{ formatAdminCurrency(agency.credit_line.available) }}</span>
                 </div>
               </div>
             </UCard>
