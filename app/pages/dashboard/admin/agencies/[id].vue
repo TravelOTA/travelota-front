@@ -199,6 +199,11 @@ function updateAgencyCreditLine(updated: ICreditLine) {
 function formatAdminCurrency(amount: number): string {
   return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD' }).format(amount);
 }
+
+const usagePercent = computed(() => {
+  if (!agency.value?.credit_line?.limit) return 0;
+  return Math.min((agency.value.credit_line.used / agency.value.credit_line.limit) * 100, 100);
+});
 </script>
 
 <template>
@@ -532,8 +537,9 @@ function formatAdminCurrency(amount: number): string {
                   <span class="font-bold">{{ formatAdminCurrency(agency.credit_line.limit) }}</span>
                 </div>
                 <UProgress
-                  :value="Math.min((agency.credit_line.used / agency.credit_line.limit) * 100, 100)"
+                  v-model="usagePercent"
                   color="primary"
+                  animation="none"
                 />
                 <div class="flex justify-between text-xs text-gray-500">
                   <span>{{ t('agency.wallet.credit.used') }}: {{ formatAdminCurrency(agency.credit_line.used) }}</span>

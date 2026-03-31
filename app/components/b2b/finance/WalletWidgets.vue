@@ -120,7 +120,7 @@ const updatedAgo = computed(() => {
 
         <!-- Usage progress bar -->
         <div class="mb-4">
-          <UProgress :value="displayUsage" color="primary" />
+          <UProgress v-model="displayUsage" color="primary" />
           <p class="text-xs text-gray-500 mt-1">
             {{ Math.round(displayUsage) }}% {{ t("agency.wallet.credit.used") }}
           </p>

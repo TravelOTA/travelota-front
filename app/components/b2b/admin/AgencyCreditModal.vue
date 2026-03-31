@@ -39,6 +39,18 @@ function formatCurrency(amount: number): string {
   return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD' }).format(amount);
 }
 
+const usagePercent = computed(() => {
+  if (!props.creditLine.limit) return 0;
+  return Math.min((props.creditLine.used / props.creditLine.limit) * 100, 100);
+});
+
+const progressColor = computed(() => {
+  const p = usagePercent.value;
+  if (p > 90) return 'error';
+  if (p > 70) return 'warning';
+  return 'primary';
+});
+
 function saveChanges() {
   const updated: ICreditLine = {
     ...props.creditLine,
@@ -81,6 +93,21 @@ function applyAdjustment() {
 
 <template>
   <div class="space-y-6">
+    <!-- 0. Sticky Progress Bar -->
+    <div class="sticky top-[-24px] bg-white dark:bg-gray-900 z-20 pt-2 pb-4 -mx-6 px-6 border-b border-gray-100 dark:border-gray-800 shadow-sm mb-4">
+      <div class="flex justify-between items-end mb-2">
+        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Uso de la Línea</span>
+        <span class="text-xs font-black" :class="usagePercent > 90 ? 'text-red-500' : usagePercent > 70 ? 'text-orange-500' : 'text-primary-500'">
+          {{ usagePercent.toFixed(1) }}%
+        </span>
+      </div>
+      <UProgress
+        v-model="usagePercent"
+        :color="progressColor as any"
+        size="lg"       
+      />
+    </div>
+
     <!-- 1. Summary row -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-100 dark:border-gray-800 shadow-sm">
