@@ -15,6 +15,8 @@ const {
   lastUpdatedAt,
 } = useWallet();
 
+const displayUsage = computed(() => Math.min(usageLevel.value, 100));
+
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat(locale.value, {
     style: "currency",
@@ -118,9 +120,9 @@ const updatedAgo = computed(() => {
 
         <!-- Usage progress bar -->
         <div class="mb-4">
-          <UProgress :value="usageLevel" color="primary" />
+          <UProgress :value="displayUsage" color="primary" />
           <p class="text-xs text-gray-500 mt-1">
-            {{ Math.round(usageLevel) }}% {{ t("agency.wallet.credit.used") }}
+            {{ Math.round(displayUsage) }}% {{ t("agency.wallet.credit.used") }}
           </p>
         </div>
 
