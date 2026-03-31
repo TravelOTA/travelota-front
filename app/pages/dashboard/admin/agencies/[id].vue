@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAgencies, type AdminAgencyUser } from "~/composables/useAgencies";
+import type { ICreditLine } from '#shared/types/wallet';
 
 definePageMeta({ layout: "dashboard" });
 
@@ -187,6 +188,10 @@ const userColumns = [
 
 // ── Credit modal ───────────────────────────────────────────────────────────
 const isCreditDetailOpen = ref(false);
+
+function updateAgencyCreditLine(_updated: ICreditLine) {
+  isCreditDetailOpen.value = false;
+}
 
 function formatAdminCurrency(amount: number): string {
   return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD' }).format(amount);
@@ -842,6 +847,15 @@ function formatAdminCurrency(amount: number): string {
           </div>
         </template>
       </UModal>
+
+      <!-- Credit Modal -->
+      <AgencyCreditModal
+        v-if="agency.credit_line"
+        v-model="isCreditDetailOpen"
+        :credit-line="agency.credit_line"
+        :agency-name="agency.name"
+        @update:credit-line="updateAgencyCreditLine"
+      />
     </template>
   </div>
 </template>
