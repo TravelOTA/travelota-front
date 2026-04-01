@@ -58,8 +58,10 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const id = generatePNR();
   const newBooking: IBooking = {
-    id: generatePNR(),
+    id,
+    pnr: id,
     status: 'confirmed',
     paymentStatus: 'pending_payment',
     titular: parsed.data.titular,

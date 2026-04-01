@@ -1,9 +1,24 @@
 <script setup lang="ts">
+export interface VoucherRoom {
+  id: string;
+  name: string;
+  pax: string;
+  price?: number;
+}
+
+export interface VoucherReservation {
+  titular: string;
+  checkIn: string;
+  checkOut: string;
+  rooms: VoucherRoom[];
+  agent: string;
+}
+
 defineProps<{
   isOpen: boolean;
   bookingId: string;
   hotelName: string;
-  reservation: Record<string, unknown>;
+  reservation: VoucherReservation;
   mode?: 'voucher' | 'invoice';
 }>();
 

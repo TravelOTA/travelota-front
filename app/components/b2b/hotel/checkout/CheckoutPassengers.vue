@@ -7,10 +7,15 @@ const props = defineProps<{
   totalPax: number;
 }>();
 
-// 1 = main passenger only, 2 = all passengers
+interface Passenger {
+  id: number;
+  name: string;
+  lastname: string;
+}
+
 const includeMode = ref(1);
 
-const passengers = ref(
+const passengers = ref<Passenger[]>(
   Array.from({ length: props.totalPax }).map((_, i) => ({
     id: i + 1,
     name: '',
@@ -18,8 +23,12 @@ const passengers = ref(
   })),
 );
 
-const visiblePassengers = computed(() => {
-  return includeMode.value === 1 ? [passengers.value[0]] : passengers.value;
+const visiblePassengers = computed<Passenger[]>(() => {
+  const all = passengers.value;
+  if (includeMode.value === 1) {
+    return all.length > 0 ? [all[0]!] : [];
+  }
+  return all;
 });
 </script>
 

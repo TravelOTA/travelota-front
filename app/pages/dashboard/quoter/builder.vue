@@ -49,7 +49,8 @@ const dateRangeChanged = ref(false);
 const isManualModalOpen = ref(false);
 const manualModalBlockId = ref('');
 
-const dateRange = ref({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const dateRange = ref<any>({
   start: todayDate(getLocalTimeZone()),
   end: todayDate(getLocalTimeZone()).add({ days: 2 }),
 });
@@ -171,7 +172,7 @@ const formatCurrency = (amount: number) => {
               size="xs"
               class="w-8 text-center text-primary-600 font-bold bg-transparent pr-0"
               :ui="{
-                wrapper: 'pr-0',
+                root: 'pr-0',
                 base: 'px-0 text-center font-bold text-primary-600 cursor-default',
               }"
             />
@@ -559,7 +560,7 @@ const formatCurrency = (amount: number) => {
 
     <!-- Modal Add Block -->
     <UModal
-      v-model:open="isAddBlockModalOpen"
+      v-model="isAddBlockModalOpen"
       :title="
         editingBlock
           ? t('itinerary.editBlockModalTitle')

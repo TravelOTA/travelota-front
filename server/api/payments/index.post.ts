@@ -122,17 +122,20 @@ export default defineEventHandler(async (event) => {
     response = { status: 'paid', paidAt: bookings[idx]!.paidAt };
   } else if (method === 'agency_credit') {
     const wallet = await readWallet();
-    if (wallet.availableCredit < booking.totalPrice) {
+    const available = wallet.balance + (wallet.credit_line?.available ?? 0);
+    if (available < booking.totalPrice) {
       throw createError({ statusCode: 422, message: 'Crédito insuficiente' });
     }
-    wallet.currentBalance += booking.totalPrice;
-    wallet.transactions.push({
+    wallet.balance -= booking.totalPrice;
+    wallet.totalConsumed += booking.totalPrice;
+    wallet.transactions.unshift({
       id: `TXN-${Date.now()}`,
-      type: 'charge',
+      type: 'charge' as const,
       amount: booking.totalPrice,
       description: `Reserva ${booking.id}`,
       bookingId: booking.id,
       date: new Date().toISOString(),
+      balanceAfter: wallet.balance,
     });
     await writeWallet(wallet);
     bookings[idx]!.paymentStatus = 'paid';

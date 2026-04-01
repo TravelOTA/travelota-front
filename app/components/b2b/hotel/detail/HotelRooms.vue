@@ -29,7 +29,7 @@ const { salePrice } = useSalePrice();
 
 const addToQuote = (room: HotelRoomOffer) => {
   addQuoteItem({
-    hotelId: 'HOTEL-CURRENT', // Mock ID since hotel detail is not passed down here
+    hotelId: '0', // Mock ID since hotel detail is not passed down here
     hotelName: 'Hotel Seleccionado', // Mock Name
     hotelImage:
       'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
@@ -51,12 +51,15 @@ const addToQuote = (room: HotelRoomOffer) => {
 const addToCart = (room: HotelRoomOffer) => {
   addCartItem('hotel', {
     hotel: {
-      id: 'HOTEL-CURRENT',
+      id: 0,
       name: 'Hotel Seleccionado',
       stars: 4,
       image:
         'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
-      location: 'Ubicación del Hotel',
+      location: 'Destino',
+      coordinates: [0, 0],
+      bestPrice: 0,
+      rooms: [],
     },
     room,
     searchParams: searchParams.value,

@@ -16,7 +16,7 @@ const props = defineProps<{
     checkIn: string;
     checkOut: string;
     rooms: {
-      id: number;
+      id: string | number;
       name: string;
       pax: string;
       price: number;

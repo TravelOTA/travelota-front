@@ -30,7 +30,7 @@ function handleGoToCheckout() {
   <USlideover
     v-model:open="isDrawerOpen"
     side="right"
-    :ui="{ width: 'max-w-md' }"
+    :ui="{ content: 'max-w-md' }"
   >
     <template #header>
       <div class="flex items-center justify-between w-full">

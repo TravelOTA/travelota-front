@@ -27,5 +27,5 @@ export const apiFetch = <T>(
       ...(token.value ? { Authorization: `Bearer ${token.value}` } : {}),
     },
     ...options,
-  });
+  }) as Promise<T>;
 };

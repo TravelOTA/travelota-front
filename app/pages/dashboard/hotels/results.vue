@@ -340,7 +340,7 @@ watch(
     <!-- Modals -->
     <HotelMap
       v-model="isMapOpen"
-      :hotels="filteredHotels"
+      :hotels="filteredHotels as any"
       :selected-hotel-id="selectedHotelId"
     />
   </div>

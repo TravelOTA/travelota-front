@@ -84,7 +84,7 @@ const updatedAgo = computed(() => {
         <div>
           <UButton
             variant="outline"
-            color="white"
+            color="neutral"
             size="md"
             icon="i-heroicons-plus"
             @click="emit('request-recharge')"
@@ -95,7 +95,7 @@ const updatedAgo = computed(() => {
       </div>
 
       <!-- Credit Facility Panel (Right) -->
-      <UCard v-if="creditLine" :ui="{ body: { padding: 'p-6' } }">
+      <UCard v-if="creditLine" :ui="{ body: 'p-6' }">
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-bold flex items-center gap-2">
             <UIcon name="i-heroicons-credit-card" class="text-primary-500" />
@@ -166,7 +166,7 @@ const updatedAgo = computed(() => {
 
     <!-- Mini stats -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <UCard :ui="{ body: { padding: 'p-4' } }">
+      <UCard :ui="{ body: 'p-4' }">
         <p
           class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
         >
@@ -180,7 +180,7 @@ const updatedAgo = computed(() => {
         </p>
       </UCard>
 
-      <UCard :ui="{ body: { padding: 'p-4' } }">
+      <UCard :ui="{ body: 'p-4' }">
         <p
           class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
         >
@@ -194,7 +194,7 @@ const updatedAgo = computed(() => {
         </p>
       </UCard>
 
-      <UCard :ui="{ body: { padding: 'p-4' } }">
+      <UCard :ui="{ body: 'p-4' }">
         <p
           class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
         >

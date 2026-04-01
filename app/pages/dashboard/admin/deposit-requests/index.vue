@@ -38,6 +38,20 @@ const processing = ref<string | null>(null);
 const confirmTarget = ref<IDepositRequest | null>(null);
 const rejectTarget = ref<IDepositRequest | null>(null);
 
+const isConfirmModalOpen = computed({
+  get: () => !!confirmTarget.value,
+  set: (val) => {
+    if (!val) confirmTarget.value = null;
+  },
+});
+
+const isRejectModalOpen = computed({
+  get: () => !!rejectTarget.value,
+  set: (val) => {
+    if (!val) rejectTarget.value = null;
+  },
+});
+
 async function confirmRequest(req: IDepositRequest) {
   processing.value = req.id;
   try {
@@ -270,7 +284,7 @@ const statusBadge = (status: DepositRequestStatus) => {
     </UCard>
 
     <!-- Confirm dialog -->
-    <UModal v-model:open="confirmTarget" :ui="{ width: 'max-w-md' }">
+    <UModal v-model:open="isConfirmModalOpen" :ui="{ content: 'max-w-md' }">
       <template #content>
         <UCard v-if="confirmTarget">
           <template #header>
@@ -316,7 +330,7 @@ const statusBadge = (status: DepositRequestStatus) => {
     </UModal>
 
     <!-- Reject dialog -->
-    <UModal v-model:open="rejectTarget" :ui="{ width: 'max-w-md' }">
+    <UModal v-model:open="isRejectModalOpen" :ui="{ content: 'max-w-md' }">
       <template #content>
         <UCard v-if="rejectTarget">
           <template #header>

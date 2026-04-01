@@ -15,6 +15,7 @@ const defaultAgency: Agency = {
   usersCount: 0,
   bookingsCount: 0,
   nextSettlement: '',
+  markupPercentage: 0,
 };
 
 export const useAgency = () => {

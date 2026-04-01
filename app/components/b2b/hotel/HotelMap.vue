@@ -110,7 +110,7 @@ onMounted(async () => {
 
     // Fix default icon paths for Leaflet
     const leaflet = await import('leaflet');
-    delete (leaflet.Icon.Default.prototype as Record<string, unknown>)
+    delete (leaflet.Icon.Default.prototype as { _getIconUrl?: unknown })
       ._getIconUrl;
     leaflet.Icon.Default.mergeOptions({
       iconRetinaUrl:

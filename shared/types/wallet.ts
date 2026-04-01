@@ -35,6 +35,8 @@ export interface ICreditLine {
 
 export interface IWallet {
   balance: number; // current available funds
+  availableCredit?: number; // Sum of balance + credit line available
+  currentBalance?: number; // Alias for balance in some contexts
   lowBalanceThreshold: number; // alert threshold (configured per agency group by SUPER_ADMIN)
   currency: string; // e.g. "USD", "EUR"
   totalDeposited: number; // historical sum of all deposits

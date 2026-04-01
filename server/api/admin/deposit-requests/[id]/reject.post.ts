@@ -8,13 +8,15 @@ export default defineEventHandler(async (event) => {
   const requests = await readDepositRequests();
   const idx = requests.findIndex((r) => r.id === id);
 
-  if (idx === -1) {
+  const req = requests[idx];
+  if (!req) {
     throw createError({
       statusCode: 404,
       message: 'Deposit request not found',
     });
   }
-  if (requests[idx].status !== 'pending') {
+
+  if (req.status !== 'pending') {
     throw createError({
       statusCode: 409,
       message: 'Request already processed',
@@ -22,8 +24,8 @@ export default defineEventHandler(async (event) => {
   }
 
   requests[idx] = {
-    ...requests[idx],
-    status: 'rejected',
+    ...req,
+    status: 'rejected' as const,
     processedAt: new Date().toISOString(),
     processedBy: 'admin@travelota.com',
   };
