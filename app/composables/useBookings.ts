@@ -2,46 +2,32 @@
 import { useState } from '#imports';
 import { computed } from 'vue';
 import { apiFetch } from '~/composables/useApi';
-import type { IBooking } from '#shared/types/booking';
+import type { IBooking, IBookingListItem } from '#shared/types/booking';
 
-// ── BookingRow type (UI shape — kept for backward compatibility with existing components) ──
+// ── BookingRow type (UI shape for the table) ──
 export interface BookingRow {
   id: string;
+  pnr: string;
   titular: string;
-  destination: string;
-  checkIn: string;
-  checkInISO: string;
-  checkOut: string;
-  status: string; // localized Spanish label: "Confirmada" | "Cancelada" | "Vencida"
-  paymentStatus: string; // localized Spanish label: "Pagada" | "Pendiente de Pago" | ...
-  total: number; // alias for compatibility with bookings/index.vue
-  netPrice: number;
-  agencyPrice: number;
-  salePrice: number;
-  seller: string;
-  agency: string;
-  createdAt: string;
-  createdAtISO: string;
+  hotel_name: string;
+  order_ref: string;
+  check_in: string;
+  check_out: string;
+  status: string; // localized or raw
+  payment_status: string; // localized or raw
+  sell_rate: number;
+  net_rate: number;
+  created_at: string;
+  created_at_iso: string;
 }
 
-export interface SearchFilters {
-  search: string;
-  status: string;
-  paymentStatus: string;
-  dateFrom: string;
-  dateTo: string;
-  seller: string;
-  agency: string;
-  minPrice: number;
-  maxPrice: number;
-}
-
-// ── Status label maps (machine key → Spanish, matching existing UI badge logic) ──
+// ── Status label maps (machine key → Spanish) ──
 const STATUS_LABELS: Record<string, string> = {
   confirmed: 'Confirmada',
   cancelled: 'Cancelada',
   expired: 'Vencida',
 };
+
 const PAYMENT_STATUS_LABELS: Record<string, string> = {
   paid: 'Pagada',
   pending_payment: 'Pendiente de Pago',
@@ -49,32 +35,28 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
   deferred: 'Pago Aplazado',
 };
 
-// ── Adapter: IBooking → BookingRow ────────────────────────────────────────────
-function toBookingRow(b: IBooking): BookingRow {
-  const createdDate = new Date(b.createdAt);
+// ── Adapter: IBookingListItem → BookingRow ────────────────────────────────────────────
+function toBookingRow(b: IBookingListItem): BookingRow {
   return {
-    id: b.id,
-    titular: `${b.titular.nombre} ${b.titular.apellido}`,
-    destination: b.hotel.address,
-    checkIn: b.checkIn,
-    checkInISO: b.checkIn,
-    checkOut: b.checkOut,
+    id: String(b.id),
+    pnr: b.pnr,
+    titular: '—', // ListItem doesn't have titular, mapped in detail
+    hotel_name: b.hotel_name,
+    order_ref: b.order_ref,
+    check_in: b.check_in,
+    check_out: b.check_out,
     status: STATUS_LABELS[b.status] ?? b.status,
-    paymentStatus: PAYMENT_STATUS_LABELS[b.paymentStatus] ?? b.paymentStatus,
-    total: b.totalPrice,
-    netPrice: b.totalPrice,
-    agencyPrice: b.totalPrice,
-    salePrice: b.totalPrice,
-    seller: b.createdBy,
-    agency: b.agencyId,
-    createdAt: createdDate.toLocaleString('es-ES', {
+    payment_status: '—', // ListItem might not have payment_status, needs API check
+    sell_rate: parseFloat(b.sell_rate),
+    net_rate: parseFloat(b.sell_rate), // Placeholder
+    created_at: new Date(b.created_at).toLocaleString('es-ES', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
     }),
-    createdAtISO: b.createdAt.slice(0, 10),
+    created_at_iso: b.created_at.slice(0, 10),
   };
 }
 
@@ -89,8 +71,8 @@ export function useBookings() {
     error.value = null;
     try {
       const qs = orderRef ? `?order_ref=${orderRef}` : '';
-      const data = await apiFetch<IBooking[]>(`/api/bookings${qs}`);
-      bookings.value = data.map(toBookingRow);
+      const data = await apiFetch<{ results: IBookingListItem[] }>(`/api/agency/bookings${qs}`);
+      bookings.value = (data.results || []).map(toBookingRow);
     } catch (err) {
       error.value =
         err instanceof Error ? err.message : 'Error al cargar reservas';
@@ -107,33 +89,16 @@ export function useBookings() {
     }
   }
 
-  function filterBookings(filters: Partial<SearchFilters>): BookingRow[] {
+  function filterBookings(filters: Record<string, any>): BookingRow[] {
     return bookings.value.filter((b) => {
-      if (
-        filters.search &&
-        !b.titular.toLowerCase().includes(filters.search.toLowerCase()) &&
-        !b.id.toLowerCase().includes(filters.search.toLowerCase())
-      )
-        return false;
+      if (filters.pnr && !b.pnr.toLowerCase().includes(filters.pnr.toLowerCase())) return false;
+      if (filters.hotel_name && !b.hotel_name.toLowerCase().includes(filters.hotel_name.toLowerCase())) return false;
       if (filters.status && b.status !== filters.status) return false;
-      if (filters.paymentStatus && b.paymentStatus !== filters.paymentStatus)
-        return false;
-      if (filters.dateFrom && b.checkInISO < filters.dateFrom) return false;
-      if (filters.dateTo && b.checkInISO > filters.dateTo) return false;
-      if (filters.seller && b.seller !== filters.seller) return false;
-      if (filters.agency && b.agency !== filters.agency) return false;
-      if (filters.minPrice && b.netPrice < filters.minPrice) return false;
-      if (filters.maxPrice && b.netPrice > filters.maxPrice) return false;
+      if (filters.check_in_from && b.check_in < filters.check_in_from) return false;
+      if (filters.check_in_to && b.check_in > filters.check_in_to) return false;
       return true;
     });
   }
-
-  const agencyOptions = computed(() =>
-    [...new Set(bookings.value.map((b) => b.agency))].filter(Boolean),
-  );
-  const sellerOptions = computed(() =>
-    [...new Set(bookings.value.map((b) => b.seller))].filter(Boolean),
-  );
 
   return {
     bookings,
@@ -142,7 +107,6 @@ export function useBookings() {
     fetchBookings,
     getBookingById,
     filterBookings,
-    agencyOptions,
-    sellerOptions,
   };
 }
+

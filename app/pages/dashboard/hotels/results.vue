@@ -5,19 +5,38 @@ import ResultCard from '~/components/b2b/hotel/ResultCard.vue';
 import HotelMap from '~/components/b2b/hotel/HotelMap.vue';
 import { useHotels, type HotelFilterState } from '~/composables/useHotels';
 import { useHotelSearch } from '~/composables/useHotelSearch';
+import type { IRoomDistribution } from '#shared/types/booking';
 
 definePageMeta({
   layout: 'dashboard',
 });
 
-const { hotels: mockHotels, filterHotels } = useHotels();
+const { hotels, loading, searchHotels, filterHotels } = useHotels();
 const { searchParams, hydrateFromRoute } = useHotelSearch();
-hydrateFromRoute();
+
+onMounted(async () => {
+  hydrateFromRoute();
+  if (searchParams.value.destination_code) {
+    const rooms: IRoomDistribution[] = (searchParams.value.rooms ?? []).map(
+      (r) => ({
+        adults: r.adults,
+        children: r.children.length,
+        children_ages: r.children.map((c) => c.age),
+      }),
+    );
+    await searchHotels({
+      destination_code: searchParams.value.destination_code,
+      check_in: searchParams.value.check_in,
+      check_out: searchParams.value.check_out,
+      rooms,
+    });
+  }
+});
 
 useHead(
   computed(() => ({
-    title: searchParams.value.destination
-      ? `Resultados: ${searchParams.value.destination} - TravelOTA B2B`
+    title: searchParams.value.destination_label
+      ? `Resultados: ${searchParams.value.destination_label} - TravelOTA B2B`
       : 'Resultados de búsqueda - TravelOTA B2B',
   })),
 );
@@ -31,16 +50,13 @@ const sortDirection = ref<'asc' | 'desc'>('asc');
 
 const toggleSort = (field: 'price' | 'stars' | 'name') => {
   if (sortField.value === field) {
-    // Same field clicked: toggle direction
     sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
   } else {
-    // New field: set it and default to ascending
     sortField.value = field;
     sortDirection.value = 'asc';
   }
 };
 
-// Sort icon helper
 const sortIcon = (field: string): string => {
   if (sortField.value !== field) return 'i-heroicons-chevron-up-down';
   return sortDirection.value === 'asc'
@@ -49,11 +65,11 @@ const sortIcon = (field: string): string => {
 };
 
 const isMapOpen = ref(false);
-const selectedHotelId = ref<number | string | null>(null);
+const selectedHotelId = ref<string | null>(null);
 
-const handleOpenMap = (hotel?: Record<string, unknown>) => {
-  if (hotel && hotel.id) {
-    selectedHotelId.value = hotel.id as string | number;
+const handleOpenMap = (hotel?: Record<string, any>) => {
+  if (hotel && hotel.hotel_code) {
+    selectedHotelId.value = hotel.hotel_code as string;
   } else {
     selectedHotelId.value = null;
   }
@@ -74,12 +90,12 @@ const onFilterUpdate = (filters: HotelFilterState) => {
   activeFilters.value = filters;
 };
 
-// Filtered hotels (apply sidebar filters)
+// Filtered hotels
 const filteredHotels = computed(() => {
   return filterHotels(activeFilters.value);
 });
 
-// Sorted hotels computed (sorts filtered, not all)
+// Sorted hotels
 const sortedHotels = computed(() => {
   const list = [...filteredHotels.value];
   if (!sortField.value) return list;
@@ -88,21 +104,21 @@ const sortedHotels = computed(() => {
   return list.sort((a, b) => {
     switch (sortField.value) {
       case 'price':
-        return (a.bestPrice - b.bestPrice) * dir;
+        return (a.best_price - b.best_price) * dir;
       case 'stars':
-        return (a.stars - b.stars) * dir;
+        return (a.category - b.category) * dir;
       case 'name':
-        return a.name.localeCompare(b.name) * dir;
+        return a.hotel_name.localeCompare(b.hotel_name) * dir;
       default:
         return 0;
     }
   });
 });
 
-// Min price for display (from filtered results)
+// Min price
 const minPrice = computed(() =>
   filteredHotels.value.length
-    ? Math.min(...filteredHotels.value.map((h) => h.bestPrice))
+    ? Math.min(...filteredHotels.value.map((h) => h.best_price))
     : 0,
 );
 
@@ -120,7 +136,7 @@ const goToPage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) currentPage.value = page;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
-// Reset page when sort or filters change
+
 watch(
   [sortField, sortDirection, activeFilters],
   () => {
@@ -142,7 +158,7 @@ watch(
         class="hidden lg:block w-[320px] shrink-0 sticky top-24 self-start max-h-[calc(100vh-6rem)] overflow-y-auto rounded-lg scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600"
       >
         <FiltersSidebar
-          :hotels="mockHotels"
+          :hotels="hotels"
           @update:filters="onFilterUpdate"
           @open-map="handleOpenMap()"
         />
@@ -257,7 +273,7 @@ watch(
         <div>
           <ResultCard
             v-for="hotel in paginatedHotels"
-            :key="hotel.id"
+            :key="hotel.hotel_code"
             :hotel="hotel"
             @open-map="handleOpenMap($event)"
           />
@@ -329,7 +345,7 @@ watch(
       <template #body>
         <div class="p-4">
           <FiltersSidebar
-            :hotels="mockHotels"
+            :hotels="hotels"
             @update:filters="onFilterUpdate"
             @open-map="handleOpenMap()"
           />

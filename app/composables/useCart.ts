@@ -2,14 +2,14 @@ import { computed } from 'vue';
 import { useState, useI18n } from '#imports';
 import { apiFetch } from '~/composables/useApi';
 import { useQuoter } from '~/composables/useQuoter';
-import type { Hotel, HotelRoomOffer } from '~/composables/useHotels';
+import type { Hotel, RoomOption } from '~/composables/useHotels';
 import type { HotelSearchParams } from '~/composables/useHotelSearch';
 
 export type CartItemHotel = {
   type: 'hotel';
   id: string;
   hotel: Hotel;
-  room: HotelRoomOffer;
+  option: RoomOption;
   searchParams: HotelSearchParams;
   addedAt: number;
 };
@@ -50,7 +50,7 @@ export function useCart() {
   const itemCount = computed(() => items.value.length);
   const total = computed(() =>
     items.value.reduce((sum, item) => {
-      if (item.type === 'hotel') return sum + item.room.price;
+      if (item.type === 'hotel') return sum + parseFloat(item.option.total_net_rate);
       return sum;
     }, 0),
   );
@@ -85,12 +85,12 @@ export function useCart() {
     for (const item of items.value) {
       if (item.type === 'hotel') {
         addQuoterItem({
-          hotelId: String(item.hotel.id),
-          hotelName: item.hotel.name,
-          hotelImage: item.hotel.image,
-          location: item.hotel.location,
-          roomsDescription: item.room.name,
-          netPrice: item.room.price,
+          hotelId: item.hotel.hotel_code,
+          hotelName: item.hotel.hotel_name,
+          hotelImage: item.hotel.thumbnail || '',
+          location: item.hotel.destination_name,
+          roomsDescription: item.option.rooms[0]?.room_name || 'Habitación',
+          netPrice: parseFloat(item.option.total_net_rate),
         });
       }
     }
@@ -119,12 +119,12 @@ export function useCart() {
       if (item.type !== 'hotel') continue;
       if (skipIds?.has(item.id)) continue;
 
-      if (!item.room.rate_key) {
+      if (!item.option.rate_key) {
         results.push({
           cartItemId: item.id,
           orderRef,
           status: 'unavailable',
-          hotelName: item.hotel.name,
+          hotelName: item.hotel.hotel_name,
           error: t('cart.checkout.noRateKeyWarning'),
         });
         continue;
@@ -153,26 +153,13 @@ export function useCart() {
           }>('/api/hotel/booking-flow/select', {
             method: 'POST',
             body: {
-              rate_key: item.room.rate_key,
-              check_in: item.searchParams.checkIn,
-              check_out: item.searchParams.checkOut,
+              rate_key: item.option.rate_key,
+              check_in: item.searchParams.check_in,
+              check_out: item.searchParams.check_out,
               rooms,
-              // DEV-ONLY: metadata for mock backend to persist realistic bookings
-              _mockPrice: item.room.price,
-              _mockHotel: {
-                id: String(item.hotel.id),
-                name: item.hotel.name,
-                stars: item.hotel.stars,
-                image: item.hotel.image,
-                address: item.hotel.location ?? item.hotel.address ?? '',
-              },
-              _mockRoom: {
-                id: String(item.room.rate_key ?? 'room-1'),
-                name: item.room.name,
-                regimen: item.room.regimen ?? 'SA',
-                cancellation: item.room.cancellation ?? '',
-                cancellationPolicy: item.room.cancellationPolicy,
-              },
+              // Metadata for backend enrichment is no longer needed in body as the backend
+              // already has access to the catalog and the booking flow state.
+              // But we can keep it as a reference if needed for other providers.
             },
           });
           bookingFlowId = bookingFlow.id;
@@ -199,7 +186,10 @@ export function useCart() {
           booking: { id: number; pnr: string; order_ref: string } | null;
         }>(`/api/hotel/booking-flow/${bookingFlowId}/confirm`, {
           method: 'POST',
-          body: { order_ref: orderRef },
+          body: {
+            order_ref: orderRef,
+            payment_method: paymentMethod,
+          },
         });
 
         results.push({
@@ -210,14 +200,14 @@ export function useCart() {
           pnr: confirmed.booking?.pnr,
           orderRef,
           status: 'confirmed',
-          hotelName: item.hotel.name,
+          hotelName: item.hotel.hotel_name,
         });
       } catch (err) {
         results.push({
           cartItemId: item.id,
           orderRef,
           status: 'failed',
-          hotelName: item.hotel.name,
+          hotelName: item.hotel.hotel_name,
           error: err instanceof Error ? err.message : 'Error desconocido',
         });
       }
@@ -238,3 +228,4 @@ export function useCart() {
     confirmAll,
   };
 }
+

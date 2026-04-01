@@ -98,7 +98,7 @@ const handleSearch = (filters: SearchFilters) => {
   // PNR filter
   if (filters.pnr) {
     const q = filters.pnr.toLowerCase();
-    results = results.filter((b) => b.id.toLowerCase().includes(q));
+    results = results.filter((b) => b.pnr.toLowerCase().includes(q));
   }
 
   // Titular filter
@@ -110,7 +110,7 @@ const handleSearch = (filters: SearchFilters) => {
   // Destination filter
   if (filters.destination) {
     const q = filters.destination.toLowerCase();
-    results = results.filter((b) => b.destination.toLowerCase().includes(q));
+    results = results.filter((b) => b.hotel_name.toLowerCase().includes(q));
   }
 
   // Status filter (reservation status only: Confirmada, Cancelada, Vencida)
@@ -121,24 +121,24 @@ const handleSearch = (filters: SearchFilters) => {
   // Payment status filter (Pagada, Pendiente de Pago)
   if (filters.paymentStatuses && filters.paymentStatuses.length > 0) {
     results = results.filter((b) =>
-      filters.paymentStatuses.includes(b.paymentStatus),
+      filters.paymentStatuses.includes(b.payment_status),
     );
   }
 
   // Created date range
   if (filters.createdFrom) {
-    results = results.filter((b) => b.createdAtISO >= filters.createdFrom);
+    results = results.filter((b) => b.created_at_iso >= filters.createdFrom);
   }
   if (filters.createdTo) {
-    results = results.filter((b) => b.createdAtISO <= filters.createdTo);
+    results = results.filter((b) => b.created_at_iso <= filters.createdTo);
   }
 
   // Check-in date range
   if (filters.checkInFrom) {
-    results = results.filter((b) => b.checkInISO >= filters.checkInFrom);
+    results = results.filter((b) => b.check_in >= filters.checkInFrom);
   }
   if (filters.checkInTo) {
-    results = results.filter((b) => b.checkInISO <= filters.checkInTo);
+    results = results.filter((b) => b.check_in <= filters.checkInTo);
   }
 
   // Seller filter
@@ -174,7 +174,7 @@ const handleClear = () => {
 // Pending payment bookings in current results
 const pendingPaymentBookings = computed(() => {
   return filteredBookings.value.filter(
-    (b) => b.paymentStatus === 'Pendiente de Pago',
+    (b) => b.payment_status === 'Pendiente de Pago',
   );
 });
 
@@ -227,12 +227,12 @@ const columns = computed(() => [
   { accessorKey: 'select', header: '' },
   { accessorKey: 'id', header: t('bookings.tableColumns.pnr') },
   { accessorKey: 'status', header: t('bookings.tableColumns.status') },
-  { accessorKey: 'paymentStatus', header: t('bookings.tableColumns.payment') },
+  { accessorKey: 'payment_status', header: t('bookings.tableColumns.payment') },
   { accessorKey: 'prices', header: t('bookings.tableColumns.prices') },
-  { accessorKey: 'createdAt', header: t('bookings.tableColumns.createdAt') },
+  { accessorKey: 'created_at', header: t('bookings.tableColumns.createdAt') },
   { accessorKey: 'titular', header: t('bookings.tableColumns.titular') },
   {
-    accessorKey: 'destination',
+    accessorKey: 'hotel_name',
     header: t('bookings.tableColumns.destination'),
   },
   { accessorKey: 'dates', header: t('bookings.tableColumns.dates') },
@@ -265,11 +265,11 @@ const resultStats = computed(() => {
     (b) => b.status === 'Cancelada',
   ).length;
   const totalAmount = filteredBookings.value.reduce(
-    (acc, b) => acc + b.total,
+    (acc, b) => acc + b.sell_rate,
     0,
   );
   const pendingAmount = pendingPaymentBookings.value.reduce(
-    (acc, b) => acc + b.total,
+    (acc, b) => acc + b.sell_rate,
     0,
   );
   return { total, confirmed, pending, cancelled, totalAmount, pendingAmount };
@@ -463,7 +463,7 @@ const resultStats = computed(() => {
             <div class="flex items-center justify-center">
               <UCheckbox
                 v-if="
-                  (row as any).original.paymentStatus === 'Pendiente de Pago'
+                  (row as any).original.payment_status === 'Pendiente de Pago'
                 "
                 :model-value="selectedIds.has((row as any).original.id)"
                 @update:model-value="toggleSelection((row as any).original.id)"
@@ -485,11 +485,11 @@ const resultStats = computed(() => {
           <template #dates-cell="{ row }">
             <div class="text-sm">
               <span class="block text-gray-900 dark:text-white">{{
-                (row as any).original.checkIn
+                (row as any).original.check_in
               }}</span>
               <span class="block text-xs text-gray-500">{{
                 t('bookings.checkoutUntil', {
-                  date: (row as any).original.checkOut,
+                  date: (row as any).original.check_out,
                 })
               }}</span>
             </div>
@@ -519,7 +519,7 @@ const resultStats = computed(() => {
                   class="font-bold text-gray-900 dark:text-white tabular-nums"
                 >
                   ${{
-                    (row as any).original.total.toLocaleString('en-US', {
+                    (row as any).original.net_rate.toLocaleString('en-US', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })
@@ -534,7 +534,7 @@ const resultStats = computed(() => {
                   class="font-bold text-primary-600 dark:text-primary-400 tabular-nums"
                 >
                   ${{
-                    (row as any).original.salePrice.toLocaleString('en-US', {
+                    (row as any).original.sell_rate.toLocaleString('en-US', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })
@@ -545,17 +545,17 @@ const resultStats = computed(() => {
           </template>
 
           <!-- Payment Status Column -->
-          <template #paymentStatus-cell="{ row }">
+          <template #payment_status-cell="{ row }">
             <UBadge
               :color="
-                (row as any).original.paymentStatus === 'Pagada'
+                (row as any).original.payment_status === 'Pagada'
                   ? 'success'
                   : 'warning'
               "
               variant="subtle"
               class="font-bold tracking-wider text-[10px] uppercase"
             >
-              {{ (row as any).original.paymentStatus }}
+              {{ (row as any).original.payment_status }}
             </UBadge>
           </template>
 
@@ -730,7 +730,7 @@ const resultStats = computed(() => {
         selectedBookings.map((b) => ({
           id: b.id,
           titular: b.titular,
-          total: b.total,
+          total: b.sell_rate,
         }))
       "
       :pending-count="pendingPaymentBookings.length"
@@ -744,12 +744,12 @@ const resultStats = computed(() => {
       v-if="selectedVoucherBooking"
       v-model:is-open="isVoucherModalOpen"
       :booking-id="selectedVoucherBooking.id"
-      :hotel-name="selectedVoucherBooking.destination"
+      :hotel-name="selectedVoucherBooking.hotel_name"
       :reservation="{
         titular: selectedVoucherBooking.titular,
-        checkIn: selectedVoucherBooking.checkIn,
-        checkOut: selectedVoucherBooking.checkOut,
-        agent: selectedVoucherBooking.seller,
+        checkIn: selectedVoucherBooking.check_in,
+        checkOut: selectedVoucherBooking.check_out,
+        agent: 'Sistema',
         rooms: [{ id: '1', name: 'Standard Room', pax: '2 Adultos' }],
       }"
     />

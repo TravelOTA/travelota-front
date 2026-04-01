@@ -7,9 +7,10 @@ import { formatCalendarDate } from '~/utils/formatDate';
 const { t } = useI18n();
 
 interface InitialSearchData {
-  destination?: string;
-  checkIn?: string;
-  checkOut?: string;
+  destination_code?: string;
+  destination_label?: string;
+  check_in?: string;
+  check_out?: string;
   nationality?: string;
   distribution?: string;
   rooms?: SearchRoomDistribution[];
@@ -23,9 +24,10 @@ const emit = defineEmits(['search']);
 
 // Default values if no initialData is provided
 const defaultInitial = {
-  destination: '',
-  checkIn: '',
-  checkOut: '',
+  destination_code: '',
+  destination_label: '',
+  check_in: '',
+  check_out: '',
   nationality: 'Estados Unidos',
   distribution: '1 Habitación, 2 Adultos',
   rooms: [{ adults: 2, children: [] }] as SearchRoomDistribution[],
@@ -71,8 +73,8 @@ const formatDistributionLabel = (roomsArray: SearchRoomDistribution[]) => {
 // Sync dates and distribution back to form when submitting
 const submitSearch = () => {
   if (dateRange.value.start && dateRange.value.end) {
-    form.value.checkIn = dateRange.value.start.toString();
-    form.value.checkOut = dateRange.value.end.toString();
+    form.value.check_in = dateRange.value.start.toString();
+    form.value.check_out = dateRange.value.end.toString();
   }
   form.value.distribution = formatDistributionLabel(rooms.value);
   emit('search', {
@@ -112,7 +114,11 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
             {{ t('hotels.search.destination') }}
           </span>
           <USelectMenu
-            v-model="form.destination"
+            :model-value="
+              destinationOptions.find(
+                (d) => d.code === form.destination_code,
+              )
+            "
             :items="destinationOptions"
             :placeholder="t('hotels.search.destinationPlaceholder')"
             searchable
@@ -122,6 +128,12 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
             :ui="{
               base: 'bg-transparent border-0 ring-0 shadow-none p-0 text-sm font-medium text-gray-900 dark:text-gray-50 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-0',
             }"
+            @update:model-value="
+              (val) => {
+                form.destination_code = val.code;
+                form.destination_label = val.label;
+              }
+            "
           />
         </div>
       </div>

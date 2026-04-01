@@ -48,14 +48,14 @@ const NATIONALITIES = [
 ];
 
 const DESTINATIONS = [
-  'Punta Cana, República Dominicana',
-  'Cancún, México',
-  'Madrid, España',
-  'Barcelona, España',
-  'Santo Domingo, República Dominicana',
-  'Cartagena, Colombia',
-  'Miami, Estados Unidos',
-  'Orlando, Estados Unidos',
+  { label: 'Punta Cana, República Dominicana', code: 'PUJ' },
+  { label: 'Cancún, México', code: 'CUN' },
+  { label: 'Madrid, España', code: 'MAD' },
+  { label: 'Barcelona, España', code: 'BCN' },
+  { label: 'Santo Domingo, República Dominicana', code: 'SDQ' },
+  { label: 'Cartagena, Colombia', code: 'CTG' },
+  { label: 'Miami, Estados Unidos', code: 'MIA' },
+  { label: 'Orlando, Estados Unidos', code: 'MCO' },
 ];
 
 export function useConfig() {
@@ -71,7 +71,7 @@ export function useConfig() {
     () => NATIONALITIES,
   );
 
-  const destinations = useState<string[]>(
+  const destinations = useState<{ label: string; code: string }[]>(
     'config-destinations',
     () => DESTINATIONS,
   );

@@ -1,13 +1,7 @@
 <script setup lang="ts">
-const { t } = useI18n();
+import type { Hotel } from '~/composables/useHotels';
 
-interface Hotel {
-  id: number;
-  name: string;
-  stars: number;
-  bestPrice: number;
-  rooms: { regimen: string; cancellation?: string }[];
-}
+const { t } = useI18n();
 
 const props = defineProps<{
   hotels: Hotel[];
@@ -34,12 +28,12 @@ const hotelName = ref('');
 // Derive price bounds from actual hotel data
 const PRICE_FLOOR = computed(() =>
   props.hotels.length
-    ? Math.floor(Math.min(...props.hotels.map((h) => h.bestPrice)))
+    ? Math.floor(Math.min(...props.hotels.map((h) => h.best_price)))
     : 0,
 );
 const PRICE_CEIL = computed(() =>
   props.hotels.length
-    ? Math.ceil(Math.max(...props.hotels.map((h) => h.bestPrice)))
+    ? Math.ceil(Math.max(...props.hotels.map((h) => h.best_price)))
     : 10000,
 );
 
@@ -56,7 +50,7 @@ watch(
   { immediate: true },
 );
 
-// Price distribution histogram – compute from actual hotel data
+// Price distribution histogram
 const HISTOGRAM_BARS = 30;
 const priceDistribution = computed(() => {
   const bars = new Array(HISTOGRAM_BARS).fill(0);
@@ -65,7 +59,7 @@ const priceDistribution = computed(() => {
   const range = ceil - floor || 1;
   for (const h of props.hotels) {
     const idx = Math.min(
-      Math.floor(((h.bestPrice - floor) / range) * HISTOGRAM_BARS),
+      Math.floor(((h.best_price - floor) / range) * HISTOGRAM_BARS),
       HISTOGRAM_BARS - 1,
     );
     bars[idx]++;
@@ -74,7 +68,6 @@ const priceDistribution = computed(() => {
 });
 const maxBar = computed(() => Math.max(...priceDistribution.value, 1));
 
-// Computed positions for dual slider overlay
 const minPercent = computed(
   () =>
     ((priceMin.value - PRICE_FLOOR.value) /
@@ -88,7 +81,6 @@ const maxPercent = computed(
     100,
 );
 
-// Clamp values on blur
 const clampMin = () => {
   if (priceMin.value < PRICE_FLOOR.value) priceMin.value = PRICE_FLOOR.value;
   if (priceMin.value > PRICE_CEIL.value) priceMin.value = PRICE_CEIL.value;
@@ -124,7 +116,6 @@ const onMaxSlider = (e: Event) => {
   );
 };
 
-// Which histogram bars are inside the selected range
 const barInRange = (barIndex: number): boolean => {
   const floor = PRICE_FLOOR.value;
   const ceil = PRICE_CEIL.value;
@@ -134,31 +125,31 @@ const barInRange = (barIndex: number): boolean => {
   return barEnd >= priceMin.value && barStart <= priceMax.value;
 };
 
-// Category filters – compute counts from hotel data
+// Category filters
 const categories = computed(() => [
   {
     label: '★★★★★',
-    count: props.hotels.filter((h) => h.stars === 5).length,
+    count: props.hotels.filter((h) => h.category === 5).length,
     value: '5',
   },
   {
     label: '★★★★',
-    count: props.hotels.filter((h) => h.stars === 4).length,
+    count: props.hotels.filter((h) => h.category === 4).length,
     value: '4',
   },
   {
     label: '★★★',
-    count: props.hotels.filter((h) => h.stars === 3).length,
+    count: props.hotels.filter((h) => h.category === 3).length,
     value: '3',
   },
   {
     label: '★★',
-    count: props.hotels.filter((h) => h.stars === 2).length,
+    count: props.hotels.filter((h) => h.category === 2).length,
     value: '2',
   },
   {
     label: '★',
-    count: props.hotels.filter((h) => h.stars === 1).length,
+    count: props.hotels.filter((h) => h.category === 1).length,
     value: '1',
   },
 ]);
@@ -175,9 +166,10 @@ const regimes = computed(() => {
   ];
 
   return baseRegimes.map((reg) => {
-    // A hotel counts for a regime if ANY of its rooms have that regime
     const count = props.hotels.filter((h) =>
-      h.rooms.some((r) => r.regimen === reg.value),
+      h.options.some((o) =>
+        o.rooms.some((r) => r.meal_plan === reg.value),
+      ),
     ).length;
     return { ...reg, count };
   });
@@ -187,7 +179,7 @@ const selectedRegimes = ref<string[]>([]);
 const hideNR = ref(false);
 const hideOR = ref(false);
 
-// Emit filter state whenever any filter changes
+// Emit filter state
 watch(
   [
     hotelName,

@@ -56,20 +56,20 @@ const bookingStatusLabel = computed(() =>
 const paymentStatusLabel = computed(() =>
   booking.value
     ? t(
-        `hotels.paymentStatusLabel.${booking.value.paymentStatus}`,
-        booking.value.paymentStatus,
+        `hotels.paymentStatusLabel.${booking.value.payment_status}`,
+        booking.value.payment_status,
       )
     : '',
 );
 
 // Computed props for child components
 const hotelProp = computed(() =>
-  booking.value
+  booking.value && booking.value.hotel_snapshot
     ? {
-        name: booking.value.hotel.name,
-        stars: booking.value.hotel.stars,
-        address: booking.value.hotel.address,
-        image: booking.value.hotel.image,
+        name: booking.value.hotel_snapshot.name,
+        stars: booking.value.hotel_snapshot.stars,
+        address: booking.value.hotel_snapshot.address,
+        image: booking.value.hotel_snapshot.image,
       }
     : null,
 );
@@ -77,30 +77,19 @@ const hotelProp = computed(() =>
 const reservationProp = computed(() =>
   booking.value
     ? {
-        titular: `${booking.value.titular.nombre} ${booking.value.titular.apellido}`,
-        agent: booking.value.createdBy,
-        checkIn: booking.value.checkIn,
-        checkOut: booking.value.checkOut,
+        titular: booking.value.passengers?.[0]
+          ? `${booking.value.passengers[0].first_name} ${booking.value.passengers[0].last_name}`
+          : '—',
+        agent: 'Sistema', // Field createdBy is not in new IBooking, using placeholder
+        checkIn: booking.value.check_in,
+        checkOut: booking.value.check_out,
         rooms: [
           {
             id: '1',
-            name: `${booking.value.room.name} - ${booking.value.room.regime}`,
-            pax: booking.value.guests
-              .map((g) => {
-                const parts = [];
-                if (g.adults)
-                  parts.push(
-                    `${g.adults} ${g.adults !== 1 ? t('hotels.search.adults') : t('hotels.search.adult')}`,
-                  );
-                if (g.children.length)
-                  parts.push(
-                    `${g.children.length} ${g.children.length !== 1 ? t('hotels.search.children') : t('hotels.search.child')}`,
-                  );
-                return parts.join(', ');
-              })
-              .join(' / '),
-            price: salePrice(booking.value.totalPrice),
-            netPrice: booking.value.totalPrice,
+            name: booking.value.room_description,
+            pax: `${booking.value.pax} ${t('hotels.search.guests')}`,
+            price: salePrice(parseFloat(booking.value.sell_rate)),
+            netPrice: parseFloat(booking.value.net_rate),
           },
         ],
       }
@@ -110,14 +99,12 @@ const reservationProp = computed(() =>
 // Cancellation policies derived from IBooking
 const cancellationPolicies = computed(() => {
   if (!booking.value) return [];
-  return (booking.value.room.cancellationPolicy?.penalties ?? []).map((p) => ({
-    status: t('hotels.cancellation.percentOfTotal', {
-      percentage: p.percentage,
-    }),
-    fromDate: p.from,
-    toDate: p.from,
+  return (booking.value.cancellation_policies ?? []).map((p) => ({
+    status: p.description || t('hotels.cancellation.penalty'),
+    fromDate: p.deadline,
+    toDate: p.deadline,
     time: '23:59 CET',
-    price: p.amount,
+    price: parseFloat(p.penalty_amount),
   }));
 });
 
@@ -129,8 +116,8 @@ const showCancellation = computed(
 );
 
 const paidDate = computed(() =>
-  booking.value?.paidAt
-    ? new Date(booking.value.paidAt).toLocaleString('es-ES', {
+  booking.value?.paid_at
+    ? new Date(booking.value.paid_at).toLocaleString('es-ES', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -141,7 +128,7 @@ const paidDate = computed(() =>
 );
 
 const paymentDeadline = computed(
-  () => booking.value?.transferDeadline ?? undefined,
+  () => booking.value?.transfer_deadline ?? undefined,
 );
 
 const emptyReservation: VoucherReservation = {
@@ -260,7 +247,7 @@ useHead({
                   <UBadge
                     v-if="booking.status !== 'cancelled'"
                     :color="
-                      booking.paymentStatus === 'paid' ? 'success' : 'warning'
+                      booking.payment_status === 'paid' ? 'success' : 'warning'
                     "
                     variant="subtle"
                     class="px-2 py-1 text-xs uppercase tracking-wider font-bold"
@@ -287,7 +274,7 @@ useHead({
                     name="i-heroicons-user"
                     class="w-4 h-4 text-gray-400"
                   />
-                  {{ booking.titular.nombre }} {{ booking.titular.apellido }}
+                  {{ booking.passengers?.[0]?.first_name }} {{ booking.passengers?.[0]?.last_name }}
                 </p>
               </div>
               <div>
@@ -297,7 +284,7 @@ useHead({
                   {{ t('hotels.bookingDetail.agencyReference') }}
                 </p>
                 <p class="font-bold text-gray-900 dark:text-white text-lg">
-                  {{ booking.titular.refAgencia || 'N/A' }}
+                  {{ booking.order_ref || 'N/A' }}
                 </p>
               </div>
               <div>
@@ -323,7 +310,7 @@ useHead({
                   {{ t('hotels.bookingDetail.responsibleAgent') }}
                 </p>
                 <p class="text-gray-900 dark:text-gray-300">
-                  {{ booking.createdBy }}
+                  Sistema
                 </p>
               </div>
               <div class="md:col-span-2">
@@ -339,7 +326,7 @@ useHead({
                     name="i-heroicons-calendar-days"
                     class="w-4 h-4 text-gray-400"
                   />
-                  {{ new Date(booking.createdAt).toLocaleDateString('es-ES') }}
+                  {{ new Date(booking.created_at).toLocaleDateString('es-ES') }}
                 </p>
               </div>
             </div>
@@ -349,7 +336,7 @@ useHead({
           <BookingPayment
             v-if="booking.status !== 'expired'"
             :payment-status="paymentStatusLabel"
-            :total-price="booking.totalPrice"
+            :total-price="parseFloat(booking.sell_rate)"
             :payment-deadline="paymentDeadline"
             :paid-date="paidDate"
           />
@@ -358,7 +345,7 @@ useHead({
           <BookingCancellation
             v-if="showCancellation || booking.status === 'cancelled'"
             :booking-status="bookingStatusLabel"
-            :total-price="booking.totalPrice"
+            :total-price="parseFloat(booking.sell_rate)"
             :policies="cancellationPolicies"
           />
 
@@ -487,7 +474,7 @@ useHead({
             v-if="hotelProp && reservationProp"
             :hotel="hotelProp"
             :reservation="reservationProp"
-            :total-price="booking.totalPrice"
+            :total-price="parseFloat(booking.sell_rate)"
           />
         </div>
       </div>
@@ -497,7 +484,7 @@ useHead({
         v-model:is-open="isVoucherModalOpen"
         :mode="documentMode"
         :booking-id="booking.id"
-        :hotel-name="booking.hotel.name"
+        :hotel-name="booking.hotel_snapshot?.name || ''"
         :reservation="reservationProp ?? emptyReservation"
       />
     </template>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { navigateTo } from '#imports';
-import type { Hotel, HotelRoomOffer } from '~/composables/useHotels';
+import { useHotels, type RoomOption } from '~/composables/useHotels';
 import { useCart } from '~/composables/useCart';
 import { useHotelSearch } from '~/composables/useHotelSearch';
 import SearchSummaryBar from '~/components/b2b/hotel/SearchSummaryBar.vue';
@@ -22,124 +22,58 @@ const router = useRouter();
 const isMapOpen = ref(false);
 const hotelId = route.params.id as string;
 
+const { getHotelByCode } = useHotels();
 const { addItem: addToCart } = useCart();
 const { searchParams } = useHotelSearch();
 
-function handleReserve(room: HotelRoomOffer) {
+const hotel = computed(() => getHotelByCode(hotelId));
+
+// Images from components or fallback
+const hotelImages = computed(() => {
+  if (hotel.value?.thumbnail) {
+    return [hotel.value.thumbnail];
+  }
+  return [
+    'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+  ];
+});
+
+function handleReserve(option: RoomOption) {
+  if (!hotel.value) return;
   addToCart('hotel', {
     hotel: hotel.value,
-    room,
+    option,
     searchParams: searchParams.value,
   });
   navigateTo('/dashboard/cart/checkout');
 }
 
 function handleAddToCart() {
-  if (!hotel.value.rooms.length) return;
-  const cheapestRoom = hotel.value.rooms.reduce(
-    (min, r) => (min && r.price < min.price ? r : min),
-    hotel.value.rooms[0] as HotelRoomOffer,
+  if (!hotel.value || !hotel.value.options.length) return;
+  const cheapestOption = hotel.value.options.reduce(
+    (min, o) =>
+      min && parseFloat(o.total_net_rate) < parseFloat(min.total_net_rate)
+        ? o
+        : min,
+    hotel.value.options[0] as RoomOption,
   );
-  if (cheapestRoom) {
+  if (cheapestOption) {
     addToCart('hotel', {
       hotel: hotel.value,
-      room: cheapestRoom,
+      option: cheapestOption,
       searchParams: searchParams.value,
     });
   }
 }
 
-// Mock images
-const hotelImages = [
-  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-];
-
-// Mock Data
-const hotel = ref<Hotel>({
-  id: Number(hotelId),
-  name: 'Iberostar WAVES DOMINICANA', // Can be dynamic if we implement a store
-  stars: 5,
-  location: 'Playa Bavaro, DO',
-  coordinates: [18.7035, -68.4215] as [number, number],
-  image: hotelImages[0]!, // Agregada la foto principal
-  bestPrice: 1118.76,
-  rooms: [
-    {
-      name: 'Twin/double room - premium - with lateral sea view',
-      regimen: 'TI',
-      cancellation: 'Gastos de cancelación',
-      cancellationPolicy: {
-        refundable: true,
-        penaltyFrom: '2026-04-15',
-        penalties: [{ from: '2026-04-15', percentage: 100, amount: 3027.93 }],
-      },
-      price: 3027.93,
-      rate_key: 'MOCK-HB-1-001',
-    },
-    {
-      name: 'Twin/double room - premium',
-      regimen: 'TI',
-      cancellation: 'Gastos de cancelación',
-      cancellationPolicy: {
-        refundable: true,
-        penaltyFrom: '2026-04-15',
-        penalties: [{ from: '2026-04-15', percentage: 100, amount: 3186.43 }],
-      },
-      price: 3186.43,
-      rate_key: 'MOCK-HB-1-002',
-    },
-    {
-      name: 'Premium double room (full double bed)',
-      regimen: 'TI',
-      cancellation: 'No reembolsable',
-      cancellationPolicy: {
-        refundable: false,
-        penaltyFrom: null,
-        penalties: [{ from: '2026-03-16', percentage: 100, amount: 3253.48 }],
-      },
-      price: 3253.48,
-      rate_key: 'MOCK-HB-1-003',
-    },
-    {
-      name: 'Premium room with tropical view',
-      regimen: 'TI',
-      cancellation: 'Bajo petición',
-      cancellationPolicy: {
-        refundable: true,
-        penaltyFrom: '2026-04-15',
-        penalties: [{ from: '2026-04-15', percentage: 100, amount: 3433.94 }],
-      },
-      price: 3433.94,
-      rate_key: 'MOCK-HB-1-004',
-      onRequest: true,
-    },
-    {
-      name: 'Suite - family',
-      regimen: 'TI',
-      cancellation: 'Gastos de cancelación',
-      cancellationPolicy: {
-        refundable: true,
-        penaltyFrom: '2026-04-15',
-        penalties: [{ from: '2026-04-15', percentage: 100, amount: 4181.59 }],
-      },
-      price: 4181.59,
-      rate_key: 'MOCK-HB-1-005',
-    },
-  ],
-});
-
 useHead({
-  title: `${hotel.value.name} - TravelOTA B2B`,
+  title: hotel.value ? `${hotel.value.hotel_name} - TravelOTA B2B` : 'Hotel - TravelOTA B2B',
 });
 </script>
 
 <template>
   <div class="max-w-[1400px] mx-auto pb-12">
-    <SearchSummaryBar :hotel-name="hotel.name" />
+    <SearchSummaryBar :hotel-name="hotel?.hotel_name" />
     <!-- Breadcrumb / Back button -->
     <div class="mb-4 mt-2">
       <UButton
@@ -155,7 +89,17 @@ useHead({
 
     <div v-if="hotel" class="flex flex-col gap-6 mt-6">
       <!-- 1. Top Summary (Reused from Results) -->
-      <ResultHotelSummary :hotel="hotel" @open-map="isMapOpen = true" />
+      <ResultHotelSummary
+        :hotel="{
+          hotel_code: hotel.hotel_code,
+          hotel_name: hotel.hotel_name,
+          category: hotel.category,
+          thumbnail: hotel.thumbnail,
+          destination_name: hotel.destination_name,
+          best_price: hotel.best_price,
+        }"
+        @open-map="isMapOpen = true"
+      />
 
       <!-- 2. Middle Gallery -->
       <HotelGallery :images="hotelImages" />
@@ -164,7 +108,7 @@ useHead({
       <div class="flex gap-6 items-start">
         <div class="flex-1 min-w-0">
           <ResultRoomList
-            :rooms="hotel.rooms"
+            :options="hotel.options"
             :hotel="hotel"
             :is-expanded="true"
             :default-expanded-rooms="true"
@@ -173,7 +117,7 @@ useHead({
         </div>
         <div class="w-72 shrink-0">
           <HotelPriceBox
-            :best-price="hotel.bestPrice"
+            :best-price="hotel.best_price"
             @add-to-cart="handleAddToCart"
             @open-map="isMapOpen = true"
           />
@@ -186,9 +130,11 @@ useHead({
 
     <!-- Map Modal -->
     <HotelMap
+      v-if="hotel"
       v-model="isMapOpen"
-      :hotels="[hotel]"
-      :selected-hotel-id="hotel.id"
+      :hotels="[hotel] as any"
+      :selected-hotel-id="hotel.hotel_code"
     />
   </div>
 </template>
+

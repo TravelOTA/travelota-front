@@ -67,7 +67,7 @@ const handleSearchUpdate = async (newData: HotelSearchParams) => {
             >
               {{
                 props.hotelName ||
-                searchParams.destination ||
+                searchParams.destination_label ||
                 t('hotels.results.noDestination')
               }}
             </span>
@@ -97,9 +97,9 @@ const handleSearchUpdate = async (newData: HotelSearchParams) => {
             <span
               class="text-sm font-medium text-gray-900 dark:text-gray-50 truncate"
             >
-              <template v-if="searchParams.checkIn && searchParams.checkOut">
-                {{ formatIsoDate(searchParams.checkIn) }} -
-                {{ formatIsoDate(searchParams.checkOut) }}
+              <template v-if="searchParams.check_in && searchParams.check_out">
+                {{ formatIsoDate(searchParams.check_in) }} -
+                {{ formatIsoDate(searchParams.check_out) }}
               </template>
               <span v-else class="text-gray-400 dark:text-gray-500"
                 >dd/mm/yy - dd/mm/yy</span

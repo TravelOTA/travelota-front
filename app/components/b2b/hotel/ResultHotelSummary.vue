@@ -7,29 +7,29 @@ const { t } = useI18n();
 
 const props = defineProps<{
   hotel: {
-    id: string | number;
-    name: string;
-    stars: number;
-    image: string;
-    location: string;
-    bestPrice: number;
+    hotel_code: string;
+    hotel_name: string;
+    category: number;
+    thumbnail: string | null;
+    destination_name: string;
+    best_price: number;
   };
 }>();
 
 const emit = defineEmits<{
-  (e: 'open-map', hotel: Record<string, unknown>): void;
+  (e: 'open-map', hotel: Record<string, any>): void;
 }>();
 const { triggerAddOption } = useItinerary();
 
 const addToItinerary = () => {
   triggerAddOption({
-    providerId: String(props.hotel.id),
-    name: props.hotel.name,
+    providerId: String(props.hotel.hotel_code),
+    name: props.hotel.hotel_name,
     image:
-      props.hotel.image ||
+      props.hotel.thumbnail ||
       'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
-    description: props.hotel.location + ' - Alojamiento Completo',
-    netPrice: props.hotel.bestPrice,
+    description: props.hotel.destination_name + ' - Alojamiento Completo',
+    netPrice: props.hotel.best_price,
     isManual: false,
   });
 };
@@ -44,12 +44,12 @@ const { salePrice } = useSalePrice();
   >
     <!-- Imagen -->
     <NuxtLink
-      :to="`/dashboard/hotels/${hotel.id}`"
+      :to="`/dashboard/hotels/${hotel.hotel_code}`"
       class="relative w-full md:w-64 h-48 shrink-0 cursor-pointer block"
     >
       <img
-        :src="hotel.image"
-        :alt="hotel.name"
+        :src="hotel.thumbnail || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800'"
+        :alt="hotel.hotel_name"
         class="w-full h-full object-cover"
       />
     </NuxtLink>
@@ -59,17 +59,17 @@ const { salePrice } = useSalePrice();
       <div>
         <div class="flex text-yellow-400 mb-1">
           <UIcon
-            v-for="i in hotel.stars"
+            v-for="i in hotel.category"
             :key="i"
             name="i-heroicons-star-16-solid"
             class="w-4 h-4"
           />
         </div>
-        <NuxtLink :to="`/dashboard/hotels/${hotel.id}`">
+        <NuxtLink :to="`/dashboard/hotels/${hotel.hotel_code}`">
           <h3
             class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary-600 transition-colors"
           >
-            {{ hotel.name }}
+            {{ hotel.hotel_name }}
           </h3>
         </NuxtLink>
 
@@ -78,7 +78,7 @@ const { salePrice } = useSalePrice();
           @click="emit('open-map', hotel)"
         >
           <UIcon name="i-heroicons-map-pin" class="w-4 h-4 mr-1" />
-          <span>{{ hotel.location }}</span>
+          <span>{{ hotel.destination_name }}</span>
           <span class="ml-2 underline underline-offset-2">{{
             t('hotels.results.seeOnMap')
           }}</span>
@@ -102,7 +102,7 @@ const { salePrice } = useSalePrice();
       >
         <span class="font-bold">$</span>
         {{
-          salePrice(hotel.bestPrice).toLocaleString('en-US', {
+          salePrice(hotel.best_price).toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })
@@ -110,7 +110,7 @@ const { salePrice } = useSalePrice();
       </p>
       <p v-if="netPriceVisible" class="text-xs text-gray-400 mb-2">
         neto ${{
-          hotel.bestPrice.toLocaleString('en-US', {
+          hotel.best_price.toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })

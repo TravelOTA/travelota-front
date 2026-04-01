@@ -58,25 +58,10 @@ async function runPreCheck(item: CartItemHotel): Promise<void> {
     }>('/api/hotel/booking-flow/select', {
       method: 'POST',
       body: {
-        rate_key: item.room.rate_key,
-        check_in: item.searchParams.checkIn,
-        check_out: item.searchParams.checkOut,
+        rate_key: item.option.rate_key,
+        check_in: item.searchParams.check_in,
+        check_out: item.searchParams.check_out,
         rooms,
-        _mockPrice: item.room.price,
-        _mockHotel: {
-          id: String(item.hotel.id),
-          name: item.hotel.name,
-          stars: item.hotel.stars,
-          image: item.hotel.image,
-          address: item.hotel.location ?? item.hotel.address ?? '',
-        },
-        _mockRoom: {
-          id: String(item.room.rate_key ?? 'room-1'),
-          name: item.room.name,
-          regimen: item.room.regimen ?? 'SA',
-          cancellation: item.room.cancellation ?? '',
-          cancellationPolicy: item.room.cancellationPolicy,
-        },
       },
     });
 
@@ -86,7 +71,7 @@ async function runPreCheck(item: CartItemHotel): Promise<void> {
       bookingFlowId: flow.id,
       remarks: flow.remarks ?? [],
       currentPrice,
-      priceChanged: currentPrice !== item.room.price,
+      priceChanged: Math.abs(currentPrice - parseFloat(item.option.total_net_rate)) > 0.01,
     };
   } catch (err) {
     preCheckMap.value[item.id] = {
@@ -109,7 +94,7 @@ onMounted(async () => {
   await Promise.allSettled(
     items.value
       .filter(
-        (i): i is CartItemHotel => i.type === 'hotel' && !!i.room.rate_key,
+        (i): i is CartItemHotel => i.type === 'hotel' && !!i.option.rate_key,
       )
       .map(runPreCheck),
   );
@@ -127,13 +112,12 @@ const cartCancellationPolicy = computed((): ICancellationPolicy | undefined => {
   const hotelItems = items.value.filter(
     (i): i is CartItemHotel => i.type === 'hotel',
   );
-  const nonRefundable = hotelItems.find(
-    (i) => !i.room.cancellationPolicy?.refundable,
-  );
-  return (
-    nonRefundable?.room.cancellationPolicy ??
-    hotelItems[0]?.room.cancellationPolicy
-  );
+  // Just use the first policy for the summary bar in this iteration
+  return hotelItems[0]?.option.rooms[0] ? {
+    deadline: '',
+    penalty_amount: '0.00',
+    description: hotelItems[0].option.rooms[0].cancellation_policy
+  } : undefined;
 });
 
 const totalSalePrice = computed(() => salePrice(total.value));
@@ -204,7 +188,7 @@ async function handleConfirmAll() {
       if (pc.priceChanged) {
         const accepted = await askPriceChange(
           item as CartItemHotel,
-          item.room.price,
+          parseFloat((item as CartItemHotel).option.total_net_rate),
           pc.currentPrice,
         );
         if (!accepted) {
@@ -405,7 +389,7 @@ const preCheckForItem = (id: string): PreCheckState =>
         <p class="text-sm text-gray-600 dark:text-gray-300">
           {{
             t('cart.checkout.priceChangedDescription', {
-              roomName: priceChangeModal.item?.room.name ?? '',
+              roomName: priceChangeModal.item?.option.rooms[0]?.room_name ?? '',
               oldPrice: priceChangeModal.oldPrice.toFixed(2),
               newPrice: priceChangeModal.newPrice.toFixed(2),
             })

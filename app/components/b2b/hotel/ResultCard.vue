@@ -17,11 +17,21 @@ const isExpanded = ref(true); // Simulate that by default the first 2 are shown 
   <div
     class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden mb-6 shadow-sm hover:shadow transition-shadow"
   >
-    <ResultHotelSummary :hotel="hotel" @open-map="emit('open-map', $event)" />
+    <ResultHotelSummary
+      :hotel="{
+        hotel_code: hotel.hotel_code,
+        hotel_name: hotel.hotel_name,
+        category: hotel.category,
+        thumbnail: hotel.thumbnail,
+        destination_name: hotel.destination_name,
+        best_price: hotel.best_price,
+      }"
+      @open-map="emit('open-map', $event)"
+    />
 
     <ResultRoomList
-      v-if="hotel?.rooms?.length"
-      :rooms="hotel.rooms"
+      v-if="hotel?.options?.length"
+      :options="hotel.options"
       :hotel="hotel"
       :is-expanded="isExpanded"
     />

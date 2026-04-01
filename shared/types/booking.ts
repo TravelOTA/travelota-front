@@ -1,10 +1,6 @@
+import type { PaymentStatus, PaymentMethod } from './payment';
+
 export type BookingStatus = 'confirmed' | 'cancelled' | 'expired';
-export type PaymentStatus =
-  | 'paid'
-  | 'pending_payment'
-  | 'pending_transfer'
-  | 'deferred';
-export type PaymentMethod = 'card' | 'transfer' | 'agency_credit';
 
 export interface ICancellationPolicy {
   deadline: string; // ISO datetime

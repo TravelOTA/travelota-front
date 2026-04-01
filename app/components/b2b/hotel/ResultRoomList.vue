@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import type { PropType } from 'vue';
 import { useItinerary } from '~/composables/useItinerary';
-import type { Hotel, HotelRoomOffer } from '~/composables/useHotels';
+import type { Hotel, RoomOption } from '~/composables/useHotels';
 import { useCart } from '~/composables/useCart';
 import { useHotelSearch } from '~/composables/useHotelSearch';
 import { useNetPrice } from '~/composables/useNetPrice';
@@ -11,8 +11,8 @@ import { useSalePrice } from '~/composables/useSalePrice';
 const { t } = useI18n();
 
 const props = defineProps({
-  rooms: {
-    type: Array as PropType<HotelRoomOffer[]>,
+  options: {
+    type: Array as PropType<RoomOption[]>,
     required: true,
   },
   hotel: {
@@ -32,9 +32,10 @@ const props = defineProps({
 const showAllRooms = ref(props.defaultExpandedRooms);
 
 const sortedRooms = computed(() => {
-  if (!Array.isArray(props.rooms)) return [];
-  return [...props.rooms].sort(
-    (a: HotelRoomOffer, b: HotelRoomOffer) => (a.price || 0) - (b.price || 0),
+  if (!Array.isArray(props.options)) return [];
+  return [...props.options].sort(
+    (a: RoomOption, b: RoomOption) =>
+      parseFloat(a.total_net_rate) - parseFloat(b.total_net_rate),
   );
 });
 
@@ -47,22 +48,25 @@ const { searchParams } = useHotelSearch();
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 
-const addToItinerary = (room: HotelRoomOffer) => {
+const addToItinerary = (option: RoomOption) => {
+  const room = option.rooms[0];
+  if (!room) return;
   triggerAddOption({
-    providerId: 'HOTEL-CURRENT',
-    name: 'Alojamiento',
+    providerId: String(props.hotel.hotel_code),
+    name: props.hotel.hotel_name,
     image:
+      props.hotel.thumbnail ||
       'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
-    description: `${room.name} (${room.regimen})`,
-    netPrice: room.price,
+    description: `${room.room_name} (${room.meal_plan})`,
+    netPrice: parseFloat(option.total_net_rate),
     isManual: false,
   });
 };
 
-function handleAddToCart(room: HotelRoomOffer) {
+function handleAddToCart(option: RoomOption) {
   addToCart('hotel', {
     hotel: props.hotel,
-    room,
+    option,
     searchParams: searchParams.value,
   });
 }
@@ -77,7 +81,7 @@ function handleAddToCart(room: HotelRoomOffer) {
     <div class="w-full h-1 bg-primary-500/20 mb-2 rounded-full"></div>
 
     <div
-      v-for="(room, idx) in visibleRooms"
+      v-for="(option, idx) in visibleRooms"
       :key="idx"
       class="flex flex-col sm:flex-row items-center py-1 border-b border-gray-200 dark:border-gray-700 last:border-0 gap-1"
     >
@@ -88,14 +92,14 @@ function handleAddToCart(room: HotelRoomOffer) {
 
       <!-- Tipo Habitación -->
       <div class="flex-1 min-w-[150px]">
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
-          room.name
-        }}</span>
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">
+          {{ option.rooms[0]?.room_name || 'Habitación' }}
+        </span>
       </div>
 
       <!-- Régimen -->
       <div class="w-16 font-bold text-gray-800 dark:text-gray-300">
-        {{ room.regimen }}
+        {{ option.rooms[0]?.meal_plan }}
       </div>
 
       <!-- Cancelación -->
@@ -112,15 +116,19 @@ function handleAddToCart(room: HotelRoomOffer) {
                 {{ t('hotels.rooms.cancellationPolicy') }}
               </p>
               <p class="text-gray-600 dark:text-gray-300 text-xs">
-                {{ room.cancellation }}. (Texto de ejemplo, será devuelto por el
-                backend próximamente).
+                {{ option.rooms[0]?.cancellation_policy }}
               </p>
             </div>
           </template>
         </UPopover>
         <UBadge
           v-if="
-            String(room.cancellation).toLowerCase().includes('no reembolsable')
+            option.rooms[0]?.cancellation_policy
+              ?.toLowerCase()
+              .includes('no reembolsable') ||
+            option.rooms[0]?.cancellation_policy
+              ?.toLowerCase()
+              .includes('non-refundable')
           "
           color="error"
           variant="soft"
@@ -130,7 +138,11 @@ function handleAddToCart(room: HotelRoomOffer) {
           NR
         </UBadge>
         <UBadge
-          v-if="room.onRequest"
+          v-if="
+            option.rooms[0]?.cancellation_policy
+              ?.toLowerCase()
+              .includes('on request')
+          "
           color="warning"
           variant="soft"
           size="xs"
@@ -143,20 +155,20 @@ function handleAddToCart(room: HotelRoomOffer) {
       <div
         class="w-32 text-right font-bold text-gray-900 dark:text-white flex flex-col items-end"
       >
-        <span
-          >${{
-            salePrice(room.price).toLocaleString('en-US', {
+        <span>
+          ${{
+            salePrice(parseFloat(option.total_net_rate)).toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })
-          }}</span
-        >
+          }}
+        </span>
         <span
           v-if="netPriceVisible"
           class="block text-[10px] text-gray-400 font-normal"
         >
           neto ${{
-            room.price.toLocaleString('en-US', {
+            parseFloat(option.total_net_rate).toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })
@@ -170,7 +182,7 @@ function handleAddToCart(room: HotelRoomOffer) {
           color="neutral"
           variant="soft"
           icon="i-heroicons-document-plus"
-          @click="addToItinerary(room)"
+          @click="addToItinerary(option)"
         />
         <UButton
           color="primary"
@@ -178,7 +190,7 @@ function handleAddToCart(room: HotelRoomOffer) {
           size="sm"
           icon="i-heroicons-shopping-cart"
           class="font-bold w-36 justify-center"
-          @click="handleAddToCart(room)"
+          @click="handleAddToCart(option)"
         >
           {{ t('cart.addToCart') }}
         </UButton>
