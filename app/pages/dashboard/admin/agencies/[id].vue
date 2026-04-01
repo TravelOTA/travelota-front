@@ -565,10 +565,7 @@ const usagePercent = computed(() => {
                     formatAdminCurrency(agency.credit_line.limit)
                   }}</span>
                 </div>
-                <UProgress
-                  v-model="usagePercent"
-                  color="primary"
-                />
+                <UProgress v-model="usagePercent" color="primary" />
                 <div class="flex justify-between text-xs text-gray-500">
                   <span
                     >{{ t('agency.wallet.credit.used') }}:

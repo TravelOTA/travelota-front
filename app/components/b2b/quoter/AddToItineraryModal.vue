@@ -31,6 +31,7 @@ const newBlockType = ref<
 >('hotel');
 const newBlockTitle = ref('');
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dateRange = ref<any>({
   start: todayDate(getLocalTimeZone()),
   end: todayDate(getLocalTimeZone()).add({ days: 2 }),

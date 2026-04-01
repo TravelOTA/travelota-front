@@ -110,7 +110,8 @@ onMounted(async () => {
 
     // Fix default icon paths for Leaflet
     const leaflet = await import('leaflet');
-    delete (leaflet.Icon.Default.prototype as any)._getIconUrl;
+    delete (leaflet.Icon.Default.prototype as { _getIconUrl?: unknown })
+      ._getIconUrl;
     leaflet.Icon.Default.mergeOptions({
       iconRetinaUrl:
         'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',

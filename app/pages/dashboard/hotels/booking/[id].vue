@@ -7,7 +7,9 @@ import CheckoutSidebarSummary from '~/components/b2b/hotel/checkout/CheckoutSide
 import BookingStatusHero from '~/components/b2b/hotel/checkout/BookingStatusHero.vue';
 import BookingCancellation from '~/components/b2b/hotel/checkout/BookingCancellation.vue';
 import BookingPayment from '~/components/b2b/hotel/checkout/BookingPayment.vue';
-import VoucherPreviewModal, { type VoucherReservation } from '~/components/b2b/hotel/checkout/VoucherPreviewModal.vue';
+import VoucherPreviewModal, {
+  type VoucherReservation,
+} from '~/components/b2b/hotel/checkout/VoucherPreviewModal.vue';
 import { useBookings } from '~/composables/useBookings';
 import { apiFetch } from '~/composables/useApi';
 import type { IBooking } from '#shared/types/booking';
