@@ -1,4 +1,13 @@
 <script setup>
+import { onMounted } from 'vue';
+import { useConfig } from '~/composables/useConfig';
+
+const { fetchCountries } = useConfig();
+
+onMounted(() => {
+  fetchCountries();
+});
+
 useHead({
   titleTemplate: (titleChunk) => {
     return titleChunk ? `${titleChunk} - TravelOTA` : 'TravelOTA';

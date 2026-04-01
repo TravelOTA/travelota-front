@@ -22,7 +22,7 @@ const form = reactive<RegisterInput>({
   aceptaPrivacidad: false,
 });
 
-const { countries: paises } = useConfig();
+const { countryNames: paises } = useConfig();
 
 const isFormValid = computed(
   () =>

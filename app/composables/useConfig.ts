@@ -1,6 +1,13 @@
 import { useState, useI18n } from '#imports';
 import { computed } from 'vue';
+import { apiFetch } from '~/composables/useApi';
 import type { PaymentMethod as PaymentMethodKey } from '#shared/types/payment';
+
+export interface Country {
+  id: number;
+  code: string;
+  name: string;
+}
 
 export interface PaymentMethodConfig {
   key: PaymentMethodKey;
@@ -8,31 +15,6 @@ export interface PaymentMethodConfig {
   description: string;
   icon: string;
 }
-
-const COUNTRIES = [
-  'Argentina',
-  'Chile',
-  'Colombia',
-  'España',
-  'Estados Unidos',
-  'México',
-  'Perú',
-];
-
-const DESTINATIONS = [
-  'Punta Cana, República Dominicana',
-  'Playa Bavaro, República Dominicana',
-  'Cap Cana, República Dominicana',
-  'Uvero Alto, República Dominicana',
-  'Santo Domingo, República Dominicana',
-  'Cancún, México',
-  'Riviera Maya, México',
-  'Madrid, España',
-  'Barcelona, España',
-  'Miami, Estados Unidos',
-  'Orlando, Estados Unidos',
-  'Nueva York, Estados Unidos',
-];
 
 const NATIONALITIES = [
   'Alemania',
@@ -65,18 +47,54 @@ const NATIONALITIES = [
   'Venezuela',
 ];
 
+const DESTINATIONS = [
+  'Punta Cana, República Dominicana',
+  'Cancún, México',
+  'Madrid, España',
+  'Barcelona, España',
+  'Santo Domingo, República Dominicana',
+  'Cartagena, Colombia',
+  'Miami, Estados Unidos',
+  'Orlando, Estados Unidos',
+];
+
 export function useConfig() {
   const { t } = useI18n();
 
-  const countries = useState<string[]>('config-countries', () => COUNTRIES);
-  const destinations = useState<string[]>(
-    'config-destinations',
-    () => DESTINATIONS,
-  );
+  const countries = useState<Country[]>('config-countries', () => []);
+  const loading = useState<boolean>('config-countries:loading', () => false);
+
+  // Nationalities remain static — they represent all world nationalities for
+  // passenger forms, not just countries in our catalog.
   const nationalities = useState<string[]>(
     'config-nationalities',
     () => NATIONALITIES,
   );
+
+  const destinations = useState<string[]>(
+    'config-destinations',
+    () => DESTINATIONS,
+  );
+
+  const countryNames = computed<string[]>(() =>
+    countries.value.map((c) => c.name),
+  );
+
+  async function fetchCountries(): Promise<void> {
+    if (countries.value.length > 0) return; // already loaded
+    loading.value = true;
+    try {
+      const data = await apiFetch<Country[] | { results: Country[] }>(
+        '/api/hotel/countries',
+      );
+      countries.value = Array.isArray(data) ? data : data.results;
+    } catch {
+      // fallback: leave empty, dropdowns will show nothing
+    } finally {
+      loading.value = false;
+    }
+  }
+
   const paymentMethods = computed<PaymentMethodConfig[]>(() => [
     {
       key: 'card',
@@ -100,8 +118,11 @@ export function useConfig() {
 
   return {
     countries,
-    destinations,
+    countryNames,
     nationalities,
+    destinations,
     paymentMethods,
+    loading,
+    fetchCountries,
   };
 }
