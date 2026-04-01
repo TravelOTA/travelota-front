@@ -22,14 +22,7 @@ export interface ItineraryBlock {
   options: ItineraryOption[]; // Min 1, Max 5
 }
 
-export interface ChildAge {
-  age: number;
-}
-
-export interface SearchRoomDistribution {
-  adults: number;
-  children: ChildAge[];
-}
+import type { SearchRoomDistribution, ChildAge } from '#shared/types/search';
 
 export interface Itinerary {
   id?: string;

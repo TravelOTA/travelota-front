@@ -1,9 +1,5 @@
+import type { SearchRoomDistribution } from '#shared/types/search';
 import { useState, useRouter, useRoute } from '#imports';
-
-export interface SearchRoomDistribution {
-  adults: number;
-  children: Array<{ age: number }>;
-}
 
 export interface HotelSearchParams {
   destination_code: string;
