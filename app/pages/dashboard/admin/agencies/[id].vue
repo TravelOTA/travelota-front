@@ -568,7 +568,6 @@ const usagePercent = computed(() => {
                 <UProgress
                   v-model="usagePercent"
                   color="primary"
-                  animation="none"
                 />
                 <div class="flex justify-between text-xs text-gray-500">
                   <span

@@ -121,7 +121,7 @@ function applyAdjustment() {
   // Add to mock ledger
   mockLedger.value.unshift({
     id: Date.now(),
-    date: new Date().toISOString().split('T')[0],
+    date: new Date().toISOString().split('T')[0]!,
     description: adjustmentNote.value || 'Ajuste administrativo',
     type: isDeposit ? 'deposit' : 'charge',
     amount: amount,

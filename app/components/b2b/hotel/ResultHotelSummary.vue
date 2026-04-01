@@ -5,12 +5,16 @@ import { useSalePrice } from '~/composables/useSalePrice';
 
 const { t } = useI18n();
 
-const props = defineProps({
+const props = defineProps<{
   hotel: {
-    type: Object, // REFACTOR: This should be a corresponding hotel type
-    required: true,
-  },
-});
+    id: string | number;
+    name: string;
+    stars: number;
+    image: string;
+    location: string;
+    bestPrice: number;
+  };
+}>();
 
 const emit = defineEmits<{
   (e: 'open-map', hotel: Record<string, unknown>): void;
@@ -26,6 +30,7 @@ const addToItinerary = () => {
       'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
     description: props.hotel.location + ' - Alojamiento Completo',
     netPrice: props.hotel.bestPrice,
+    isManual: false,
   });
 };
 

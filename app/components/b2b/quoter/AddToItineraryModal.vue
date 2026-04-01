@@ -31,7 +31,7 @@ const newBlockType = ref<
 >('hotel');
 const newBlockTitle = ref('');
 
-const dateRange = ref({
+const dateRange = ref<any>({
   start: todayDate(getLocalTimeZone()),
   end: todayDate(getLocalTimeZone()).add({ days: 2 }),
 });

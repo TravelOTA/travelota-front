@@ -5,8 +5,7 @@ import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
 
 defineProps<{
-  subtotal: number;
-  tax: number;
+  items: CartItem[];
   total: number;
 }>();
 

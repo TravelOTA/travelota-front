@@ -39,7 +39,7 @@ async function onSubmit(event: FormSubmitEvent<LoginInput>) {
 <template>
   <UCard
     class="backdrop-blur-md bg-white/95 dark:bg-gray-900/95 shadow-2xl ring-1 ring-gray-200 dark:ring-gray-800"
-    :ui="{ header: { padding: 'px-4 py-5 sm:px-6 text-center' } }"
+    :ui="{ header: 'px-4 py-5 sm:px-6 text-center' }"
   >
     <template #header>
       <h2
@@ -90,10 +90,7 @@ async function onSubmit(event: FormSubmitEvent<LoginInput>) {
           v-model="form.rememberMe"
           name="rememberMe"
           :ui="{
-            base: 'w-4 h-4',
-            rounded: 'rounded',
-            color: 'text-primary-500 focus:ring-primary-500',
-            border: 'border-gray-300 dark:border-gray-600',
+            base: 'w-4 h-4 rounded text-primary-500 focus:ring-primary-500 border-gray-300 dark:border-gray-600',
           }"
         >
           <template #label>

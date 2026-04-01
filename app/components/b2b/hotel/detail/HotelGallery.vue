@@ -18,14 +18,14 @@ const currentIndex = computed(() => props.images.indexOf(mainImage.value));
 const nextImage = () => {
   if (props.images.length === 0) return;
   const nextIdx = (currentIndex.value + 1) % props.images.length;
-  mainImage.value = props.images[nextIdx];
+  mainImage.value = props.images[nextIdx] ?? '';
 };
 
 const prevImage = () => {
   if (props.images.length === 0) return;
   const prevIdx =
     (currentIndex.value - 1 + props.images.length) % props.images.length;
-  mainImage.value = props.images[prevIdx];
+  mainImage.value = props.images[prevIdx] ?? '';
 };
 </script>
 

@@ -10,13 +10,15 @@ export default defineEventHandler(async (event) => {
   const requests = await readDepositRequests();
   const idx = requests.findIndex((r) => r.id === id);
 
-  if (idx === -1) {
+  const req = requests[idx];
+  if (!req) {
     throw createError({
       statusCode: 404,
       message: 'Deposit request not found',
     });
   }
-  if (requests[idx].status !== 'pending') {
+
+  if (req.status !== 'pending') {
     throw createError({
       statusCode: 409,
       message: 'Request already processed',
@@ -25,8 +27,8 @@ export default defineEventHandler(async (event) => {
 
   // Mark as confirmed
   requests[idx] = {
-    ...requests[idx],
-    status: 'confirmed',
+    ...req,
+    status: 'confirmed' as const,
     processedAt: new Date().toISOString(),
     processedBy: 'admin@travelota.com', // MVP: hardcoded; will come from auth session
   };
@@ -34,8 +36,8 @@ export default defineEventHandler(async (event) => {
 
   // Update wallet balance
   const wallet = await readWallet();
-  const req = requests[idx];
-  const newBalance = wallet.balance + req.amount;
+  const confirmedReq = requests[idx]!;
+  const newBalance = wallet.balance + confirmedReq.amount;
   const newTransaction = {
     id: `TXN-${Date.now()}`,
     type: 'deposit' as const,

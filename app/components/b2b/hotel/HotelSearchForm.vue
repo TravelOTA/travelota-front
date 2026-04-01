@@ -45,7 +45,7 @@ const rooms = ref<SearchRoomDistribution[]>(
 const todayCalDate = todayDate(getLocalTimeZone());
 const defaultEnd = todayCalDate.add({ days: 2 });
 
-const dateRange = ref({
+const dateRange = ref<any>({
   start: todayCalDate,
   end: defaultEnd,
 });

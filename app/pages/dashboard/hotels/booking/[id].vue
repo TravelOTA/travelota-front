@@ -7,7 +7,7 @@ import CheckoutSidebarSummary from '~/components/b2b/hotel/checkout/CheckoutSide
 import BookingStatusHero from '~/components/b2b/hotel/checkout/BookingStatusHero.vue';
 import BookingCancellation from '~/components/b2b/hotel/checkout/BookingCancellation.vue';
 import BookingPayment from '~/components/b2b/hotel/checkout/BookingPayment.vue';
-import VoucherPreviewModal from '~/components/b2b/hotel/checkout/VoucherPreviewModal.vue';
+import VoucherPreviewModal, { type VoucherReservation } from '~/components/b2b/hotel/checkout/VoucherPreviewModal.vue';
 import { useBookings } from '~/composables/useBookings';
 import { apiFetch } from '~/composables/useApi';
 import type { IBooking } from '#shared/types/booking';
@@ -75,11 +75,13 @@ const hotelProp = computed(() =>
 const reservationProp = computed(() =>
   booking.value
     ? {
+        titular: `${booking.value.titular.nombre} ${booking.value.titular.apellido}`,
+        agent: booking.value.createdBy,
         checkIn: booking.value.checkIn,
         checkOut: booking.value.checkOut,
         rooms: [
           {
-            id: 1,
+            id: '1',
             name: `${booking.value.room.name} - ${booking.value.room.regime}`,
             pax: booking.value.guests
               .map((g) => {
@@ -139,6 +141,14 @@ const paidDate = computed(() =>
 const paymentDeadline = computed(
   () => booking.value?.transferDeadline ?? undefined,
 );
+
+const emptyReservation: VoucherReservation = {
+  titular: '',
+  agent: '',
+  checkIn: '',
+  checkOut: '',
+  rooms: [],
+};
 
 const isVoucherModalOpen = ref(false);
 const documentMode = ref<'voucher' | 'invoice'>('voucher');
@@ -486,7 +496,7 @@ useHead({
         :mode="documentMode"
         :booking-id="booking.id"
         :hotel-name="booking.hotel.name"
-        :reservation="reservationProp ?? {}"
+        :reservation="reservationProp ?? emptyReservation"
       />
     </template>
   </div>

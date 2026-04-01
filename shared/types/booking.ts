@@ -15,7 +15,8 @@ export interface ICancellationPolicy {
 }
 
 export interface IBooking {
-  id: string; // PNR: TRV-YYYYMMDD-XXXX
+  id: string; // Internal id
+  pnr: string; // PNR: TRV-YYYYMMDD-XXXX
   status: BookingStatus;
   paymentStatus: PaymentStatus;
   paymentMethod?: PaymentMethod;

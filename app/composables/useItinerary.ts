@@ -1,5 +1,5 @@
 import { computed } from 'vue';
-import type { ItineraryOptionMetadata } from '~/shared/schemas/itinerary';
+import type { ItineraryOptionMetadata } from '#shared/schemas/itinerary';
 
 export interface ItineraryOption {
   id: string;
@@ -191,11 +191,13 @@ export const useItinerary = () => {
   };
 
   const fetchItinerary = async (id: string) => {
-    const { data } = await useApi<Itinerary>(`/api/itineraries/${id}`, {
-      key: `itinerary-${id}`,
-    });
-    if (data.value) {
-      itinerary.value = data.value;
+    try {
+      const data = await apiFetch<Itinerary>(`/api/itineraries/${id}`);
+      if (data) {
+        itinerary.value = data;
+      }
+    } catch (err) {
+      console.error('Error fetching itinerary:', err);
     }
   };
 

@@ -750,7 +750,7 @@ const resultStats = computed(() => {
         checkIn: selectedVoucherBooking.checkIn,
         checkOut: selectedVoucherBooking.checkOut,
         agent: selectedVoucherBooking.seller,
-        rooms: [{ id: 1, name: 'Standard Room', pax: '2 Adultos' }],
+        rooms: [{ id: '1', name: 'Standard Room', pax: '2 Adultos' }],
       }"
     />
   </div>

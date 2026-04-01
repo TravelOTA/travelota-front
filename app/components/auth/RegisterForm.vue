@@ -57,14 +57,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             variant="outline"
             class="uppercase-placeholder w-full"
             :ui="{
-              base: 'text-gray-600 dark:text-gray-300',
-              rounded: 'rounded-sm',
-              color: {
-                white: {
-                  outline:
-                    'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
-                },
-              },
+              base: 'text-gray-600 dark:text-gray-300 rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
             }"
           />
         </UFormField>
@@ -77,14 +70,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             variant="outline"
             class="uppercase-placeholder w-full"
             :ui="{
-              base: 'text-gray-600 dark:text-gray-300',
-              rounded: 'rounded-sm',
-              color: {
-                white: {
-                  outline:
-                    'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
-                },
-              },
+              base: 'text-gray-600 dark:text-gray-300 rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
             }"
           />
         </UFormField>
@@ -97,14 +83,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             variant="outline"
             class="uppercase-placeholder w-full"
             :ui="{
-              base: 'text-gray-600 dark:text-gray-300',
-              rounded: 'rounded-sm',
-              color: {
-                white: {
-                  outline:
-                    'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
-                },
-              },
+              base: 'text-gray-600 dark:text-gray-300 rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
             }"
           />
         </UFormField>
@@ -118,14 +97,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             variant="outline"
             class="uppercase-placeholder w-full"
             :ui="{
-              base: 'text-gray-600 dark:text-gray-300',
-              rounded: 'rounded-sm',
-              color: {
-                white: {
-                  outline:
-                    'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
-                },
-              },
+              base: 'text-gray-600 dark:text-gray-300 rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
             }"
           />
         </UFormField>
@@ -142,14 +114,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             variant="outline"
             class="uppercase-placeholder w-full"
             :ui="{
-              base: 'text-gray-600 dark:text-gray-300',
-              rounded: 'rounded-sm',
-              color: {
-                white: {
-                  outline:
-                    'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
-                },
-              },
+              base: 'text-gray-600 dark:text-gray-300 rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
             }"
           />
         </UFormField>
@@ -163,14 +128,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             variant="outline"
             class="uppercase-placeholder w-full"
             :ui="{
-              base: 'text-gray-600 dark:text-gray-300',
-              rounded: 'rounded-sm',
-              color: {
-                white: {
-                  outline:
-                    'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
-                },
-              },
+              base: 'text-gray-600 dark:text-gray-300 rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
             }"
           />
         </UFormField>
@@ -184,14 +142,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             variant="outline"
             class="uppercase-placeholder-select w-full"
             :ui="{
-              base: 'text-gray-600 dark:text-gray-300',
-              rounded: 'rounded-sm',
-              color: {
-                white: {
-                  outline:
-                    'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
-                },
-              },
+              base: 'text-gray-600 dark:text-gray-300 rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
             }"
           />
         </UFormField>
@@ -206,14 +157,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             variant="outline"
             class="uppercase-placeholder w-full"
             :ui="{
-              base: 'text-gray-600 dark:text-gray-300',
-              rounded: 'rounded-sm',
-              color: {
-                white: {
-                  outline:
-                    'shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
-                },
-              },
+              base: 'text-gray-600 dark:text-gray-300 rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400',
             }"
           />
         </UFormField>
@@ -231,10 +175,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
             v-model="form.aceptaPrivacidad"
             name="privacidad"
             :ui="{
-              base: 'w-4 h-4',
-              rounded: 'rounded',
-              color: 'text-primary-500 focus:ring-primary-500',
-              border: 'border-gray-300 dark:border-gray-600',
+              base: 'w-4 h-4 rounded text-primary-500 focus:ring-primary-500 border-gray-300 dark:border-gray-600',
             }"
           >
             <template #label>
