@@ -1,5 +1,5 @@
-export default defineNuxtPlugin(() => {
-  const { t } = useI18n();
+export default defineNuxtPlugin((nuxtApp) => {
+  const translate = nuxtApp.$i18n.t;
   const toast = useToast();
   const auth = useAuth();
 
@@ -14,7 +14,7 @@ export default defineNuxtPlugin(() => {
       if (url.includes('/api/auth/login')) return;
 
       toast.add({
-        title: t('errors.unauthorized'),
+        title: translate('errors.unauthorized'),
         color: 'warning',
         icon: 'i-heroicons-exclamation-triangle',
       });
@@ -25,7 +25,7 @@ export default defineNuxtPlugin(() => {
 
     if (status === 403) {
       toast.add({
-        title: t('errors.forbidden'),
+        title: translate('errors.forbidden'),
         color: 'warning',
         icon: 'i-heroicons-lock-closed',
       });
@@ -34,7 +34,7 @@ export default defineNuxtPlugin(() => {
 
     if (status === 422) {
       toast.add({
-        title: t('errors.unprocessable'),
+        title: translate('errors.unprocessable'),
         color: 'warning',
         icon: 'i-heroicons-exclamation-circle',
       });
@@ -44,7 +44,7 @@ export default defineNuxtPlugin(() => {
 
     if (status >= 500) {
       toast.add({
-        title: t('errors.serverError'),
+        title: translate('errors.serverError'),
         color: 'error',
         icon: 'i-heroicons-server',
       });

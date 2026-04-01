@@ -30,8 +30,13 @@ vi.stubGlobal('$fetch', {
 // --- Import plugin AFTER globals are stubbed ---
 const { default: plugin } = await import('~/plugins/error-handler.client');
 
-// Run the plugin (defineNuxtPlugin is mocked to call fn directly)
-(plugin as (app: unknown) => void)(null);
+// Run the plugin
+const mockNuxtApp = {
+  $i18n: {
+    t: mockT,
+  },
+};
+(plugin as (app: unknown) => void)(mockNuxtApp);
 
 // --- Helpers ---
 
