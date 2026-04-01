@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import HotelSearchForm from "~/components/b2b/hotel/HotelSearchForm.vue";
-
-const { t } = useI18n();
+import { ref } from 'vue';
+import HotelSearchForm from '~/components/b2b/hotel/HotelSearchForm.vue';
 import {
   useHotelSearch,
   type HotelSearchParams,
-} from "~/composables/useHotelSearch";
-import { formatIsoDate } from "~/utils/formatDate";
+} from '~/composables/useHotelSearch';
+import { formatIsoDate } from '~/utils/formatDate';
+
+const { t } = useI18n();
 
 const props = defineProps<{
   hotelName?: string;
@@ -65,7 +65,11 @@ const handleSearchUpdate = async (newData: HotelSearchParams) => {
             <span
               class="text-sm font-medium text-gray-900 dark:text-gray-50 truncate"
             >
-              {{ props.hotelName || searchParams.destination || t('hotels.results.noDestination') }}
+              {{
+                props.hotelName ||
+                searchParams.destination ||
+                t('hotels.results.noDestination')
+              }}
             </span>
           </div>
         </div>
@@ -156,7 +160,7 @@ const handleSearchUpdate = async (newData: HotelSearchParams) => {
             <span
               class="text-sm font-medium text-gray-900 dark:text-gray-50 truncate"
             >
-              {{ searchParams.nationality || "—" }}
+              {{ searchParams.nationality || '—' }}
             </span>
           </div>
         </div>

@@ -1,10 +1,10 @@
-import { useRuntimeConfig, useCookie, useFetch } from "#imports";
-import type { UseFetchOptions } from "nuxt/app";
+import { useRuntimeConfig, useCookie, useFetch } from '#imports';
+import type { UseFetchOptions } from 'nuxt/app';
 
 /** Reactive wrapper — use in component setup for GET requests */
 export const useApi = <T>(path: string, options?: UseFetchOptions<T>) => {
   const config = useRuntimeConfig();
-  const token = useCookie("travelota-token");
+  const token = useCookie('travelota-token');
 
   return useFetch(`${config.public.apiBaseUrl}${path}`, {
     headers: {
@@ -20,7 +20,7 @@ export const apiFetch = <T>(
   options?: Parameters<typeof $fetch>[1],
 ): Promise<T> => {
   const config = useRuntimeConfig();
-  const token = useCookie("travelota-token");
+  const token = useCookie('travelota-token');
 
   return $fetch<T>(`${config.public.apiBaseUrl}${path}`, {
     headers: {

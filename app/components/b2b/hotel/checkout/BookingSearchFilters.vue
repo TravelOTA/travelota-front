@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed } from "vue";
+import { reactive, computed } from 'vue';
 
 const { t } = useI18n();
 
@@ -23,9 +23,9 @@ const resolvedStatusOptions = computed(() =>
   props.statusOptions.length > 0
     ? props.statusOptions
     : [
-        { label: t('hotels.bookingStatusLabel.confirmed'), value: "confirmed" },
-        { label: t('hotels.bookingStatusLabel.cancelled'), value: "cancelled" },
-        { label: t('hotels.bookingStatusLabel.expired'), value: "expired" },
+        { label: t('hotels.bookingStatusLabel.confirmed'), value: 'confirmed' },
+        { label: t('hotels.bookingStatusLabel.cancelled'), value: 'cancelled' },
+        { label: t('hotels.bookingStatusLabel.expired'), value: 'expired' },
       ],
 );
 
@@ -45,41 +45,41 @@ interface FilterPayload {
 }
 
 const emit = defineEmits<{
-  (e: "search", filters: FilterPayload): void;
-  (e: "clear"): void;
+  (e: 'search', filters: FilterPayload): void;
+  (e: 'clear'): void;
 }>();
 
 const filters = reactive({
-  pnr: "",
-  titular: "",
-  destination: "",
+  pnr: '',
+  titular: '',
+  destination: '',
   statuses: [] as string[],
   paymentStatuses: [] as string[],
-  createdFrom: "",
-  createdTo: "",
-  checkInFrom: "",
-  checkInTo: "",
-  agency: "",
-  seller: "",
+  createdFrom: '',
+  createdTo: '',
+  checkInFrom: '',
+  checkInTo: '',
+  agency: '',
+  seller: '',
 });
 
 const handleSearch = () => {
-  emit("search", { ...filters });
+  emit('search', { ...filters });
 };
 
 const handleClear = () => {
-  filters.pnr = "";
-  filters.titular = "";
-  filters.destination = "";
+  filters.pnr = '';
+  filters.titular = '';
+  filters.destination = '';
   filters.statuses = [];
   filters.paymentStatuses = [];
-  filters.createdFrom = "";
-  filters.createdTo = "";
-  filters.checkInFrom = "";
-  filters.checkInTo = "";
-  filters.agency = "";
-  filters.seller = "";
-  emit("clear");
+  filters.createdFrom = '';
+  filters.createdTo = '';
+  filters.checkInFrom = '';
+  filters.checkInTo = '';
+  filters.agency = '';
+  filters.seller = '';
+  emit('clear');
 };
 
 const hasActiveFilters = computed(() => {

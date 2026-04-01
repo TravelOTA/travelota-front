@@ -1,13 +1,13 @@
-import { format, parseISO } from "date-fns";
-import { getLocalTimeZone } from "@internationalized/date";
-import type { CalendarDate } from "@internationalized/date";
+import { format, parseISO } from 'date-fns';
+import { getLocalTimeZone } from '@internationalized/date';
+import type { CalendarDate } from '@internationalized/date';
 
 /**
  * Formatea un CalendarDate (@internationalized/date) a "dd/MM/yy".
  * Usar en HotelSearchForm donde dateRange contiene CalendarDate objects.
  */
 export const formatCalendarDate = (d: CalendarDate): string =>
-  format(d.toDate(getLocalTimeZone()), "dd/MM/yy");
+  format(d.toDate(getLocalTimeZone()), 'dd/MM/yy');
 
 /**
  * Formatea una fecha ISO string ("2026-03-14") a "dd/MM/yy".
@@ -18,6 +18,6 @@ export const formatCalendarDate = (d: CalendarDate): string =>
  * aparece el día anterior. parseISO trata la cadena como hora local.
  */
 export const formatIsoDate = (iso: string): string => {
-  if (!iso) return "";
-  return format(parseISO(iso), "dd/MM/yy");
+  if (!iso) return '';
+  return format(parseISO(iso), 'dd/MM/yy');
 };

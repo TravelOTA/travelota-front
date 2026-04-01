@@ -2,14 +2,14 @@
 import {
   useSupportUsers,
   type SupportUser,
-} from "~/composables/useSupportUsers";
+} from '~/composables/useSupportUsers';
 
 definePageMeta({
-  layout: "dashboard",
+  layout: 'dashboard',
 });
 
 useHead({
-  title: "Usuarios de Soporte - TravelOTA Admin",
+  title: 'Usuarios de Soporte - TravelOTA Admin',
 });
 
 const { t } = useI18n();
@@ -24,17 +24,23 @@ const {
 } = useSupportUsers();
 
 const columns = computed(() => [
-  { accessorKey: "name", header: t('admin.supportUsers.tableHeaders.name') },
-  { accessorKey: "email", header: t('admin.supportUsers.tableHeaders.email') },
-  { accessorKey: "role", header: t('admin.supportUsers.tableHeaders.role') },
-  { accessorKey: "lastLogin", header: t('admin.supportUsers.tableHeaders.lastLogin') },
-  { accessorKey: "status", header: t('admin.supportUsers.tableHeaders.status') },
-  { id: "actions" },
+  { accessorKey: 'name', header: t('admin.supportUsers.tableHeaders.name') },
+  { accessorKey: 'email', header: t('admin.supportUsers.tableHeaders.email') },
+  { accessorKey: 'role', header: t('admin.supportUsers.tableHeaders.role') },
+  {
+    accessorKey: 'lastLogin',
+    header: t('admin.supportUsers.tableHeaders.lastLogin'),
+  },
+  {
+    accessorKey: 'status',
+    header: t('admin.supportUsers.tableHeaders.status'),
+  },
+  { id: 'actions' },
 ]);
 
-const searchQuery = ref("");
-const statusFilter = ref("Todos");
-const roleFilter = ref("Todos");
+const searchQuery = ref('');
+const statusFilter = ref('Todos');
+const roleFilter = ref('Todos');
 
 const filteredUsers = computed(() => {
   return users.value.filter((u) => {
@@ -43,9 +49,9 @@ const filteredUsers = computed(() => {
       u.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       u.email.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchStatus =
-      statusFilter.value === "Todos" || u.status === statusFilter.value;
+      statusFilter.value === 'Todos' || u.status === statusFilter.value;
     const matchRole =
-      roleFilter.value === "Todos" || u.role === roleFilter.value;
+      roleFilter.value === 'Todos' || u.role === roleFilter.value;
     return matchSearch && matchStatus && matchRole;
   });
 });
@@ -53,10 +59,10 @@ const filteredUsers = computed(() => {
 // Modal nuevo usuario
 const isModalOpen = ref(false);
 const newUser = ref({
-  name: "",
-  email: "",
-  password: "",
-  role: "SUPPORT" as const,
+  name: '',
+  email: '',
+  password: '',
+  role: 'SUPPORT' as const,
 });
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -67,13 +73,13 @@ const showEditPassword = ref(false);
 
 const isFormValid = computed(
   () =>
-    newUser.value.name.trim() !== "" &&
+    newUser.value.name.trim() !== '' &&
     emailValid.value &&
     newUser.value.password.length >= 8,
 );
 
 function openModal() {
-  newUser.value = { name: "", email: "", password: "", role: "SUPPORT" };
+  newUser.value = { name: '', email: '', password: '', role: 'SUPPORT' };
   emailTouched.value = false;
   isModalOpen.value = true;
 }
@@ -88,14 +94,14 @@ function saveUser() {
   isModalOpen.value = false;
 }
 
-const roleColors: Record<string, "primary" | "neutral"> = {
-  SUPER_ADMIN: "primary",
-  SUPPORT: "neutral",
+const roleColors: Record<string, 'primary' | 'neutral'> = {
+  SUPER_ADMIN: 'primary',
+  SUPPORT: 'neutral',
 };
 
 const roleLabels: Record<string, string> = {
-  SUPER_ADMIN: "Admin",
-  SUPPORT: "Soporte",
+  SUPER_ADMIN: 'Admin',
+  SUPPORT: 'Soporte',
 };
 
 function toggleStatus(user: SupportUser) {
@@ -111,21 +117,21 @@ function deleteUser(user: SupportUser) {
 // Modal edición
 const isEditModalOpen = ref(false);
 const editUser = ref<SupportUser | null>(null);
-const editPassword = ref("");
+const editPassword = ref('');
 const editEmailTouched = ref(false);
 const editEmailValid = computed(() =>
-  emailRegex.test(editUser.value?.email ?? ""),
+  emailRegex.test(editUser.value?.email ?? ''),
 );
 const isEditFormValid = computed(
   () =>
-    (editUser.value?.name.trim() ?? "") !== "" &&
+    (editUser.value?.name.trim() ?? '') !== '' &&
     editEmailValid.value &&
-    (editPassword.value === "" || editPassword.value.length >= 8),
+    (editPassword.value === '' || editPassword.value.length >= 8),
 );
 
 function openEditModal(user: SupportUser) {
   editUser.value = { ...user };
-  editPassword.value = "";
+  editPassword.value = '';
   editEmailTouched.value = false;
   isEditModalOpen.value = true;
 }
@@ -148,7 +154,8 @@ function saveEditUser() {
           to="/dashboard/admin"
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('admin.supportUsers.backToPanel') }}
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
+          {{ t('admin.supportUsers.backToPanel') }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
           {{ t('admin.supportUsers.title') }}
@@ -176,7 +183,9 @@ function saveEditUser() {
             <UIcon name="i-heroicons-users" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">{{ t('admin.supportUsers.stats.total') }}</p>
+            <p class="text-xs text-gray-500 font-medium">
+              {{ t('admin.supportUsers.stats.total') }}
+            </p>
             <p class="text-xl font-bold">{{ supportStats.total }}</p>
           </div>
         </div>
@@ -189,7 +198,9 @@ function saveEditUser() {
             <UIcon name="i-heroicons-check-circle" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">{{ t('admin.supportUsers.stats.active') }}</p>
+            <p class="text-xs text-gray-500 font-medium">
+              {{ t('admin.supportUsers.stats.active') }}
+            </p>
             <p class="text-xl font-bold">
               {{ supportStats.active }}
             </p>
@@ -204,7 +215,9 @@ function saveEditUser() {
             <UIcon name="i-heroicons-shield-check" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">{{ t('admin.supportUsers.stats.admins') }}</p>
+            <p class="text-xs text-gray-500 font-medium">
+              {{ t('admin.supportUsers.stats.admins') }}
+            </p>
             <p class="text-xl font-bold">
               {{ supportStats.admins }}
             </p>
@@ -219,7 +232,9 @@ function saveEditUser() {
             <UIcon name="i-heroicons-headphone" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">{{ t('admin.supportUsers.stats.support') }}</p>
+            <p class="text-xs text-gray-500 font-medium">
+              {{ t('admin.supportUsers.stats.support') }}
+            </p>
             <p class="text-xl font-bold">
               {{ supportStats.support }}
             </p>
@@ -343,7 +358,10 @@ function saveEditUser() {
     </UCard>
 
     <!-- Modal nuevo usuario -->
-    <UModal v-model:open="isModalOpen" :title="t('admin.supportUsers.modals.create.title')">
+    <UModal
+      v-model:open="isModalOpen"
+      :title="t('admin.supportUsers.modals.create.title')"
+    >
       <template #body>
         <div class="space-y-4">
           <UAlert
@@ -351,10 +369,16 @@ function saveEditUser() {
             color="warning"
             variant="soft"
             :title="t('admin.supportUsers.modals.create.warning')"
-            :description="t('admin.supportUsers.modals.create.warningDescription')"
+            :description="
+              t('admin.supportUsers.modals.create.warningDescription')
+            "
           />
 
-          <UFormField :label="t('admin.supportUsers.modals.create.fullName')" name="name" required>
+          <UFormField
+            :label="t('admin.supportUsers.modals.create.fullName')"
+            name="name"
+            required
+          >
             <UInput
               v-model="newUser.name"
               placeholder="Ej: Laura Martínez"
@@ -409,7 +433,11 @@ function saveEditUser() {
             </UInput>
           </UFormField>
 
-          <UFormField :label="t('admin.supportUsers.modals.create.role')" name="role" required>
+          <UFormField
+            :label="t('admin.supportUsers.modals.create.role')"
+            name="role"
+            required
+          >
             <USelectMenu
               v-model="newUser.role"
               :items="[
@@ -442,10 +470,17 @@ function saveEditUser() {
     </UModal>
 
     <!-- Modal edición de usuario -->
-    <UModal v-model:open="isEditModalOpen" :title="t('admin.supportUsers.modals.edit.title')">
+    <UModal
+      v-model:open="isEditModalOpen"
+      :title="t('admin.supportUsers.modals.edit.title')"
+    >
       <template #body>
         <div v-if="editUser" class="space-y-4">
-          <UFormField :label="t('admin.supportUsers.modals.edit.fullName')" name="edit-name" required>
+          <UFormField
+            :label="t('admin.supportUsers.modals.edit.fullName')"
+            name="edit-name"
+            required
+          >
             <UInput
               v-model="editUser.name"
               placeholder="Ej: Laura Martínez"
@@ -506,7 +541,11 @@ function saveEditUser() {
             </UInput>
           </UFormField>
 
-          <UFormField :label="t('admin.supportUsers.modals.edit.role')" name="edit-role" required>
+          <UFormField
+            :label="t('admin.supportUsers.modals.edit.role')"
+            name="edit-role"
+            required
+          >
             <USelectMenu
               v-model="editUser.role"
               :items="[
@@ -518,7 +557,10 @@ function saveEditUser() {
             />
           </UFormField>
 
-          <UFormField :label="t('admin.supportUsers.modals.edit.status')" name="edit-status">
+          <UFormField
+            :label="t('admin.supportUsers.modals.edit.status')"
+            name="edit-status"
+          >
             <USelectMenu
               v-model="editUser.status"
               :items="[

@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { useItinerary } from "~/composables/useItinerary";
-import ItineraryDocument from "~/components/b2b/quoter/ItineraryDocument.vue";
+import { onMounted } from 'vue';
+import { useItinerary } from '~/composables/useItinerary';
+import ItineraryDocument from '~/components/b2b/quoter/ItineraryDocument.vue';
 
-definePageMeta({ layout: "print" });
+definePageMeta({ layout: 'print' });
 
 const { itinerary } = useItinerary();
 
 onMounted(() => {
   // Sync state from the originating tab
-  const data = localStorage.getItem("print_itinerary");
+  const data = localStorage.getItem('print_itinerary');
   if (data) {
     try {
       itinerary.value = JSON.parse(data);
     } catch (e) {
-      console.error("Failed to parse print itinerary data", e);
+      console.error('Failed to parse print itinerary data', e);
     }
   }
 

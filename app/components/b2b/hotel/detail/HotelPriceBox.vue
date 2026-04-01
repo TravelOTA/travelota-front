@@ -11,12 +11,9 @@ defineProps<{
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 
-
 const emit = defineEmits<{
-  (e: "open-map"): void;
-  (e: "add-to-cart"): void;
+  (e: 'open-map' | 'add-to-cart'): void;
 }>();
-
 </script>
 
 <template>
@@ -35,14 +32,19 @@ const emit = defineEmits<{
       >
         <span class="font-bold">$</span>
         {{
-          salePrice(bestPrice).toLocaleString("en-US", {
+          salePrice(bestPrice).toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })
         }}
       </p>
       <p v-if="netPriceVisible" class="text-xs text-gray-400 mb-2">
-        neto ${{ bestPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+        neto ${{
+          bestPrice.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        }}
       </p>
 
       <UButton

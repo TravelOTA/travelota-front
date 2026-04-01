@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { useStats } from "~/composables/useStats";
+import { useStats } from '~/composables/useStats';
 
 definePageMeta({
-  layout: "dashboard",
+  layout: 'dashboard',
 });
 
 useHead({
-  title: "Portal de Administración - TravelOTA",
+  title: 'Portal de Administración - TravelOTA',
 });
 
 const { t } = useI18n();
 const { adminStats } = useStats();
 
 const fmtCurrency = (v: number) =>
-  new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
-    notation: "compact",
+  new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'USD',
+    notation: 'compact',
     maximumFractionDigits: 1,
   }).format(v);
 </script>
@@ -119,7 +119,9 @@ const fmtCurrency = (v: number) =>
           >
             <UIcon name="i-heroicons-building-storefront" class="w-6 h-6" />
           </div>
-          <h3 class="font-bold text-lg mb-1">{{ t('admin.dashboard.agencies.title') }}</h3>
+          <h3 class="font-bold text-lg mb-1">
+            {{ t('admin.dashboard.agencies.title') }}
+          </h3>
           <p class="text-sm text-gray-500">
             {{ t('admin.dashboard.agencies.description') }}
           </p>
@@ -144,7 +146,9 @@ const fmtCurrency = (v: number) =>
           >
             <UIcon name="i-heroicons-user-group" class="w-6 h-6" />
           </div>
-          <h3 class="font-bold text-lg mb-1">{{ t('admin.dashboard.supportUsers.title') }}</h3>
+          <h3 class="font-bold text-lg mb-1">
+            {{ t('admin.dashboard.supportUsers.title') }}
+          </h3>
           <p class="text-sm text-gray-500">
             {{ t('admin.dashboard.supportUsers.description') }}
           </p>
@@ -169,7 +173,9 @@ const fmtCurrency = (v: number) =>
           >
             <UIcon name="i-heroicons-briefcase" class="w-6 h-6" />
           </div>
-          <h3 class="font-bold text-lg mb-1">{{ t('admin.dashboard.allBookings.title') }}</h3>
+          <h3 class="font-bold text-lg mb-1">
+            {{ t('admin.dashboard.allBookings.title') }}
+          </h3>
           <p class="text-sm text-gray-500">
             {{ t('admin.dashboard.allBookings.description') }}
           </p>
@@ -178,7 +184,8 @@ const fmtCurrency = (v: number) =>
           <div
             class="flex items-center justify-between text-primary text-sm font-semibold"
           >
-            {{ t('admin.dashboard.allBookings.manage') }} <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
+            {{ t('admin.dashboard.allBookings.manage') }}
+            <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </div>
         </template>
       </UCard>
@@ -192,7 +199,9 @@ const fmtCurrency = (v: number) =>
           >
             <UIcon name="i-heroicons-user-group" class="w-6 h-6" />
           </div>
-          <h3 class="font-bold text-lg mb-1">{{ t('admin.dashboard.agencyGroups.title') }}</h3>
+          <h3 class="font-bold text-lg mb-1">
+            {{ t('admin.dashboard.agencyGroups.title') }}
+          </h3>
           <p class="text-sm text-gray-500">
             {{ t('admin.dashboard.agencyGroups.description') }}
           </p>
@@ -216,7 +225,9 @@ const fmtCurrency = (v: number) =>
           >
             <UIcon name="i-heroicons-banknotes" class="w-6 h-6" />
           </div>
-          <h3 class="font-bold text-lg mb-1">{{ t('admin.dashboard.depositRequests.title') }}</h3>
+          <h3 class="font-bold text-lg mb-1">
+            {{ t('admin.dashboard.depositRequests.title') }}
+          </h3>
           <p class="text-sm text-gray-500">
             {{ t('admin.dashboard.depositRequests.description') }}
           </p>

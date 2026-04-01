@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useAgencies, type AdminAgency } from "~/composables/useAgencies";
+import { useAgencies, type AdminAgency } from '~/composables/useAgencies';
 
-definePageMeta({ layout: "dashboard" });
-useHead({ title: "Gestor de Agencias B2B - TravelOTA" });
+definePageMeta({ layout: 'dashboard' });
+useHead({ title: 'Gestor de Agencias B2B - TravelOTA' });
 
 const { t } = useI18n();
 
@@ -18,8 +18,8 @@ const {
 const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
 
 // ── Filters ────────────────────────────────────────────────────────────────
-const searchQuery = ref("");
-const statusFilter = ref("Todas");
+const searchQuery = ref('');
+const statusFilter = ref('Todas');
 
 const filteredAgencies = computed(() => {
   return agencies.value.filter((a) => {
@@ -29,45 +29,45 @@ const filteredAgencies = computed(() => {
       a.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       a.country.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchStatus =
-      statusFilter.value === "Todas" || a.status === statusFilter.value;
+      statusFilter.value === 'Todas' || a.status === statusFilter.value;
     return matchSearch && matchStatus;
   });
 });
 
 // ── Status helpers ─────────────────────────────────────────────────────────
 function statusColor(s: string) {
-  if (s === "Activa") return "success";
-  if (s === "Pendiente") return "warning";
-  if (s === "Bloqueada") return "error";
-  if (s === "Denegada") return "neutral";
-  return "neutral";
+  if (s === 'Activa') return 'success';
+  if (s === 'Pendiente') return 'warning';
+  if (s === 'Bloqueada') return 'error';
+  if (s === 'Denegada') return 'neutral';
+  return 'neutral';
 }
 
 // ── Nueva Agencia modal ────────────────────────────────────────────────────
 const isCreateOpen = ref(false);
 const newAgency = ref({
-  name: "",
-  country: "",
-  email: "",
-  phone: "",
-  agencyGroup: "Grupo Estándar",
+  name: '',
+  country: '',
+  email: '',
+  phone: '',
+  agencyGroup: 'Grupo Estándar',
 });
 
 const isCreateValid = computed(
   () =>
-    newAgency.value.name.trim() !== "" &&
+    newAgency.value.name.trim() !== '' &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newAgency.value.email),
 );
 
 const groupNames = computed(() => agencyGroups.value.map((g) => g.name));
 
 function openCreate() {
-  const defaultGroupName = groupNames.value[0] || "Grupo Estándar";
+  const defaultGroupName = groupNames.value[0] || 'Grupo Estándar';
   newAgency.value = {
-    name: "",
-    country: "",
-    email: "",
-    phone: "",
+    name: '',
+    country: '',
+    email: '',
+    phone: '',
     agencyGroup: defaultGroupName,
   };
   isCreateOpen.value = true;
@@ -85,10 +85,10 @@ function saveAgency() {
     email: newAgency.value.email,
     phone: newAgency.value.phone,
     agencyGroup: String(
-      newAgency.value.agencyGroup || groupNames.value[0] || "Grupo Estándar",
+      newAgency.value.agencyGroup || groupNames.value[0] || 'Grupo Estándar',
     ),
     markup: appliedMarkup,
-    registeredAt: new Date().toISOString().split("T")[0]!,
+    registeredAt: new Date().toISOString().split('T')[0]!,
   });
   if (selectedGroup) incrementAgencyCount(selectedGroup.name);
   isCreateOpen.value = false;
@@ -97,7 +97,7 @@ function saveAgency() {
 // ── Aprobar modal ──────────────────────────────────────────────────────────
 const isApproveOpen = ref(false);
 const agencyToApprove = ref<AdminAgency | null>(null);
-const selectedGroupName = ref<string>("");
+const selectedGroupName = ref<string>('');
 
 const selectedGroup = computed(
   () =>
@@ -106,7 +106,7 @@ const selectedGroup = computed(
 
 function openApprove(agency: AdminAgency) {
   agencyToApprove.value = agency;
-  selectedGroupName.value = "";
+  selectedGroupName.value = '';
   isApproveOpen.value = true;
 }
 
@@ -152,14 +152,20 @@ function confirmDelete() {
 
 // ── Table columns ──────────────────────────────────────────────────────────
 const columns = computed(() => [
-  { accessorKey: "name", header: t('admin.agencies.tableHeaders.agency') },
-  { accessorKey: "country", header: t('admin.agencies.tableHeaders.country') },
-  { accessorKey: "email", header: t('admin.agencies.tableHeaders.contact') },
-  { accessorKey: "agencyGroup", header: t('admin.agencies.tableHeaders.group') },
-  { accessorKey: "usersCount", header: t('admin.agencies.tableHeaders.users') },
-  { accessorKey: "bookingsCount", header: t('admin.agencies.tableHeaders.bookings') },
-  { accessorKey: "status", header: t('admin.agencies.tableHeaders.status') },
-  { accessorKey: "actions", header: "" },
+  { accessorKey: 'name', header: t('admin.agencies.tableHeaders.agency') },
+  { accessorKey: 'country', header: t('admin.agencies.tableHeaders.country') },
+  { accessorKey: 'email', header: t('admin.agencies.tableHeaders.contact') },
+  {
+    accessorKey: 'agencyGroup',
+    header: t('admin.agencies.tableHeaders.group'),
+  },
+  { accessorKey: 'usersCount', header: t('admin.agencies.tableHeaders.users') },
+  {
+    accessorKey: 'bookingsCount',
+    header: t('admin.agencies.tableHeaders.bookings'),
+  },
+  { accessorKey: 'status', header: t('admin.agencies.tableHeaders.status') },
+  { accessorKey: 'actions', header: '' },
 ]);
 </script>
 
@@ -174,7 +180,8 @@ const columns = computed(() => [
           to="/dashboard/admin"
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('admin.agencies.backToPanel') }}
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
+          {{ t('admin.agencies.backToPanel') }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
           {{ t('admin.agencies.title') }}
@@ -201,7 +208,9 @@ const columns = computed(() => [
             <UIcon name="i-heroicons-building-storefront" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.total') }}</p>
+            <p class="text-xs text-gray-500 font-medium">
+              {{ t('admin.agencies.stats.total') }}
+            </p>
             <p class="text-xl font-bold">{{ stats.total }}</p>
           </div>
         </div>
@@ -214,7 +223,9 @@ const columns = computed(() => [
             <UIcon name="i-heroicons-check-circle" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.active') }}</p>
+            <p class="text-xs text-gray-500 font-medium">
+              {{ t('admin.agencies.stats.active') }}
+            </p>
             <p class="text-xl font-bold">{{ stats.active }}</p>
           </div>
         </div>
@@ -227,7 +238,9 @@ const columns = computed(() => [
             <UIcon name="i-heroicons-clock" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.pending') }}</p>
+            <p class="text-xs text-gray-500 font-medium">
+              {{ t('admin.agencies.stats.pending') }}
+            </p>
             <p class="text-xl font-bold">{{ stats.pending }}</p>
           </div>
         </div>
@@ -240,7 +253,9 @@ const columns = computed(() => [
             <UIcon name="i-heroicons-no-symbol" class="w-5 h-5" />
           </div>
           <div>
-            <p class="text-xs text-gray-500 font-medium">{{ t('admin.agencies.stats.blocked') }}</p>
+            <p class="text-xs text-gray-500 font-medium">
+              {{ t('admin.agencies.stats.blocked') }}
+            </p>
             <p class="text-xl font-bold">{{ stats.blocked }}</p>
           </div>
         </div>
@@ -301,7 +316,7 @@ const columns = computed(() => [
         <!-- Contenedor agencyGroup -->
         <template #agencyGroup-cell="{ row }">
           <span class="font-medium text-gray-900 dark:text-gray-100">
-            {{ row.original.agencyGroup ?? "—" }}
+            {{ row.original.agencyGroup ?? '—' }}
           </span>
         </template>
 
@@ -427,7 +442,10 @@ const columns = computed(() => [
     </UCard>
 
     <!-- Create modal -->
-    <UModal v-model:open="isCreateOpen" :title="t('admin.agencies.modals.create.title')">
+    <UModal
+      v-model:open="isCreateOpen"
+      :title="t('admin.agencies.modals.create.title')"
+    >
       <template #body>
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -443,14 +461,22 @@ const columns = computed(() => [
                 icon="i-heroicons-building-storefront"
               />
             </UFormField>
-            <UFormField :label="t('admin.agencies.modals.create.country')" name="country" required>
+            <UFormField
+              :label="t('admin.agencies.modals.create.country')"
+              name="country"
+              required
+            >
               <UInput
                 v-model="newAgency.country"
                 placeholder="España"
                 icon="i-heroicons-globe-alt"
               />
             </UFormField>
-            <UFormField :label="t('admin.agencies.modals.create.agencyGroup')" name="group" required>
+            <UFormField
+              :label="t('admin.agencies.modals.create.agencyGroup')"
+              name="group"
+              required
+            >
               <USelectMenu
                 v-model="newAgency.agencyGroup"
                 :items="groupNames"
@@ -470,7 +496,11 @@ const columns = computed(() => [
                 icon="i-heroicons-envelope"
               />
             </UFormField>
-            <UFormField :label="t('admin.agencies.modals.create.phone')" name="phone" class="sm:col-span-2">
+            <UFormField
+              :label="t('admin.agencies.modals.create.phone')"
+              name="phone"
+              class="sm:col-span-2"
+            >
               <UInput
                 v-model="newAgency.phone"
                 placeholder="+34 91 000 00 00"
@@ -506,7 +536,10 @@ const columns = computed(() => [
     </UModal>
 
     <!-- Aprobar modal -->
-    <UModal v-model:open="isApproveOpen" :title="t('admin.agencies.modals.approve.title')">
+    <UModal
+      v-model:open="isApproveOpen"
+      :title="t('admin.agencies.modals.approve.title')"
+    >
       <template #body>
         <div class="space-y-4">
           <p class="text-sm text-gray-600 dark:text-gray-300">
@@ -514,7 +547,11 @@ const columns = computed(() => [
             <strong>{{ agencyToApprove?.name }}</strong
             >.
           </p>
-          <UFormField :label="t('admin.agencies.modals.approve.groupField')" name="approveGroup" required>
+          <UFormField
+            :label="t('admin.agencies.modals.approve.groupField')"
+            name="approveGroup"
+            required
+          >
             <USelectMenu
               v-model="selectedGroupName"
               :items="groupNames"
@@ -552,7 +589,10 @@ const columns = computed(() => [
     </UModal>
 
     <!-- Denegar modal -->
-    <UModal v-model:open="isDenyOpen" :title="t('admin.agencies.modals.deny.title')">
+    <UModal
+      v-model:open="isDenyOpen"
+      :title="t('admin.agencies.modals.deny.title')"
+    >
       <template #body>
         <p class="text-sm text-gray-600 dark:text-gray-300">
           {{ t('admin.agencies.modals.deny.message') }}
@@ -579,7 +619,10 @@ const columns = computed(() => [
     </UModal>
 
     <!-- Eliminar modal -->
-    <UModal v-model:open="isDeleteOpen" :title="t('admin.agencies.modals.delete.title')">
+    <UModal
+      v-model:open="isDeleteOpen"
+      :title="t('admin.agencies.modals.delete.title')"
+    >
       <template #body>
         <p class="text-sm text-gray-600 dark:text-gray-300">
           {{ t('admin.agencies.modals.delete.message') }}

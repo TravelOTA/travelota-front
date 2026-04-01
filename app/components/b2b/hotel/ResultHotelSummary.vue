@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { useItinerary } from "~/composables/useItinerary";
+import { useItinerary } from '~/composables/useItinerary';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
-
 
 const { t } = useI18n();
 
@@ -14,7 +13,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (e: "open-map", hotel: Record<string, unknown>): void;
+  (e: 'open-map', hotel: Record<string, unknown>): void;
 }>();
 const { triggerAddOption } = useItinerary();
 
@@ -24,15 +23,14 @@ const addToItinerary = () => {
     name: props.hotel.name,
     image:
       props.hotel.image ||
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
-    description: props.hotel.location + " - Alojamiento Completo",
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
+    description: props.hotel.location + ' - Alojamiento Completo',
     netPrice: props.hotel.bestPrice,
   });
 };
 
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
-
 </script>
 
 <template>
@@ -76,7 +74,9 @@ const { salePrice } = useSalePrice();
         >
           <UIcon name="i-heroicons-map-pin" class="w-4 h-4 mr-1" />
           <span>{{ hotel.location }}</span>
-          <span class="ml-2 underline underline-offset-2">{{ t('hotels.results.seeOnMap') }}</span>
+          <span class="ml-2 underline underline-offset-2">{{
+            t('hotels.results.seeOnMap')
+          }}</span>
         </div>
       </div>
     </div>
@@ -88,23 +88,29 @@ const { salePrice } = useSalePrice();
       <p
         class="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1 leading-tight text-right w-full"
       >
-        {{ t('hotels.results.bestPrice') }}<br />{{ t('hotels.results.perStay') }}
+        {{ t('hotels.results.bestPrice') }}<br />{{
+          t('hotels.results.perStay')
+        }}
       </p>
       <p
         class="text-3xl font-light text-gray-900 dark:text-white tracking-tight mb-2"
       >
         <span class="font-bold">$</span>
         {{
-          salePrice(hotel.bestPrice).toLocaleString("en-US", {
+          salePrice(hotel.bestPrice).toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })
         }}
       </p>
       <p v-if="netPriceVisible" class="text-xs text-gray-400 mb-2">
-        neto ${{ hotel.bestPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+        neto ${{
+          hotel.bestPrice.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        }}
       </p>
-
 
       <UButton
         color="neutral"

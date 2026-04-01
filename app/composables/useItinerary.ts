@@ -1,5 +1,5 @@
-import { computed } from "vue";
-import type { ItineraryOptionMetadata } from "~/shared/schemas/itinerary";
+import { computed } from 'vue';
+import type { ItineraryOptionMetadata } from '~/shared/schemas/itinerary';
 
 export interface ItineraryOption {
   id: string;
@@ -16,7 +16,7 @@ export interface ItineraryOption {
 
 export interface ItineraryBlock {
   id: string; // block UUID
-  type: "hotel" | "flight" | "transfer" | "excursion" | "extra";
+  type: 'hotel' | 'flight' | 'transfer' | 'excursion' | 'extra';
   title: string;
   date: string;
   options: ItineraryOption[]; // Min 1, Max 5
@@ -44,11 +44,11 @@ export interface Itinerary {
 // Global active builder state mapped to Nuxt useState
 export const useItinerary = () => {
   const { t } = useI18n();
-  const itinerary = useState<Itinerary>("quoter-itinerary", () => ({
-    title: t("itinerary.newTitle"),
-    clientName: "",
+  const itinerary = useState<Itinerary>('quoter-itinerary', () => ({
+    title: t('itinerary.newTitle'),
+    clientName: '',
     rooms: [{ adults: 2, children: [] }],
-    origin: "",
+    origin: '',
     markupPercentage: 15, // Default 15% margin
     blocks: [],
   }));
@@ -61,15 +61,15 @@ export const useItinerary = () => {
 
   // Global Modal State for Adding Options
   const isAddOptionModalOpen = useState<boolean>(
-    "quoter-modal-open",
+    'quoter-modal-open',
     () => false,
   );
-  const pendingOption = useState<Omit<ItineraryOption, "id"> | null>(
-    "quoter-pending-option",
+  const pendingOption = useState<Omit<ItineraryOption, 'id'> | null>(
+    'quoter-pending-option',
     () => null,
   );
   const addBlock = (
-    type: ItineraryBlock["type"],
+    type: ItineraryBlock['type'],
     title: string,
     date: string,
   ) => {
@@ -99,12 +99,12 @@ export const useItinerary = () => {
 
   const addOptionToBlock = (
     blockId: string,
-    option: Omit<ItineraryOption, "id">,
+    option: Omit<ItineraryOption, 'id'>,
   ) => {
     const block = itinerary.value.blocks.find((b) => b.id === blockId);
-    if (!block) throw new Error("Block not found");
+    if (!block) throw new Error('Block not found');
     if (block.options.length >= 5)
-      throw new Error("Max 5 options allowed per block");
+      throw new Error('Max 5 options allowed per block');
 
     block.options.push({
       ...option,
@@ -176,16 +176,16 @@ export const useItinerary = () => {
 
   const clearItinerary = () => {
     itinerary.value = {
-      title: t("itinerary.newTitle"),
-      clientName: "",
+      title: t('itinerary.newTitle'),
+      clientName: '',
       rooms: [{ adults: 2, children: [] }],
-      origin: "",
+      origin: '',
       markupPercentage: 15,
       blocks: [],
     };
   };
 
-  const triggerAddOption = (option: Omit<ItineraryOption, "id">) => {
+  const triggerAddOption = (option: Omit<ItineraryOption, 'id'>) => {
     pendingOption.value = option;
     isAddOptionModalOpen.value = true;
   };
@@ -200,8 +200,8 @@ export const useItinerary = () => {
   };
 
   const saveItinerary = () => {
-    return useApi<Itinerary>("/api/itineraries", {
-      method: "POST",
+    return useApi<Itinerary>('/api/itineraries', {
+      method: 'POST',
       body: itinerary.value,
     });
   };

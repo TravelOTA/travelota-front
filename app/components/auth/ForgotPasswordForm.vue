@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { z } from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import { apiFetch } from "~/composables/useApi";
+import { z } from 'zod';
+import type { FormSubmitEvent } from '@nuxt/ui';
+import { apiFetch } from '~/composables/useApi';
 
 const emit = defineEmits<{ success: [] }>();
 const { t } = useI18n();
 
 const schema = computed(() =>
   z.object({
-    email: z.string().email(t("validation.emailInvalid")),
+    email: z.string().email(t('validation.emailInvalid')),
   }),
 );
 
-const form = reactive({ email: "" });
+const form = reactive({ email: '' });
 const isSubmitting = ref(false);
 const error = ref<string | null>(null);
 
@@ -20,14 +20,14 @@ async function onSubmit(event: FormSubmitEvent<{ email: string }>) {
   isSubmitting.value = true;
   error.value = null;
   try {
-    await apiFetch("/api/auth/forgot-password", {
-      method: "POST",
+    await apiFetch('/api/auth/forgot-password', {
+      method: 'POST',
       body: { email: event.data.email },
     });
-    emit("success");
+    emit('success');
   } catch {
     // API always returns 200 to prevent email enumeration — only fail on network errors
-    error.value = t("auth.forgotPassword.errorGeneric");
+    error.value = t('auth.forgotPassword.errorGeneric');
   } finally {
     isSubmitting.value = false;
   }
@@ -37,7 +37,9 @@ async function onSubmit(event: FormSubmitEvent<{ email: string }>) {
 <template>
   <UCard>
     <template #header>
-      <h2 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wider text-center">
+      <h2
+        class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wider text-center"
+      >
         {{ t('auth.forgotPassword.title') }}
       </h2>
       <p class="text-sm text-gray-500 dark:text-gray-400 text-center mt-1">
@@ -57,12 +59,7 @@ async function onSubmit(event: FormSubmitEvent<{ email: string }>) {
         />
       </UFormField>
 
-      <UAlert
-        v-if="error"
-        color="error"
-        variant="soft"
-        :description="error"
-      />
+      <UAlert v-if="error" color="error" variant="soft" :description="error" />
 
       <UButton
         type="submit"

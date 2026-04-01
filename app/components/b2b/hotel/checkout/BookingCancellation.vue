@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
 
 const { t } = useI18n();
 
-const props = defineProps<{
+defineProps<{
   bookingStatus: string;
   totalPrice: number;
   policies: {
@@ -18,7 +18,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "cancel"): void;
+  (e: 'cancel'): void;
 }>();
 
 const { netPriceVisible } = useNetPrice();
@@ -33,7 +33,7 @@ const handleCancel = () => {
   setTimeout(() => {
     isCancelling.value = false;
     showConfirmModal.value = false;
-    emit("cancel");
+    emit('cancel');
   }, 1500);
 };
 </script>
@@ -74,17 +74,28 @@ const handleCancel = () => {
       <!-- Tabla de gastos de cancelación -->
       <div class="mb-4 flex flex-col gap-1">
         <div class="flex items-center gap-2">
-          <span class="text-sm text-gray-600 dark:text-gray-400">{{ t('hotels.cancellationPolicy.total') }} </span>
+          <span class="text-sm text-gray-600 dark:text-gray-400"
+            >{{ t('hotels.cancellationPolicy.total') }}
+          </span>
           <span class="font-bold text-gray-900 dark:text-white"
             >${{
-              salePrice(totalPrice).toLocaleString("en-US", {
+              salePrice(totalPrice).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })
-            }}</span>
+            }}</span
+          >
         </div>
-        <span v-if="netPriceVisible" class="text-[10px] text-gray-400 font-medium">
-          neto ${{ totalPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+        <span
+          v-if="netPriceVisible"
+          class="text-[10px] text-gray-400 font-medium"
+        >
+          neto ${{
+            totalPrice.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })
+          }}
         </span>
       </div>
 
@@ -94,11 +105,21 @@ const handleCancel = () => {
             <tr
               class="border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white"
             >
-              <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.costsHeader') }}</th>
-              <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.fromDate') }}</th>
-              <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.toDate') }}</th>
-              <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.time') }}</th>
-              <th class="py-2 font-bold">{{ t('hotels.cancellationPolicy.price') }}</th>
+              <th class="py-2 pr-4 font-bold">
+                {{ t('hotels.cancellationPolicy.costsHeader') }}
+              </th>
+              <th class="py-2 pr-4 font-bold">
+                {{ t('hotels.cancellationPolicy.fromDate') }}
+              </th>
+              <th class="py-2 pr-4 font-bold">
+                {{ t('hotels.cancellationPolicy.toDate') }}
+              </th>
+              <th class="py-2 pr-4 font-bold">
+                {{ t('hotels.cancellationPolicy.time') }}
+              </th>
+              <th class="py-2 font-bold">
+                {{ t('hotels.cancellationPolicy.price') }}
+              </th>
             </tr>
           </thead>
           <tbody
@@ -117,14 +138,22 @@ const handleCancel = () => {
                 <div class="flex flex-col text-right">
                   <span class="font-bold text-gray-900 dark:text-white">
                     ${{
-                      salePrice(policy.price).toLocaleString("en-US", {
+                      salePrice(policy.price).toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })
                     }}
                   </span>
-                  <span v-if="netPriceVisible" class="text-[10px] text-gray-400 font-normal">
-                    neto ${{ policy.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                  <span
+                    v-if="netPriceVisible"
+                    class="text-[10px] text-gray-400 font-normal"
+                  >
+                    neto ${{
+                      policy.price.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })
+                    }}
                   </span>
                 </div>
               </td>

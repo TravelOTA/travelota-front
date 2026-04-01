@@ -1,15 +1,15 @@
 <script setup>
 useHead({
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} - TravelOTA` : "TravelOTA";
+    return titleChunk ? `${titleChunk} - TravelOTA` : 'TravelOTA';
   },
   meta: [
-    { name: "viewport", content: "width=device-width, initial-scale=1" },
-    { key: "theme-color", name: "theme-color", content: "#ffffff" },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    { key: 'theme-color', name: 'theme-color', content: '#ffffff' },
   ],
-  link: [{ rel: "icon", href: "/favicon.ico" }],
+  link: [{ rel: 'icon', href: '/favicon.ico' }],
   htmlAttrs: {
-    lang: "es",
+    lang: 'es',
   },
 });
 </script>

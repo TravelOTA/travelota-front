@@ -7,11 +7,18 @@ definePageMeta({ layout: 'dashboard' });
 
 const { t } = useI18n();
 
-const results = useState<BookingResult[]>('cart:confirmation-results', () => []);
+const results = useState<BookingResult[]>(
+  'cart:confirmation-results',
+  () => [],
+);
 
 const orderRef = computed(() => results.value[0]?.orderRef ?? '');
-const confirmedCount = computed(() => results.value.filter((r) => r.status === 'confirmed').length);
-const failedCount = computed(() => results.value.filter((r) => r.status !== 'confirmed').length);
+const confirmedCount = computed(
+  () => results.value.filter((r) => r.status === 'confirmed').length,
+);
+const failedCount = computed(
+  () => results.value.filter((r) => r.status !== 'confirmed').length,
+);
 
 const summaryMessage = computed(() => {
   if (failedCount.value === 0) return t('cart.confirmation.allConfirmed');
@@ -32,31 +39,49 @@ useHead({
 
 <template>
   <div class="max-w-[800px] mx-auto pb-12 pt-6">
-    <h1 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight mb-6">
+    <h1
+      class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight mb-6"
+    >
       {{ t('cart.confirmation.title') }}
     </h1>
 
     <!-- Order ref -->
-    <div v-if="orderRef" class="mb-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+    <div
+      v-if="orderRef"
+      class="mb-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+    >
       <UIcon name="i-heroicons-tag" class="w-4 h-4" />
-      <span>{{ t('cart.confirmation.orderRef') }}: <strong class="text-gray-900 dark:text-white">{{ orderRef }}</strong></span>
+      <span
+        >{{ t('cart.confirmation.orderRef') }}:
+        <strong class="text-gray-900 dark:text-white">{{
+          orderRef
+        }}</strong></span
+      >
     </div>
 
     <!-- Summary banner -->
-    <UAlert
-      :color="summaryColor"
-      :description="summaryMessage"
-      class="mb-6"
-    />
+    <UAlert :color="summaryColor" :description="summaryMessage" class="mb-6" />
 
     <!-- Results table -->
     <UCard>
       <table class="w-full text-sm">
         <thead>
           <tr class="border-b border-gray-100 dark:border-gray-800">
-            <th class="text-left py-2 px-3 font-semibold text-gray-600 dark:text-gray-400">Hotel</th>
-            <th class="text-left py-2 px-3 font-semibold text-gray-600 dark:text-gray-400">{{ t('cart.confirmation.pnr') }}</th>
-            <th class="text-left py-2 px-3 font-semibold text-gray-600 dark:text-gray-400">Estado</th>
+            <th
+              class="text-left py-2 px-3 font-semibold text-gray-600 dark:text-gray-400"
+            >
+              Hotel
+            </th>
+            <th
+              class="text-left py-2 px-3 font-semibold text-gray-600 dark:text-gray-400"
+            >
+              {{ t('cart.confirmation.pnr') }}
+            </th>
+            <th
+              class="text-left py-2 px-3 font-semibold text-gray-600 dark:text-gray-400"
+            >
+              Estado
+            </th>
             <th class="py-2 px-3" />
           </tr>
         </thead>
@@ -75,10 +100,18 @@ useHead({
             <td class="py-3 px-3">
               <UBadge
                 :color="result.status === 'confirmed' ? 'success' : 'error'"
-                :label="result.status === 'confirmed' ? t('cart.confirmation.confirmed') : (result.status === 'unavailable' ? t('cart.confirmation.unavailable') : t('cart.confirmation.failed'))"
+                :label="
+                  result.status === 'confirmed'
+                    ? t('cart.confirmation.confirmed')
+                    : result.status === 'unavailable'
+                      ? t('cart.confirmation.unavailable')
+                      : t('cart.confirmation.failed')
+                "
                 variant="subtle"
               />
-              <p v-if="result.error" class="text-xs text-red-500 mt-1">{{ result.error }}</p>
+              <p v-if="result.error" class="text-xs text-red-500 mt-1">
+                {{ result.error }}
+              </p>
             </td>
             <td class="py-3 px-3 text-right">
               <UButton

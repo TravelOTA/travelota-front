@@ -1,20 +1,20 @@
-import { useState } from "#imports";
-import { computed } from "vue";
-import type { IWallet } from "#shared/types/wallet";
+import { useState } from '#imports';
+import { computed } from 'vue';
+import type { IWallet } from '#shared/types/wallet';
 
 export function useWallet() {
-  const wallet = useState<IWallet | null>("wallet:data", () => null);
-  const loading = useState<boolean>("wallet:loading", () => false);
-  const error = useState<string | null>("wallet:error", () => null);
+  const wallet = useState<IWallet | null>('wallet:data', () => null);
+  const loading = useState<boolean>('wallet:loading', () => false);
+  const error = useState<string | null>('wallet:error', () => null);
 
   async function fetchWallet() {
     loading.value = true;
     error.value = null;
     try {
-      wallet.value = await $fetch<IWallet>("/api/wallet");
+      wallet.value = await $fetch<IWallet>('/api/wallet');
     } catch (err) {
       error.value =
-        err instanceof Error ? err.message : "Error al cargar el wallet";
+        err instanceof Error ? err.message : 'Error al cargar el wallet';
     } finally {
       loading.value = false;
     }
@@ -35,7 +35,7 @@ export function useWallet() {
     return (creditLine.value.used / creditLine.value.limit) * 100;
   });
   const isCreditBlocked = computed(
-    () => creditLine.value?.status === "blocked",
+    () => creditLine.value?.status === 'blocked',
   );
 
   function hasSufficientCredit(amount: number): boolean {
@@ -49,7 +49,7 @@ export function useWallet() {
     () => balance.value > 0 && balance.value < lowBalanceThreshold.value,
   );
   const isZeroBalance = computed(() => balance.value === 0);
-  const currency = computed(() => wallet.value?.currency ?? "USD");
+  const currency = computed(() => wallet.value?.currency ?? 'USD');
   const totalDeposited = computed(() => wallet.value?.totalDeposited ?? 0);
   const totalConsumed = computed(() => wallet.value?.totalConsumed ?? 0);
   const lastUpdatedAt = computed(() => wallet.value?.lastUpdatedAt ?? null);

@@ -1,8 +1,8 @@
 // app/composables/useBookings.ts
-import { useState } from "#imports";
-import { computed } from "vue";
-import { apiFetch } from "~/composables/useApi";
-import type { IBooking } from "#shared/types/booking";
+import { useState } from '#imports';
+import { computed } from 'vue';
+import { apiFetch } from '~/composables/useApi';
+import type { IBooking } from '#shared/types/booking';
 
 // ── BookingRow type (UI shape — kept for backward compatibility with existing components) ──
 export interface BookingRow {
@@ -38,15 +38,15 @@ export interface SearchFilters {
 
 // ── Status label maps (machine key → Spanish, matching existing UI badge logic) ──
 const STATUS_LABELS: Record<string, string> = {
-  confirmed: "Confirmada",
-  cancelled: "Cancelada",
-  expired: "Vencida",
+  confirmed: 'Confirmada',
+  cancelled: 'Cancelada',
+  expired: 'Vencida',
 };
 const PAYMENT_STATUS_LABELS: Record<string, string> = {
-  paid: "Pagada",
-  pending_payment: "Pendiente de Pago",
-  pending_transfer: "Pendiente Transferencia",
-  deferred: "Pago Aplazado",
+  paid: 'Pagada',
+  pending_payment: 'Pendiente de Pago',
+  pending_transfer: 'Pendiente Transferencia',
+  deferred: 'Pago Aplazado',
 };
 
 // ── Adapter: IBooking → BookingRow ────────────────────────────────────────────
@@ -67,12 +67,12 @@ function toBookingRow(b: IBooking): BookingRow {
     salePrice: b.totalPrice,
     seller: b.createdBy,
     agency: b.agencyId,
-    createdAt: createdDate.toLocaleString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    createdAt: createdDate.toLocaleString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     }),
     createdAtISO: b.createdAt.slice(0, 10),
   };
@@ -80,20 +80,20 @@ function toBookingRow(b: IBooking): BookingRow {
 
 // ── Composable ────────────────────────────────────────────────────────────────
 export function useBookings() {
-  const bookings = useState<BookingRow[]>("bookings", () => []);
-  const loading = useState<boolean>("bookings:loading", () => false);
-  const error = useState<string | null>("bookings:error", () => null);
+  const bookings = useState<BookingRow[]>('bookings', () => []);
+  const loading = useState<boolean>('bookings:loading', () => false);
+  const error = useState<string | null>('bookings:error', () => null);
 
   async function fetchBookings(orderRef?: string) {
     loading.value = true;
     error.value = null;
     try {
-      const qs = orderRef ? `?order_ref=${orderRef}` : "";
+      const qs = orderRef ? `?order_ref=${orderRef}` : '';
       const data = await apiFetch<IBooking[]>(`/api/bookings${qs}`);
       bookings.value = data.map(toBookingRow);
     } catch (err) {
       error.value =
-        err instanceof Error ? err.message : "Error al cargar reservas";
+        err instanceof Error ? err.message : 'Error al cargar reservas';
     } finally {
       loading.value = false;
     }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
-import type { Component } from "vue";
+import { ref, watch, onMounted } from 'vue';
+import type { Component } from 'vue';
 
 const { t } = useI18n();
 
@@ -21,7 +21,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: boolean): void;
+  (e: 'update:modelValue', value: boolean): void;
 }>();
 
 // Map settings
@@ -69,7 +69,7 @@ watch(
           if (targetMarker && targetMarker.leafletObject) {
             // Ensure popup is fully mounted
             if (
-              typeof targetMarker.leafletObject.getPopup === "function" &&
+              typeof targetMarker.leafletObject.getPopup === 'function' &&
               targetMarker.leafletObject.getPopup()
             ) {
               targetMarker.leafletObject.openPopup();
@@ -101,7 +101,7 @@ const mapReady = ref(false);
 onMounted(async () => {
   // Only import on client-side
   if (import.meta.client) {
-    const L = await import("@vue-leaflet/vue-leaflet");
+    const L = await import('@vue-leaflet/vue-leaflet');
     LMap.value = L.LMap;
     LTileLayer.value = L.LTileLayer;
     LMarker.value = L.LMarker;
@@ -109,16 +109,16 @@ onMounted(async () => {
     LIcon.value = L.LIcon;
 
     // Fix default icon paths for Leaflet
-    const leaflet = await import("leaflet");
+    const leaflet = await import('leaflet');
     delete (leaflet.Icon.Default.prototype as Record<string, unknown>)
       ._getIconUrl;
     leaflet.Icon.Default.mergeOptions({
       iconRetinaUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
       iconUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
       shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
     });
 
     mapReady.value = true;
@@ -207,10 +207,12 @@ onMounted(async () => {
                     >
                   </div>
                   <div class="flex justify-between items-center text-sm">
-                    <span class="text-gray-500 text-xs">{{ t('hotels.results.bestPrice') }}</span>
+                    <span class="text-gray-500 text-xs">{{
+                      t('hotels.results.bestPrice')
+                    }}</span>
                     <span class="font-bold text-primary-600"
                       >${{
-                        hotel.bestPrice.toLocaleString("en-US", {
+                        hotel.bestPrice.toLocaleString('en-US', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })
@@ -236,7 +238,7 @@ onMounted(async () => {
 </template>
 
 <style>
-@import "leaflet/dist/leaflet.css";
+@import 'leaflet/dist/leaflet.css';
 
 /* Ensure Leaflet controls are above the map but below the modal header if any overlap */
 .leaflet-container {

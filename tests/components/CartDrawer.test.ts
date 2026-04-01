@@ -3,6 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { ref, computed } from 'vue';
 
+import CartDrawer from '~/components/b2b/cart/CartDrawer.vue';
+
 const mockItems = ref<unknown[]>([]);
 const mockIsDrawerOpen = ref(false);
 const mockItemCount = computed(() => mockItems.value.length);
@@ -50,10 +52,11 @@ vi.mock('~/components/b2b/cart/CartEmpty.vue', () => ({
 }));
 
 vi.mock('~/components/b2b/cart/CartItemCard.vue', () => ({
-  default: { template: '<div data-testid="cart-item-card" />', props: ['item'] },
+  default: {
+    template: '<div data-testid="cart-item-card" />',
+    props: ['item'],
+  },
 }));
-
-import CartDrawer from '~/components/b2b/cart/CartDrawer.vue';
 
 describe('CartDrawer', () => {
   beforeEach(() => {
@@ -63,20 +66,41 @@ describe('CartDrawer', () => {
   });
 
   it('renders CartEmpty when items is empty', () => {
-    const wrapper = mount(CartDrawer, { global: { stubs: { USlideover: { template: '<div><slot name="body" /></div>' } } } });
+    const wrapper = mount(CartDrawer, {
+      global: {
+        stubs: { USlideover: { template: '<div><slot name="body" /></div>' } },
+      },
+    });
     expect(wrapper.find('[data-testid="cart-empty"]').exists()).toBe(true);
   });
 
   it('renders one CartItemCard per item', () => {
     mockItems.value = [
-      { id: '1', type: 'hotel', hotel: { name: 'H1' }, room: { price: 100 }, searchParams: {}, addedAt: Date.now() },
-      { id: '2', type: 'hotel', hotel: { name: 'H2' }, room: { price: 200 }, searchParams: {}, addedAt: Date.now() },
+      {
+        id: '1',
+        type: 'hotel',
+        hotel: { name: 'H1' },
+        room: { price: 100 },
+        searchParams: {},
+        addedAt: Date.now(),
+      },
+      {
+        id: '2',
+        type: 'hotel',
+        hotel: { name: 'H2' },
+        room: { price: 200 },
+        searchParams: {},
+        addedAt: Date.now(),
+      },
     ];
     const wrapper = mount(CartDrawer, {
       global: {
         stubs: {
           USlideover: { template: '<div><slot name="body" /></div>' },
-          CartItemCard: { template: '<div data-testid="cart-item-card" />', props: ['item'] },
+          CartItemCard: {
+            template: '<div data-testid="cart-item-card" />',
+            props: ['item'],
+          },
         },
       },
     });
@@ -86,14 +110,29 @@ describe('CartDrawer', () => {
   it('"Crear cotización" button calls exportToQuoter and navigates', async () => {
     const { navigateTo } = await import('#imports');
     mockItems.value = [
-      { id: '1', type: 'hotel', hotel: { name: 'H1' }, room: { price: 100 }, searchParams: {}, addedAt: Date.now() },
+      {
+        id: '1',
+        type: 'hotel',
+        hotel: { name: 'H1' },
+        room: { price: 100 },
+        searchParams: {},
+        addedAt: Date.now(),
+      },
     ];
     const wrapper = mount(CartDrawer, {
       global: {
         stubs: {
-          USlideover: { template: '<div><slot name="body" /><slot name="footer" /></div>' },
-          CartItemCard: { template: '<div data-testid="cart-item-card" />', props: ['item'] },
-          UButton: { template: '<button @click="$emit(\'click\')"><slot /></button>', emits: ['click'] },
+          USlideover: {
+            template: '<div><slot name="body" /><slot name="footer" /></div>',
+          },
+          CartItemCard: {
+            template: '<div data-testid="cart-item-card" />',
+            props: ['item'],
+          },
+          UButton: {
+            template: '<button @click="$emit(\'click\')"><slot /></button>',
+            emits: ['click'],
+          },
           UBadge: true,
         },
       },
@@ -108,14 +147,29 @@ describe('CartDrawer', () => {
   it('"Ir al checkout" button navigates to /dashboard/cart/checkout', async () => {
     const { navigateTo } = await import('#imports');
     mockItems.value = [
-      { id: '1', type: 'hotel', hotel: { name: 'H1' }, room: { price: 100 }, searchParams: {}, addedAt: Date.now() },
+      {
+        id: '1',
+        type: 'hotel',
+        hotel: { name: 'H1' },
+        room: { price: 100 },
+        searchParams: {},
+        addedAt: Date.now(),
+      },
     ];
     const wrapper = mount(CartDrawer, {
       global: {
         stubs: {
-          USlideover: { template: '<div><slot name="body" /><slot name="footer" /></div>' },
-          CartItemCard: { template: '<div data-testid="cart-item-card" />', props: ['item'] },
-          UButton: { template: '<button @click="$emit(\'click\')"><slot /></button>', emits: ['click'] },
+          USlideover: {
+            template: '<div><slot name="body" /><slot name="footer" /></div>',
+          },
+          CartItemCard: {
+            template: '<div data-testid="cart-item-card" />',
+            props: ['item'],
+          },
+          UButton: {
+            template: '<button @click="$emit(\'click\')"><slot /></button>',
+            emits: ['click'],
+          },
           UBadge: true,
         },
       },

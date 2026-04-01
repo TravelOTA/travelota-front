@@ -4,8 +4,7 @@ import type { CartItemHotel } from '~/composables/useCart';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
 
-
-const props = defineProps<{
+defineProps<{
   item: CartItemHotel;
 }>();
 
@@ -16,11 +15,12 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
-
 </script>
 
 <template>
-  <div class="flex gap-3 py-4 border-b border-gray-100 dark:border-gray-800 last:border-0 items-start">
+  <div
+    class="flex gap-3 py-4 border-b border-gray-100 dark:border-gray-800 last:border-0 items-start"
+  >
     <img
       :src="item.hotel.image"
       :alt="item.hotel.name"
@@ -33,7 +33,9 @@ const { salePrice } = useSalePrice();
       <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
         {{ item.room.name }}
       </p>
-      <div class="flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-gray-400">
+      <div
+        class="flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-gray-400"
+      >
         <span>{{ t('cart.checkIn') }}: {{ item.searchParams.checkIn }}</span>
         <span>·</span>
         <span>{{ t('cart.checkOut') }}: {{ item.searchParams.checkOut }}</span>
@@ -43,10 +45,20 @@ const { salePrice } = useSalePrice();
     <!-- Price + remove button column -->
     <div class="flex flex-col items-end gap-1 shrink-0">
       <span class="font-bold text-primary-600 dark:text-primary-400 text-sm">
-        ${{ salePrice(item.room.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+        ${{
+          salePrice(item.room.price).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        }}
       </span>
       <span v-if="netPriceVisible" class="text-[10px] text-gray-400">
-        neto ${{ item.room.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+        neto ${{
+          item.room.price.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        }}
       </span>
       <UButton
         color="neutral"

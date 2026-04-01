@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import BookingSearchFilters from "~/components/b2b/hotel/checkout/BookingSearchFilters.vue";
-import { useBookings, type SearchFilters } from "~/composables/useBookings";
+import BookingSearchFilters from '~/components/b2b/hotel/checkout/BookingSearchFilters.vue';
+import { useBookings, type SearchFilters } from '~/composables/useBookings';
 
 interface FilterPayload {
   pnr: string;
@@ -18,11 +18,11 @@ interface FilterPayload {
 }
 
 definePageMeta({
-  layout: "dashboard",
+  layout: 'dashboard',
 });
 
 useHead({
-  title: "Todas las Reservas - TravelOTA Admin",
+  title: 'Todas las Reservas - TravelOTA Admin',
 });
 
 const { t } = useI18n();
@@ -61,10 +61,10 @@ const handleClear = () => {
 const resultStats = computed(() => {
   const total = filteredBookings.value.length;
   const confirmed = filteredBookings.value.filter(
-    (b) => b.status === "Confirmada",
+    (b) => b.status === 'Confirmada',
   ).length;
   const pending = filteredBookings.value.filter(
-    (b) => b.paymentStatus === "Pendiente Pago",
+    (b) => b.paymentStatus === 'Pendiente Pago',
   ).length;
   const totalNet = filteredBookings.value.reduce(
     (acc, b) => acc + b.netPrice,
@@ -83,38 +83,53 @@ const resultStats = computed(() => {
 
 // Table columns
 const columns = computed(() => [
-  { accessorKey: "actions", header: "" },
-  { accessorKey: "id", header: t('admin.allBookings.tableHeaders.pnr') },
-  { accessorKey: "status", header: t('admin.allBookings.tableHeaders.status') },
-  { accessorKey: "paymentStatus", header: t('admin.allBookings.tableHeaders.payment') },
-  { accessorKey: "prices", header: t('admin.allBookings.tableHeaders.prices') },
-  { accessorKey: "createdAt", header: t('admin.allBookings.tableHeaders.createdDate') },
-  { accessorKey: "titular", header: t('admin.allBookings.tableHeaders.guestName') },
-  { accessorKey: "destination", header: t('admin.allBookings.tableHeaders.destination') },
-  { accessorKey: "dates", header: t('admin.allBookings.tableHeaders.travelDates') },
-  { accessorKey: "agency", header: t('admin.allBookings.tableHeaders.agency') },
-  { accessorKey: "seller", header: t('admin.allBookings.tableHeaders.seller') },
+  { accessorKey: 'actions', header: '' },
+  { accessorKey: 'id', header: t('admin.allBookings.tableHeaders.pnr') },
+  { accessorKey: 'status', header: t('admin.allBookings.tableHeaders.status') },
+  {
+    accessorKey: 'paymentStatus',
+    header: t('admin.allBookings.tableHeaders.payment'),
+  },
+  { accessorKey: 'prices', header: t('admin.allBookings.tableHeaders.prices') },
+  {
+    accessorKey: 'createdAt',
+    header: t('admin.allBookings.tableHeaders.createdDate'),
+  },
+  {
+    accessorKey: 'titular',
+    header: t('admin.allBookings.tableHeaders.guestName'),
+  },
+  {
+    accessorKey: 'destination',
+    header: t('admin.allBookings.tableHeaders.destination'),
+  },
+  {
+    accessorKey: 'dates',
+    header: t('admin.allBookings.tableHeaders.travelDates'),
+  },
+  { accessorKey: 'agency', header: t('admin.allBookings.tableHeaders.agency') },
+  { accessorKey: 'seller', header: t('admin.allBookings.tableHeaders.seller') },
 ]);
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "Confirmada":
-      return "success";
-    case "Pendiente Pago":
-      return "warning";
-    case "Cancelada":
-      return "error";
-    case "Vencida":
-      return "neutral";
+    case 'Confirmada':
+      return 'success';
+    case 'Pendiente Pago':
+      return 'warning';
+    case 'Cancelada':
+      return 'error';
+    case 'Vencida':
+      return 'neutral';
     default:
-      return "primary";
+      return 'primary';
   }
 };
 
 const fmt = (v: number) =>
-  new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
+  new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'USD',
     minimumFractionDigits: 2,
   }).format(v);
 </script>
@@ -130,7 +145,8 @@ const fmt = (v: number) =>
           to="/dashboard/admin"
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('admin.allBookings.backToPanel') }}
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
+          {{ t('admin.allBookings.backToPanel') }}
         </NuxtLink>
         <h1
           class="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tight flex items-center gap-3"
@@ -196,10 +212,12 @@ const fmt = (v: number) =>
           <div class="h-4 w-px bg-gray-200 dark:bg-gray-700" />
           <div class="flex items-center gap-2">
             <UBadge color="success" variant="subtle" class="text-xs font-bold"
-              >{{ resultStats.confirmed }} {{ t('admin.allBookings.confirmed') }}</UBadge
+              >{{ resultStats.confirmed }}
+              {{ t('admin.allBookings.confirmed') }}</UBadge
             >
             <UBadge color="warning" variant="subtle" class="text-xs font-bold"
-              >{{ resultStats.pending }} {{ t('admin.allBookings.pendingPayment') }}</UBadge
+              >{{ resultStats.pending }}
+              {{ t('admin.allBookings.pendingPayment') }}</UBadge
             >
           </div>
           <div class="h-4 w-px bg-gray-200 dark:bg-gray-700" />
@@ -293,7 +311,9 @@ const fmt = (v: number) =>
           <template #prices-cell="{ row }">
             <div class="text-xs space-y-0.5">
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-gray-400 w-12">{{ t('admin.allBookings.priceLabels.net') }}</span>
+                <span class="font-semibold text-gray-400 w-12">{{
+                  t('admin.allBookings.priceLabels.net')
+                }}</span>
                 <span
                   class="font-bold text-gray-900 dark:text-white tabular-nums"
                 >
@@ -301,7 +321,9 @@ const fmt = (v: number) =>
                 </span>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-orange-500 w-12">{{ t('admin.allBookings.priceLabels.agency') }}</span>
+                <span class="font-semibold text-orange-500 w-12">{{
+                  t('admin.allBookings.priceLabels.agency')
+                }}</span>
                 <span
                   class="font-bold text-orange-600 dark:text-orange-400 tabular-nums"
                 >
@@ -309,7 +331,9 @@ const fmt = (v: number) =>
                 </span>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="font-semibold text-primary-500 w-12">{{ t('admin.allBookings.priceLabels.sale') }}</span>
+                <span class="font-semibold text-primary-500 w-12">{{
+                  t('admin.allBookings.priceLabels.sale')
+                }}</span>
                 <span
                   class="font-bold text-primary-600 dark:text-primary-400 tabular-nums"
                 >

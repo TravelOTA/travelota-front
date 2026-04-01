@@ -1,9 +1,9 @@
-import type { IDepositRequest } from "../../../shared/types/wallet";
+import type { IDepositRequest } from '../../../shared/types/wallet';
 import {
   readDepositRequests,
   writeDepositRequests,
   MOCK_SESSION,
-} from "../../utils/db";
+} from '../../utils/db';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{
@@ -16,14 +16,14 @@ export default defineEventHandler(async (event) => {
   const requests = await readDepositRequests();
 
   const newRequest: IDepositRequest = {
-    id: `DEP-${String(requests.length + 1).padStart(3, "0")}`,
+    id: `DEP-${String(requests.length + 1).padStart(3, '0')}`,
     agencyId: MOCK_SESSION.agencyId,
-    agencyName: "Viajes El Corte Inglés", // MVP: hardcoded; will come from agency profile
+    agencyName: 'Viajes El Corte Inglés', // MVP: hardcoded; will come from agency profile
     amount: body.amount,
     currency: body.currency,
     concept: body.concept,
     note: body.note,
-    status: "pending",
+    status: 'pending',
     createdAt: new Date().toISOString(),
   };
 

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const { t } = useI18n();
 
 const form = ref({
-  name: "",
-  lastName: "",
-  reference: "",
-  observations: "",
+  name: '',
+  lastName: '',
+  reference: '',
+  observations: '',
 });
 
 defineExpose({ form });
@@ -32,32 +32,43 @@ defineExpose({ form });
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-bold text-gray-700 dark:text-gray-200"
-            >{{ t('hotels.checkout.name') }} <span class="text-red-500">*</span></label
+            >{{ t('hotels.checkout.name') }}
+            <span class="text-red-500">*</span></label
           >
-          <UInput v-model="form.name" :placeholder="t('hotels.checkout.namePlaceholder')" />
+          <UInput
+            v-model="form.name"
+            :placeholder="t('hotels.checkout.namePlaceholder')"
+          />
         </div>
 
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-bold text-gray-700 dark:text-gray-200"
-            >{{ t('hotels.checkout.lastName') }} <span class="text-red-500">*</span></label
+            >{{ t('hotels.checkout.lastName') }}
+            <span class="text-red-500">*</span></label
           >
-          <UInput v-model="form.lastName" :placeholder="t('hotels.checkout.lastNamePlaceholder')" />
+          <UInput
+            v-model="form.lastName"
+            :placeholder="t('hotels.checkout.lastNamePlaceholder')"
+          />
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-bold text-gray-700 dark:text-gray-200"
-            >{{ t('hotels.checkout.agencyReference') }}</label
-          >
-          <UInput v-model="form.reference" :placeholder="t('hotels.checkout.agencyReferencePlaceholder')" />
+          <label class="text-sm font-bold text-gray-700 dark:text-gray-200">{{
+            t('hotels.checkout.agencyReference')
+          }}</label>
+          <UInput
+            v-model="form.reference"
+            :placeholder="t('hotels.checkout.agencyReferencePlaceholder')"
+          />
         </div>
       </div>
 
       <!-- Observations Row -->
       <div class="w-full">
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-bold text-gray-700 dark:text-gray-200"
-            >{{ t('hotels.checkout.observations') }}</label
-          >
+          <label class="text-sm font-bold text-gray-700 dark:text-gray-200">{{
+            t('hotels.checkout.observations')
+          }}</label>
           <UTextarea
             v-model="form.observations"
             :placeholder="t('hotels.checkout.observationsPlaceholder')"

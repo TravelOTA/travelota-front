@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Promotion } from "~/composables/usePromotions";
+import type { Promotion } from '~/composables/usePromotions';
 
 const props = defineProps<{ promotion: Promotion }>();
 const emit = defineEmits<{ search: [destination: string] }>();

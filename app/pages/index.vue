@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const { t } = useI18n();
 useSeoMeta({
-  title: t("auth.seo.homeTitle"),
-  description: t("auth.seo.homeDescription"),
+  title: t('auth.seo.homeTitle'),
+  description: t('auth.seo.homeDescription'),
 });
 </script>
 

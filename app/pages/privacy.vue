@@ -74,6 +74,6 @@
 
 <script setup>
 useHead({
-  title: "Políticas de Privacidad - TravelOTA",
+  title: 'Políticas de Privacidad - TravelOTA',
 });
 </script>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
-import type { SearchRoomDistribution } from "~/composables/useItinerary";
-import { useConfig } from "~/composables/useConfig";
-import { formatCalendarDate } from "~/utils/formatDate";
+import { getLocalTimeZone, today as todayDate } from '@internationalized/date';
+import type { SearchRoomDistribution } from '~/composables/useItinerary';
+import { useConfig } from '~/composables/useConfig';
+import { formatCalendarDate } from '~/utils/formatDate';
 
 const { t } = useI18n();
 
@@ -19,15 +19,15 @@ const props = defineProps<{
   initialData?: InitialSearchData;
 }>();
 
-const emit = defineEmits(["search"]);
+const emit = defineEmits(['search']);
 
 // Default values if no initialData is provided
 const defaultInitial = {
-  destination: "",
-  checkIn: "",
-  checkOut: "",
-  nationality: "Estados Unidos",
-  distribution: "1 Habitación, 2 Adultos",
+  destination: '',
+  checkIn: '',
+  checkOut: '',
+  nationality: 'Estados Unidos',
+  distribution: '1 Habitación, 2 Adultos',
   rooms: [{ adults: 2, children: [] }] as SearchRoomDistribution[],
 };
 
@@ -59,10 +59,10 @@ const formatDistributionLabel = (roomsArray: SearchRoomDistribution[]) => {
     0,
   );
 
-  let label = `${totalRooms} Habitación${totalRooms > 1 ? "es" : ""}`;
-  label += `, ${totalAdults} Adulto${totalAdults > 1 ? "s" : ""}`;
+  let label = `${totalRooms} Habitación${totalRooms > 1 ? 'es' : ''}`;
+  label += `, ${totalAdults} Adulto${totalAdults > 1 ? 's' : ''}`;
   if (totalChildren > 0) {
-    label += `, ${totalChildren} Niño${totalChildren > 1 ? "s" : ""}`;
+    label += `, ${totalChildren} Niño${totalChildren > 1 ? 's' : ''}`;
   }
   return label;
 };
@@ -74,7 +74,7 @@ const submitSearch = () => {
     form.value.checkOut = dateRange.value.end.toString();
   }
   form.value.distribution = formatDistributionLabel(rooms.value);
-  emit("search", {
+  emit('search', {
     ...form.value,
     rooms: rooms.value,
   });
@@ -153,9 +153,9 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
                   {{ formatCalendarDate(dateRange.start) }} -
                   {{ formatCalendarDate(dateRange.end) }}
                 </template>
-                <span v-else class="text-gray-400 dark:text-gray-500"
-                  >{{ t('hotels.search.datePlaceholder') }}</span
-                >
+                <span v-else class="text-gray-400 dark:text-gray-500">{{
+                  t('hotels.search.datePlaceholder')
+                }}</span>
               </span>
             </div>
           </div>

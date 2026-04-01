@@ -2,10 +2,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { ref } from 'vue';
 
-vi.stubGlobal('useState', (_key: string, init?: () => unknown) => ref(init ? init() : undefined));
-
-
 import { useNetPrice } from '~/composables/useNetPrice';
+
+vi.stubGlobal('useState', (_key: string, init?: () => unknown) =>
+  ref(init ? init() : undefined),
+);
 
 describe('useNetPrice', () => {
   it('starts hidden', () => {

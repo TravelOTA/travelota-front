@@ -13,9 +13,11 @@ const { t } = useI18n();
         <h3
           class="font-bold text-gray-900 dark:text-white mb-4 uppercase text-xs tracking-wider"
         >
-          {{ t("footer.contactTitle") }}
+          {{ t('footer.contactTitle') }}
         </h3>
-        <p class="font-semibold text-primary mb-2">{{ t("footer.headOffice").toUpperCase() }}</p>
+        <p class="font-semibold text-primary mb-2">
+          {{ t('footer.headOffice').toUpperCase() }}
+        </p>
         <address class="not-italic text-gray-500 dark:text-gray-400 space-y-2">
           <p><strong>TravelOTA</strong></p>
           <p>Calle Falsa 123</p>
@@ -29,11 +31,15 @@ const { t } = useI18n();
         <h3
           class="font-bold text-gray-900 dark:text-white mb-4 uppercase text-xs tracking-wider"
         >
-          {{ t("footer.scheduleTitle") }}
+          {{ t('footer.scheduleTitle') }}
         </h3>
         <div class="text-gray-500 dark:text-gray-400 space-y-2">
-          <p><strong>{{ t("footer.weekdays") }}:</strong><br />09.00 - 22.00 CET</p>
-          <p><strong>{{ t("footer.saturday") }}:</strong><br />10.00 - 14.00 CET</p>
+          <p>
+            <strong>{{ t('footer.weekdays') }}:</strong><br />09.00 - 22.00 CET
+          </p>
+          <p>
+            <strong>{{ t('footer.saturday') }}:</strong><br />10.00 - 14.00 CET
+          </p>
         </div>
       </div>
 
@@ -41,7 +47,7 @@ const { t } = useI18n();
         <h3
           class="font-bold text-gray-900 dark:text-white mb-4 uppercase text-xs tracking-wider"
         >
-          {{ t("footer.followUs") }}
+          {{ t('footer.followUs') }}
         </h3>
         <div class="flex gap-4">
           <UButton
@@ -71,10 +77,18 @@ const { t } = useI18n();
         class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400"
       >
         <div class="flex flex-col gap-1">
-          <p>{{ t("footer.rights", { year: new Date().getFullYear() }) }}</p>
+          <p>{{ t('footer.rights', { year: new Date().getFullYear() }) }}</p>
           <div class="flex gap-4">
-            <NuxtLink to="/privacy" class="hover:text-primary transition-colors">{{ t("footer.privacyPolicy") }}</NuxtLink>
-            <NuxtLink to="/terms" class="hover:text-primary transition-colors">{{ t("footer.termsOfUse") }}</NuxtLink>
+            <NuxtLink
+              to="/privacy"
+              class="hover:text-primary transition-colors"
+              >{{ t('footer.privacyPolicy') }}</NuxtLink
+            >
+            <NuxtLink
+              to="/terms"
+              class="hover:text-primary transition-colors"
+              >{{ t('footer.termsOfUse') }}</NuxtLink
+            >
           </div>
         </div>
         <div class="flex items-center gap-4 mt-4 md:mt-0 opacity-70">

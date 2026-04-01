@@ -1,17 +1,17 @@
 // eslint.config.mjs
-import withNuxt from "./.nuxt/eslint.config.mjs";
-import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import withNuxt from './.nuxt/eslint.config.mjs';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
 export default withNuxt(eslintPluginPrettierRecommended, {
   rules: {
-    "prettier/prettier": [
-      "error",
+    'prettier/prettier': [
+      'error',
       {
-        singleQuotes: true,
+        singleQuote: true,
         semi: true,
-        endOfLine: "auto",
+        endOfLine: 'auto',
       },
     ],
-    "vue/no-multiple-template-root": "off",
+    'vue/no-multiple-template-root': 'off',
   },
 });

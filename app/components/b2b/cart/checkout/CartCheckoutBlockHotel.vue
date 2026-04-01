@@ -11,7 +11,13 @@ import { useSalePrice } from '~/composables/useSalePrice';
 type PreCheckState =
   | { status: 'loading' }
   | { status: 'error'; message: string }
-  | { status: 'ready'; bookingFlowId: number; remarks: string[]; currentPrice: number; priceChanged: boolean };
+  | {
+      status: 'ready';
+      bookingFlowId: number;
+      remarks: string[];
+      currentPrice: number;
+      priceChanged: boolean;
+    };
 
 const props = defineProps<{
   item: CartItemHotel;
@@ -37,17 +43,22 @@ const nights = computed(() =>
   ),
 );
 
-const rooms = computed(() => props.item.searchParams.rooms ?? [{ adults: 2, children: [] }]);
+const rooms = computed(
+  () => props.item.searchParams.rooms ?? [{ adults: 2, children: [] }],
+);
 
 const pricePerRoom = computed(() => {
-  const net = props.preCheck.status === 'ready'
-    ? props.preCheck.currentPrice
-    : props.item.room.price;
+  const net =
+    props.preCheck.status === 'ready'
+      ? props.preCheck.currentPrice
+      : props.item.room.price;
   return net / rooms.value.length;
 });
 
 const totalNetPrice = computed(() =>
-  props.preCheck.status === 'ready' ? props.preCheck.currentPrice : props.item.room.price,
+  props.preCheck.status === 'ready'
+    ? props.preCheck.currentPrice
+    : props.item.room.price,
 );
 
 const totalSalePrice = computed(() => salePrice(totalNetPrice.value));
@@ -88,24 +99,30 @@ type PolicyRow = {
 const policyRows = computed((): PolicyRow[] => {
   const p = props.item.room.cancellationPolicy;
   if (!p.refundable) {
-    return [{
-      label: t('hotels.nonRefundable'),
-      color: 'error',
-      from: '—',
-      to: '—',
-      amount: `$${totalNetPrice.value.toFixed(2)}`,
-    }];
+    return [
+      {
+        label: t('hotels.nonRefundable'),
+        color: 'error',
+        from: '—',
+        to: '—',
+        amount: `$${totalNetPrice.value.toFixed(2)}`,
+      },
+    ];
   }
   if (!p.penaltyFrom) {
-    return [{
-      label: t('hotels.freeCancellation'),
-      color: 'success',
-      from: t('cart.checkout.blocks.cancellationNow'),
-      to: fmtDate(props.item.searchParams.checkIn),
-      amount: '$0.00',
-    }];
+    return [
+      {
+        label: t('hotels.freeCancellation'),
+        color: 'success',
+        from: t('cart.checkout.blocks.cancellationNow'),
+        to: fmtDate(props.item.searchParams.checkIn),
+        amount: '$0.00',
+      },
+    ];
   }
-  const freeTo = format(subDays(parseISO(p.penaltyFrom), 1), 'd MMM yyyy', { locale: es });
+  const freeTo = format(subDays(parseISO(p.penaltyFrom), 1), 'd MMM yyyy', {
+    locale: es,
+  });
   const rows: PolicyRow[] = [
     {
       label: t('hotels.freeCancellation'),
@@ -133,8 +150,13 @@ const policyRows = computed((): PolicyRow[] => {
     <!-- Header band — full width via UCard native header -->
     <template #header>
       <div class="flex items-center gap-2">
-        <UIcon name="i-heroicons-building-office-2" class="w-4 h-4 text-green-600 dark:text-green-400" />
-        <span class="text-xs font-bold text-green-700 dark:text-green-400 uppercase tracking-wide">
+        <UIcon
+          name="i-heroicons-building-office-2"
+          class="w-4 h-4 text-green-600 dark:text-green-400"
+        />
+        <span
+          class="text-xs font-bold text-green-700 dark:text-green-400 uppercase tracking-wide"
+        >
           {{ t('cart.checkout.blocks.hotel') }}
         </span>
         <span class="text-xs text-gray-400 dark:text-gray-500 ml-auto">
@@ -152,7 +174,6 @@ const policyRows = computed((): PolicyRow[] => {
     </template>
 
     <div class="flex flex-col gap-4">
-
       <!-- Hotel identity: photo + stars + name + address -->
       <div class="flex gap-3">
         <img
@@ -169,10 +190,15 @@ const policyRows = computed((): PolicyRow[] => {
               class="w-3.5 h-3.5 text-amber-400"
             />
           </div>
-          <p class="text-sm font-bold text-gray-900 dark:text-white leading-tight">
+          <p
+            class="text-sm font-bold text-gray-900 dark:text-white leading-tight"
+          >
             {{ item.hotel.name }}
           </p>
-          <p v-if="item.hotel.address" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 flex items-center gap-1">
+          <p
+            v-if="item.hotel.address"
+            class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 flex items-center gap-1"
+          >
             <UIcon name="i-heroicons-map-pin" class="w-3 h-3 shrink-0" />
             {{ item.hotel.address }}
           </p>
@@ -180,46 +206,82 @@ const policyRows = computed((): PolicyRow[] => {
       </div>
 
       <!-- Dates grid -->
-      <div class="grid grid-cols-4 divide-x divide-gray-100 dark:divide-gray-800 border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-900/40">
+      <div
+        class="grid grid-cols-4 divide-x divide-gray-100 dark:divide-gray-800 border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-900/40"
+      >
         <div class="px-3 py-2">
-          <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">{{ t('cart.checkout.blocks.checkIn') }}</p>
-          <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">{{ fmtDate(item.searchParams.checkIn) }}</p>
+          <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">
+            {{ t('cart.checkout.blocks.checkIn') }}
+          </p>
+          <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">
+            {{ fmtDate(item.searchParams.checkIn) }}
+          </p>
         </div>
         <div class="px-3 py-2">
-          <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">{{ t('cart.checkout.blocks.checkOut') }}</p>
-          <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">{{ fmtDate(item.searchParams.checkOut) }}</p>
+          <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">
+            {{ t('cart.checkout.blocks.checkOut') }}
+          </p>
+          <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">
+            {{ fmtDate(item.searchParams.checkOut) }}
+          </p>
         </div>
         <div class="px-3 py-2">
-          <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">{{ t('cart.checkout.blocks.nights') }}</p>
-          <p class="text-base font-black text-gray-900 dark:text-white">{{ nights }}</p>
+          <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">
+            {{ t('cart.checkout.blocks.nights') }}
+          </p>
+          <p class="text-base font-black text-gray-900 dark:text-white">
+            {{ nights }}
+          </p>
         </div>
         <div class="px-3 py-2">
-          <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">{{ t('cart.checkout.blocks.regimen') }}</p>
-          <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">{{ getRegimenLabel(item.room.regimen) }}</p>
+          <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">
+            {{ t('cart.checkout.blocks.regimen') }}
+          </p>
+          <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">
+            {{ getRegimenLabel(item.room.regimen) }}
+          </p>
         </div>
       </div>
 
       <!-- Room rows: one per pax entry -->
       <div class="flex flex-col gap-2">
-        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">{{ t('cart.checkout.blocks.rooms') }}</p>
+        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide">
+          {{ t('cart.checkout.blocks.rooms') }}
+        </p>
         <div
           v-for="(room, i) in rooms"
           :key="i"
           class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-800 rounded-lg px-3 py-2"
         >
           <div class="flex-1 min-w-0">
-            <p class="text-xs font-semibold text-gray-900 dark:text-white">{{ item.room.name }}</p>
+            <p class="text-xs font-semibold text-gray-900 dark:text-white">
+              {{ item.room.name }}
+            </p>
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              {{ room.adults }} {{ room.adults !== 1 ? t('hotels.search.adults') : t('hotels.search.adult') }}{{ fmtChildren(room.children) }}
+              {{ room.adults }}
+              {{
+                room.adults !== 1
+                  ? t('hotels.search.adults')
+                  : t('hotels.search.adult')
+              }}{{ fmtChildren(room.children) }}
             </p>
           </div>
           <div class="text-right shrink-0">
-            <p class="text-xs text-gray-400">{{ t('cart.checkout.blocks.salePrice', { n: nights }) }}</p>
+            <p class="text-xs text-gray-400">
+              {{ t('cart.checkout.blocks.salePrice', { n: nights }) }}
+            </p>
             <p class="text-sm font-bold text-gray-900 dark:text-white">
-              ${{ salePrice(pricePerRoom).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+              ${{
+                salePrice(pricePerRoom).toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              }}
             </p>
             <p v-if="netPriceVisible" class="text-[10px] text-gray-400">
-              {{ t('cart.checkout.blocks.netPrice', { n: nights }) }}: ${{ pricePerRoom.toFixed(2) }}
+              {{ t('cart.checkout.blocks.netPrice', { n: nights }) }}: ${{
+                pricePerRoom.toFixed(2)
+              }}
             </p>
           </div>
         </div>
@@ -236,14 +298,28 @@ const policyRows = computed((): PolicyRow[] => {
 
       <!-- Full cancellation policy table -->
       <div>
-        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wide mb-2">{{ t('cart.checkout.blocks.cancellationPolicy') }}</p>
-        <table class="w-full text-xs border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden">
+        <p
+          class="text-[9px] font-bold text-gray-400 uppercase tracking-wide mb-2"
+        >
+          {{ t('cart.checkout.blocks.cancellationPolicy') }}
+        </p>
+        <table
+          class="w-full text-xs border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden"
+        >
           <thead>
             <tr class="bg-gray-50 dark:bg-gray-900/40">
-              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">{{ t('cart.checkout.blocks.cancellationStatus') }}</th>
-              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">{{ t('cart.checkout.blocks.cancellationFrom') }}</th>
-              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">{{ t('cart.checkout.blocks.cancellationTo') }}</th>
-              <th class="text-right px-3 py-1.5 font-semibold text-gray-500">{{ t('cart.checkout.blocks.cancellationAmount') }}</th>
+              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">
+                {{ t('cart.checkout.blocks.cancellationStatus') }}
+              </th>
+              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">
+                {{ t('cart.checkout.blocks.cancellationFrom') }}
+              </th>
+              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">
+                {{ t('cart.checkout.blocks.cancellationTo') }}
+              </th>
+              <th class="text-right px-3 py-1.5 font-semibold text-gray-500">
+                {{ t('cart.checkout.blocks.cancellationAmount') }}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -253,11 +329,21 @@ const policyRows = computed((): PolicyRow[] => {
               class="border-t border-gray-100 dark:border-gray-800"
             >
               <td class="px-3 py-1.5">
-                <UBadge :color="row.color" variant="soft" size="xs">{{ row.label }}</UBadge>
+                <UBadge :color="row.color" variant="soft" size="xs">{{
+                  row.label
+                }}</UBadge>
               </td>
-              <td class="px-3 py-1.5 text-gray-600 dark:text-gray-400">{{ row.from }}</td>
-              <td class="px-3 py-1.5 text-gray-600 dark:text-gray-400">{{ row.to }}</td>
-              <td class="px-3 py-1.5 text-right text-gray-700 dark:text-gray-300">{{ row.amount }}</td>
+              <td class="px-3 py-1.5 text-gray-600 dark:text-gray-400">
+                {{ row.from }}
+              </td>
+              <td class="px-3 py-1.5 text-gray-600 dark:text-gray-400">
+                {{ row.to }}
+              </td>
+              <td
+                class="px-3 py-1.5 text-right text-gray-700 dark:text-gray-300"
+              >
+                {{ row.amount }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -268,7 +354,12 @@ const policyRows = computed((): PolicyRow[] => {
         v-if="preCheck.status === 'ready' && preCheck.priceChanged"
         color="warning"
         variant="soft"
-        :description="t('cart.checkout.blocks.priceChanged', { old: item.room.price.toFixed(2), new: preCheck.currentPrice.toFixed(2) })"
+        :description="
+          t('cart.checkout.blocks.priceChanged', {
+            old: item.room.price.toFixed(2),
+            new: preCheck.currentPrice.toFixed(2),
+          })
+        "
         icon="i-heroicons-exclamation-triangle"
         :ui="{ description: 'text-xs' }"
       />
@@ -278,12 +369,20 @@ const policyRows = computed((): PolicyRow[] => {
         v-if="preCheck.status === 'ready' && preCheck.remarks.length > 0"
         class="border border-blue-200 dark:border-blue-800 rounded-lg overflow-hidden"
       >
-        <summary class="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 px-3 py-2.5 cursor-pointer list-none">
-          <UIcon name="i-heroicons-information-circle" class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+        <summary
+          class="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 px-3 py-2.5 cursor-pointer list-none"
+        >
+          <UIcon
+            name="i-heroicons-information-circle"
+            class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0"
+          />
           <span class="text-xs font-semibold text-blue-700 dark:text-blue-300">
             {{ t('cart.checkout.blocks.importantInfo') }}
           </span>
-          <UIcon name="i-heroicons-chevron-down" class="w-3.5 h-3.5 text-blue-500 ml-auto" />
+          <UIcon
+            name="i-heroicons-chevron-down"
+            class="w-3.5 h-3.5 text-blue-500 ml-auto"
+          />
         </summary>
         <div class="px-3 py-2.5 bg-white dark:bg-gray-900">
           <ul class="list-disc list-inside space-y-1">
@@ -312,7 +411,6 @@ const policyRows = computed((): PolicyRow[] => {
           @update:model-value="emit('update:specialRequest', item.id, $event)"
         />
       </UFormField>
-
     </div>
 
     <!-- Footer: sale price total -->
@@ -323,10 +421,20 @@ const policyRows = computed((): PolicyRow[] => {
         </span>
         <div class="text-right">
           <p class="text-lg font-black text-primary-600 dark:text-primary-400">
-            ${{ totalSalePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+            ${{
+              totalSalePrice.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            }}
           </p>
           <p v-if="netPriceVisible" class="text-xs text-gray-400">
-            {{ t('cart.checkout.blocks.netPrice', { n: nights }) }}: ${{ totalNetPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+            {{ t('cart.checkout.blocks.netPrice', { n: nights }) }}: ${{
+              totalNetPrice.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            }}
           </p>
         </div>
       </div>

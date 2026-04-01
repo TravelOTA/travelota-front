@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { reactive } from "vue";
-import { createLoginSchema, type LoginInput } from "~/utils/schemas";
-import { useAuth } from "~/composables/useAuth";
-import type { FormSubmitEvent } from "@nuxt/ui";
+import { reactive } from 'vue';
+import { createLoginSchema, type LoginInput } from '~/utils/schemas';
+import { useAuth } from '~/composables/useAuth';
+import type { FormSubmitEvent } from '@nuxt/ui';
 
 const { t } = useI18n();
 const loginSchema = createLoginSchema(t);
 
 const form = reactive<LoginInput>({
-  email: "",
-  password: "",
+  email: '',
+  password: '',
   rememberMe: false,
 });
 
-const { login, loginAs } = useAuth()
+const { login, loginAs } = useAuth();
 const isDev = import.meta.dev;
 
 const loginError = ref<string | null>(null);
@@ -23,9 +23,13 @@ async function onSubmit(event: FormSubmitEvent<LoginInput>) {
   loginError.value = null;
   isSubmitting.value = true;
   try {
-    await login(event.data.email, event.data.password, event.data.rememberMe ?? false);
+    await login(
+      event.data.email,
+      event.data.password,
+      event.data.rememberMe ?? false,
+    );
   } catch {
-    loginError.value = t("auth.login.errorInvalidCredentials");
+    loginError.value = t('auth.login.errorInvalidCredentials');
   } finally {
     isSubmitting.value = false;
   }
@@ -125,7 +129,10 @@ async function onSubmit(event: FormSubmitEvent<LoginInput>) {
       </UButton>
     </UForm>
 
-    <div v-if="isDev" class="mt-8 border-t border-gray-100 dark:border-gray-800 pt-6">
+    <div
+      v-if="isDev"
+      class="mt-8 border-t border-gray-100 dark:border-gray-800 pt-6"
+    >
       <p
         class="text-xs text-center text-gray-500 font-bold uppercase tracking-wider mb-4"
       >

@@ -2,8 +2,13 @@
 import { describe, it, expect, vi } from 'vitest';
 import { ref, computed } from 'vue';
 
+import { useSalePrice } from '~/composables/useSalePrice';
+
 vi.mock('#imports', () => ({
-  useAsyncData: (_key: string, fn: () => unknown) => ({ data: ref({ markupPercentage: 10 }), refresh: vi.fn() }),
+  useAsyncData: (_key: string, _fn: () => unknown) => ({
+    data: ref({ markupPercentage: 10 }),
+    refresh: vi.fn(),
+  }),
 }));
 
 vi.mock('~/composables/useAgency', () => ({
@@ -11,8 +16,6 @@ vi.mock('~/composables/useAgency', () => ({
     agency: computed(() => ({ markupPercentage: 10 })),
   }),
 }));
-
-import { useSalePrice } from '~/composables/useSalePrice';
 
 describe('useSalePrice', () => {
   it('computes sale price with markup', () => {

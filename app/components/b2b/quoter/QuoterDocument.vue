@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { useQuoter } from "~/composables/useQuoter";
-import { useAgency } from "~/composables/useAgency";
+import { computed } from 'vue';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { useQuoter } from '~/composables/useQuoter';
+import { useAgency } from '~/composables/useAgency';
 
 const { items, totalSellPrice, calculateItemSellPrice } = useQuoter();
 const { agency } = useAgency();
@@ -14,9 +14,9 @@ const currentDate = computed(() => {
 });
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'USD',
   }).format(amount);
 };
 </script>
@@ -32,16 +32,16 @@ const formatCurrency = (amount: number) => {
     >
       <div>
         <h1 class="text-3xl font-black text-primary-600 mb-2 tracking-tight">
-          {{ t("quoter.documentTitle") }}
+          {{ t('quoter.documentTitle') }}
         </h1>
         <p class="text-sm text-gray-500 font-medium">
-          {{ t("quoter.documentReference") }}:
+          {{ t('quoter.documentReference') }}:
           <span class="font-mono text-gray-900"
             >COT-{{ Math.floor(Math.random() * 100000) }}</span
           >
         </p>
         <p class="text-sm text-gray-500 font-medium">
-          {{ t("quoter.documentDate") }}: {{ currentDate }}
+          {{ t('quoter.documentDate') }}: {{ currentDate }}
         </p>
       </div>
 
@@ -67,7 +67,7 @@ const formatCurrency = (amount: number) => {
         class="w-5 h-5 text-primary-500 mt-0.5 shrink-0"
       />
       <p class="text-sm text-gray-700 leading-relaxed">
-        {{ t("quoter.documentWarning") }}
+        {{ t('quoter.documentWarning') }}
       </p>
     </div>
 
@@ -76,16 +76,20 @@ const formatCurrency = (amount: number) => {
       <h2
         class="text-xl font-bold mb-4 text-gray-900 border-b border-gray-200 pb-2"
       >
-        {{ t("quoter.documentServicesHeader") }}
+        {{ t('quoter.documentServicesHeader') }}
       </h2>
 
       <table class="w-full text-left border-collapse">
         <thead>
           <tr class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
-            <th class="p-3 font-semibold rounded-tl-md">{{ t("quoter.tableSelectedService") }}</th>
-            <th class="p-3 font-semibold">{{ t("quoter.documentLocation") }}</th>
+            <th class="p-3 font-semibold rounded-tl-md">
+              {{ t('quoter.tableSelectedService') }}
+            </th>
+            <th class="p-3 font-semibold">
+              {{ t('quoter.documentLocation') }}
+            </th>
             <th class="p-3 text-right font-semibold rounded-tr-md">
-              {{ t("quoter.documentTotalPvp") }}
+              {{ t('quoter.documentTotalPvp') }}
             </th>
           </tr>
         </thead>
@@ -118,7 +122,7 @@ const formatCurrency = (amount: number) => {
         <p
           class="text-sm text-gray-500 font-bold uppercase tracking-widest mb-1"
         >
-          {{ t("quoter.documentTotalPrice") }}
+          {{ t('quoter.documentTotalPrice') }}
         </p>
         <p
           class="text-4xl font-black text-primary-600 font-mono tracking-tighter"
@@ -132,11 +136,9 @@ const formatCurrency = (amount: number) => {
     <div
       class="border-t border-gray-200 pt-6 mt-12 text-center text-xs text-gray-400"
     >
-      <p class="mb-1">
-        {{ t("quoter.documentFooter1") }} {{ agency.name }}.
-      </p>
+      <p class="mb-1">{{ t('quoter.documentFooter1') }} {{ agency.name }}.</p>
       <p>
-        {{ t("quoter.documentFooter2") }}
+        {{ t('quoter.documentFooter2') }}
       </p>
     </div>
   </div>

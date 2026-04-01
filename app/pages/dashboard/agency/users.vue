@@ -1,54 +1,57 @@
 <script setup lang="ts">
-useHead({ title: "Equipo de Ventas - TravelOTA" });
+useHead({ title: 'Equipo de Ventas - TravelOTA' });
 const { t } = useI18n();
 
 interface AgencyUser {
   id: string;
   name: string;
   email: string;
-  role: "Admin Agencia" | "Vendedor";
-  status: "Activo" | "Inactivo";
+  role: 'Admin Agencia' | 'Vendedor';
+  status: 'Activo' | 'Inactivo';
   lastLogin: string;
 }
 
 const users = ref<AgencyUser[]>([
   {
-    id: "U-851",
-    name: "Juan Pérez",
-    email: "juan@miagencia.com",
-    role: "Vendedor",
-    status: "Activo",
-    lastLogin: "Hace 2 horas",
+    id: 'U-851',
+    name: 'Juan Pérez',
+    email: 'juan@miagencia.com',
+    role: 'Vendedor',
+    status: 'Activo',
+    lastLogin: 'Hace 2 horas',
   },
   {
-    id: "U-852",
-    name: "María Gómez",
-    email: "maria@miagencia.com",
-    role: "Admin Agencia",
-    status: "Activo",
-    lastLogin: "Ayer",
+    id: 'U-852',
+    name: 'María Gómez',
+    email: 'maria@miagencia.com',
+    role: 'Admin Agencia',
+    status: 'Activo',
+    lastLogin: 'Ayer',
   },
   {
-    id: "U-853",
-    name: "Carlos López",
-    email: "carlos@miagencia.com",
-    role: "Vendedor",
-    status: "Inactivo",
-    lastLogin: "Hace 1 mes",
+    id: 'U-853',
+    name: 'Carlos López',
+    email: 'carlos@miagencia.com',
+    role: 'Vendedor',
+    status: 'Inactivo',
+    lastLogin: 'Hace 1 mes',
   },
 ]);
 
 // ── Table config ──
 const columns = computed(() => [
-  { accessorKey: "name", header: t('agency.users.tableHeaders.user') },
-  { accessorKey: "role", header: t('agency.users.tableHeaders.role') },
-  { accessorKey: "status", header: t('agency.users.tableHeaders.status') },
-  { accessorKey: "lastLogin", header: t('agency.users.tableHeaders.lastLogin') },
-  { id: "actions" },
+  { accessorKey: 'name', header: t('agency.users.tableHeaders.user') },
+  { accessorKey: 'role', header: t('agency.users.tableHeaders.role') },
+  { accessorKey: 'status', header: t('agency.users.tableHeaders.status') },
+  {
+    accessorKey: 'lastLogin',
+    header: t('agency.users.tableHeaders.lastLogin'),
+  },
+  { id: 'actions' },
 ]);
 
-const searchQuery = ref("");
-const statusFilter = ref("Todos");
+const searchQuery = ref('');
+const statusFilter = ref('Todos');
 
 const filteredUsers = computed(() => {
   return users.value.filter((user) => {
@@ -56,7 +59,7 @@ const filteredUsers = computed(() => {
       user.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchStatus =
-      statusFilter.value === "Todos" || user.status === statusFilter.value;
+      statusFilter.value === 'Todos' || user.status === statusFilter.value;
     return matchQuery && matchStatus;
   });
 });
@@ -67,12 +70,12 @@ const isEditing = ref(false);
 const formUser = ref<Partial<AgencyUser> & { password?: string }>({});
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const emailValid = computed(() => emailRegex.test(formUser.value.email || ""));
+const emailValid = computed(() => emailRegex.test(formUser.value.email || ''));
 const emailTouched = ref(false);
 const showPassword = ref(false);
 
 const isFormValid = computed(() => {
-  const isNameValid = (formUser.value.name?.trim() || "") !== "";
+  const isNameValid = (formUser.value.name?.trim() || '') !== '';
   const isPassValid = isEditing.value
     ? !formUser.value.password || formUser.value.password.length >= 8
     : (formUser.value.password?.length || 0) >= 8;
@@ -84,11 +87,11 @@ function openCreateModal() {
   emailTouched.value = false;
   showPassword.value = false;
   formUser.value = {
-    name: "",
-    email: "",
-    password: "",
-    role: "Vendedor",
-    status: "Activo",
+    name: '',
+    email: '',
+    password: '',
+    role: 'Vendedor',
+    status: 'Activo',
   };
   isUserModalOpen.value = true;
 }
@@ -97,7 +100,7 @@ function openEditModal(user: AgencyUser) {
   isEditing.value = true;
   emailTouched.value = false;
   showPassword.value = false;
-  formUser.value = { ...user, password: "" };
+  formUser.value = { ...user, password: '' };
   isUserModalOpen.value = true;
 }
 
@@ -116,16 +119,16 @@ function saveUser() {
       id: `U-${Math.floor(Math.random() * 1000)}`,
       name: formUser.value.name as string,
       email: formUser.value.email as string,
-      role: formUser.value.role as "Admin Agencia" | "Vendedor",
-      status: formUser.value.status as "Activo" | "Inactivo",
-      lastLogin: "Nunca",
+      role: formUser.value.role as 'Admin Agencia' | 'Vendedor',
+      status: formUser.value.status as 'Activo' | 'Inactivo',
+      lastLogin: 'Nunca',
     });
   }
   isUserModalOpen.value = false;
 }
 
 function toggleUserStatus(user: AgencyUser) {
-  user.status = user.status === "Activo" ? "Inactivo" : "Activo";
+  user.status = user.status === 'Activo' ? 'Inactivo' : 'Activo';
 }
 </script>
 
@@ -139,7 +142,8 @@ function toggleUserStatus(user: AgencyUser) {
           to="/dashboard/agency"
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" /> {{ t('agency.users.backToAgency') }}
+          <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
+          {{ t('agency.users.backToAgency') }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
           {{ t('agency.users.title') }}
@@ -211,7 +215,11 @@ function toggleUserStatus(user: AgencyUser) {
               "
               class="mr-1 w-3 h-3"
             />
-            {{ row.original.role === 'Admin Agencia' ? t('agency.users.roles.adminAgency') : t('agency.users.roles.seller') }}
+            {{
+              row.original.role === 'Admin Agencia'
+                ? t('agency.users.roles.adminAgency')
+                : t('agency.users.roles.seller')
+            }}
           </UBadge>
         </template>
 
@@ -230,7 +238,11 @@ function toggleUserStatus(user: AgencyUser) {
               v-else
               class="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1.5"
             ></span>
-            {{ row.original.status === 'Activo' ? t('agency.users.statuses.active') : t('agency.users.statuses.inactive') }}
+            {{
+              row.original.status === 'Activo'
+                ? t('agency.users.statuses.active')
+                : t('agency.users.statuses.inactive')
+            }}
           </UBadge>
         </template>
 
@@ -272,7 +284,11 @@ function toggleUserStatus(user: AgencyUser) {
     <!-- Modal Formulario -->
     <UModal
       v-model:open="isUserModalOpen"
-      :title="isEditing ? t('agency.users.modal.edit') : t('agency.users.modal.create')"
+      :title="
+        isEditing
+          ? t('agency.users.modal.edit')
+          : t('agency.users.modal.create')
+      "
     >
       <template #body>
         <form class="space-y-4" @submit.prevent="saveUser">
@@ -295,7 +311,11 @@ function toggleUserStatus(user: AgencyUser) {
               name="email"
               required
               class="sm:col-span-2"
-              :error="emailTouched && !emailValid && t('agency.users.modal.emailError')"
+              :error="
+                emailTouched &&
+                !emailValid &&
+                t('agency.users.modal.emailError')
+              "
             >
               <UInput
                 v-model="formUser.email"
@@ -307,7 +327,11 @@ function toggleUserStatus(user: AgencyUser) {
             </UFormField>
 
             <UFormField
-              :label="isEditing ? t('agency.users.modal.newPassword') : t('agency.users.modal.password')"
+              :label="
+                isEditing
+                  ? t('agency.users.modal.newPassword')
+                  : t('agency.users.modal.password')
+              "
               name="password"
               :required="!isEditing"
               class="sm:col-span-2"
@@ -338,14 +362,21 @@ function toggleUserStatus(user: AgencyUser) {
               </UInput>
             </UFormField>
 
-            <UFormField :label="t('agency.users.modal.role')" name="role" required>
+            <UFormField
+              :label="t('agency.users.modal.role')"
+              name="role"
+              required
+            >
               <USelectMenu
                 v-model="formUser.role"
                 :items="['Vendedor', 'Admin Agencia']"
               />
             </UFormField>
 
-            <UFormField :label="t('agency.users.modal.initialStatus')" name="status">
+            <UFormField
+              :label="t('agency.users.modal.initialStatus')"
+              name="status"
+            >
               <USelectMenu
                 v-model="formUser.status"
                 :items="['Activo', 'Inactivo']"
@@ -365,7 +396,11 @@ function toggleUserStatus(user: AgencyUser) {
           />
           <UButton
             color="primary"
-            :label="isEditing ? t('agency.users.modal.saveChanges') : t('agency.users.modal.sendInvitation')"
+            :label="
+              isEditing
+                ? t('agency.users.modal.saveChanges')
+                : t('agency.users.modal.sendInvitation')
+            "
             :disabled="!isFormValid"
             @click="saveUser"
           />

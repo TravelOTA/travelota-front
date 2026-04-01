@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { t } = useI18n();
-useSeoMeta({ title: t("auth.resetPassword.title") });
+useSeoMeta({ title: t('auth.resetPassword.title') });
 
 const showSuccess = ref(false);
 </script>
@@ -16,7 +16,10 @@ const showSuccess = ref(false);
       <UCard v-else class="text-center">
         <template #header>
           <div class="flex items-center justify-center gap-2">
-            <UIcon name="i-lucide-check-circle" class="w-5 h-5 text-success-500" />
+            <UIcon
+              name="i-lucide-check-circle"
+              class="w-5 h-5 text-success-500"
+            />
             <h3 class="font-semibold text-gray-900 dark:text-white">
               {{ t('auth.resetPassword.successTitle') }}
             </h3>

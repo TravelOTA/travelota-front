@@ -8,7 +8,8 @@ import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
 
 const { t } = useI18n();
-const { items, isDrawerOpen, itemCount, total, removeItem, exportToQuoter } = useCart();
+const { items, isDrawerOpen, itemCount, total, removeItem, exportToQuoter } =
+  useCart();
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 const totalSalePrice = computed(() => salePrice(total.value));
@@ -26,7 +27,11 @@ function handleGoToCheckout() {
 </script>
 
 <template>
-  <USlideover v-model:open="isDrawerOpen" side="right" :ui="{ width: 'max-w-md' }">
+  <USlideover
+    v-model:open="isDrawerOpen"
+    side="right"
+    :ui="{ width: 'max-w-md' }"
+  >
     <template #header>
       <div class="flex items-center justify-between w-full">
         <h2 class="text-base font-bold text-gray-900 dark:text-white">
@@ -58,16 +63,33 @@ function handleGoToCheckout() {
     <template v-if="itemCount > 0" #footer>
       <div class="flex flex-col gap-3 w-full">
         <!-- Total -->
-        <div class="flex flex-col gap-0.5 font-semibold text-gray-900 dark:text-white px-1">
+        <div
+          class="flex flex-col gap-0.5 font-semibold text-gray-900 dark:text-white px-1"
+        >
           <div class="flex items-center justify-between text-base">
             <span>{{ t('cart.total') }}</span>
             <span class="text-primary-600 dark:text-primary-400">
-              ${{ totalSalePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+              ${{
+                totalSalePrice.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              }}
             </span>
           </div>
-          <div v-if="netPriceVisible" class="flex items-center justify-between text-[11px] text-gray-400 font-normal">
+          <div
+            v-if="netPriceVisible"
+            class="flex items-center justify-between text-[11px] text-gray-400 font-normal"
+          >
             <span>neto</span>
-            <span>${{ total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+            <span
+              >${{
+                total.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              }}</span
+            >
           </div>
         </div>
 

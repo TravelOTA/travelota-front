@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useAgencies, type AdminAgencyUser } from "~/composables/useAgencies";
+import { useAgencies, type AdminAgencyUser } from '~/composables/useAgencies';
 import type { ICreditLine } from '#shared/types/wallet';
-import AgencyCreditModal from "~/components/b2b/admin/AgencyCreditModal.vue";
+import AgencyCreditModal from '~/components/b2b/admin/AgencyCreditModal.vue';
 
-definePageMeta({ layout: "dashboard" });
+definePageMeta({ layout: 'dashboard' });
 
 const { t, locale } = useI18n();
 const route = useRoute();
@@ -21,27 +21,31 @@ const {
 const agency = computed(() => getAgencyById(agencyId) ?? null);
 
 useHead({
-  title: computed(() => `${agency.value?.name ?? "Agencia"} - TravelOTA Admin`),
+  title: computed(() => `${agency.value?.name ?? 'Agencia'} - TravelOTA Admin`),
 });
 
 // ── Tabs ───────────────────────────────────────────────────────────────────
-const activeTab = ref("info");
+const activeTab = ref('info');
 const tabs = computed(() => [
   {
-    key: "info",
+    key: 'info',
     label: t('admin.agencyDetail.tabInfo'),
-    icon: "i-heroicons-information-circle",
+    icon: 'i-heroicons-information-circle',
   },
-  { key: "users", label: t('admin.agencyDetail.tabUsers'), icon: "i-heroicons-users" },
+  {
+    key: 'users',
+    label: t('admin.agencyDetail.tabUsers'),
+    icon: 'i-heroicons-users',
+  },
 ]);
 
 // ── Status helpers ─────────────────────────────────────────────────────────
 function statusColor(s: string) {
-  if (s === "Activa") return "success";
-  if (s === "Pendiente") return "warning";
-  if (s === "Bloqueada") return "error";
-  if (s === "Denegada") return "neutral";
-  return "neutral";
+  if (s === 'Activa') return 'success';
+  if (s === 'Pendiente') return 'warning';
+  if (s === 'Bloqueada') return 'error';
+  if (s === 'Denegada') return 'neutral';
+  return 'neutral';
 }
 
 const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
@@ -49,14 +53,14 @@ const groupNames = computed(() => agencyGroups.value.map((g) => g.name));
 
 // ── Aprobar modal ──────────────────────────────────────────────────────────
 const isApproveOpen = ref(false);
-const selectedGroupName = ref<string>("");
+const selectedGroupName = ref<string>('');
 const selectedGroup = computed(
   () =>
     agencyGroups.value.find((g) => g.name === selectedGroupName.value) ?? null,
 );
 
 function openApprove() {
-  selectedGroupName.value = "";
+  selectedGroupName.value = '';
   isApproveOpen.value = true;
 }
 
@@ -70,11 +74,11 @@ function confirmApprove() {
 // ── Edit Info modal ────────────────────────────────────────────────────────
 const isEditOpen = ref(false);
 const editForm = ref({
-  name: "",
-  country: "",
-  email: "",
-  phone: "",
-  agencyGroup: "",
+  name: '',
+  country: '',
+  email: '',
+  phone: '',
+  agencyGroup: '',
 });
 
 function openEdit() {
@@ -84,7 +88,7 @@ function openEdit() {
     country: agency.value.country,
     email: agency.value.email,
     phone: agency.value.phone,
-    agencyGroup: agency.value.agencyGroup ?? "",
+    agencyGroup: agency.value.agencyGroup ?? '',
   };
   isEditOpen.value = true;
 }
@@ -109,30 +113,30 @@ function saveEdit() {
 // ── Whitelabel modal ───────────────────────────────────────────────────────
 const isWhitelabelOpen = ref(false);
 const whitelabelForm = ref({
-  logo: "",
-  colorPrimario: "",
-  publicEmail: "",
-  publicPhone: "",
+  logo: '',
+  colorPrimario: '',
+  publicEmail: '',
+  publicPhone: '',
 });
 
 const colorMap: Record<string, string> = {
-  red: "#ef4444",
-  orange: "#f97316",
-  amber: "#f59e0b",
-  yellow: "#eab308",
-  lime: "#84cc16",
-  green: "#22c55e",
-  emerald: "#10b981",
-  teal: "#14b8a6",
-  cyan: "#06b6d4",
-  sky: "#0ea5e9",
-  blue: "#3b82f6",
-  indigo: "#6366f1",
-  violet: "#8b5cf6",
-  purple: "#a855f7",
-  fuchsia: "#d946ef",
-  pink: "#ec4899",
-  rose: "#f43f5e",
+  red: '#ef4444',
+  orange: '#f97316',
+  amber: '#f59e0b',
+  yellow: '#eab308',
+  lime: '#84cc16',
+  green: '#22c55e',
+  emerald: '#10b981',
+  teal: '#14b8a6',
+  cyan: '#06b6d4',
+  sky: '#0ea5e9',
+  blue: '#3b82f6',
+  indigo: '#6366f1',
+  violet: '#8b5cf6',
+  purple: '#a855f7',
+  fuchsia: '#d946ef',
+  pink: '#ec4899',
+  rose: '#f43f5e',
 };
 const themeColors = Object.keys(colorMap);
 
@@ -164,7 +168,7 @@ function saveWhitelabel() {
 }
 
 // ── Users tab ──────────────────────────────────────────────────────────────
-const userSearch = ref("");
+const userSearch = ref('');
 const filteredUsers = computed(() =>
   (agency.value?.users ?? []).filter(
     (u) =>
@@ -175,17 +179,17 @@ const filteredUsers = computed(() =>
 );
 
 function toggleUserStatus(user: AdminAgencyUser) {
-  const newStatus = user.status === "Activo" ? "Inactivo" : "Activo";
+  const newStatus = user.status === 'Activo' ? 'Inactivo' : 'Activo';
   updateUserStatus(agencyId, user.id, newStatus);
 }
 
 const userColumns = [
-  { accessorKey: "name", header: "Vendedor" },
-  { accessorKey: "email", header: "Email" },
-  { accessorKey: "role", header: "Rol" },
-  { accessorKey: "lastLogin", header: "Último Acceso" },
-  { accessorKey: "status", header: "Estado" },
-  { accessorKey: "userActions", header: "" },
+  { accessorKey: 'name', header: 'Vendedor' },
+  { accessorKey: 'email', header: 'Email' },
+  { accessorKey: 'role', header: 'Rol' },
+  { accessorKey: 'lastLogin', header: 'Último Acceso' },
+  { accessorKey: 'status', header: 'Estado' },
+  { accessorKey: 'userActions', header: '' },
 ];
 
 // ── Credit modal ───────────────────────────────────────────────────────────
@@ -197,12 +201,18 @@ function updateAgencyCreditLine(updated: ICreditLine) {
 }
 
 function formatAdminCurrency(amount: number): string {
-  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD' }).format(amount);
+  return new Intl.NumberFormat(locale.value, {
+    style: 'currency',
+    currency: 'USD',
+  }).format(amount);
 }
 
 const usagePercent = computed(() => {
   if (!agency.value?.credit_line?.limit) return 0;
-  return Math.min((agency.value.credit_line.used / agency.value.credit_line.limit) * 100, 100);
+  return Math.min(
+    (agency.value.credit_line.used / agency.value.credit_line.limit) * 100,
+    100,
+  );
 });
 </script>
 
@@ -298,7 +308,11 @@ const usagePercent = computed(() => {
               :color="agency.status === 'Bloqueada' ? 'success' : 'error'"
               variant="soft"
               size="sm"
-              :label="agency.status === 'Bloqueada' ? t('admin.agencyDetail.actions.activate') : t('admin.agencyDetail.actions.block')"
+              :label="
+                agency.status === 'Bloqueada'
+                  ? t('admin.agencyDetail.actions.activate')
+                  : t('admin.agencyDetail.actions.block')
+              "
               @click="toggleBlock(agencyId)"
             />
             <UButton
@@ -351,7 +365,9 @@ const usagePercent = computed(() => {
                   name="i-heroicons-information-circle"
                   class="w-5 h-5 text-primary-500"
                 />
-                <h2 class="font-bold">{{ t('admin.agencyDetail.generalInfo.title') }}</h2>
+                <h2 class="font-bold">
+                  {{ t('admin.agencyDetail.generalInfo.title') }}
+                </h2>
               </div>
             </template>
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
@@ -427,7 +443,7 @@ const usagePercent = computed(() => {
                   {{ t('admin.agencyDetail.generalInfo.taxId') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ agency.rut || "—" }}
+                  {{ agency.rut || '—' }}
                 </dd>
               </div>
               <div>
@@ -437,7 +453,7 @@ const usagePercent = computed(() => {
                   {{ t('admin.agencyDetail.generalInfo.registeredAddress') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ agency.direccionRegistrada || "—" }}
+                  {{ agency.direccionRegistrada || '—' }}
                 </dd>
               </div>
               <div>
@@ -447,7 +463,7 @@ const usagePercent = computed(() => {
                   {{ t('admin.agencyDetail.generalInfo.contactName') }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ agency.nombreContacto || "—" }}
+                  {{ agency.nombreContacto || '—' }}
                 </dd>
               </div>
               <div>
@@ -480,7 +496,9 @@ const usagePercent = computed(() => {
                   <UIcon name="i-heroicons-users" class="w-5 h-5" />
                 </div>
                 <div>
-                  <p class="text-xs text-gray-500">{{ t('admin.agencyDetail.generalInfo.users') }}</p>
+                  <p class="text-xs text-gray-500">
+                    {{ t('admin.agencyDetail.generalInfo.users') }}
+                  </p>
                   <p class="text-2xl font-bold">
                     {{ agency.users?.length ?? 0 }}
                   </p>
@@ -523,18 +541,29 @@ const usagePercent = computed(() => {
               <template #header>
                 <div class="flex items-center justify-between">
                   <h3 class="text-sm font-bold flex items-center gap-2">
-                    <UIcon name="i-heroicons-credit-card" class="w-4 h-4 text-primary-500" />
+                    <UIcon
+                      name="i-heroicons-credit-card"
+                      class="w-4 h-4 text-primary-500"
+                    />
                     {{ t('agency.wallet.credit.title') }}
                   </h3>
-                  <UButton size="xs" variant="ghost" @click="isCreditDetailOpen = true">
+                  <UButton
+                    size="xs"
+                    variant="ghost"
+                    @click="isCreditDetailOpen = true"
+                  >
                     {{ t('agency.wallet.credit.manage') }}
                   </UButton>
                 </div>
               </template>
               <div class="space-y-3">
                 <div class="flex justify-between text-sm">
-                  <span class="text-gray-500">{{ t('agency.wallet.credit.limit') }}</span>
-                  <span class="font-bold">{{ formatAdminCurrency(agency.credit_line.limit) }}</span>
+                  <span class="text-gray-500">{{
+                    t('agency.wallet.credit.limit')
+                  }}</span>
+                  <span class="font-bold">{{
+                    formatAdminCurrency(agency.credit_line.limit)
+                  }}</span>
                 </div>
                 <UProgress
                   v-model="usagePercent"
@@ -542,8 +571,16 @@ const usagePercent = computed(() => {
                   animation="none"
                 />
                 <div class="flex justify-between text-xs text-gray-500">
-                  <span>{{ t('agency.wallet.credit.used') }}: {{ formatAdminCurrency(agency.credit_line.used) }}</span>
-                  <span>{{ t('agency.wallet.credit.available') }}: {{ formatAdminCurrency(agency.credit_line.available) }}</span>
+                  <span
+                    >{{ t('agency.wallet.credit.used') }}:
+                    {{ formatAdminCurrency(agency.credit_line.used) }}</span
+                  >
+                  <span
+                    >{{ t('agency.wallet.credit.available') }}:
+                    {{
+                      formatAdminCurrency(agency.credit_line.available)
+                    }}</span
+                  >
                 </div>
               </div>
             </UCard>
@@ -561,7 +598,9 @@ const usagePercent = computed(() => {
                   name="i-heroicons-users"
                   class="w-5 h-5 text-primary-500"
                 />
-                <h2 class="font-bold">{{ t('admin.agencyDetail.generalInfo.agencyTeam') }}</h2>
+                <h2 class="font-bold">
+                  {{ t('admin.agencyDetail.generalInfo.agencyTeam') }}
+                </h2>
               </div>
               <UButton
                 icon="i-heroicons-user-plus"
@@ -641,7 +680,10 @@ const usagePercent = computed(() => {
       </div>
 
       <!-- ── Edit Info Modal ── -->
-      <UModal v-model:open="isEditOpen" :title="t('admin.agencyDetail.editModal.title')">
+      <UModal
+        v-model:open="isEditOpen"
+        :title="t('admin.agencyDetail.editModal.title')"
+      >
         <template #body>
           <div class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -656,13 +698,21 @@ const usagePercent = computed(() => {
                   icon="i-heroicons-building-storefront"
                 />
               </UFormField>
-              <UFormField :label="t('admin.agencyDetail.editModal.country')" name="edit-country" required>
+              <UFormField
+                :label="t('admin.agencyDetail.editModal.country')"
+                name="edit-country"
+                required
+              >
                 <UInput
                   v-model="editForm.country"
                   icon="i-heroicons-globe-alt"
                 />
               </UFormField>
-              <UFormField :label="t('admin.agencyDetail.editModal.agencyGroup')" name="edit-group" required>
+              <UFormField
+                :label="t('admin.agencyDetail.editModal.agencyGroup')"
+                name="edit-group"
+                required
+              >
                 <USelectMenu
                   v-model="editForm.agencyGroup"
                   :items="groupNames"
@@ -710,7 +760,10 @@ const usagePercent = computed(() => {
       </UModal>
 
       <!-- Aprobar modal -->
-      <UModal v-model:open="isApproveOpen" :title="t('admin.agencies.modals.approve.title')">
+      <UModal
+        v-model:open="isApproveOpen"
+        :title="t('admin.agencies.modals.approve.title')"
+      >
         <template #body>
           <div class="space-y-4">
             <p class="text-sm text-gray-600 dark:text-gray-300">
@@ -718,11 +771,17 @@ const usagePercent = computed(() => {
               <strong>{{ agency?.name }}</strong
               >.
             </p>
-            <UFormField :label="t('admin.agencies.modals.approve.groupField')" name="approveGroup" required>
+            <UFormField
+              :label="t('admin.agencies.modals.approve.groupField')"
+              name="approveGroup"
+              required
+            >
               <USelectMenu
                 v-model="selectedGroupName"
                 :items="groupNames"
-                :placeholder="t('admin.agencies.modals.approve.groupPlaceholder')"
+                :placeholder="
+                  t('admin.agencies.modals.approve.groupPlaceholder')
+                "
                 icon="i-heroicons-user-group"
                 class="w-full"
               />

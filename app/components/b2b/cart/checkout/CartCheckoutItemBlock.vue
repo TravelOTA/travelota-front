@@ -7,7 +7,13 @@ import CartCheckoutBlockHotel from '~/components/b2b/cart/checkout/CartCheckoutB
 type PreCheckState =
   | { status: 'loading' }
   | { status: 'error'; message: string }
-  | { status: 'ready'; bookingFlowId: number; remarks: string[]; currentPrice: number; priceChanged: boolean };
+  | {
+      status: 'ready';
+      bookingFlowId: number;
+      remarks: string[];
+      currentPrice: number;
+      priceChanged: boolean;
+    };
 
 const props = defineProps<{
   item: CartItem;
@@ -39,7 +45,9 @@ const resolvedComponent = computed(() => registry[props.item.type] ?? null);
     :pre-check="preCheck"
     :special-request="specialRequest"
     @remove="emit('remove', $event)"
-    @update:special-request="(id: string, val: string) => emit('update:specialRequest', id, val)"
+    @update:special-request="
+      (id: string, val: string) => emit('update:specialRequest', id, val)
+    "
   />
   <UCard v-else data-testid="block-fallback">
     <div class="flex items-center justify-between">
@@ -47,7 +55,11 @@ const resolvedComponent = computed(() => registry[props.item.type] ?? null);
         {{ (item as any).hotel?.name ?? item.type }}
       </span>
       <span class="text-sm font-bold text-primary-600 dark:text-primary-400">
-        ${{ ((item as any).room?.price ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+        ${{
+          ((item as any).room?.price ?? 0).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+          })
+        }}
       </span>
     </div>
   </UCard>

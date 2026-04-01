@@ -1,5 +1,5 @@
-export type TransactionType = "charge" | "deposit" | "refund";
-export type DepositRequestStatus = "pending" | "confirmed" | "rejected";
+export type TransactionType = 'charge' | 'deposit' | 'refund';
+export type DepositRequestStatus = 'pending' | 'confirmed' | 'rejected';
 
 export interface IDepositRequest {
   id: string;

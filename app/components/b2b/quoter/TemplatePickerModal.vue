@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
-import { useAuth } from "~/composables/useAuth";
-import { useTemplates } from "~/composables/useTemplates";
-import type { ItineraryTemplate } from "~/composables/useTemplates";
+import { ref, computed, watch } from 'vue';
+import { useAuth } from '~/composables/useAuth';
+import { useTemplates } from '~/composables/useTemplates';
+import type { ItineraryTemplate } from '~/composables/useTemplates';
 
 const props = defineProps<{ isOpen: boolean }>();
-const emit = defineEmits<{ "update:isOpen": [value: boolean] }>();
+const emit = defineEmits<{ 'update:isOpen': [value: boolean] }>();
 
 const { t } = useI18n();
 const toast = useToast();
@@ -20,20 +20,20 @@ const {
   loadTemplateIntoBuilder,
 } = useTemplates();
 
-const search = ref("");
-const activeTab = ref<string | number>("personal");
+const search = ref('');
+const activeTab = ref<string | number>('personal');
 
 // Tabs visible based on role
 const tabs = computed(() => {
   const list = [
-    { label: t("templates.pickerModal.tabPersonal"), value: "personal" },
+    { label: t('templates.pickerModal.tabPersonal'), value: 'personal' },
   ];
-  if (role.value === "USER" || role.value === "AGENCY_ADMIN") {
-    list.push({ label: t("templates.pickerModal.tabAgency"), value: "agency" });
+  if (role.value === 'USER' || role.value === 'AGENCY_ADMIN') {
+    list.push({ label: t('templates.pickerModal.tabAgency'), value: 'agency' });
   }
   list.push({
-    label: t("templates.pickerModal.tabPlatform"),
-    value: "platform",
+    label: t('templates.pickerModal.tabPlatform'),
+    value: 'platform',
   });
   return list;
 });
@@ -49,18 +49,18 @@ const filterBySearch = (list: ItineraryTemplate[]) => {
 };
 
 const visibleTemplates = computed(() => {
-  if (activeTab.value === "personal")
+  if (activeTab.value === 'personal')
     return filterBySearch(personalTemplates.value);
-  if (activeTab.value === "agency")
+  if (activeTab.value === 'agency')
     return filterBySearch(agencyTemplates.value);
   return filterBySearch(platformTemplates.value);
 });
 
 // Rename inline
 const editingId = ref<number | null>(null);
-const editingName = ref("");
-const editingDescription = ref("");
-const editingDestination = ref("");
+const editingName = ref('');
+const editingDescription = ref('');
+const editingDestination = ref('');
 
 const startEdit = (tpl: ItineraryTemplate) => {
   editingId.value = tpl.id;
@@ -84,18 +84,18 @@ const confirmEdit = async () => {
 };
 
 const handleDelete = async (id: number) => {
-  if (!confirm(t("templates.pickerModal.deleteConfirm"))) return;
+  if (!confirm(t('templates.pickerModal.deleteConfirm'))) return;
   await deleteTemplate(id);
 };
 
 const handleUse = (tpl: ItineraryTemplate) => {
   loadTemplateIntoBuilder(tpl);
   toast.add({
-    title: t("templates.pickerModal.loadedToast"),
-    color: "primary",
-    icon: "i-heroicons-document-duplicate",
+    title: t('templates.pickerModal.loadedToast'),
+    color: 'primary',
+    icon: 'i-heroicons-document-duplicate',
   });
-  emit("update:isOpen", false);
+  emit('update:isOpen', false);
 };
 
 // Load templates when modal opens
@@ -136,7 +136,7 @@ watch(
             v-if="visibleTemplates.length === 0"
             class="py-8 text-center text-sm text-gray-400"
           >
-            {{ t("templates.pickerModal.emptyState") }}
+            {{ t('templates.pickerModal.emptyState') }}
           </div>
 
           <template v-for="tpl in visibleTemplates" :key="tpl.id">
@@ -163,7 +163,7 @@ watch(
                   variant="ghost"
                   @click="cancelEdit"
                 >
-                  {{ t("itinerary.cancelButton") }}
+                  {{ t('itinerary.cancelButton') }}
                 </UButton>
                 <UButton
                   size="xs"
@@ -196,7 +196,7 @@ watch(
                   <span class="text-xs text-gray-400">
                     {{
                       t(
-                        "templates.pickerModal.blocksCount",
+                        'templates.pickerModal.blocksCount',
                         { n: tpl.itinerary.blocks.length },
                         tpl.itinerary.blocks.length,
                       )
@@ -241,7 +241,7 @@ watch(
                   variant="solid"
                   @click="handleUse(tpl)"
                 >
-                  {{ t("templates.pickerModal.useButton") }}
+                  {{ t('templates.pickerModal.useButton') }}
                 </UButton>
               </div>
             </div>

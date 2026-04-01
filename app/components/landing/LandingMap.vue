@@ -53,19 +53,19 @@
 </template>
 
 <script setup lang="ts">
-import { Motion } from "motion-v";
+import { Motion } from 'motion-v';
 
 const countries = [
-  "España",
-  "Portugal",
-  "Cabo Verde",
-  "Marruecos",
-  "Turquía",
-  "México",
-  "Cuba",
-  "Finlandia",
-  "Jamaica",
-  "Egipto",
-  "República Dominicana",
+  'España',
+  'Portugal',
+  'Cabo Verde',
+  'Marruecos',
+  'Turquía',
+  'México',
+  'Cuba',
+  'Finlandia',
+  'Jamaica',
+  'Egipto',
+  'República Dominicana',
 ];
 </script>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { reactive } from "vue";
-import { createRegisterSchema, type RegisterInput } from "~/utils/schemas";
-import type { FormSubmitEvent } from "@nuxt/ui";
+import { reactive } from 'vue';
+import { createRegisterSchema, type RegisterInput } from '~/utils/schemas';
+import type { FormSubmitEvent } from '@nuxt/ui';
 
 const { t } = useI18n();
 const registerSchema = createRegisterSchema(t);
@@ -11,14 +11,14 @@ const emit = defineEmits<{ success: [] }>();
 const { registerAgency } = useAgencies();
 
 const form = reactive<RegisterInput>({
-  nombreComercial: "",
-  direccionRegistrada: "",
-  nif: "",
-  telefono: "",
-  email: "",
-  web: "",
-  pais: "",
-  nombreContacto: "",
+  nombreComercial: '',
+  direccionRegistrada: '',
+  nif: '',
+  telefono: '',
+  email: '',
+  web: '',
+  pais: '',
+  nombreContacto: '',
   aceptaPrivacidad: false,
 });
 
@@ -38,7 +38,7 @@ const isFormValid = computed(
 
 async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
   registerAgency(event.data);
-  emit("success");
+  emit('success');
 }
 </script>
 
@@ -50,7 +50,9 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
         <UFormField name="nombreComercial">
           <UInput
             v-model="form.nombreComercial"
-            :placeholder="t('auth.register.commercialNamePlaceholder').toUpperCase()"
+            :placeholder="
+              t('auth.register.commercialNamePlaceholder').toUpperCase()
+            "
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"
@@ -197,7 +199,9 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
         <UFormField name="nombreContacto">
           <UInput
             v-model="form.nombreContacto"
-            :placeholder="t('auth.register.contactNamePlaceholder').toUpperCase()"
+            :placeholder="
+              t('auth.register.contactNamePlaceholder').toUpperCase()
+            "
             size="xl"
             variant="outline"
             class="uppercase-placeholder w-full"

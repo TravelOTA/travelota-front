@@ -8,7 +8,7 @@ function onRegistrationSuccess() {
 
 function onConfirm() {
   showConfirmation.value = false;
-  navigateTo("/");
+  navigateTo('/');
 }
 </script>
 
@@ -50,7 +50,11 @@ function onConfirm() {
     </template>
     <template #footer>
       <div class="flex justify-end">
-        <UButton color="primary" :label="t('auth.register.successButton')" @click="onConfirm" />
+        <UButton
+          color="primary"
+          :label="t('auth.register.successButton')"
+          @click="onConfirm"
+        />
       </div>
     </template>
   </UModal>

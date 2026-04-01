@@ -1,6 +1,6 @@
 <script setup>
 useHead({
-  title: "Conócenos - TravelOTA",
+  title: 'Conócenos - TravelOTA',
 });
 </script>
 

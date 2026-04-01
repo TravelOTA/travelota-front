@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Motion } from "motion-v";
+import { Motion } from 'motion-v';
+
 const { t } = useI18n();
 </script>
 
@@ -87,7 +88,8 @@ const { t } = useI18n();
           </h3>
           <p class="text-gray-600 dark:text-gray-400">
             {{ t('auth.landing.service3Prefix') }}
-            <strong>{{ t('auth.landing.service3Highlight') }}</strong>,
+            <strong>{{ t('auth.landing.service3Highlight') }}</strong
+            >,
             {{ t('auth.landing.service3Suffix') }}
           </p>
         </Motion>

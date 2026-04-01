@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Motion } from "motion-v";
+import { Motion } from 'motion-v';
+
 const { t } = useI18n();
 </script>
 

@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import HotelSearchForm from "~/components/b2b/hotel/HotelSearchForm.vue";
-import B2bLandingPromotionCard from "~/components/b2b/landing/PromotionCard.vue";
-import { useStats } from "~/composables/useStats";
+import HotelSearchForm from '~/components/b2b/hotel/HotelSearchForm.vue';
+import B2bLandingPromotionCard from '~/components/b2b/landing/PromotionCard.vue';
+import { useStats } from '~/composables/useStats';
 import {
   useHotelSearch,
   type HotelSearchParams,
-} from "~/composables/useHotelSearch";
+} from '~/composables/useHotelSearch';
 
 const { t } = useI18n();
 
 definePageMeta({
-  layout: "dashboard",
+  layout: 'dashboard',
 });
 
 useHead({
-  title: "Buscador de Hoteles - Portal B2B",
+  title: 'Buscador de Hoteles - Portal B2B',
 });
 
 const { promotions } = usePromotions();
@@ -28,10 +28,10 @@ const handleSearch = async (data: HotelSearchParams) => {
 const handlePromotionSearch = async (destination: string) => {
   await navigateToResults({
     destination,
-    checkIn: "",
-    checkOut: "",
-    nationality: "Estados Unidos",
-    distribution: "1 Habitación, 2 Adultos",
+    checkIn: '',
+    checkOut: '',
+    nationality: 'Estados Unidos',
+    distribution: '1 Habitación, 2 Adultos',
   });
 };
 
@@ -39,30 +39,30 @@ const processedStats = computed(() => [
   {
     label: t('dashboard.stats.activeBookings'),
     value: b2bStats.value.activeBookings.toString(),
-    icon: "i-heroicons-briefcase",
-    iconBg: "bg-primary-50 dark:bg-primary-950",
-    iconColor: "text-primary-500",
+    icon: 'i-heroicons-briefcase',
+    iconBg: 'bg-primary-50 dark:bg-primary-950',
+    iconColor: 'text-primary-500',
   },
   {
     label: t('dashboard.stats.availableHotels'),
     value: b2bStats.value.availableHotels,
-    icon: "i-heroicons-building-office-2",
-    iconBg: "bg-blue-50 dark:bg-blue-950",
-    iconColor: "text-blue-500",
+    icon: 'i-heroicons-building-office-2',
+    iconBg: 'bg-blue-50 dark:bg-blue-950',
+    iconColor: 'text-blue-500',
   },
   {
     label: t('dashboard.stats.activeDestinations'),
     value: b2bStats.value.activeDestinations.toString(),
-    icon: "i-heroicons-map-pin",
-    iconBg: "bg-amber-50 dark:bg-amber-950",
-    iconColor: "text-amber-500",
+    icon: 'i-heroicons-map-pin',
+    iconBg: 'bg-amber-50 dark:bg-amber-950',
+    iconColor: 'text-amber-500',
   },
   {
     label: t('dashboard.stats.monthlyBookings'),
     value: b2bStats.value.monthlyBookings.toString(),
-    icon: "i-heroicons-calendar-days",
-    iconBg: "bg-green-50 dark:bg-green-950",
-    iconColor: "text-green-500",
+    icon: 'i-heroicons-calendar-days',
+    iconBg: 'bg-green-50 dark:bg-green-950',
+    iconColor: 'text-green-500',
   },
 ]);
 </script>

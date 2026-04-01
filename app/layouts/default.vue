@@ -2,9 +2,9 @@
 const { t } = useI18n();
 
 const links = computed(() => [
-  { label: t("nav.home").toUpperCase(), to: "/" },
-  { label: t("nav.about").toUpperCase(), to: "/about" },
-  { label: t("nav.register").toUpperCase(), to: "/register" },
+  { label: t('nav.home').toUpperCase(), to: '/' },
+  { label: t('nav.about').toUpperCase(), to: '/about' },
+  { label: t('nav.register').toUpperCase(), to: '/register' },
 ]);
 </script>
 

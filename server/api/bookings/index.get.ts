@@ -1,5 +1,5 @@
 // server/api/bookings/index.get.ts
-import { readBookings } from "../../utils/db";
+import { readBookings } from '../../utils/db';
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     bookings = bookings.filter((b) => b.paymentStatus === query.paymentStatus);
   }
   if (query.order_ref) {
-    bookings = bookings.filter((b: any) => b.order_ref === query.order_ref);
+    bookings = bookings.filter((b) => b.order_ref === query.order_ref);
   }
 
   return bookings;

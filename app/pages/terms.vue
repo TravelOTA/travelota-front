@@ -80,6 +80,6 @@
 
 <script setup>
 useHead({
-  title: "Aviso Legal - TravelOTA",
+  title: 'Aviso Legal - TravelOTA',
 });
 </script>

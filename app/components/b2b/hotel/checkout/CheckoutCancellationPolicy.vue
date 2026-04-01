@@ -28,10 +28,12 @@ defineProps<{
     </h3>
 
     <div class="mb-4">
-      <span class="text-sm text-gray-600 dark:text-gray-400">{{ t('hotels.cancellationPolicy.total') }} </span>
+      <span class="text-sm text-gray-600 dark:text-gray-400"
+        >{{ t('hotels.cancellationPolicy.total') }}
+      </span>
       <span class="font-bold text-gray-900 dark:text-white"
         >${{
-          total.toLocaleString("en-US", {
+          total.toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })
@@ -46,11 +48,21 @@ defineProps<{
           <tr
             class="border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white"
           >
-            <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.costsHeader') }}</th>
-            <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.fromDate') }}</th>
-            <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.toDate') }}</th>
-            <th class="py-2 pr-4 font-bold">{{ t('hotels.cancellationPolicy.time') }}</th>
-            <th class="py-2 font-bold">{{ t('hotels.cancellationPolicy.price') }}</th>
+            <th class="py-2 pr-4 font-bold">
+              {{ t('hotels.cancellationPolicy.costsHeader') }}
+            </th>
+            <th class="py-2 pr-4 font-bold">
+              {{ t('hotels.cancellationPolicy.fromDate') }}
+            </th>
+            <th class="py-2 pr-4 font-bold">
+              {{ t('hotels.cancellationPolicy.toDate') }}
+            </th>
+            <th class="py-2 pr-4 font-bold">
+              {{ t('hotels.cancellationPolicy.time') }}
+            </th>
+            <th class="py-2 font-bold">
+              {{ t('hotels.cancellationPolicy.price') }}
+            </th>
           </tr>
         </thead>
         <tbody
@@ -67,7 +79,7 @@ defineProps<{
             <td class="py-2.5 pr-4">{{ policy.time }}</td>
             <td class="py-2.5 font-bold text-gray-900 dark:text-white">
               ${{
-                policy.price.toLocaleString("en-US", {
+                policy.price.toLocaleString('en-US', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })
