@@ -7,10 +7,18 @@ import { vi } from 'vitest';
 
 export { ref, computed, watch, reactive, onMounted, onUnmounted };
 
-// useState: ignora la key y devuelve un ref inicializado
+// useState: singleton map for shared state by key
+const stateMap = new Map<string, any>();
+
 export const useState = <T>(key: string, init?: () => T) => {
-  return ref<T>(init ? init() : (undefined as T));
+  if (!stateMap.has(key)) {
+    stateMap.set(key, ref<T>(init ? init() : (undefined as T)));
+  }
+  return stateMap.get(key);
 };
+
+// Helper for tests to clear state if needed
+export const clearState = () => stateMap.clear();
 
 // Router stub
 export const useRouter = () => ({

@@ -11,9 +11,10 @@ const globalStubs = {
 vi.mock('~/composables/useHotelSearch', () => ({
   useHotelSearch: () => ({
     searchParams: {
-      destination: 'Madrid',
-      checkIn: '2026-04-01',
-      checkOut: '2026-04-05',
+      destination_code: 'MAD',
+      destination_label: 'Madrid',
+      check_in: '2026-04-01',
+      check_out: '2026-04-05',
       distribution: '1 Habitación, 2 Adultos',
       nationality: 'Venezuela',
     },

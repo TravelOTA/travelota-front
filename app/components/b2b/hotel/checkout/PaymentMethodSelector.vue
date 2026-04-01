@@ -48,15 +48,18 @@ function addDaysStr(days: number): string {
 const isDeferredDisabled = computed(() => {
   const p = props.cancellationPolicy;
   if (!p) return false;
-  return !p.refundable || p.penaltyFrom === null || p.penaltyFrom <= todayStr();
+  // If there's no deadline or it's empty, we assume it's refundable/flexible
+  if (!p.deadline) return false;
+  // Disable if deadline is today or in the past
+  return p.deadline <= todayStr();
 });
 
 const isTransferDisabled = computed(() => {
   const p = props.cancellationPolicy;
   if (!p) return false;
-  return (
-    !p.refundable || p.penaltyFrom === null || p.penaltyFrom <= addDaysStr(3)
-  );
+  if (!p.deadline) return false;
+  // Disable if deadline is within 3 days
+  return p.deadline <= addDaysStr(3);
 });
 
 const select = (key: string) => {

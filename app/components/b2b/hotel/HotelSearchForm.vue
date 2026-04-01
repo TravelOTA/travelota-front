@@ -115,9 +115,7 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
           </span>
           <USelectMenu
             :model-value="
-              destinationOptions.find(
-                (d) => d.code === form.destination_code,
-              )
+              destinationOptions.find((d) => d.code === form.destination_code)
             "
             :items="destinationOptions"
             :placeholder="t('hotels.search.destinationPlaceholder')"

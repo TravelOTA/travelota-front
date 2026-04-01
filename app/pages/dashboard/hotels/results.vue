@@ -3,7 +3,7 @@ import SearchSummaryBar from '~/components/b2b/hotel/SearchSummaryBar.vue';
 import FiltersSidebar from '~/components/b2b/hotel/FiltersSidebar.vue';
 import ResultCard from '~/components/b2b/hotel/ResultCard.vue';
 import HotelMap from '~/components/b2b/hotel/HotelMap.vue';
-import { useHotels, type HotelFilterState } from '~/composables/useHotels';
+import { useHotels, type HotelFilterState, type Hotel } from '~/composables/useHotels';
 import { useHotelSearch } from '~/composables/useHotelSearch';
 import type { IRoomDistribution } from '#shared/types/booking';
 
@@ -11,7 +11,7 @@ definePageMeta({
   layout: 'dashboard',
 });
 
-const { hotels, loading, searchHotels, filterHotels } = useHotels();
+const { hotels, error, searchHotels, filterHotels } = useHotels();
 const { searchParams, hydrateFromRoute } = useHotelSearch();
 
 onMounted(async () => {
@@ -67,9 +67,9 @@ const sortIcon = (field: string): string => {
 const isMapOpen = ref(false);
 const selectedHotelId = ref<string | null>(null);
 
-const handleOpenMap = (hotel?: Record<string, any>) => {
+const handleOpenMap = (hotel?: Hotel) => {
   if (hotel && hotel.hotel_code) {
-    selectedHotelId.value = hotel.hotel_code as string;
+    selectedHotelId.value = hotel.hotel_code;
   } else {
     selectedHotelId.value = null;
   }
@@ -101,7 +101,7 @@ const sortedHotels = computed(() => {
   if (!sortField.value) return list;
 
   const dir = sortDirection.value === 'asc' ? 1 : -1;
-  return list.sort((a, b) => {
+  return list.sort((a: Hotel, b: Hotel) => {
     switch (sortField.value) {
       case 'price':
         return (a.best_price - b.best_price) * dir;
@@ -356,7 +356,7 @@ watch(
     <!-- Modals -->
     <HotelMap
       v-model="isMapOpen"
-      :hotels="filteredHotels as any"
+      :hotels="filteredHotels"
       :selected-hotel-id="selectedHotelId"
     />
   </div>

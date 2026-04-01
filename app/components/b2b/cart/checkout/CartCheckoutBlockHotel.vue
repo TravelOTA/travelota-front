@@ -38,8 +38,8 @@ const { salePrice } = useSalePrice();
 
 const nights = computed(() =>
   differenceInCalendarDays(
-    parseISO(props.item.searchParams.checkOut),
-    parseISO(props.item.searchParams.checkIn),
+    parseISO(props.item.searchParams.check_out),
+    parseISO(props.item.searchParams.check_in),
   ),
 );
 
@@ -47,101 +47,41 @@ const rooms = computed(
   () => props.item.searchParams.rooms ?? [{ adults: 2, children: [] }],
 );
 
-const pricePerRoom = computed(() => {
-  const net =
-    props.preCheck.status === 'ready'
-      ? props.preCheck.currentPrice
-      : props.item.room.price;
-  return net / rooms.value.length;
-});
-
 const totalNetPrice = computed(() =>
   props.preCheck.status === 'ready'
     ? props.preCheck.currentPrice
-    : props.item.room.price,
+    : parseFloat(props.item.option.total_net_rate),
 );
+
+const pricePerRoom = computed(() => {
+  return totalNetPrice.value / rooms.value.length;
+});
 
 const totalSalePrice = computed(() => salePrice(totalNetPrice.value));
 
 function fmtDate(iso: string): string {
+  if (!iso) return '—';
   return format(parseISO(iso), 'd MMM yyyy', { locale: es });
 }
 
 function fmtChildren(children: Array<number | { age: number }>): string {
-  if (!children.length) return '';
+  if (!children?.length) return '';
   const ages = children.map((c) => (typeof c === 'number' ? c : c.age));
   return ` · ${ages.length} ${ages.length === 1 ? t('hotels.search.child') : t('hotels.search.children')} (${ages.join(', ')})`;
 }
 
 const cancellationBadge = computed(() => {
-  const p = props.item.room.cancellationPolicy;
-  if (!p.refundable) {
+  const p = props.item.option.rooms[0]?.cancellation_policy || '';
+  if (
+    p.toLowerCase().includes('no reembolsable') ||
+    p.toLowerCase().includes('non-refundable')
+  ) {
     return { color: 'error' as const, text: t('hotels.nonRefundable') };
   }
-  if (p.penaltyFrom) {
-    const pct = p.penalties[0]?.percentage ?? 0;
-    return {
-      color: 'warning' as const,
-      text: `${t('hotels.cancellationFees')} ${fmtDate(p.penaltyFrom)} (${pct}%)`,
-    };
+  if (p.toLowerCase().includes('on request')) {
+    return { color: 'warning' as const, text: 'Bajo petición' };
   }
-  return { color: 'success' as const, text: t('hotels.freeCancellation') };
-});
-
-type PolicyRow = {
-  label: string;
-  color: 'success' | 'warning' | 'error';
-  from: string;
-  to: string;
-  amount: string;
-};
-
-const policyRows = computed((): PolicyRow[] => {
-  const p = props.item.room.cancellationPolicy;
-  if (!p.refundable) {
-    return [
-      {
-        label: t('hotels.nonRefundable'),
-        color: 'error',
-        from: '—',
-        to: '—',
-        amount: `$${totalNetPrice.value.toFixed(2)}`,
-      },
-    ];
-  }
-  if (!p.penaltyFrom) {
-    return [
-      {
-        label: t('hotels.freeCancellation'),
-        color: 'success',
-        from: t('cart.checkout.blocks.cancellationNow'),
-        to: fmtDate(props.item.searchParams.checkIn),
-        amount: '$0.00',
-      },
-    ];
-  }
-  const freeTo = format(subDays(parseISO(p.penaltyFrom), 1), 'd MMM yyyy', {
-    locale: es,
-  });
-  const rows: PolicyRow[] = [
-    {
-      label: t('hotels.freeCancellation'),
-      color: 'success',
-      from: t('cart.checkout.blocks.cancellationNow'),
-      to: freeTo,
-      amount: '$0.00',
-    },
-  ];
-  p.penalties.forEach((pen) => {
-    rows.push({
-      label: t('cart.checkout.blocks.cancellationFees'),
-      color: 'warning',
-      from: fmtDate(pen.from),
-      to: fmtDate(props.item.searchParams.checkIn),
-      amount: `$${pen.amount.toFixed(2)} (${pen.percentage}%)`,
-    });
-  });
-  return rows;
+  return { color: 'success' as const, text: p || t('hotels.freeCancellation') };
 });
 </script>
 
@@ -177,14 +117,14 @@ const policyRows = computed((): PolicyRow[] => {
       <!-- Hotel identity: photo + stars + name + address -->
       <div class="flex gap-3">
         <img
-          :src="item.hotel.image"
-          :alt="item.hotel.name"
+          :src="item.hotel.thumbnail || ''"
+          :alt="item.hotel.hotel_name"
           class="w-20 h-20 object-cover rounded-lg shrink-0"
         />
         <div class="flex-1 min-w-0">
           <div class="flex gap-0.5 mb-1">
             <UIcon
-              v-for="n in item.hotel.stars"
+              v-for="n in item.hotel.category"
               :key="n"
               name="i-heroicons-star-solid"
               class="w-3.5 h-3.5 text-amber-400"
@@ -193,14 +133,14 @@ const policyRows = computed((): PolicyRow[] => {
           <p
             class="text-sm font-bold text-gray-900 dark:text-white leading-tight"
           >
-            {{ item.hotel.name }}
+            {{ item.hotel.hotel_name }}
           </p>
           <p
-            v-if="item.hotel.address"
+            v-if="item.hotel.destination_name"
             class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 flex items-center gap-1"
           >
             <UIcon name="i-heroicons-map-pin" class="w-3 h-3 shrink-0" />
-            {{ item.hotel.address }}
+            {{ item.hotel.destination_name }}
           </p>
         </div>
       </div>
@@ -214,7 +154,7 @@ const policyRows = computed((): PolicyRow[] => {
             {{ t('cart.checkout.blocks.checkIn') }}
           </p>
           <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">
-            {{ fmtDate(item.searchParams.checkIn) }}
+            {{ fmtDate(item.searchParams.check_in) }}
           </p>
         </div>
         <div class="px-3 py-2">
@@ -222,7 +162,7 @@ const policyRows = computed((): PolicyRow[] => {
             {{ t('cart.checkout.blocks.checkOut') }}
           </p>
           <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">
-            {{ fmtDate(item.searchParams.checkOut) }}
+            {{ fmtDate(item.searchParams.check_out) }}
           </p>
         </div>
         <div class="px-3 py-2">
@@ -238,7 +178,7 @@ const policyRows = computed((): PolicyRow[] => {
             {{ t('cart.checkout.blocks.regimen') }}
           </p>
           <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">
-            {{ getRegimenLabel(item.room.regimen) }}
+            {{ item.option.rooms[0]?.meal_plan }}
           </p>
         </div>
       </div>
@@ -255,7 +195,7 @@ const policyRows = computed((): PolicyRow[] => {
         >
           <div class="flex-1 min-w-0">
             <p class="text-xs font-semibold text-gray-900 dark:text-white">
-              {{ item.room.name }}
+              {{ item.option.rooms[0]?.room_name || 'Habitación' }}
             </p>
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
               {{ room.adults }}
@@ -299,54 +239,11 @@ const policyRows = computed((): PolicyRow[] => {
       <!-- Full cancellation policy table -->
       <div>
         <p
-          class="text-[9px] font-bold text-gray-400 uppercase tracking-wide mb-2"
+          v-if="item.option.rooms[0]?.cancellation_policy"
+          class="text-xs text-gray-600 dark:text-gray-400 border border-gray-100 dark:border-gray-800 rounded-lg p-3 bg-gray-50 dark:bg-gray-900/40"
         >
-          {{ t('cart.checkout.blocks.cancellationPolicy') }}
+          {{ item.option.rooms[0].cancellation_policy }}
         </p>
-        <table
-          class="w-full text-xs border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden"
-        >
-          <thead>
-            <tr class="bg-gray-50 dark:bg-gray-900/40">
-              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">
-                {{ t('cart.checkout.blocks.cancellationStatus') }}
-              </th>
-              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">
-                {{ t('cart.checkout.blocks.cancellationFrom') }}
-              </th>
-              <th class="text-left px-3 py-1.5 font-semibold text-gray-500">
-                {{ t('cart.checkout.blocks.cancellationTo') }}
-              </th>
-              <th class="text-right px-3 py-1.5 font-semibold text-gray-500">
-                {{ t('cart.checkout.blocks.cancellationAmount') }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(row, i) in policyRows"
-              :key="i"
-              class="border-t border-gray-100 dark:border-gray-800"
-            >
-              <td class="px-3 py-1.5">
-                <UBadge :color="row.color" variant="soft" size="xs">{{
-                  row.label
-                }}</UBadge>
-              </td>
-              <td class="px-3 py-1.5 text-gray-600 dark:text-gray-400">
-                {{ row.from }}
-              </td>
-              <td class="px-3 py-1.5 text-gray-600 dark:text-gray-400">
-                {{ row.to }}
-              </td>
-              <td
-                class="px-3 py-1.5 text-right text-gray-700 dark:text-gray-300"
-              >
-                {{ row.amount }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
 
       <!-- Price changed alert -->
@@ -356,7 +253,7 @@ const policyRows = computed((): PolicyRow[] => {
         variant="soft"
         :description="
           t('cart.checkout.blocks.priceChanged', {
-            old: item.room.price.toFixed(2),
+            old: parseFloat(item.option.total_net_rate).toFixed(2),
             new: preCheck.currentPrice.toFixed(2),
           })
         "
@@ -413,7 +310,6 @@ const policyRows = computed((): PolicyRow[] => {
       </UFormField>
     </div>
 
-    <!-- Footer: sale price total -->
     <template #footer>
       <div class="flex items-center justify-between">
         <span class="text-xs text-gray-500 dark:text-gray-400">

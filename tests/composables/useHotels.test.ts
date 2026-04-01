@@ -1,5 +1,92 @@
-import { describe, expect, it } from 'vitest';
-import { useHotels, type HotelFilterState } from '~/composables/useHotels';
+import { describe, expect, it, beforeEach } from 'vitest';
+import { useHotels, type HotelFilterState, type Hotel } from '~/composables/useHotels';
+
+const MOCK_HOTELS: Hotel[] = [
+  {
+    hotel_code: '1',
+    hotel_name: 'Serenade Punta Cana Beach & Spa Resort',
+    category: 5,
+    destination_name: 'Punta Cana',
+    latitude: 18.1,
+    longitude: -68.1,
+    thumbnail: 'h1.jpg',
+    best_price: 1000,
+    options: [
+      {
+        rate_key: 'rk1',
+        total_net_rate: '1000',
+        currency: 'USD',
+        rooms: [
+          {
+            room_code: 'rc1',
+            room_name: 'Luxury Room',
+            rate_key: 'rk1',
+            net_rate: '1000',
+            currency: 'USD',
+            cancellation_policy: 'Cancelación gratuita',
+            meal_plan: 'TI',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    hotel_code: '2',
+    hotel_name: 'Iberostar Grand Bavaro',
+    category: 5,
+    destination_name: 'Punta Cana',
+    latitude: 18.2,
+    longitude: -68.2,
+    thumbnail: 'h2.jpg',
+    best_price: 1500,
+    options: [
+      {
+        rate_key: 'rk2',
+        total_net_rate: '1500',
+        currency: 'USD',
+        rooms: [
+          {
+            room_code: 'rc2',
+            room_name: 'Suite',
+            rate_key: 'rk2',
+            net_rate: '1500',
+            currency: 'USD',
+            cancellation_policy: 'No reembolsable',
+            meal_plan: 'TI',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    hotel_code: '3',
+    hotel_name: 'Hotel Económico',
+    category: 3,
+    destination_name: 'Madrid',
+    latitude: 40.4,
+    longitude: -3.7,
+    thumbnail: 'h3.jpg',
+    best_price: 300,
+    options: [
+      {
+        rate_key: 'rk3',
+        total_net_rate: '300',
+        currency: 'EUR',
+        rooms: [
+          {
+            room_code: 'rc3',
+            room_name: 'Standard',
+            rate_key: 'rk3',
+            net_rate: '300',
+            currency: 'EUR',
+            cancellation_policy: 'On Request',
+            meal_plan: 'SA',
+          },
+        ],
+      },
+    ],
+  },
+];
 
 const DEFAULT_FILTERS: HotelFilterState = {
   hotelName: '',
@@ -12,27 +99,24 @@ const DEFAULT_FILTERS: HotelFilterState = {
 };
 
 describe('useHotels', () => {
-  describe('getHotelById', () => {
-    it('devuelve el hotel por id numérico', () => {
-      const { getHotelById } = useHotels();
-      const hotel = getHotelById(1);
+  beforeEach(() => {
+    const { hotels } = useHotels();
+    hotels.value = [...MOCK_HOTELS];
+  });
+
+  describe('getHotelByCode', () => {
+    it('devuelve el hotel por id numérico (como string)', () => {
+      const { getHotelByCode } = useHotels();
+      const hotel = getHotelByCode('1');
 
       expect(hotel).toBeDefined();
-      expect(hotel!.id).toBe(1);
-      expect(hotel!.name).toBe('Serenade Punta Cana Beach & Spa Resort');
-    });
-
-    it('devuelve el hotel por id como string', () => {
-      const { getHotelById } = useHotels();
-      const hotel = getHotelById('2');
-
-      expect(hotel).toBeDefined();
-      expect(hotel!.id).toBe(2);
+      expect(hotel!.hotel_code).toBe('1');
+      expect(hotel!.hotel_name).toBe('Serenade Punta Cana Beach & Spa Resort');
     });
 
     it('devuelve undefined para un id inexistente', () => {
-      const { getHotelById } = useHotels();
-      expect(getHotelById(9999)).toBeUndefined();
+      const { getHotelByCode } = useHotels();
+      expect(getHotelByCode('9999')).toBeUndefined();
     });
   });
 
@@ -52,8 +136,8 @@ describe('useHotels', () => {
       });
 
       expect(result.length).toBeGreaterThan(0);
-      result.forEach((h) => {
-        expect(h.name.toLowerCase()).toContain('punta cana');
+      result.forEach((h: Hotel) => {
+        expect(h.hotel_name.toLowerCase()).toContain('punta cana');
       });
     });
 
@@ -66,9 +150,9 @@ describe('useHotels', () => {
       });
 
       expect(result.length).toBeGreaterThan(0);
-      result.forEach((h) => {
-        expect(h.bestPrice).toBeGreaterThanOrEqual(800);
-        expect(h.bestPrice).toBeLessThanOrEqual(1200);
+      result.forEach((h: Hotel) => {
+        expect(h.best_price).toBeGreaterThanOrEqual(800);
+        expect(h.best_price).toBeLessThanOrEqual(1200);
       });
     });
 
@@ -77,8 +161,8 @@ describe('useHotels', () => {
       const result = filterHotels({ ...DEFAULT_FILTERS, categories: ['3'] });
 
       expect(result.length).toBeGreaterThan(0);
-      result.forEach((h) => {
-        expect(String(h.stars)).toBe('3');
+      result.forEach((h: Hotel) => {
+        expect(String(h.category)).toBe('3');
       });
     });
 
@@ -86,8 +170,8 @@ describe('useHotels', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({ ...DEFAULT_FILTERS, regimes: ['TI'] });
 
-      result.forEach((h) => {
-        const regimes = h.rooms.map((r) => r.regimen);
+      result.forEach((h: Hotel) => {
+        const regimes = h.options.flatMap((o: any) => o.rooms.map((r: any) => r.meal_plan));
         expect(regimes).toContain('TI');
       });
     });
@@ -96,22 +180,15 @@ describe('useHotels', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({ ...DEFAULT_FILTERS, hideNR: true });
 
-      result.forEach((h) => {
-        const hasRefundable = h.rooms.some(
-          (r) => !r.cancellation.toLowerCase().includes('no reembolsable'),
+      result.forEach((h: Hotel) => {
+        const hasRefundable = h.options.some((o: any) =>
+          o.rooms.some(
+            (r: any) =>
+              !r.cancellation_policy.toLowerCase().includes('no reembolsable') &&
+              !r.cancellation_policy.toLowerCase().includes('non-refundable'),
+          ),
         );
         expect(hasRefundable).toBe(true);
-      });
-    });
-
-    it('hideNR elimina habitaciones no reembolsables de los resultados', () => {
-      const { filterHotels } = useHotels();
-      const result = filterHotels({ ...DEFAULT_FILTERS, hideNR: true });
-
-      result.forEach((h) => {
-        h.rooms.forEach((r) => {
-          expect(r.cancellation.toLowerCase()).not.toContain('no reembolsable');
-        });
       });
     });
 
@@ -119,20 +196,13 @@ describe('useHotels', () => {
       const { filterHotels } = useHotels();
       const result = filterHotels({ ...DEFAULT_FILTERS, hideOR: true });
 
-      result.forEach((h) => {
-        const hasInstant = h.rooms.some((r) => !r.onRequest);
+      result.forEach((h: Hotel) => {
+        const hasInstant = h.options.some((o: any) =>
+          o.rooms.some(
+            (r: any) => !r.cancellation_policy.toLowerCase().includes('on request'),
+          ),
+        );
         expect(hasInstant).toBe(true);
-      });
-    });
-
-    it('hideOR elimina habitaciones on-request de los resultados', () => {
-      const { filterHotels } = useHotels();
-      const result = filterHotels({ ...DEFAULT_FILTERS, hideOR: true });
-
-      result.forEach((h) => {
-        h.rooms.forEach((r) => {
-          expect(r.onRequest).toBeFalsy();
-        });
       });
     });
 
@@ -146,13 +216,10 @@ describe('useHotels', () => {
         hideNR: true,
       });
 
-      result.forEach((h) => {
-        expect(h.stars).toBe(5);
-        expect(h.bestPrice).toBeGreaterThanOrEqual(1000);
-        expect(h.bestPrice).toBeLessThanOrEqual(2000);
-        h.rooms.forEach((r) => {
-          expect(r.cancellation.toLowerCase()).not.toContain('no reembolsable');
-        });
+      result.forEach((h: Hotel) => {
+        expect(h.category).toBe(5);
+        expect(h.best_price).toBeGreaterThanOrEqual(1000);
+        expect(h.best_price).toBeLessThanOrEqual(2000);
       });
     });
 

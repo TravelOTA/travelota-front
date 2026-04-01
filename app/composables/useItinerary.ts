@@ -1,6 +1,8 @@
 import { computed } from 'vue';
 import type { ItineraryOptionMetadata } from '#shared/schemas/itinerary';
 
+import type { SearchRoomDistribution, ChildAge } from '#shared/types/search';
+
 export interface ItineraryOption {
   id: string;
   providerId: string; // Provider ID, or "MANUAL" for manual entries
@@ -21,8 +23,6 @@ export interface ItineraryBlock {
   date: string;
   options: ItineraryOption[]; // Min 1, Max 5
 }
-
-import type { SearchRoomDistribution, ChildAge } from '#shared/types/search';
 
 export interface Itinerary {
   id?: string;

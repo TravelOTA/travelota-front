@@ -67,7 +67,9 @@ function handleAddToCart() {
 }
 
 useHead({
-  title: hotel.value ? `${hotel.value.hotel_name} - TravelOTA B2B` : 'Hotel - TravelOTA B2B',
+  title: hotel.value
+    ? `${hotel.value.hotel_name} - TravelOTA B2B`
+    : 'Hotel - TravelOTA B2B',
 });
 </script>
 
@@ -137,4 +139,3 @@ useHead({
     />
   </div>
 </template>
-

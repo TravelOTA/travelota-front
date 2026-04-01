@@ -179,7 +179,8 @@ watch(
 );
 
 useHead({
-  title: `Reserva ${bookingId} - TravelOTA B2B`,
+  title: () =>
+    `Reserva ${booking.value?.pnr || bookingId} - TravelOTA B2B`,
 });
 </script>
 
@@ -205,7 +206,7 @@ useHead({
         :origin="origin"
         :booking-status="bookingStatusLabel"
         :payment-status="paymentStatusLabel"
-        :booking-id="bookingId"
+        :booking-id="booking.pnr"
         :payment-deadline="paymentDeadline"
         :cancelled-date="undefined"
       />
@@ -230,7 +231,7 @@ useHead({
                 <h2
                   class="text-3xl font-black text-primary-600 dark:text-primary-400 tracking-tight flex items-center gap-2"
                 >
-                  {{ booking.id }}
+                  {{ booking.pnr }}
                   <UBadge
                     :color="
                       booking.status === 'confirmed'
@@ -274,7 +275,8 @@ useHead({
                     name="i-heroicons-user"
                     class="w-4 h-4 text-gray-400"
                   />
-                  {{ booking.passengers?.[0]?.first_name }} {{ booking.passengers?.[0]?.last_name }}
+                  {{ booking.passengers?.[0]?.first_name }}
+                  {{ booking.passengers?.[0]?.last_name }}
                 </p>
               </div>
               <div>
@@ -309,9 +311,7 @@ useHead({
                 >
                   {{ t('hotels.bookingDetail.responsibleAgent') }}
                 </p>
-                <p class="text-gray-900 dark:text-gray-300">
-                  Sistema
-                </p>
+                <p class="text-gray-900 dark:text-gray-300">Sistema</p>
               </div>
               <div class="md:col-span-2">
                 <p
@@ -483,7 +483,7 @@ useHead({
       <VoucherPreviewModal
         v-model:is-open="isVoucherModalOpen"
         :mode="documentMode"
-        :booking-id="booking.id"
+        :booking-id="booking.pnr"
         :hotel-name="booking.hotel_snapshot?.name || ''"
         :reservation="reservationProp ?? emptyReservation"
       />

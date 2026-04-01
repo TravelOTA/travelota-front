@@ -167,9 +167,7 @@ const regimes = computed(() => {
 
   return baseRegimes.map((reg) => {
     const count = props.hotels.filter((h) =>
-      h.options.some((o) =>
-        o.rooms.some((r) => r.meal_plan === reg.value),
-      ),
+      h.options.some((o) => o.rooms.some((r) => r.meal_plan === reg.value)),
     ).length;
     return { ...reg, count };
   });

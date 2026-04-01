@@ -60,6 +60,7 @@ export interface IBookingListItem {
   id: number;
   pnr: string;
   hotel_name: string;
+  titular: string; // <-- Added
   order_ref: string;
   check_in: string;
   check_out: string;

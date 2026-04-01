@@ -48,7 +48,10 @@ const { salePrice } = useSalePrice();
       class="relative w-full md:w-64 h-48 shrink-0 cursor-pointer block"
     >
       <img
-        :src="hotel.thumbnail || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800'"
+        :src="
+          hotel.thumbnail ||
+          'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800'
+        "
         :alt="hotel.hotel_name"
         class="w-full h-full object-cover"
       />

@@ -71,7 +71,8 @@ async function runPreCheck(item: CartItemHotel): Promise<void> {
       bookingFlowId: flow.id,
       remarks: flow.remarks ?? [],
       currentPrice,
-      priceChanged: Math.abs(currentPrice - parseFloat(item.option.total_net_rate)) > 0.01,
+      priceChanged:
+        Math.abs(currentPrice - parseFloat(item.option.total_net_rate)) > 0.01,
     };
   } catch (err) {
     preCheckMap.value[item.id] = {
@@ -113,11 +114,13 @@ const cartCancellationPolicy = computed((): ICancellationPolicy | undefined => {
     (i): i is CartItemHotel => i.type === 'hotel',
   );
   // Just use the first policy for the summary bar in this iteration
-  return hotelItems[0]?.option.rooms[0] ? {
-    deadline: '',
-    penalty_amount: '0.00',
-    description: hotelItems[0].option.rooms[0].cancellation_policy
-  } : undefined;
+  return hotelItems[0]?.option.rooms[0]
+    ? {
+        deadline: '',
+        penalty_amount: '0.00',
+        description: hotelItems[0].option.rooms[0].cancellation_policy,
+      }
+    : undefined;
 });
 
 const totalSalePrice = computed(() => salePrice(total.value));

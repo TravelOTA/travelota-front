@@ -225,7 +225,7 @@ const openVoucher = (booking: BookingRow) => {
 const columns = computed(() => [
   { accessorKey: 'actions', header: '' },
   { accessorKey: 'select', header: '' },
-  { accessorKey: 'id', header: t('bookings.tableColumns.pnr') },
+  { accessorKey: 'pnr', header: t('bookings.tableColumns.pnr') },
   { accessorKey: 'status', header: t('bookings.tableColumns.status') },
   { accessorKey: 'payment_status', header: t('bookings.tableColumns.payment') },
   { accessorKey: 'prices', header: t('bookings.tableColumns.prices') },
@@ -471,13 +471,13 @@ const resultStats = computed(() => {
             </div>
           </template>
 
-          <!-- Id Column -->
-          <template #id-cell="{ row }">
+          <!-- PNR Column -->
+          <template #pnr-cell="{ row }">
             <NuxtLink
               :to="`/dashboard/hotels/booking/${(row as any).original.id}`"
               class="font-bold text-primary-600 dark:text-primary-400 hover:underline"
             >
-              {{ (row as any).original.id }}
+              {{ (row as any).original.pnr }}
             </NuxtLink>
           </template>
 

@@ -157,10 +157,13 @@ function handleAddToCart(option: RoomOption) {
       >
         <span>
           ${{
-            salePrice(parseFloat(option.total_net_rate)).toLocaleString('en-US', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })
+            salePrice(parseFloat(option.total_net_rate)).toLocaleString(
+              'en-US',
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              },
+            )
           }}
         </span>
         <span

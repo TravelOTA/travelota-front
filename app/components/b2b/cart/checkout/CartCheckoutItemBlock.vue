@@ -52,11 +52,13 @@ const resolvedComponent = computed(() => registry[props.item.type] ?? null);
   <UCard v-else data-testid="block-fallback">
     <div class="flex items-center justify-between">
       <span class="text-sm text-gray-700 dark:text-gray-300 font-medium">
-        {{ (item as any).hotel?.name ?? item.type }}
+        {{ (item as any).hotel?.hotel_name ?? item.type }}
       </span>
       <span class="text-sm font-bold text-primary-600 dark:text-primary-400">
         ${{
-          ((item as any).room?.price ?? 0).toLocaleString('en-US', {
+          parseFloat(
+            (item as any).option?.total_net_rate ?? '0',
+          ).toLocaleString('en-US', {
             minimumFractionDigits: 2,
           })
         }}

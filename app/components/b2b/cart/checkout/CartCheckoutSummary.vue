@@ -14,12 +14,12 @@ const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 
 function itemName(item: CartItem): string {
-  if (item.type === 'hotel') return item.hotel.name;
+  if (item.type === 'hotel') return item.hotel.hotel_name;
   return item.type;
 }
 
 function itemNetPrice(item: CartItem): number {
-  if (item.type === 'hotel') return item.room.price;
+  if (item.type === 'hotel') return parseFloat(item.option.total_net_rate);
   return 0;
 }
 </script>
@@ -37,25 +37,25 @@ function itemNetPrice(item: CartItem): number {
         :key="item.id"
         class="flex items-center justify-between py-2.5 gap-2"
       >
-        <span class="text-xs text-gray-600 dark:text-gray-300 truncate flex-1">
-          {{ itemName(item) }}
+        <span class="text-sm text-gray-700 dark:text-gray-300 font-medium">
+          {{ (item as any).hotel?.hotel_name ?? item.type }}
         </span>
-        <div class="text-right shrink-0">
-          <p class="text-xs font-bold text-primary-600 dark:text-primary-400">
-            ${{
-              salePrice(itemNetPrice(item)).toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-              })
-            }}
-          </p>
-          <p v-if="netPriceVisible" class="text-[10px] text-gray-400">
-            ${{
-              itemNetPrice(item).toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-              })
-            }}
-          </p>
-        </div>
+        <span class="text-sm font-bold text-primary-600 dark:text-primary-400">
+          ${{
+            parseFloat(
+              (item as any).option?.total_net_rate ?? '0',
+            ).toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+            })
+          }}
+        </span>
+        <p v-if="netPriceVisible" class="text-[10px] text-gray-400">
+          ${{
+            itemNetPrice(item).toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+            })
+          }}
+        </p>
       </div>
     </div>
     <template #footer>

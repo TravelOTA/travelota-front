@@ -50,7 +50,8 @@ export function useCart() {
   const itemCount = computed(() => items.value.length);
   const total = computed(() =>
     items.value.reduce((sum, item) => {
-      if (item.type === 'hotel') return sum + parseFloat(item.option.total_net_rate);
+      if (item.type === 'hotel')
+        return sum + parseFloat(item.option.total_net_rate);
       return sum;
     }, 0),
   );
@@ -228,4 +229,3 @@ export function useCart() {
     confirmAll,
   };
 }
-
