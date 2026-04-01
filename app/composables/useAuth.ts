@@ -15,15 +15,10 @@ export interface CurrentUser {
   avatar: string | null;
   preferred_language: string;
   is_staff: boolean;
+  role: UserRole;
 }
 
-const REMEMBER_ME_MAX_AGE = 60 * 60 * 12; // 12 horas
-
-function roleFromProfile(profile: CurrentUser): UserRole {
-  // Cuando el backend exponga un campo `role` explícito, usarlo aquí.
-  // Por ahora: is_staff=true → SUPER_ADMIN, resto → USER.
-  return profile.is_staff ? 'SUPER_ADMIN' : 'USER';
-}
+const REMEMBER_ME_MAX_AGE = 60 * 60 * 12; // 12 hours
 
 export const useAuth = () => {
   const config = useRuntimeConfig();
@@ -40,29 +35,19 @@ export const useAuth = () => {
     sameSite: 'lax',
   });
 
-  // Rol derivado de JWT real — se setea en loadProfile(), se limpia en logout()
-  const realRole = useCookie<UserRole | null>('travelota-real-role', {
+  // Persists role across SSR/page reloads without an extra API call.
+  // Set by loadProfile() after login.
+  const storedRole = useCookie<UserRole | null>('travelota-real-role', {
     default: () => null,
     secure: true,
     sameSite: 'lax',
   });
 
-  // Dev-only: simulador de roles (botones de test en LoginForm)
-  const simulatedRole = useCookie<UserRole | null>('travelota-role', {
-    default: () => null,
-  });
-
-  const currentUser = useState<CurrentUser | null>(
-    'auth:currentUser',
-    () => null,
-  );
+  const currentUser = useState<CurrentUser | null>('auth:currentUser', () => null);
 
   const isAuthenticated = computed(() => !!accessToken.value);
 
-  // simulatedRole tiene prioridad solo en dev; en prod siempre será null
-  const role = computed<UserRole>(
-    () => simulatedRole.value ?? realRole.value ?? 'USER',
-  );
+  const role = computed<UserRole>(() => storedRole.value ?? 'USER');
 
   async function loadProfile(): Promise<void> {
     if (!accessToken.value) return;
@@ -72,7 +57,7 @@ export const useAuth = () => {
     ).catch(() => null);
     if (profile) {
       currentUser.value = profile;
-      realRole.value = roleFromProfile(profile);
+      storedRole.value = profile.role;
     }
   }
 
@@ -86,11 +71,9 @@ export const useAuth = () => {
       { method: 'POST', body: { email, password } },
     );
 
-    // Setear en la ref original garantiza que loadProfile() lee el valor correcto
     accessToken.value = data.access;
     refreshToken.value = data.refresh;
 
-    // Si rememberMe, re-setear con maxAge para persistir la cookie más allá de la sesión
     if (rememberMe) {
       const opts = {
         default: () => null as string | null,
@@ -118,16 +101,9 @@ export const useAuth = () => {
     }
     accessToken.value = null;
     refreshToken.value = null;
-    realRole.value = null;
-    simulatedRole.value = null;
+    storedRole.value = null;
     currentUser.value = null;
     await router.push('/');
-  }
-
-  // Dev-only: simular rol sin credenciales reales
-  async function loginAs(targetRole: UserRole): Promise<void> {
-    simulatedRole.value = targetRole;
-    await router.push('/dashboard');
   }
 
   return {
@@ -138,6 +114,5 @@ export const useAuth = () => {
     loadProfile,
     login,
     logout,
-    loginAs,
   };
 };
