@@ -43,7 +43,10 @@ export const useAuth = () => {
     sameSite: 'lax',
   });
 
-  const currentUser = useState<CurrentUser | null>('auth:currentUser', () => null);
+  const currentUser = useState<CurrentUser | null>(
+    'auth:currentUser',
+    () => null,
+  );
 
   const isAuthenticated = computed(() => !!accessToken.value);
 

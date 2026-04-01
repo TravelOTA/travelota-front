@@ -13,8 +13,7 @@ const form = reactive<LoginInput>({
   rememberMe: false,
 });
 
-const { login, loginAs } = useAuth();
-const isDev = import.meta.dev;
+const { login } = useAuth();
 
 const loginError = ref<string | null>(null);
 const isSubmitting = ref(false);
@@ -125,59 +124,6 @@ async function onSubmit(event: FormSubmitEvent<LoginInput>) {
         {{ t('auth.login.submitButton') }}
       </UButton>
     </UForm>
-
-    <div
-      v-if="isDev"
-      class="mt-8 border-t border-gray-100 dark:border-gray-800 pt-6"
-    >
-      <p
-        class="text-xs text-center text-gray-500 font-bold uppercase tracking-wider mb-4"
-      >
-        {{ t('auth.login.testSimulatorTitle') }}
-      </p>
-      <div class="grid grid-cols-2 gap-2">
-        <UButton
-          color="neutral"
-          variant="soft"
-          size="sm"
-          icon="i-lucide-user"
-          class="justify-center text-xs"
-          @click="loginAs('USER')"
-        >
-          {{ t('auth.login.roleUser') }}
-        </UButton>
-        <UButton
-          color="primary"
-          variant="soft"
-          size="sm"
-          icon="i-lucide-building"
-          class="justify-center text-xs"
-          @click="loginAs('AGENCY_ADMIN')"
-        >
-          {{ t('auth.login.roleAgencyAdmin') }}
-        </UButton>
-        <UButton
-          color="warning"
-          variant="soft"
-          size="sm"
-          icon="i-lucide-life-buoy"
-          class="justify-center text-xs"
-          @click="loginAs('SUPPORT')"
-        >
-          {{ t('auth.login.roleSupport') }}
-        </UButton>
-        <UButton
-          color="error"
-          variant="soft"
-          size="sm"
-          icon="i-lucide-shield-alert"
-          class="justify-center text-xs"
-          @click="loginAs('SUPER_ADMIN')"
-        >
-          {{ t('auth.login.roleSuperAdmin') }}
-        </UButton>
-      </div>
-    </div>
 
     <template #footer>
       <div
