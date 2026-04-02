@@ -172,7 +172,12 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
           </div>
           <template #content>
             <div class="p-2">
-              <UCalendar v-model="dateRange" range :number-of-months="2" />
+              <UCalendar
+                v-model="dateRange"
+                :number-of-months="2"
+                :fixed-weeks="false"
+                range
+              />
             </div>
           </template>
         </UPopover>
@@ -267,3 +272,12 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
     </form>
   </div>
 </template>
+
+<style scoped>
+/* Oculta los días que pertenecen a otros meses para evitar duplicidad */
+:deep([data-slot="cellTrigger"][data-outside-month]),
+:deep([data-slot="cellTrigger"][data-outside-view]) {
+  visibility: hidden !important;
+  pointer-events: none;
+}
+</style>
