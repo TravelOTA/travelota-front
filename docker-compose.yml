@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   traefik:
-    image: traefik:v3.0
+    image: traefik:latest
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -19,14 +17,13 @@ services:
     build: .
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.nuxt.rule=Host(localhost)"  # Use domain in production
+      - "traefik.http.routers.nuxt.rule=Host(`localhost`)"  # Use domain in production
       - "traefik.http.routers.nuxt.entrypoints=web"
       - "traefik.http.services.nuxt.loadbalancer.server.port=3000"
     ports:
       - "3000:3000"  # Optional: direct access to Nuxt (bypass Traefik)
     volumes:
       - .:/app  # Mount current directory for hot reloading
-      - /app/node_modules  # Prevent overwriting node_modules
     environment:
       - NUXT_HOST=0.0.0.0
       - NUXT_PORT=3000

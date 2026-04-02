@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20
 
 # Install pnpm
 RUN npm install -g pnpm
@@ -14,6 +14,9 @@ COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
 RUN pnpm install
+
+# Force install the missing native binding
+RUN pnpm install @oxc-parser/binding-linux-x64-gnu
 
 # Copy the rest of the application
 COPY . .
