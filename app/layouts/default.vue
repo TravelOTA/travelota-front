@@ -26,7 +26,7 @@ const links = computed(() => [
           icon="i-lucide-user"
           variant="ghost"
           color="neutral"
-          to="/dashboard"
+          to="/"
         />
         <AppLocaleSwitcher />
         <UColorModeButton />
