@@ -187,8 +187,10 @@ const regimes = computed(() => {
         AI: 'hotels.results.allInclusive',
       }[code];
 
+      const translatedLabel = i18nKey ? t(i18nKey) : name;
+
       return {
-        label: i18nKey ? t(i18nKey) : name,
+        label: `${translatedLabel} [${code}]`,
         value: code,
         count,
       };
