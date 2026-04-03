@@ -275,8 +275,8 @@ const { nationalities: nationalityOptions, destinations: destinationOptions } =
 
 <style scoped>
 /* Oculta los días que pertenecen a otros meses para evitar duplicidad */
-:deep([data-slot="cellTrigger"][data-outside-month]),
-:deep([data-slot="cellTrigger"][data-outside-view]) {
+:deep([data-slot='cellTrigger'][data-outside-month]),
+:deep([data-slot='cellTrigger'][data-outside-view]) {
   visibility: hidden !important;
   pointer-events: none;
 }

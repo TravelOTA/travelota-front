@@ -105,7 +105,9 @@ function handleAddToCart(option: RoomOption) {
             (() => {
               const code = option.rooms[0]?.meal_plan.code ?? '';
               const i18nKey = getRegimenI18nKey(code);
-              return i18nKey ? t(i18nKey) : (option.rooms[0]?.meal_plan.name ?? '');
+              return i18nKey
+                ? t(i18nKey)
+                : (option.rooms[0]?.meal_plan.name ?? '');
             })()
           "
         >

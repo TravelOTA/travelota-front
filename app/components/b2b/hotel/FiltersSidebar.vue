@@ -175,7 +175,9 @@ const regimes = computed(() => {
   return Array.from(mealPlanMap.entries())
     .map(([code, name]) => {
       const count = props.hotels.filter((h) =>
-        h.options?.some((o) => o.rooms?.some((r) => r.meal_plan?.code === code)),
+        h.options?.some((o) =>
+          o.rooms?.some((r) => r.meal_plan?.code === code),
+        ),
       ).length;
 
       // Map code to i18n key for translation

@@ -3,7 +3,11 @@ import SearchSummaryBar from '~/components/b2b/hotel/SearchSummaryBar.vue';
 import FiltersSidebar from '~/components/b2b/hotel/FiltersSidebar.vue';
 import ResultCard from '~/components/b2b/hotel/ResultCard.vue';
 import HotelMap from '~/components/b2b/hotel/HotelMap.vue';
-import { useHotels, type HotelFilterState, type Hotel } from '~/composables/useHotels';
+import {
+  useHotels,
+  type HotelFilterState,
+  type Hotel,
+} from '~/composables/useHotels';
 import { useHotelSearch } from '~/composables/useHotelSearch';
 import type { IRoomDistribution } from '#shared/types/booking';
 
