@@ -63,7 +63,7 @@ const statusConfig = computed(() => {
   }
 
   // Caso 4: Confirmada + Pendiente Pago
-  if (props.paymentStatus === 'Pendiente Pago') {
+  if (props.paymentStatus === t('hotels.paymentStatusLabel.pending_payment')) {
     return {
       icon: 'i-heroicons-clock-solid',
       bgClass:

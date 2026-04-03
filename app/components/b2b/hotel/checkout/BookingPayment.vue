@@ -20,7 +20,9 @@ const emit = defineEmits<{
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 
-const isPaid = computed(() => props.paymentStatus === 'Pagada');
+const isPaid = computed(
+  () => props.paymentStatus === t('hotels.paymentStatusLabel.paid'),
+);
 
 const selectedMethod = ref('credit_card');
 const isProcessing = ref(false);

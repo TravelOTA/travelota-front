@@ -42,11 +42,19 @@ const { salePrice } = useSalePrice();
     class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden shadow-sm flex flex-col"
   >
     <!-- Image -->
-    <div class="w-full h-48 relative shrink-0">
+    <div class="w-full h-48 relative shrink-0 bg-gray-100 dark:bg-gray-800">
       <img
-        :src="hotel.image"
+        :src="
+          hotel.image ||
+          'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800'
+        "
         :alt="hotel.name"
         class="w-full h-full object-cover"
+        @error="
+          (e) =>
+            ((e.target as HTMLImageElement).src =
+              'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800')
+        "
       />
     </div>
 

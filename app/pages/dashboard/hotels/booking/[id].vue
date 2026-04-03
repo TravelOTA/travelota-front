@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useSalePrice } from '~/composables/useSalePrice';
+
 
 import CheckoutSidebarSummary from '~/components/b2b/hotel/checkout/CheckoutSidebarSummary.vue';
 import BookingStatusHero from '~/components/b2b/hotel/checkout/BookingStatusHero.vue';
@@ -15,7 +15,6 @@ import { apiFetch } from '~/composables/useApi';
 import type { IBooking } from '#shared/types/booking';
 
 const { t } = useI18n();
-const { salePrice } = useSalePrice();
 
 definePageMeta({
   layout: 'dashboard',
@@ -56,8 +55,7 @@ const bookingStatusLabel = computed(() =>
 const paymentStatusLabel = computed(() =>
   booking.value
     ? t(
-        `hotels.paymentStatusLabel.${booking.value.payment_status}`,
-        booking.value.payment_status,
+        `hotels.paymentStatusLabel.${booking.value.payment_status ?? 'pending_payment'}`,
       )
     : '',
 );
@@ -69,7 +67,7 @@ const hotelProp = computed(() =>
         name: booking.value.hotel_snapshot.name,
         stars: booking.value.hotel_snapshot.stars,
         address: booking.value.hotel_snapshot.address,
-        image: booking.value.hotel_snapshot.image,
+        image: booking.value.hotel_snapshot.image ?? '',
       }
     : null,
 );
@@ -88,8 +86,7 @@ const reservationProp = computed(() =>
             id: '1',
             name: booking.value.room_description,
             pax: `${booking.value.pax} ${t('hotels.search.guests')}`,
-            price: salePrice(parseFloat(booking.value.sell_rate)),
-            netPrice: parseFloat(booking.value.net_rate),
+            price: parseFloat(booking.value.net_rate),
           },
         ],
       }
@@ -179,8 +176,7 @@ watch(
 );
 
 useHead({
-  title: () =>
-    `Reserva ${booking.value?.pnr || bookingId} - TravelOTA B2B`,
+  title: () => `Reserva ${booking.value?.pnr || bookingId} - TravelOTA B2B`,
 });
 </script>
 
@@ -336,7 +332,7 @@ useHead({
           <BookingPayment
             v-if="booking.status !== 'expired'"
             :payment-status="paymentStatusLabel"
-            :total-price="parseFloat(booking.sell_rate)"
+            :total-price="parseFloat(booking.net_rate)"
             :payment-deadline="paymentDeadline"
             :paid-date="paidDate"
           />
@@ -345,7 +341,7 @@ useHead({
           <BookingCancellation
             v-if="showCancellation || booking.status === 'cancelled'"
             :booking-status="bookingStatusLabel"
-            :total-price="parseFloat(booking.sell_rate)"
+            :total-price="parseFloat(booking.net_rate)"
             :policies="cancellationPolicies"
           />
 
@@ -474,7 +470,7 @@ useHead({
             v-if="hotelProp && reservationProp"
             :hotel="hotelProp"
             :reservation="reservationProp"
-            :total-price="parseFloat(booking.sell_rate)"
+            :total-price="parseFloat(booking.net_rate)"
           />
         </div>
       </div>

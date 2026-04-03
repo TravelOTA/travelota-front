@@ -27,10 +27,10 @@ const summaryLabel = computed(() => {
     0,
   );
 
-  let label = `${totalRooms} Hab`;
-  label += ` · ${totalAdults} Adulto${totalAdults > 1 ? 's' : ''}`;
+  let label = `${totalRooms} ${t('hotels.search.roomLabel')}`;
+  label += ` · ${totalAdults} ${totalAdults === 1 ? t('hotels.search.adult') : t('hotels.search.adults')}`;
   if (totalChildren > 0) {
-    label += ` · ${totalChildren} Niño${totalChildren > 1 ? 's' : ''}`;
+    label += ` · ${totalChildren} ${totalChildren === 1 ? t('hotels.search.child') : t('hotels.search.children')}`;
   }
   return label;
 });
