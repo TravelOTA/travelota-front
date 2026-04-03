@@ -178,8 +178,17 @@ const regimes = computed(() => {
         h.options?.some((o) => o.rooms?.some((r) => r.meal_plan?.code === code)),
       ).length;
 
+      // Map code to i18n key for translation
+      const i18nKey = {
+        RO: 'hotels.results.soleLodging',
+        BB: 'hotels.results.lodgingAndBreakfast',
+        HB: 'hotels.results.halfBoard',
+        FB: 'hotels.results.fullBoard',
+        AI: 'hotels.results.allInclusive',
+      }[code];
+
       return {
-        label: t(`hotels.results.mealPlan.${code.toLowerCase()}`) || name,
+        label: i18nKey ? t(i18nKey) : name,
         value: code,
         count,
       };

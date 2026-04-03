@@ -178,7 +178,19 @@ const cancellationBadge = computed(() => {
             {{ t('cart.checkout.blocks.regimen') }}
           </p>
           <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">
-            {{ getRegimenLabel(item.option.rooms[0]?.meal_plan.code ?? '') || item.option.rooms[0]?.meal_plan.name }}
+            {{
+              (() => {
+                const code = item.option.rooms[0]?.meal_plan.code ?? '';
+                const i18nKey = {
+                  RO: 'hotels.results.soleLodging',
+                  BB: 'hotels.results.lodgingAndBreakfast',
+                  HB: 'hotels.results.halfBoard',
+                  FB: 'hotels.results.fullBoard',
+                  AI: 'hotels.results.allInclusive',
+                }[code];
+                return i18nKey ? t(i18nKey) : (item.option.rooms[0]?.meal_plan.name ?? '');
+              })()
+            }}
           </p>
         </div>
       </div>
