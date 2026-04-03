@@ -1,21 +1,40 @@
 <!-- app/components/b2b/cart/checkout/CartCheckoutSummary.vue -->
 <script setup lang="ts">
-import type { CartItem } from '~/composables/useCart';
+import type { CartItem, CartItemHotel } from '~/composables/useCart';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
 
-defineProps<{
+type PreCheckState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | {
+      status: 'ready';
+      bookingFlowId: number;
+      remarks: string[];
+      currentPrice: number;
+      priceChanged: boolean;
+    };
+
+const props = defineProps<{
   items: CartItem[];
   total: number;
+  preCheckMap?: Record<string, PreCheckState>;
 }>();
 
 const { t } = useI18n();
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 
-function itemNetPrice(item: CartItem): number {
-  if (item.type === 'hotel') return parseFloat(item.option.total_net_rate);
-  return 0;
+function getItemNetPrice(item: CartItem): number {
+  if (item.type !== 'hotel') return 0;
+  // Use updated price from preCheck if available
+  const preCheck = props.preCheckMap?.[item.id];
+  if (preCheck?.status === 'ready') return preCheck.currentPrice;
+  return parseFloat((item as CartItemHotel).option.total_net_rate);
+}
+
+function getItemSalePrice(item: CartItem): number {
+  return salePrice(getItemNetPrice(item));
 }
 </script>
 
@@ -33,13 +52,11 @@ function itemNetPrice(item: CartItem): number {
         class="flex items-center justify-between py-2.5 gap-2"
       >
         <span class="text-sm text-gray-700 dark:text-gray-300 font-medium">
-          {{ (item as any).hotel?.hotel_name ?? item.type }}
+          {{ (item as CartItemHotel).hotel?.hotel_name ?? item.type }}
         </span>
         <span class="text-sm font-bold text-primary-600 dark:text-primary-400">
           ${{
-            salePrice(
-              parseFloat((item as any).option?.total_net_rate ?? '0'),
-            ).toLocaleString('en-US', {
+            getItemSalePrice(item).toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })
@@ -47,7 +64,7 @@ function itemNetPrice(item: CartItem): number {
         </span>
         <p v-if="netPriceVisible" class="text-[10px] text-gray-400">
           ${{
-            itemNetPrice(item).toLocaleString('en-US', {
+            getItemNetPrice(item).toLocaleString('en-US', {
               minimumFractionDigits: 2,
             })
           }}

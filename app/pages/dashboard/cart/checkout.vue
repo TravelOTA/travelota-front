@@ -299,7 +299,11 @@ const preCheckForItem = (id: string): PreCheckState =>
       <!-- Sidebar: numerical summary -->
       <div class="lg:col-span-1">
         <div class="sticky top-24">
-          <CartCheckoutSummary :items="items" :total="currentNetTotal" />
+          <CartCheckoutSummary
+            :items="items"
+            :total="currentNetTotal"
+            :pre-check-map="preCheckMap"
+          />
         </div>
       </div>
 

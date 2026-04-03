@@ -269,8 +269,8 @@ const cancellationBadge = computed(() => {
         variant="soft"
         :description="
           t('cart.checkout.blocks.priceChanged', {
-            old: parseFloat(item.option.total_net_rate).toFixed(2),
-            new: preCheck.currentPrice.toFixed(2),
+            old: salePrice(parseFloat(item.option.total_net_rate)).toFixed(2),
+            new: salePrice(preCheck.currentPrice).toFixed(2),
           })
         "
         icon="i-heroicons-exclamation-triangle"
