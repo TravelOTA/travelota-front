@@ -22,13 +22,19 @@ const { salePrice } = useSalePrice();
     class="flex gap-3 py-4 border-b border-gray-100 dark:border-gray-800 last:border-0 items-start"
   >
     <img
-      :src="item.hotel.thumbnail || ''"
+      :src="
+        item.hotel.thumbnail ||
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=200'
+      "
       :alt="item.hotel.hotel_name"
       class="w-16 h-16 object-cover rounded-md shrink-0"
     />
     <div class="flex-1 min-w-0">
       <p class="font-semibold text-sm text-gray-900 dark:text-white truncate">
         {{ item.hotel.hotel_name }}
+        <span class="text-gray-500"
+          >[{{ item.option.rooms[0]?.meal_plan.code ?? '' }}]</span
+        >
       </p>
       <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
         {{ item.option.rooms[0]?.room_name || 'Habitación' }}
