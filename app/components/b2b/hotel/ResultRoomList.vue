@@ -7,6 +7,7 @@ import { useCart } from '~/composables/useCart';
 import { useHotelSearch } from '~/composables/useHotelSearch';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
+import { getRegimenI18nKey } from '~/utils/regimen';
 
 const { t } = useI18n();
 
@@ -99,7 +100,15 @@ function handleAddToCart(option: RoomOption) {
 
       <!-- Régimen -->
       <div class="w-16 font-bold text-gray-800 dark:text-gray-300">
-        <UTooltip :text="option.rooms[0]?.meal_plan.name">
+        <UTooltip
+          :text="
+            (() => {
+              const code = option.rooms[0]?.meal_plan.code ?? '';
+              const i18nKey = getRegimenI18nKey(code);
+              return i18nKey ? t(i18nKey) : (option.rooms[0]?.meal_plan.name ?? '');
+            })()
+          "
+        >
           <span class="cursor-help border-b border-dotted border-gray-400">
             {{ option.rooms[0]?.meal_plan.code }}
           </span>
