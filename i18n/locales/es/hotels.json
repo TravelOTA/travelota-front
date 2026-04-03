@@ -14,7 +14,8 @@
       "children": "Niños",
       "roomLabel": "Habitación",
       "childAgeLabel": "Edad niño",
-      "datePlaceholder": "dd/mm/aa - dd/mm/aa"
+      "datePlaceholder": "dd/mm/aa - dd/mm/aa",
+      "guests": "huéspedes"
     },
     "results": {
       "seeOnMap": "Ver hoteles en el mapa",

@@ -174,7 +174,7 @@ const handleClear = () => {
 // Pending payment bookings in current results
 const pendingPaymentBookings = computed(() => {
   return filteredBookings.value.filter(
-    (b) => b.payment_status === 'Pendiente de Pago',
+    (b) => b.payment_status === 'pending_payment',
   );
 });
 
@@ -241,13 +241,13 @@ const columns = computed(() => [
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'Confirmada':
+    case 'confirmed':
       return 'success';
-    case 'Pendiente de Pago':
+    case 'pending_payment':
       return 'warning';
-    case 'Cancelada':
+    case 'cancelled':
       return 'error';
-    case 'Vencida':
+    case 'expired':
       return 'neutral';
     default:
       return 'primary';
@@ -258,11 +258,11 @@ const getStatusColor = (status: string) => {
 const resultStats = computed(() => {
   const total = filteredBookings.value.length;
   const confirmed = filteredBookings.value.filter(
-    (b) => b.status === 'Confirmada',
+    (b) => b.status === 'confirmed',
   ).length;
   const pending = pendingPaymentBookings.value.length;
   const cancelled = filteredBookings.value.filter(
-    (b) => b.status === 'Cancelada',
+    (b) => b.status === 'cancelled',
   ).length;
   const totalAmount = filteredBookings.value.reduce(
     (acc, b) => acc + b.sell_rate,
@@ -463,7 +463,7 @@ const resultStats = computed(() => {
             <div class="flex items-center justify-center">
               <UCheckbox
                 v-if="
-                  (row as any).original.payment_status === 'Pendiente de Pago'
+                  (row as any).original.payment_status === 'pending_payment'
                 "
                 :model-value="selectedIds.has((row as any).original.id)"
                 @update:model-value="toggleSelection((row as any).original.id)"
@@ -548,14 +548,19 @@ const resultStats = computed(() => {
           <template #payment_status-cell="{ row }">
             <UBadge
               :color="
-                (row as any).original.payment_status === 'Pagada'
+                (row as any).original.payment_status === 'paid'
                   ? 'success'
                   : 'warning'
               "
               variant="subtle"
               class="font-bold tracking-wider text-[10px] uppercase"
             >
-              {{ (row as any).original.payment_status }}
+              {{
+                t(
+                  'hotels.paymentStatusLabel.' +
+                    (row as any).original.payment_status,
+                )
+              }}
             </UBadge>
           </template>
 
@@ -566,7 +571,9 @@ const resultStats = computed(() => {
               variant="soft"
               class="font-bold tracking-wider text-[10px] uppercase"
             >
-              {{ (row as any).original.status }}
+              {{
+                t('hotels.bookingStatusLabel.' + (row as any).original.status)
+              }}
             </UBadge>
           </template>
 

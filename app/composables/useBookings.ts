@@ -1,6 +1,5 @@
 // app/composables/useBookings.ts
 import { useState } from '#imports';
-import { computed } from 'vue';
 import { apiFetch } from '~/composables/useApi';
 import type { IBooking, IBookingListItem } from '#shared/types/booking';
 
@@ -13,28 +12,14 @@ export interface BookingRow {
   order_ref: string;
   check_in: string;
   check_out: string;
-  status: string; // localized or raw
-  payment_status: string; // localized or raw
+  status: string; // raw API value: 'confirmed' | 'cancelled' | 'expired'
+  payment_status: string; // raw API value: 'paid' | 'pending_payment' | 'pending_transfer' | 'deferred'
   sell_rate: number;
   net_rate: number;
   seller: string;
   created_at: string;
   created_at_iso: string;
 }
-
-// ── Status label maps (machine key → Spanish) ──
-const STATUS_LABELS: Record<string, string> = {
-  confirmed: 'Confirmada',
-  cancelled: 'Cancelada',
-  expired: 'Vencida',
-};
-
-const PAYMENT_STATUS_LABELS: Record<string, string> = {
-  paid: 'Pagada',
-  pending_payment: 'Pendiente de Pago',
-  pending_transfer: 'Pendiente Transferencia',
-  deferred: 'Pago Aplazado',
-};
 
 // ── Adapter: IBookingListItem → BookingRow ────────────────────────────────────────────
 function toBookingRow(b: IBookingListItem): BookingRow {
@@ -46,8 +31,8 @@ function toBookingRow(b: IBookingListItem): BookingRow {
     order_ref: b.order_ref,
     check_in: b.check_in,
     check_out: b.check_out,
-    status: STATUS_LABELS[b.status] ?? b.status,
-    payment_status: 'Pendiente de Pago', // Default for now
+    status: b.status,
+    payment_status: b.payment_status ?? 'pending_payment',
     sell_rate: parseFloat(b.sell_rate),
     net_rate: parseFloat(b.sell_rate),
     seller: 'Sistema', // Default for now

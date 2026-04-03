@@ -61,21 +61,21 @@ const handleClear = () => {
 const resultStats = computed(() => {
   const total = filteredBookings.value.length;
   const confirmed = filteredBookings.value.filter(
-    (b) => b.status === 'Confirmada',
+    (b) => b.status === 'confirmed',
   ).length;
   const pending = filteredBookings.value.filter(
-    (b) => b.paymentStatus === 'Pendiente Pago',
+    (b) => b.payment_status === 'pending_payment',
   ).length;
   const totalNet = filteredBookings.value.reduce(
-    (acc, b) => acc + b.netPrice,
+    (acc, b) => acc + b.net_rate,
     0,
   );
   const totalAgency = filteredBookings.value.reduce(
-    (acc, b) => acc + b.agencyPrice,
+    (acc, b) => acc + b.sell_rate,
     0,
   );
   const totalSale = filteredBookings.value.reduce(
-    (acc, b) => acc + b.salePrice,
+    (acc, b) => acc + b.sell_rate,
     0,
   );
   return { total, confirmed, pending, totalNet, totalAgency, totalSale };
@@ -87,7 +87,7 @@ const columns = computed(() => [
   { accessorKey: 'id', header: t('admin.allBookings.tableHeaders.pnr') },
   { accessorKey: 'status', header: t('admin.allBookings.tableHeaders.status') },
   {
-    accessorKey: 'paymentStatus',
+    accessorKey: 'payment_status',
     header: t('admin.allBookings.tableHeaders.payment'),
   },
   { accessorKey: 'prices', header: t('admin.allBookings.tableHeaders.prices') },
@@ -113,13 +113,13 @@ const columns = computed(() => [
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'Confirmada':
+    case 'confirmed':
       return 'success';
-    case 'Pendiente Pago':
+    case 'pending_payment':
       return 'warning';
-    case 'Cancelada':
+    case 'cancelled':
       return 'error';
-    case 'Vencida':
+    case 'expired':
       return 'neutral';
     default:
       return 'primary';
@@ -344,17 +344,22 @@ const fmt = (v: number) =>
           </template>
 
           <!-- Payment Status -->
-          <template #paymentStatus-cell="{ row }">
+          <template #payment_status-cell="{ row }">
             <UBadge
               :color="
-                (row as any).original.paymentStatus === 'Pagada'
+                (row as any).original.payment_status === 'paid'
                   ? 'success'
                   : 'warning'
               "
               variant="subtle"
               class="font-bold tracking-wider text-[10px] uppercase"
             >
-              {{ (row as any).original.paymentStatus }}
+              {{
+                t(
+                  'hotels.paymentStatusLabel.' +
+                    (row as any).original.payment_status,
+                )
+              }}
             </UBadge>
           </template>
 
@@ -365,7 +370,9 @@ const fmt = (v: number) =>
               variant="soft"
               class="font-bold tracking-wider text-[10px] uppercase"
             >
-              {{ (row as any).original.status }}
+              {{
+                t('hotels.bookingStatusLabel.' + (row as any).original.status)
+              }}
             </UBadge>
           </template>
 
