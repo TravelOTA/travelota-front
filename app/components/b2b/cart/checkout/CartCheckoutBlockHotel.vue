@@ -1,9 +1,8 @@
 <!-- app/components/b2b/cart/checkout/CartCheckoutBlockHotel.vue -->
 <script setup lang="ts">
 import type { CartItemHotel } from '~/composables/useCart';
-import { getRegimenLabel } from '~/utils/regimen';
 import { computed } from 'vue';
-import { differenceInCalendarDays, parseISO, format, subDays } from 'date-fns';
+import { differenceInCalendarDays, parseISO, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
@@ -117,7 +116,10 @@ const cancellationBadge = computed(() => {
       <!-- Hotel identity: photo + stars + name + address -->
       <div class="flex gap-3">
         <img
-          :src="item.hotel.thumbnail || ''"
+          :src="
+            item.hotel.thumbnail ||
+            'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=400'
+          "
           :alt="item.hotel.hotel_name"
           class="w-20 h-20 object-cover rounded-lg shrink-0"
         />
@@ -188,7 +190,9 @@ const cancellationBadge = computed(() => {
                   FB: 'hotels.results.fullBoard',
                   AI: 'hotels.results.allInclusive',
                 }[code];
-                return i18nKey ? t(i18nKey) : (item.option.rooms[0]?.meal_plan.name ?? '');
+                return i18nKey
+                  ? t(i18nKey)
+                  : (item.option.rooms[0]?.meal_plan.name ?? '');
               })()
             }}
           </p>
@@ -220,7 +224,7 @@ const cancellationBadge = computed(() => {
           </div>
           <div class="text-right shrink-0">
             <p class="text-xs text-gray-400">
-              {{ t('cart.checkout.blocks.salePrice', { n: nights }) }}
+              {{ t('cart.checkout.blocks.price') }}
             </p>
             <p class="text-sm font-bold text-gray-900 dark:text-white">
               ${{
@@ -325,7 +329,7 @@ const cancellationBadge = computed(() => {
     <template #footer>
       <div class="flex items-center justify-between">
         <span class="text-xs text-gray-500 dark:text-gray-400">
-          {{ t('cart.checkout.blocks.salePrice', { n: nights }) }}
+          {{ t('cart.checkout.blocks.price') }}
         </span>
         <div class="text-right">
           <p class="text-lg font-black text-primary-600 dark:text-primary-400">
