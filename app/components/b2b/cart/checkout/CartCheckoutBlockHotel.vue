@@ -178,7 +178,7 @@ const cancellationBadge = computed(() => {
             {{ t('cart.checkout.blocks.regimen') }}
           </p>
           <p class="text-xs font-bold text-gray-900 dark:text-white mt-0.5">
-            {{ item.option.rooms[0]?.meal_plan }}
+            {{ getRegimenLabel(item.option.rooms[0]?.meal_plan.code ?? '') || item.option.rooms[0]?.meal_plan.name }}
           </p>
         </div>
       </div>

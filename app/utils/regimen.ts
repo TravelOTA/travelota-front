@@ -1,11 +1,18 @@
 // app/utils/regimen.ts
+// Meal plan code to label mapping (for display without i18n)
 const REGIMEN_LABELS: Record<string, string> = {
-  TI: 'Todo incluido',
-  AI: 'All inclusive',
-  MP: 'Media pensión',
-  CP: 'Cama y desayuno',
+  // Backend codes (from API)
+  RO: 'Sólo alojamiento',
+  BB: 'Cama y desayuno',
+  HB: 'Media pensión',
+  FB: 'Pensión Completa',
+  AI: 'Todo incluido',
+  // Legacy codes (fallback for compatibility)
   SA: 'Sólo alojamiento',
-  BB: 'Bed & Breakfast',
+  CP: 'Cama y desayuno',
+  MP: 'Media pensión',
+  PC: 'Pensión Completa',
+  TI: 'Todo incluido',
 };
 
 export function getRegimenLabel(code: string): string {

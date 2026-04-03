@@ -155,22 +155,36 @@ const categories = computed(() => [
 ]);
 const selectedCategories = ref<string[]>([]);
 
-// Board/regime filters
+// Board/regime filters — dynamically extracted from hotel data
 const regimes = computed(() => {
-  const baseRegimes = [
-    { label: t('hotels.results.soleLodging'), value: 'SA' },
-    { label: t('hotels.results.lodgingAndBreakfast'), value: 'CP' },
-    { label: t('hotels.results.halfBoard'), value: 'MP' },
-    { label: t('hotels.results.fullBoard'), value: 'PC' },
-    { label: t('hotels.results.allInclusive'), value: 'TI' },
-  ];
+  // Extract unique meal plan codes from search results
+  const mealPlanMap = new Map<string, string>();
 
-  return baseRegimes.map((reg) => {
-    const count = props.hotels.filter((h) =>
-      h.options.some((o) => o.rooms.some((r) => r.meal_plan === reg.value)),
-    ).length;
-    return { ...reg, count };
-  });
+  for (const hotel of props.hotels) {
+    for (const option of hotel.options ?? []) {
+      for (const room of option.rooms ?? []) {
+        const { code, name } = room.meal_plan ?? {};
+        if (code && name && !mealPlanMap.has(code)) {
+          mealPlanMap.set(code, name);
+        }
+      }
+    }
+  }
+
+  // Build filter options with counts and translations
+  return Array.from(mealPlanMap.entries())
+    .map(([code, name]) => {
+      const count = props.hotels.filter((h) =>
+        h.options?.some((o) => o.rooms?.some((r) => r.meal_plan?.code === code)),
+      ).length;
+
+      return {
+        label: t(`hotels.results.mealPlan.${code.toLowerCase()}`) || name,
+        value: code,
+        count,
+      };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
 });
 const selectedRegimes = ref<string[]>([]);
 
