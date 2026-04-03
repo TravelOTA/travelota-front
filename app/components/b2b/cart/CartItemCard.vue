@@ -33,7 +33,7 @@ const { salePrice } = useSalePrice();
       <p class="font-semibold text-sm text-gray-900 dark:text-white truncate">
         {{ item.hotel.hotel_name }}
         <span class="text-gray-500"
-          >[{{ item.option.rooms[0]?.meal_plan.code ?? '' }}]</span
+          >-{{ item.option.rooms[0]?.meal_plan.code ?? '' }}</span
         >
       </p>
       <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
