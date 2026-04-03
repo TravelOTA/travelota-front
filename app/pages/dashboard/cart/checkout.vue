@@ -317,7 +317,7 @@ const preCheckForItem = (id: string): PreCheckState =>
             <PaymentMethodSelector
               v-model="selectedPaymentMethod"
               :show-pay-later="true"
-              :total-price="total"
+              :total-price="totalSalePrice"
               :cancellation-policy="cartCancellationPolicy"
             />
             <!-- Price summary -->

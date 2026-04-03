@@ -235,7 +235,7 @@ const cancellationBadge = computed(() => {
               }}
             </p>
             <p v-if="netPriceVisible" class="text-[10px] text-gray-400">
-              {{ t('cart.checkout.blocks.netPrice', { n: nights }) }}: ${{
+              {{ t('cart.checkout.blocks.netPrice') }}: ${{
                 pricePerRoom.toFixed(2)
               }}
             </p>
@@ -341,7 +341,7 @@ const cancellationBadge = computed(() => {
             }}
           </p>
           <p v-if="netPriceVisible" class="text-xs text-gray-400">
-            {{ t('cart.checkout.blocks.netPrice', { n: nights }) }}: ${{
+            {{ t('cart.checkout.blocks.netPrice') }}: ${{
               totalNetPrice.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
