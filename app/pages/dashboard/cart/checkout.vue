@@ -18,8 +18,7 @@ definePageMeta({ layout: 'dashboard' });
 
 const { t } = useI18n();
 const router = useRouter();
-const { items, itemCount, total, confirmAll, clearCart, removeItem } =
-  useCart();
+const { items, itemCount, confirmAll, clearCart, removeItem } = useCart();
 
 // ── Pre-check state ──────────────────────────────────────────────────────────
 
@@ -123,7 +122,23 @@ const cartCancellationPolicy = computed((): ICancellationPolicy | undefined => {
     : undefined;
 });
 
-const totalSalePrice = computed(() => salePrice(total.value));
+// Calculate total considering price changes from preCheck
+const currentNetTotal = computed(() => {
+  let sum = 0;
+  for (const item of items.value) {
+    if (item.type !== 'hotel') continue;
+    const pc = preCheckMap.value[item.id];
+    // Use updated price if available, otherwise use original
+    if (pc?.status === 'ready') {
+      sum += pc.currentPrice;
+    } else {
+      sum += parseFloat((item as CartItemHotel).option.total_net_rate);
+    }
+  }
+  return sum;
+});
+
+const totalSalePrice = computed(() => salePrice(currentNetTotal.value));
 
 // ── Price change modal ───────────────────────────────────────────────────────
 
@@ -284,7 +299,7 @@ const preCheckForItem = (id: string): PreCheckState =>
       <!-- Sidebar: numerical summary -->
       <div class="lg:col-span-1">
         <div class="sticky top-24">
-          <CartCheckoutSummary :items="items" :total="total" />
+          <CartCheckoutSummary :items="items" :total="currentNetTotal" />
         </div>
       </div>
 
@@ -348,7 +363,7 @@ const preCheckForItem = (id: string): PreCheckState =>
                 }}</span>
                 <span class="text-sm font-semibold text-gray-400">
                   ${{
-                    total.toLocaleString('en-US', {
+                    currentNetTotal.toLocaleString('en-US', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })
