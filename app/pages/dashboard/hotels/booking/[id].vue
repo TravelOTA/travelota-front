@@ -2,7 +2,6 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-
 import CheckoutSidebarSummary from '~/components/b2b/hotel/checkout/CheckoutSidebarSummary.vue';
 import BookingStatusHero from '~/components/b2b/hotel/checkout/BookingStatusHero.vue';
 import BookingCancellation from '~/components/b2b/hotel/checkout/BookingCancellation.vue';

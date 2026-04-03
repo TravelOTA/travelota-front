@@ -1,5 +1,4 @@
-Include here project utils scripts
-==================================
+# Include here project utils scripts
 
 - start: enchanted pnpm dev
 

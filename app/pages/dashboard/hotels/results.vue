@@ -15,7 +15,7 @@ definePageMeta({
   layout: 'dashboard',
 });
 
-const { hotels, error, searchHotels, filterHotels } = useHotels();
+const { hotels, searchHotels, filterHotels } = useHotels();
 const { searchParams, hydrateFromRoute } = useHotelSearch();
 
 onMounted(async () => {

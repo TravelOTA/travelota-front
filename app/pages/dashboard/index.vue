@@ -27,9 +27,10 @@ const handleSearch = async (data: HotelSearchParams) => {
 
 const handlePromotionSearch = async (destination: string) => {
   await navigateToResults({
-    destination,
-    checkIn: '',
-    checkOut: '',
+    destination_code: '', // Assuming promotions inject actual code later or we default
+    destination_label: destination,
+    check_in: '',
+    check_out: '',
     nationality: 'Estados Unidos',
     distribution: '1 Habitación, 2 Adultos',
   });

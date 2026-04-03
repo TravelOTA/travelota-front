@@ -5,9 +5,9 @@ import { es } from 'date-fns/locale';
 import { useItinerary } from '~/composables/useItinerary';
 import type {
   ItineraryBlock,
-  SearchRoomDistribution,
   ItineraryOption,
 } from '~/composables/useItinerary';
+import type { SearchRoomDistribution } from '#shared/types/search';
 import { useAgency } from '~/composables/useAgency';
 import ItineraryBlockHotel from '~/components/b2b/quoter/ItineraryBlockHotel.vue';
 import ItineraryBlockTransfer from '~/components/b2b/quoter/ItineraryBlockTransfer.vue';
@@ -58,7 +58,7 @@ const formatCurrency = (amount: number) => {
         <p class="text-sm text-gray-700 font-medium mb-3">
           {{ t('itinerary.documentClient') }}:
           <span class="font-bold text-gray-900">{{
-            itinerary.clientName || t('itinerary.documentNotSpecified')
+            itinerary.client_name || t('itinerary.documentNotSpecified')
           }}</span>
           &nbsp;—&nbsp; {{ t('itinerary.documentPax') }}:
           <span class="font-bold text-gray-900">{{ totalPax }}</span>
@@ -97,7 +97,11 @@ const formatCurrency = (amount: number) => {
                   }}
                   <span class="text-xs text-gray-500">
                     ({{ t('itinerary.documentChildrenAges') }}:
-                    {{ room.children.map((c) => c.age).join(', ') }})
+                    {{
+                      room.children
+                        .map((c: { age: number }) => c.age)
+                        .join(', ')
+                    }})
                   </span>
                 </span>
               </template>
@@ -128,10 +132,16 @@ const formatCurrency = (amount: number) => {
         class="w-5 h-5 text-primary-500 mt-0.5 shrink-0"
       />
       <p class="text-sm text-gray-700 leading-relaxed">
+        <vue-qrcode
+          :value="`https://travelota.app/q/${itinerary.id || 'draft'}?client_name=${encodeURIComponent(
+            itinerary.client_name || t('itinerary.documentNotSpecified'),
+          )}`"
+          :options="{ width: 70, margin: 0 }"
+        />
         {{
           t('itinerary.documentWarning', {
             clientName:
-              itinerary.clientName || t('itinerary.documentNotSpecified'),
+              itinerary.client_name || t('itinerary.documentNotSpecified'),
           })
         }}
       </p>
@@ -162,6 +172,9 @@ const formatCurrency = (amount: number) => {
             <h2 class="text-xl font-bold text-gray-900 uppercase tracking-wide">
               {{ block.title }}
             </h2>
+            <p class="text-sm text-gray-500 font-medium">
+              {{ itinerary.client_name || t('itinerary.documentNotSpecified') }}
+            </p>
             <p class="text-sm text-gray-500 font-semibold">
               {{ block.date || t('itinerary.documentDatesPending') }}
             </p>
@@ -213,7 +226,7 @@ const formatCurrency = (amount: number) => {
                   {{ t('itinerary.documentOptionLabel') }} {{ oIndex + 1 }}
                 </div>
                 <UBadge
-                  v-if="opt.isManual"
+                  v-if="opt.is_manual"
                   color="neutral"
                   variant="solid"
                   size="xs"
@@ -228,27 +241,29 @@ const formatCurrency = (amount: number) => {
                   >
                     {{ opt.name }}
                   </h4>
-                  <template v-if="opt.isManual && opt.metadata">
-                    <ItineraryBlockHotel
-                      v-if="opt.metadata.type === 'hotel'"
-                      :option="opt"
-                    />
-                    <ItineraryBlockTransfer
-                      v-else-if="opt.metadata.type === 'transfer'"
-                      :option="opt"
-                    />
-                    <ItineraryBlockFlight
-                      v-else-if="opt.metadata.type === 'flight'"
-                      :option="opt"
-                    />
-                    <ItineraryBlockExcursion
-                      v-else-if="opt.metadata.type === 'excursion'"
-                      :option="opt"
-                    />
-                    <ItineraryBlockExtra
-                      v-else-if="opt.metadata.type === 'extra'"
-                      :option="opt"
-                    />
+                  <template v-if="opt.is_manual && opt.metadata">
+                    <div class="mt-2 text-xs text-gray-500 space-y-1">
+                      <ItineraryBlockHotel
+                        v-if="opt.metadata.type === 'hotel'"
+                        :option="opt"
+                      />
+                      <ItineraryBlockTransfer
+                        v-else-if="opt.metadata.type === 'transfer'"
+                        :option="opt"
+                      />
+                      <ItineraryBlockFlight
+                        v-else-if="opt.metadata.type === 'flight'"
+                        :option="opt"
+                      />
+                      <ItineraryBlockExcursion
+                        v-else-if="opt.metadata.type === 'excursion'"
+                        :option="opt"
+                      />
+                      <ItineraryBlockExtra
+                        v-else-if="opt.metadata.type === 'extra'"
+                        :option="opt"
+                      />
+                    </div>
                   </template>
                   <p
                     v-else
@@ -266,11 +281,11 @@ const formatCurrency = (amount: number) => {
                   >
                     {{ t('itinerary.documentSellPrice') }}
                   </p>
-                  <p
-                    class="text-lg font-black text-primary-600 font-mono tracking-tight"
-                  >
-                    {{ formatCurrency(calculateOptionSellPrice(opt.netPrice)) }}
-                  </p>
+                  <div class="text-xl font-bold text-gray-900 tracking-tight">
+                    {{
+                      formatCurrency(calculateOptionSellPrice(opt.net_price))
+                    }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -363,26 +378,23 @@ const formatCurrency = (amount: number) => {
                 </td>
 
                 <!-- Calculate Prices using the Heuristic Math from Composable -->
-                <!-- We use an IIFE-like structure or just call the function directly -->
-                <td class="px-6 py-3 text-right font-medium text-gray-600">
+                <td class="px-4 py-2 text-right">
                   {{
                     formatCurrency(
-                      calculatePriceBreakdown(opt.netPrice).perAdult,
+                      calculatePriceBreakdown(opt.net_price).perAdult,
                     )
                   }}
                 </td>
-                <td class="px-6 py-3 text-right font-medium text-gray-600">
+                <td class="px-4 py-2 text-right">
                   {{
                     formatCurrency(
-                      calculatePriceBreakdown(opt.netPrice).perChild,
+                      calculatePriceBreakdown(opt.net_price).perChild,
                     )
                   }}
                 </td>
-                <td
-                  class="px-6 py-3 text-right font-bold text-primary-600 tracking-tight"
-                >
+                <td class="px-4 py-2 text-right font-bold text-primary-600">
                   {{
-                    formatCurrency(calculatePriceBreakdown(opt.netPrice).total)
+                    formatCurrency(calculatePriceBreakdown(opt.net_price).total)
                   }}
                 </td>
               </tr>

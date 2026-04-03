@@ -156,7 +156,7 @@ const formatCurrency = (amount: number) => {
           <span class="flex items-center gap-1">
             <UIcon name="i-heroicons-user" class="w-4 h-4" />
             <UInput
-              v-model="itinerary.clientName"
+              v-model="itinerary.client_name"
               variant="none"
               size="xs"
               :placeholder="t('itinerary.placeholderClient')"
@@ -416,8 +416,8 @@ const formatCurrency = (amount: number) => {
                           {{ opt.name }}
                         </p>
                         <UBadge
-                          v-if="opt.isManual"
-                          color="neutral"
+                          v-if="opt.is_manual"
+                          color="warning"
                           variant="subtle"
                           size="xs"
                           >{{ t('itinerary.manualBadge') }}</UBadge
@@ -433,13 +433,15 @@ const formatCurrency = (amount: number) => {
                       >
                         {{ t('itinerary.pvpClient') }}
                       </p>
-                      <p
-                        class="font-bold text-primary-600 dark:text-primary-400 font-mono"
+                      <span
+                        class="font-mono text-sm sm:text-base font-bold text-gray-900 dark:text-white"
                       >
                         {{
-                          formatCurrency(calculateOptionSellPrice(opt.netPrice))
+                          formatCurrency(
+                            calculateOptionSellPrice(opt.net_price),
+                          )
                         }}
-                      </p>
+                      </span>
                     </div>
                     <UButton
                       icon="i-heroicons-x-mark"
@@ -519,8 +521,8 @@ const formatCurrency = (amount: number) => {
                 {{ t('itinerary.globalMarkupLabel') }}
               </label>
               <div class="flex items-center gap-3">
-                <USlider
-                  v-model="itinerary.markupPercentage"
+                <URange
+                  v-model="itinerary.markup_percentage"
                   :min="0"
                   :max="100"
                   class="flex-1"
@@ -528,7 +530,7 @@ const formatCurrency = (amount: number) => {
                 <span
                   class="font-bold text-lg text-primary-700 dark:text-primary-300 w-12 text-right"
                 >
-                  +{{ itinerary.markupPercentage }}%
+                  +{{ itinerary.markup_percentage }}%
                 </span>
               </div>
               <p class="text-[10px] text-primary-600/70 mt-3 leading-snug">

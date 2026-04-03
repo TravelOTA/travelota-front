@@ -3,6 +3,15 @@ import { useState } from '#imports';
 import { apiFetch } from '~/composables/useApi';
 import type { IBooking, IBookingListItem } from '#shared/types/booking';
 
+// ── Search Filters ────────────────────────────────────────────────────────────
+export interface SearchFilters {
+  pnr?: string;
+  hotel_name?: string;
+  status?: string;
+  check_in_from?: string;
+  check_in_to?: string;
+}
+
 // ── BookingRow type (UI shape for the table) ──
 export interface BookingRow {
   id: string;
@@ -52,6 +61,9 @@ export function useBookings() {
   const bookings = useState<BookingRow[]>('bookings', () => []);
   const loading = useState<boolean>('bookings:loading', () => false);
   const error = useState<string | null>('bookings:error', () => null);
+  const agencyOptions = useState<string[]>('bookings:agencies', () => [
+    'Todas',
+  ]);
   const sellerOptions = useState<string[]>('bookings:sellers', () => [
     'Todos',
     'Sistema',
@@ -93,18 +105,18 @@ export function useBookings() {
     }
   }
 
-  function filterBookings(
-    filters: Record<string, string | string[] | number | undefined>,
-  ): BookingRow[] {
+  function filterBookings(filters: SearchFilters): BookingRow[] {
     return bookings.value.filter((b) => {
       if (
         filters.pnr &&
-        !b.pnr.toLowerCase().includes(filters.pnr.toLowerCase())
+        !b.pnr.toLowerCase().includes(String(filters.pnr).toLowerCase())
       )
         return false;
       if (
         filters.hotel_name &&
-        !b.hotel_name.toLowerCase().includes(filters.hotel_name.toLowerCase())
+        !b.hotel_name
+          .toLowerCase()
+          .includes(String(filters.hotel_name).toLowerCase())
       )
         return false;
       if (filters.status && b.status !== filters.status) return false;
@@ -119,6 +131,7 @@ export function useBookings() {
     bookings,
     loading,
     error,
+    agencyOptions,
     sellerOptions,
     fetchBookings,
     getBookingById,

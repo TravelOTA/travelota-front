@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import type { HotelRoomOffer } from '~/composables/useHotels';
+import type { RoomOption } from '~/composables/useHotels';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
 
 const { t } = useI18n();
 
 const props = defineProps<{
-  rooms: HotelRoomOffer[];
+  rooms: RoomOption[];
 }>();
 
 const showAllRooms = ref(true);
 
 const sortedRooms = computed(() => {
-  return [...props.rooms].sort((a, b) => a.price - b.price);
+  return [...props.rooms].sort(
+    (a, b) => parseFloat(a.total_net_rate) - parseFloat(b.total_net_rate),
+  );
 });
 
 const visibleRooms = computed(() => {
@@ -27,41 +29,42 @@ const toast = useToast();
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 
-const addToQuote = (room: HotelRoomOffer) => {
+const addToQuote = (room: RoomOption) => {
   addQuoteItem({
     hotelId: '0', // Mock ID since hotel detail is not passed down here
     hotelName: 'Hotel Seleccionado', // Mock Name
     hotelImage:
       'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
     location: 'Ubicación del Hotel',
-    roomsDescription: `${room.name} (${room.regimen})`,
-    netPrice: room.price,
+    roomsDescription: `${room.rooms[0]?.room_name} (${room.rooms[0]?.meal_plan?.code})`,
+    netPrice: parseFloat(room.total_net_rate),
   });
 
   toast.add({
     title: t('hotels.rooms.roomAddedTitle'),
     description: t('hotels.rooms.roomAddedDescription', {
-      roomName: room.name,
+      roomName: room.rooms[0]?.room_name,
     }),
     icon: 'i-heroicons-check-circle',
     color: 'primary',
   });
 };
 
-const addToCart = (room: HotelRoomOffer) => {
+const addToCart = (room: RoomOption) => {
   addCartItem('hotel', {
     hotel: {
-      id: 0,
-      name: 'Hotel Seleccionado',
-      stars: 4,
-      image:
+      hotel_code: '0',
+      hotel_name: 'Hotel Seleccionado',
+      category: 4,
+      thumbnail:
         'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
-      location: 'Destino',
-      coordinates: [0, 0],
-      bestPrice: 0,
-      rooms: [],
+      destination_name: 'Destino',
+      latitude: null,
+      longitude: null,
+      best_price: 0,
+      options: [],
     },
-    room,
+    option: room,
     searchParams: searchParams.value,
   });
 };
@@ -98,13 +101,13 @@ const addToCart = (room: HotelRoomOffer) => {
         <!-- Tipo Habitación -->
         <div class="flex-1 min-w-[150px]">
           <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
-            room.name
+            room.rooms[0]?.room_name
           }}</span>
         </div>
 
         <!-- Régimen -->
         <div class="w-16 font-bold text-gray-800 dark:text-gray-300">
-          {{ room.regimen }}
+          {{ room.rooms[0]?.meal_plan?.code }}
         </div>
 
         <!-- Cancelación -->
@@ -121,31 +124,38 @@ const addToCart = (room: HotelRoomOffer) => {
                   {{ t('hotels.rooms.cancellationPolicy') }}
                 </p>
                 <p class="text-gray-600 dark:text-gray-300 text-xs">
-                  {{ room.cancellation || 'Gastos de cancelación' }}. (Texto de
-                  ejemplo, será devuelto por el backend próximamente).
+                  {{
+                    room.rooms[0]?.cancellation_policy ||
+                    'Gastos de cancelación'
+                  }}. (Texto de ejemplo, será devuelto por el backend
+                  próximamente).
                 </p>
               </div>
             </template>
           </UPopover>
           <UBadge
             v-if="
-              String(room.cancellation)
+              String(room.rooms[0]?.cancellation_policy)
                 .toLowerCase()
                 .includes('no reembolsable')
             "
             color="error"
             variant="soft"
             size="xs"
-            class="ml-1 px-1 py-0 text-[9px] font-bold leading-tight"
+            class="ml-1 px-1 py-0 text-[10px] font-bold leading-tight"
           >
             NR
           </UBadge>
           <UBadge
-            v-if="room.onRequest"
+            v-if="
+              String(room.rooms[0]?.cancellation_policy)
+                .toLowerCase()
+                .includes('on request')
+            "
             color="warning"
             variant="soft"
             size="xs"
-            class="ml-1 px-1 py-0 text-[9px] font-bold leading-tight"
+            class="ml-1 px-1 py-0 text-[10px] font-bold leading-tight"
           >
             OR
           </UBadge>
@@ -156,10 +166,13 @@ const addToCart = (room: HotelRoomOffer) => {
         >
           <span
             >${{
-              salePrice(room.price).toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })
+              salePrice(parseFloat(room.total_net_rate)).toLocaleString(
+                'en-US',
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                },
+              )
             }}</span
           >
           <span
@@ -167,7 +180,7 @@ const addToCart = (room: HotelRoomOffer) => {
             class="block text-[10px] text-gray-400 font-normal"
           >
             neto ${{
-              room.price.toLocaleString('en-US', {
+              parseFloat(room.total_net_rate).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })

@@ -14,7 +14,7 @@ export function useStats() {
     ).length;
     const totalBookings = bookings.value.length;
     const totalNetVolume = bookings.value.reduce(
-      (acc, b) => acc + b.netPrice,
+      (acc, b) => acc + b.net_rate,
       0,
     );
     const confirmedBookings = bookings.value.filter(

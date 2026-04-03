@@ -53,14 +53,14 @@ const addToItinerary = (option: RoomOption) => {
   const room = option.rooms[0];
   if (!room) return;
   triggerAddOption({
-    providerId: String(props.hotel.hotel_code),
+    provider_id: String(props.hotel.hotel_code),
     name: props.hotel.hotel_name,
     image:
       props.hotel.thumbnail ||
       'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
     description: `${room.room_name} (${room.meal_plan.name})`,
-    netPrice: parseFloat(option.total_net_rate),
-    isManual: false,
+    net_price: parseFloat(option.total_net_rate),
+    is_manual: false,
   });
 };
 

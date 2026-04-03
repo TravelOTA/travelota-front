@@ -2,20 +2,12 @@
 import { ref, watch, onMounted } from 'vue';
 import type { Component } from 'vue';
 
+import type { Hotel } from '~/composables/useHotels';
+
 const { t } = useI18n();
 
-export interface HotelData {
-  id: number | string;
-  name: string;
-  stars: number;
-  bestPrice: number;
-  coordinates: number[];
-  image?: string;
-  [key: string]: unknown;
-}
-
 const props = defineProps<{
-  hotels: HotelData[];
+  hotels: Hotel[];
   modelValue: boolean;
   selectedHotelId?: number | string | null;
 }>();
@@ -50,17 +42,17 @@ watch(
       let targetHotel = null;
       if (props.selectedHotelId) {
         targetHotel = props.hotels.find(
-          (h) => String(h.id) === String(props.selectedHotelId),
+          (h) => String(h.hotel_code) === String(props.selectedHotelId),
         );
       }
 
-      if (targetHotel && targetHotel.coordinates) {
-        internalCenter.value = targetHotel.coordinates;
+      if (targetHotel && targetHotel.latitude && targetHotel.longitude) {
+        internalCenter.value = [targetHotel.latitude, targetHotel.longitude];
         zoom.value = 14;
 
         // Auto-open point popup: polling
         let attempts = 0;
-        const targetId = String(targetHotel.id);
+        const targetId = String(targetHotel.hotel_code);
 
         const tryOpenPopup = setInterval(() => {
           attempts++;
@@ -171,9 +163,12 @@ onMounted(async () => {
             <component
               :is="LMarker"
               v-for="hotel in hotels"
-              :key="hotel.id"
-              :ref="(el: unknown) => registerMarker(el, hotel.id)"
-              :lat-lng="hotel.coordinates"
+              :key="hotel.hotel_code"
+              :ref="(el: unknown) => registerMarker(el, hotel.hotel_code)"
+              :lat-lng="[
+                hotel.latitude || 18.6656,
+                hotel.longitude || -68.3979,
+              ]"
             >
               <!-- Custom Marker Icon with Price (Button Style) -->
               <component
@@ -185,7 +180,7 @@ onMounted(async () => {
                 <div
                   class="inline-flex items-center justify-center bg-primary-600 dark:bg-primary-500 text-white font-bold text-sm px-3 py-1 rounded shadow-sm hover:bg-primary-700 dark:hover:bg-primary-600 hover:shadow transition-all pointer-events-auto cursor-pointer border border-primary-700 dark:border-primary-400 w-max"
                 >
-                  ${{ Math.round(hotel.bestPrice) }}
+                  ${{ Math.round(hotel.best_price) }}
                 </div>
               </component>
 
@@ -193,16 +188,16 @@ onMounted(async () => {
               <component :is="LPopup">
                 <div class="p-1 min-w-[200px]">
                   <img
-                    :src="hotel.image"
+                    :src="hotel.thumbnail || ''"
                     class="w-full h-24 object-cover rounded-md mb-2"
                   />
                   <h4
                     class="font-bold text-sm mb-1 leading-tight text-gray-900"
                   >
-                    {{ hotel.name }}
+                    {{ hotel.hotel_name }}
                   </h4>
                   <div class="flex text-yellow-400 mb-2">
-                    <span v-for="i in hotel.stars" :key="i" class="text-xs"
+                    <span v-for="i in hotel.category" :key="i" class="text-xs"
                       >★</span
                     >
                   </div>
@@ -212,7 +207,7 @@ onMounted(async () => {
                     }}</span>
                     <span class="font-bold text-primary-600"
                       >${{
-                        hotel.bestPrice.toLocaleString('en-US', {
+                        hotel.best_price.toLocaleString('en-US', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })
@@ -224,7 +219,7 @@ onMounted(async () => {
                     color="primary"
                     block
                     class="mt-2 font-bold cursor-pointer"
-                    :to="`/dashboard/hotels/${hotel.id}`"
+                    :to="`/dashboard/hotels/${hotel.hotel_code}`"
                     >{{ t('hotels.map.details') }}</UButton
                   >
                 </div>

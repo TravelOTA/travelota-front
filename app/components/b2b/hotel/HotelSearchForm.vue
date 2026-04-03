@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getLocalTimeZone, today as todayDate } from '@internationalized/date';
-import type { SearchRoomDistribution } from '~/composables/useItinerary';
+import type { SearchRoomDistribution } from '#shared/types/search';
 import { useConfig } from '~/composables/useConfig';
 import { formatCalendarDate } from '~/utils/formatDate';
 

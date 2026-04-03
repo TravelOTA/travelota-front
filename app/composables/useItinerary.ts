@@ -1,19 +1,19 @@
 import { computed } from 'vue';
 import type { ItineraryOptionMetadata } from '#shared/schemas/itinerary';
 
-import type { SearchRoomDistribution, ChildAge } from '#shared/types/search';
+import type { SearchRoomDistribution } from '#shared/types/search';
 
 export interface ItineraryOption {
   id: string;
-  providerId: string; // Provider ID, or "MANUAL" for manual entries
+  provider_id: string; // Provider ID, or "MANUAL" for manual entries
   name: string;
   image: string;
   description: string;
-  netPrice: number;
-  isManual: boolean; // true = manual entry; false = provider-sourced
+  net_price: number;
+  is_manual: boolean; // true = manual entry; false = provider-sourced
   metadata?: ItineraryOptionMetadata;
   notes?: string;
-  isSelected?: boolean; // Client selection indicator
+  is_selected?: boolean; // Client selection indicator
 }
 
 export interface ItineraryBlock {
@@ -27,10 +27,10 @@ export interface ItineraryBlock {
 export interface Itinerary {
   id?: string;
   title: string;
-  clientName: string;
+  client_name: string;
   rooms: SearchRoomDistribution[];
   origin: string;
-  markupPercentage: number;
+  markup_percentage: number;
   blocks: ItineraryBlock[];
 }
 
@@ -39,10 +39,10 @@ export const useItinerary = () => {
   const { t } = useI18n();
   const itinerary = useState<Itinerary>('quoter-itinerary', () => ({
     title: t('itinerary.newTitle'),
-    clientName: '',
+    client_name: '',
     rooms: [{ adults: 2, children: [] }],
     origin: '',
-    markupPercentage: 15, // Default 15% margin
+    markup_percentage: 15, // Default 15% margin
     blocks: [],
   }));
 
@@ -112,8 +112,8 @@ export const useItinerary = () => {
     }
   };
 
-  const calculateOptionSellPrice = (netPrice: number) => {
-    return netPrice * (1 + itinerary.value.markupPercentage / 100);
+  const calculateOptionSellPrice = (net_price: number) => {
+    return net_price * (1 + itinerary.value.markup_percentage / 100);
   };
 
   // Helper function: get price range of a block based on its options
@@ -121,7 +121,7 @@ export const useItinerary = () => {
     const block = itinerary.value.blocks.find((b) => b.id === blockId);
     if (!block || block.options.length === 0) return { min: 0, max: 0 };
     const prices = block.options.map((o) =>
-      calculateOptionSellPrice(o.netPrice),
+      calculateOptionSellPrice(o.net_price),
     );
     return {
       min: Math.min(...prices),
@@ -133,13 +133,13 @@ export const useItinerary = () => {
   const minItineraryPrice = computed(() => {
     return itinerary.value.blocks.reduce((total, block) => {
       if (block.options.length === 0) return total;
-      const minNet = Math.min(...block.options.map((o) => o.netPrice));
+      const minNet = Math.min(...block.options.map((o) => o.net_price));
       return total + calculateOptionSellPrice(minNet);
     }, 0);
   });
 
-  const calculatePriceBreakdown = (netPrice: number) => {
-    const sellPrice = calculateOptionSellPrice(netPrice);
+  const calculatePriceBreakdown = (net_price: number) => {
+    const sellPrice = calculateOptionSellPrice(net_price);
 
     let totalAdults = 0;
     let totalChildren = 0;
@@ -170,10 +170,10 @@ export const useItinerary = () => {
   const clearItinerary = () => {
     itinerary.value = {
       title: t('itinerary.newTitle'),
-      clientName: '',
+      client_name: '',
       rooms: [{ adults: 2, children: [] }],
       origin: '',
-      markupPercentage: 15,
+      markup_percentage: 15,
       blocks: [],
     };
   };

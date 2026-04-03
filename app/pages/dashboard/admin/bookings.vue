@@ -92,7 +92,7 @@ const columns = computed(() => [
   },
   { accessorKey: 'prices', header: t('admin.allBookings.tableHeaders.prices') },
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'created_at',
     header: t('admin.allBookings.tableHeaders.createdDate'),
   },
   {
@@ -275,10 +275,10 @@ const fmt = (v: number) =>
           <template #dates-cell="{ row }">
             <div class="text-sm">
               <span class="block text-gray-900 dark:text-white">{{
-                (row as any).original.checkIn
+                (row as any).original.check_in
               }}</span>
               <span class="block text-xs text-gray-500"
-                >hasta {{ (row as any).original.checkOut }}</span
+                >hasta {{ (row as any).original.check_out }}</span
               >
             </div>
           </template>
@@ -317,7 +317,7 @@ const fmt = (v: number) =>
                 <span
                   class="font-bold text-gray-900 dark:text-white tabular-nums"
                 >
-                  {{ fmt((row as any).original.netPrice) }}
+                  {{ fmt((row as any).original.net_rate) }}
                 </span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -327,7 +327,7 @@ const fmt = (v: number) =>
                 <span
                   class="font-bold text-orange-600 dark:text-orange-400 tabular-nums"
                 >
-                  {{ fmt((row as any).original.agencyPrice) }}
+                  {{ fmt((row as any).original.sell_rate) }}
                 </span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -337,7 +337,7 @@ const fmt = (v: number) =>
                 <span
                   class="font-bold text-primary-600 dark:text-primary-400 tabular-nums"
                 >
-                  {{ fmt((row as any).original.salePrice) }}
+                  {{ fmt((row as any).original.sell_rate) }}
                 </span>
               </div>
             </div>

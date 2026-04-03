@@ -132,12 +132,12 @@ const buildOption = () => {
 
   if (props.blockType === 'hotel') {
     return {
-      providerId: 'MANUAL',
+      provider_id: 'MANUAL',
       name: hotelName.value,
       image: '',
       description: `${hotelRoomType.value} · ${hotelRegime.value} · ${hotelCheckin.value} → ${hotelCheckout.value}`,
-      netPrice: price,
-      isManual: true,
+      net_price: price,
+      is_manual: true,
       metadata: {
         type: 'hotel' as const,
         hotelName: hotelName.value,
@@ -153,12 +153,12 @@ const buildOption = () => {
 
   if (props.blockType === 'transfer') {
     return {
-      providerId: 'MANUAL',
+      provider_id: 'MANUAL',
       name: `${transferOrigin.value} → ${transferDestination.value}`,
       image: '',
       description: `${t(`itinerary.vehicleType${transferVehicleType.value.charAt(0).toUpperCase() + transferVehicleType.value.slice(1)}`)} · ${transferCapacity.value ?? 1} pax · ${transferPickupDatetime.value}`,
-      netPrice: price,
-      isManual: true,
+      net_price: price,
+      is_manual: true,
       metadata: {
         type: 'transfer' as const,
         origin: transferOrigin.value,
@@ -173,12 +173,12 @@ const buildOption = () => {
 
   if (props.blockType === 'flight') {
     return {
-      providerId: 'MANUAL',
+      provider_id: 'MANUAL',
       name: `${flightOrigin.value} → ${flightDestination.value}`,
       image: '',
       description: `${flightNumber.value} · ${flightAirline.value} · ${flightCabin.value}`,
-      netPrice: price,
-      isManual: true,
+      net_price: price,
+      is_manual: true,
       metadata: {
         type: 'flight' as const,
         origin: flightOrigin.value,
@@ -195,12 +195,12 @@ const buildOption = () => {
 
   if (props.blockType === 'excursion') {
     return {
-      providerId: 'MANUAL',
+      provider_id: 'MANUAL',
       name: excursionActivityName.value,
       image: '',
       description: `${excursionLocation.value} · ${excursionDuration.value}`,
-      netPrice: price,
-      isManual: true,
+      net_price: price,
+      is_manual: true,
       metadata: {
         type: 'excursion' as const,
         activityName: excursionActivityName.value,
@@ -215,12 +215,12 @@ const buildOption = () => {
 
   // extra
   return {
-    providerId: 'MANUAL',
+    provider_id: 'MANUAL',
     name: extraName.value,
     image: '',
     description: extraDescription.value,
-    netPrice: price,
-    isManual: true,
+    net_price: price,
+    is_manual: true,
     metadata: {
       type: 'extra' as const,
       name: extraName.value,

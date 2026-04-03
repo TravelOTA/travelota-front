@@ -91,17 +91,7 @@ useHead({
 
     <div v-if="hotel" class="flex flex-col gap-6 mt-6">
       <!-- 1. Top Summary (Reused from Results) -->
-      <ResultHotelSummary
-        :hotel="{
-          hotel_code: hotel.hotel_code,
-          hotel_name: hotel.hotel_name,
-          category: hotel.category,
-          thumbnail: hotel.thumbnail,
-          destination_name: hotel.destination_name,
-          best_price: hotel.best_price,
-        }"
-        @open-map="isMapOpen = true"
-      />
+      <ResultHotelSummary :hotel="hotel" @open-map="isMapOpen = true" />
 
       <!-- 2. Middle Gallery -->
       <HotelGallery :images="hotelImages" />

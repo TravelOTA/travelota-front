@@ -52,7 +52,7 @@ export const useTemplates = () => {
     // Strip options from all blocks; clear clientName
     const skeleton: Itinerary = {
       ...itinerary.value,
-      clientName: '',
+      client_name: '',
       blocks: itinerary.value.blocks.map((block) => ({
         ...block,
         options: [],
@@ -90,7 +90,7 @@ export const useTemplates = () => {
     clearItinerary();
     itinerary.value = {
       ...template.itinerary,
-      clientName: '',
+      client_name: '',
       // give each block a fresh UUID so the builder treats them as new
       blocks: template.itinerary.blocks.map((block) => ({
         ...block,

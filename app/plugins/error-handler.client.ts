@@ -1,5 +1,6 @@
 export default defineNuxtPlugin((nuxtApp) => {
-  const translate = nuxtApp.$i18n.t;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const translate = (nuxtApp as any).$i18n.t;
   const toast = useToast();
   const auth = useAuth();
 

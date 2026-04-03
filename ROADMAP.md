@@ -11,18 +11,18 @@ All flows are built and polished with mock data. `useApi()` is wired and injects
 
 ### Implemented (UI + Mock Data)
 
-| Module | What's built |
-|---|---|
-| **Auth** | Login/register forms (Zod), role cookie simulation, auth middleware on `/dashboard/**`, magic dev panel |
-| **Hotel Search** | Search form, URL-persisted params, results grid/list, advanced filters, hotel detail, Leaflet map |
-| **Quoter** | Cart, markup slider, profit margin visualization, print-ready `QuoterDocument.vue` |
+| Module                | What's built                                                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Auth**              | Login/register forms (Zod), role cookie simulation, auth middleware on `/dashboard/**`, magic dev panel                   |
+| **Hotel Search**      | Search form, URL-persisted params, results grid/list, advanced filters, hotel detail, Leaflet map                         |
+| **Quoter**            | Cart, markup slider, profit margin visualization, print-ready `QuoterDocument.vue`                                        |
 | **Itinerary Builder** | Multiday blocks (hotel/flight/transfer/activity), 5 options per block, child pricing, print-ready `ItineraryDocument.vue` |
-| **Checkout** | Full flow, payment method selector (card/transfer/credit/pay-later), credit availability check, booking confirmation |
-| **Bookings** | List with filters, client-side pagination, bulk selection, voucher modal |
-| **Wallet** | Credit limit widget, transaction history, `AgencyTransactions` + `WalletWidgets` |
-| **Agency Profile** | Editor, logo upload + preview, color picker with dynamic theming, markup config, user list |
-| **Admin Panel** | Stats dashboard, agency CRUD (approve/block/edit), group tiers, support user CRUD, templates page |
-| **UI Foundation** | Nuxt UI v4 + Tailwind v4, green palette, `print` layout, fully responsive, Spanish |
+| **Checkout**          | Full flow, payment method selector (card/transfer/credit/pay-later), credit availability check, booking confirmation      |
+| **Bookings**          | List with filters, client-side pagination, bulk selection, voucher modal                                                  |
+| **Wallet**            | Credit limit widget, transaction history, `AgencyTransactions` + `WalletWidgets`                                          |
+| **Agency Profile**    | Editor, logo upload + preview, color picker with dynamic theming, markup config, user list                                |
+| **Admin Panel**       | Stats dashboard, agency CRUD (approve/block/edit), group tiers, support user CRUD, templates page                         |
+| **UI Foundation**     | Nuxt UI v4 + Tailwind v4, green palette, `print` layout, fully responsive, Spanish                                        |
 
 ---
 
@@ -153,25 +153,33 @@ The `print` layout and `*Document.vue` components are already built. Needed:
 ## Phase 4 — Suggested Frontend Features
 
 ### 💡 Multi-Currency Display
+
 Show net/sell prices in the agency's preferred currency. Pair with a backend exchange-rate endpoint.
 
 ### 💡 Availability Calendar
+
 Calendar view on hotel detail page — price variation by date. Reduces back-and-forth.
 
 ### 💡 Client Portal
+
 Read-only public route (`/booking/{token}`) for travelers to view their booking and download voucher without logging in.
 
 ### 💡 Advanced Analytics Dashboard
+
 Real-time charts (Chart.js or D3) on admin dashboard — conversion rate, revenue trends, top destinations.
 
 ### 💡 Booking Modification Flow
+
 Allow agencies to edit passenger names and room types post-booking. Currently only cancellation exists.
 
 ### 💡 B2C White-Label Mode
+
 A configurable public-facing search/booking flow embeddable on agency websites. Reuse existing components with a different layout.
 
 ### 💡 Document Template Editor
+
 Rich-text editor on the admin templates page to customize voucher/quote branding per agency.
 
 ### 💡 Two-Factor Authentication UI
+
 TOTP setup flow for AGENCY_ADMIN and SUPER_ADMIN accounts.

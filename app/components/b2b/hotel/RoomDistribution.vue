@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import type { SearchRoomDistribution } from '~/composables/useItinerary';
+import type { SearchRoomDistribution } from '#shared/types/search';
 
 const { t } = useI18n();
 

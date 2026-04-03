@@ -65,6 +65,7 @@ export interface IBookingListItem {
   check_in: string;
   check_out: string;
   status: BookingStatus;
+  payment_status: PaymentStatus | null;
   sell_rate: string;
   created_at: string;
 }

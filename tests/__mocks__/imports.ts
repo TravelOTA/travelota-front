@@ -8,7 +8,7 @@ import { vi } from 'vitest';
 export { ref, computed, watch, reactive, onMounted, onUnmounted };
 
 // useState: singleton map for shared state by key
-const stateMap = new Map<string, any>();
+const stateMap = new Map<string, unknown>();
 
 export const useState = <T>(key: string, init?: () => T) => {
   if (!stateMap.has(key)) {

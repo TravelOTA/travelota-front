@@ -22,7 +22,7 @@ const downloadImage = async () => {
       cacheBust: true,
     });
     const link = document.createElement('a');
-    link.download = `itinerary-${itinerary.value.clientName || 'travel'}.png`;
+    link.download = `itinerary-${itinerary.value.client_name || 'travel'}.png`;
     link.href = dataUrl;
     link.click();
   } catch (err) {

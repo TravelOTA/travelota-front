@@ -3,34 +3,29 @@ import { useItinerary } from '~/composables/useItinerary';
 import { useNetPrice } from '~/composables/useNetPrice';
 import { useSalePrice } from '~/composables/useSalePrice';
 
+import type { Hotel } from '~/composables/useHotels';
+
 const { t } = useI18n();
 
 const props = defineProps<{
-  hotel: {
-    hotel_code: string;
-    hotel_name: string;
-    category: number;
-    thumbnail: string | null;
-    destination_name: string;
-    best_price: number;
-  };
+  hotel: Hotel;
 }>();
 
 const emit = defineEmits<{
-  (e: 'open-map', hotel: Record<string, any>): void;
+  (e: 'open-map', hotel: Hotel): void;
 }>();
 const { triggerAddOption } = useItinerary();
 
 const addToItinerary = () => {
   triggerAddOption({
-    providerId: String(props.hotel.hotel_code),
+    provider_id: String(props.hotel.hotel_code),
     name: props.hotel.hotel_name,
     image:
       props.hotel.thumbnail ||
       'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
     description: props.hotel.destination_name + ' - Alojamiento Completo',
-    netPrice: props.hotel.best_price,
-    isManual: false,
+    net_price: props.hotel.best_price,
+    is_manual: false,
   });
 };
 

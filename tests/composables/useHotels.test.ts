@@ -3,6 +3,8 @@ import {
   useHotels,
   type HotelFilterState,
   type Hotel,
+  type RoomOption,
+  type RoomRate,
 } from '~/composables/useHotels';
 
 const MOCK_HOTELS: Hotel[] = [
@@ -175,8 +177,8 @@ describe('useHotels', () => {
       const result = filterHotels({ ...DEFAULT_FILTERS, regimes: ['TI'] });
 
       result.forEach((h: Hotel) => {
-        const regimes = h.options.flatMap((o: any) =>
-          o.rooms.map((r: any) => r.meal_plan.code),
+        const regimes = h.options.flatMap((o: RoomOption) =>
+          o.rooms.map((r: RoomRate) => r.meal_plan.code),
         );
         expect(regimes).toContain('TI');
       });
@@ -187,9 +189,9 @@ describe('useHotels', () => {
       const result = filterHotels({ ...DEFAULT_FILTERS, hideNR: true });
 
       result.forEach((h: Hotel) => {
-        const hasRefundable = h.options.some((o: any) =>
+        const hasRefundable = h.options.some((o: RoomOption) =>
           o.rooms.some(
-            (r: any) =>
+            (r: RoomRate) =>
               !r.cancellation_policy
                 .toLowerCase()
                 .includes('no reembolsable') &&
@@ -205,9 +207,9 @@ describe('useHotels', () => {
       const result = filterHotels({ ...DEFAULT_FILTERS, hideOR: true });
 
       result.forEach((h: Hotel) => {
-        const hasInstant = h.options.some((o: any) =>
+        const hasInstant = h.options.some((o: RoomOption) =>
           o.rooms.some(
-            (r: any) =>
+            (r: RoomRate) =>
               !r.cancellation_policy.toLowerCase().includes('on request'),
           ),
         );
