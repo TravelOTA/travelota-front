@@ -57,7 +57,7 @@ const addToItinerary = (option: RoomOption) => {
     image:
       props.hotel.thumbnail ||
       'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
-    description: `${room.room_name} (${room.meal_plan})`,
+    description: `${room.room_name} (${room.meal_plan.name})`,
     netPrice: parseFloat(option.total_net_rate),
     isManual: false,
   });
@@ -99,7 +99,11 @@ function handleAddToCart(option: RoomOption) {
 
       <!-- Régimen -->
       <div class="w-16 font-bold text-gray-800 dark:text-gray-300">
-        {{ option.rooms[0]?.meal_plan }}
+        <UTooltip :text="option.rooms[0]?.meal_plan.name">
+          <span class="cursor-help border-b border-dotted border-gray-400">
+            {{ option.rooms[0]?.meal_plan.code }}
+          </span>
+        </UTooltip>
       </div>
 
       <!-- Cancelación -->

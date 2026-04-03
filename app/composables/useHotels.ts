@@ -9,7 +9,10 @@ export interface RoomRate {
   net_rate: string; // decimal string
   currency: string;
   cancellation_policy: string;
-  meal_plan: string;
+  meal_plan: {
+    code: string;
+    name: string;
+  };
 }
 
 export interface RoomOption {
@@ -97,7 +100,7 @@ export function useHotels() {
           return false;
         if (filters.regimes.length > 0) {
           const hotelRegimes = h.options.flatMap((o) =>
-            o.rooms.map((r) => r.meal_plan),
+            o.rooms.map((r) => r.meal_plan.code),
           );
           if (!filters.regimes.some((reg) => hotelRegimes.includes(reg)))
             return false;

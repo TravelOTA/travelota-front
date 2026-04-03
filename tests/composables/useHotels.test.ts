@@ -24,7 +24,7 @@ const MOCK_HOTELS: Hotel[] = [
             net_rate: '1000',
             currency: 'USD',
             cancellation_policy: 'Cancelación gratuita',
-            meal_plan: 'TI',
+            meal_plan: { code: 'TI', name: 'All Inclusive' },
           },
         ],
       },
@@ -52,7 +52,7 @@ const MOCK_HOTELS: Hotel[] = [
             net_rate: '1500',
             currency: 'USD',
             cancellation_policy: 'No reembolsable',
-            meal_plan: 'TI',
+            meal_plan: { code: 'TI', name: 'All Inclusive' },
           },
         ],
       },
@@ -80,7 +80,7 @@ const MOCK_HOTELS: Hotel[] = [
             net_rate: '300',
             currency: 'EUR',
             cancellation_policy: 'On Request',
-            meal_plan: 'SA',
+            meal_plan: { code: 'SA', name: 'Sole Lodging' },
           },
         ],
       },
@@ -171,7 +171,7 @@ describe('useHotels', () => {
       const result = filterHotels({ ...DEFAULT_FILTERS, regimes: ['TI'] });
 
       result.forEach((h: Hotel) => {
-        const regimes = h.options.flatMap((o: any) => o.rooms.map((r: any) => r.meal_plan));
+        const regimes = h.options.flatMap((o: any) => o.rooms.map((r: any) => r.meal_plan.code));
         expect(regimes).toContain('TI');
       });
     });

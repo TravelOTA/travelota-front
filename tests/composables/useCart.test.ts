@@ -55,7 +55,7 @@ const makeHotelData = (
         net_rate: '500',
         currency: 'USD',
         cancellation_policy: 'Reembolsable',
-        meal_plan: 'TI',
+        meal_plan: { code: 'TI', name: 'All Inclusive' },
       },
     ],
   },
