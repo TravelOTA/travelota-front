@@ -13,11 +13,6 @@ const { t } = useI18n();
 const { netPriceVisible } = useNetPrice();
 const { salePrice } = useSalePrice();
 
-function itemName(item: CartItem): string {
-  if (item.type === 'hotel') return item.hotel.hotel_name;
-  return item.type;
-}
-
 function itemNetPrice(item: CartItem): number {
   if (item.type === 'hotel') return parseFloat(item.option.total_net_rate);
   return 0;
@@ -42,10 +37,11 @@ function itemNetPrice(item: CartItem): number {
         </span>
         <span class="text-sm font-bold text-primary-600 dark:text-primary-400">
           ${{
-            parseFloat(
-              (item as any).option?.total_net_rate ?? '0',
+            salePrice(
+              parseFloat((item as any).option?.total_net_rate ?? '0'),
             ).toLocaleString('en-US', {
               minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
             })
           }}
         </span>
