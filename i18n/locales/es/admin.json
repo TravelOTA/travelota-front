@@ -125,6 +125,7 @@
           "groupField": "Grupo de Agencia",
           "groupPlaceholder": "Selecciona un grupo",
           "markupApplied": "Markup aplicado:",
+          "groupSelected": "Grupo seleccionado: {group}",
           "cancel": "Cancelar",
           "approve": "Aprobar"
         },

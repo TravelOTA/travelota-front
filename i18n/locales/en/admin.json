@@ -125,6 +125,7 @@
           "groupField": "Agency Group",
           "groupPlaceholder": "Select a group",
           "markupApplied": "Markup applied:",
+          "groupSelected": "Selected group: {group}",
           "cancel": "Cancel",
           "approve": "Approve"
         },

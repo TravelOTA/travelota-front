@@ -575,7 +575,7 @@ const columns = computed(() => [
             icon="i-heroicons-information-circle"
             color="info"
             variant="soft"
-            :description="`${t('admin.agencies.modals.approve.markupApplied')} ${selectedGroup.baseMarkup}%`"
+            :description="`${t('admin.agencies.modals.approve.groupSelected', { group: selectedGroup.name })}`"
           />
         </div>
       </template>

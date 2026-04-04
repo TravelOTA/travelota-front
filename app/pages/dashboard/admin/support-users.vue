@@ -2,14 +2,14 @@
 import {
   useSupportUsers,
   type SupportUser,
-} from '~/composables/useSupportUsers';
+} from "~/composables/useSupportUsers";
 
 definePageMeta({
-  layout: 'dashboard',
+  layout: "dashboard",
 });
 
 useHead({
-  title: 'Usuarios de Soporte - TravelOTA Admin',
+  title: "Usuarios de Soporte - TravelOTA Admin",
 });
 
 const { t } = useI18n();
@@ -17,128 +17,97 @@ const { t } = useI18n();
 const {
   users,
   stats: supportStats,
-  addUser,
+  loading,
+  error,
+  fetchUsers,
   updateUser,
-  deleteUser: removeUser,
-  toggleStatus: toggleUserStatus,
 } = useSupportUsers();
 
+onMounted(() => fetchUsers());
+
+function fullName(u: SupportUser) {
+  return [u.first_name, u.last_name].filter(Boolean).join(" ") || u.email;
+}
+
 const columns = computed(() => [
-  { accessorKey: 'name', header: t('admin.supportUsers.tableHeaders.name') },
-  { accessorKey: 'email', header: t('admin.supportUsers.tableHeaders.email') },
-  { accessorKey: 'role', header: t('admin.supportUsers.tableHeaders.role') },
   {
-    accessorKey: 'lastLogin',
-    header: t('admin.supportUsers.tableHeaders.lastLogin'),
+    accessorKey: "fullName",
+    header: t("admin.supportUsers.tableHeaders.name"),
   },
+  { accessorKey: "email", header: t("admin.supportUsers.tableHeaders.email") },
+  { accessorKey: "role", header: t("admin.supportUsers.tableHeaders.role") },
   {
-    accessorKey: 'status',
-    header: t('admin.supportUsers.tableHeaders.status'),
+    accessorKey: "status",
+    header: t("admin.supportUsers.tableHeaders.status"),
   },
-  { id: 'actions' },
+  { id: "actions" },
 ]);
 
-const searchQuery = ref('');
-const statusFilter = ref('Todos');
-const roleFilter = ref('Todos');
+const searchQuery = ref("");
+const statusFilter = ref<"all" | "active" | "locked" | "inactive">("all");
 
 const filteredUsers = computed(() => {
   return users.value.filter((u) => {
+    const name = fullName(u).toLowerCase();
     const matchSearch =
       !searchQuery.value ||
-      u.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      name.includes(searchQuery.value.toLowerCase()) ||
       u.email.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchStatus =
-      statusFilter.value === 'Todos' || u.status === statusFilter.value;
-    const matchRole =
-      roleFilter.value === 'Todos' || u.role === roleFilter.value;
-    return matchSearch && matchStatus && matchRole;
+      statusFilter.value === "all" ||
+      (statusFilter.value === "active" && u.is_active && !u.is_locked) ||
+      (statusFilter.value === "locked" && u.is_locked) ||
+      (statusFilter.value === "inactive" && !u.is_active);
+    return matchSearch && matchStatus;
   });
 });
 
-// Modal nuevo usuario
-const isModalOpen = ref(false);
-const newUser = ref({
-  name: '',
-  email: '',
-  password: '',
-  role: 'SUPPORT' as const,
-});
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const emailValid = computed(() => emailRegex.test(newUser.value.email));
-const emailTouched = ref(false);
-const showPassword = ref(false);
-const showEditPassword = ref(false);
-
-const isFormValid = computed(
-  () =>
-    newUser.value.name.trim() !== '' &&
-    emailValid.value &&
-    newUser.value.password.length >= 8,
+// Flatten users for UTable (add computed display fields)
+const tableRows = computed(() =>
+  filteredUsers.value.map((u) => ({
+    ...u,
+    fullName: fullName(u),
+  })),
 );
-
-function openModal() {
-  newUser.value = { name: '', email: '', password: '', role: 'SUPPORT' };
-  emailTouched.value = false;
-  isModalOpen.value = true;
-}
-
-function saveUser() {
-  if (!isFormValid.value) return;
-  addUser({
-    name: newUser.value.name,
-    email: newUser.value.email,
-    role: newUser.value.role,
-  });
-  isModalOpen.value = false;
-}
-
-const roleColors: Record<string, 'primary' | 'neutral'> = {
-  SUPER_ADMIN: 'primary',
-  SUPPORT: 'neutral',
-};
 
 const roleLabels: Record<string, string> = {
-  SUPER_ADMIN: 'Admin',
-  SUPPORT: 'Soporte',
+  SUPER_ADMIN: "Admin",
+  SUPPORT: "Soporte",
 };
 
-function toggleStatus(user: SupportUser) {
-  toggleUserStatus(user.id);
+function roleColor(role: string): "primary" | "neutral" {
+  return role === "SUPER_ADMIN" ? "primary" : "neutral";
 }
 
-function deleteUser(user: SupportUser) {
-  if (confirm(`¿Eliminar a ${user.name}? Esta acción no se puede deshacer.`)) {
-    removeUser(user.id);
-  }
+function statusLabel(u: SupportUser) {
+  if (u.is_locked) return "Bloqueado";
+  return u.is_active ? "Activo" : "Inactivo";
 }
 
-// Modal edición
+function statusBadgeColor(u: SupportUser): "success" | "error" | "neutral" {
+  if (u.is_locked) return "error";
+  return u.is_active ? "success" : "neutral";
+}
+
+async function toggleLock(user: SupportUser) {
+  await updateUser(user.id, { is_locked: !user.is_locked });
+}
+
+// Edit modal — only supports toggling is_active / is_locked via PATCH
 const isEditModalOpen = ref(false);
 const editUser = ref<SupportUser | null>(null);
-const editPassword = ref('');
-const editEmailTouched = ref(false);
-const editEmailValid = computed(() =>
-  emailRegex.test(editUser.value?.email ?? ''),
-);
-const isEditFormValid = computed(
-  () =>
-    (editUser.value?.name.trim() ?? '') !== '' &&
-    editEmailValid.value &&
-    (editPassword.value === '' || editPassword.value.length >= 8),
-);
 
 function openEditModal(user: SupportUser) {
   editUser.value = { ...user };
-  editPassword.value = '';
-  editEmailTouched.value = false;
   isEditModalOpen.value = true;
 }
 
-function saveEditUser() {
-  if (!isEditFormValid.value || !editUser.value) return;
-  updateUser(editUser.value.id, { ...editUser.value });
+async function saveEditUser() {
+  if (!editUser.value) return;
+  await updateUser(editUser.value.id, {
+    is_active: editUser.value.is_active,
+    is_locked: editUser.value.is_locked,
+  });
   isEditModalOpen.value = false;
 }
 </script>
@@ -155,23 +124,26 @@ function saveEditUser() {
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
           <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
-          {{ t('admin.supportUsers.backToPanel') }}
+          {{ t("admin.supportUsers.backToPanel") }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-          {{ t('admin.supportUsers.title') }}
+          {{ t("admin.supportUsers.title") }}
         </h1>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          {{ t('admin.supportUsers.subtitle') }}
+          {{ t("admin.supportUsers.subtitle") }}
         </p>
       </div>
-      <UButton
-        id="btn-new-support-user"
-        icon="i-heroicons-user-plus"
-        color="primary"
-        :label="t('admin.supportUsers.newUser')"
-        @click="openModal"
-      />
     </div>
+
+    <!-- Error state -->
+    <UAlert
+      v-if="error"
+      icon="i-heroicons-exclamation-triangle"
+      color="error"
+      variant="soft"
+      class="mb-6"
+      :title="error"
+    />
 
     <!-- Stats rápidas -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -184,7 +156,7 @@ function saveEditUser() {
           </div>
           <div>
             <p class="text-xs text-gray-500 font-medium">
-              {{ t('admin.supportUsers.stats.total') }}
+              {{ t("admin.supportUsers.stats.total") }}
             </p>
             <p class="text-xl font-bold">{{ supportStats.total }}</p>
           </div>
@@ -199,11 +171,9 @@ function saveEditUser() {
           </div>
           <div>
             <p class="text-xs text-gray-500 font-medium">
-              {{ t('admin.supportUsers.stats.active') }}
+              {{ t("admin.supportUsers.stats.active") }}
             </p>
-            <p class="text-xl font-bold">
-              {{ supportStats.active }}
-            </p>
+            <p class="text-xl font-bold">{{ supportStats.active }}</p>
           </div>
         </div>
       </UCard>
@@ -216,11 +186,9 @@ function saveEditUser() {
           </div>
           <div>
             <p class="text-xs text-gray-500 font-medium">
-              {{ t('admin.supportUsers.stats.admins') }}
+              {{ t("admin.supportUsers.stats.admins") }}
             </p>
-            <p class="text-xl font-bold">
-              {{ supportStats.admins }}
-            </p>
+            <p class="text-xl font-bold">{{ supportStats.admins }}</p>
           </div>
         </div>
       </UCard>
@@ -233,11 +201,9 @@ function saveEditUser() {
           </div>
           <div>
             <p class="text-xs text-gray-500 font-medium">
-              {{ t('admin.supportUsers.stats.support') }}
+              {{ t("admin.supportUsers.stats.support") }}
             </p>
-            <p class="text-xl font-bold">
-              {{ supportStats.support }}
-            </p>
+            <p class="text-xl font-bold">{{ supportStats.support }}</p>
           </div>
         </div>
       </UCard>
@@ -264,26 +230,44 @@ function saveEditUser() {
           :placeholder="t('admin.supportUsers.search')"
           class="w-full sm:w-72"
         />
-        <div class="flex gap-2">
-          <USelectMenu
-            v-model="roleFilter"
-            :options="['Todos', 'SUPER_ADMIN', 'SUPPORT']"
-            placeholder="Rol"
-            class="w-36"
-          />
-          <USelectMenu
-            v-model="statusFilter"
-            :options="['Todos', 'Activo', 'Inactivo']"
-            placeholder="Estado"
-            class="w-32"
-          />
-        </div>
+        <USelectMenu
+          v-model="statusFilter"
+          :items="[
+            { label: 'Todos', value: 'all' },
+            { label: 'Activo', value: 'active' },
+            { label: 'Bloqueado', value: 'locked' },
+            { label: 'Inactivo', value: 'inactive' },
+          ]"
+          value-key="value"
+          label-key="label"
+          placeholder="Estado"
+          class="w-36"
+        />
       </div>
 
-      <UTable :data="filteredUsers" :columns="columns">
+      <div v-if="loading" class="py-12 text-center text-sm text-gray-400">
+        <UIcon
+          name="i-heroicons-arrow-path"
+          class="w-6 h-6 animate-spin mx-auto mb-2"
+        />
+        Cargando usuarios...
+      </div>
+
+      <UTable v-else :data="tableRows" :columns="columns">
+        <template #fullName-cell="{ row }">
+          <div>
+            <p class="font-medium text-gray-900 dark:text-white">
+              {{ row.original.fullName }}
+            </p>
+            <p class="text-xs text-gray-400">
+              {{ row.original.group_names || "—" }}
+            </p>
+          </div>
+        </template>
+
         <template #role-cell="{ row }">
           <UBadge
-            :color="roleColors[row.original.role] ?? 'neutral'"
+            :color="roleColor(row.original.role)"
             variant="soft"
             size="xs"
           >
@@ -292,39 +276,30 @@ function saveEditUser() {
         </template>
 
         <template #status-cell="{ row }">
-          <UBadge
-            :color="row.original.status === 'Activo' ? 'success' : 'neutral'"
-            variant="subtle"
-          >
-            {{ row.original.status }}
+          <UBadge :color="statusBadgeColor(row.original)" variant="subtle">
+            {{ statusLabel(row.original) }}
           </UBadge>
-        </template>
-
-        <template #lastLogin-cell="{ row }">
-          <span class="text-sm text-gray-500">{{
-            row.original.lastLogin
-          }}</span>
         </template>
 
         <template #actions-cell="{ row }">
           <div class="flex justify-end gap-1 pr-2">
             <UTooltip
               :text="
-                row.original.status === 'Activo'
-                  ? t('admin.supportUsers.tooltips.deactivate')
-                  : t('admin.supportUsers.tooltips.activate')
+                row.original.is_locked
+                  ? t('admin.supportUsers.tooltips.activate')
+                  : t('admin.supportUsers.tooltips.deactivate')
               "
             >
               <UButton
                 :icon="
-                  row.original.status === 'Activo'
-                    ? 'i-heroicons-no-symbol'
-                    : 'i-heroicons-check-circle'
+                  row.original.is_locked
+                    ? 'i-heroicons-lock-open'
+                    : 'i-heroicons-no-symbol'
                 "
-                :color="row.original.status === 'Activo' ? 'error' : 'success'"
+                :color="row.original.is_locked ? 'success' : 'error'"
                 variant="ghost"
                 size="xs"
-                @click="toggleStatus(row.original)"
+                @click="toggleLock(row.original)"
               />
             </UTooltip>
             <UTooltip :text="t('admin.supportUsers.tooltips.edit')">
@@ -336,240 +311,43 @@ function saveEditUser() {
                 @click="openEditModal(row.original)"
               />
             </UTooltip>
-            <UTooltip :text="t('admin.supportUsers.tooltips.delete')">
-              <UButton
-                icon="i-heroicons-trash"
-                color="error"
-                variant="ghost"
-                size="xs"
-                @click="deleteUser(row.original)"
-              />
-            </UTooltip>
           </div>
         </template>
       </UTable>
 
       <div
-        v-if="filteredUsers.length === 0"
+        v-if="!loading && tableRows.length === 0"
         class="py-12 text-center text-sm text-gray-500"
       >
-        {{ t('admin.supportUsers.noResults') }}
+        {{ t("admin.supportUsers.noResults") }}
       </div>
     </UCard>
 
-    <!-- Modal nuevo usuario -->
-    <UModal
-      v-model:open="isModalOpen"
-      :title="t('admin.supportUsers.modals.create.title')"
-    >
-      <template #body>
-        <div class="space-y-4">
-          <UAlert
-            icon="i-heroicons-shield-exclamation"
-            color="warning"
-            variant="soft"
-            :title="t('admin.supportUsers.modals.create.warning')"
-            :description="
-              t('admin.supportUsers.modals.create.warningDescription')
-            "
-          />
-
-          <UFormField
-            :label="t('admin.supportUsers.modals.create.fullName')"
-            name="name"
-            required
-          >
-            <UInput
-              v-model="newUser.name"
-              placeholder="Ej: Laura Martínez"
-              icon="i-heroicons-user"
-            />
-          </UFormField>
-
-          <UFormField
-            :label="t('admin.supportUsers.modals.create.email')"
-            name="email"
-            required
-            :error="
-              emailTouched && !emailValid
-                ? 'Introduce un email válido (ej: usuario@travelota.com)'
-                : undefined
-            "
-          >
-            <UInput
-              v-model="newUser.email"
-              type="email"
-              placeholder="usuario@travelota.com"
-              icon="i-heroicons-envelope"
-              :color="emailTouched && !emailValid ? 'error' : undefined"
-              @blur="emailTouched = true"
-            />
-          </UFormField>
-
-          <UFormField
-            :label="t('admin.supportUsers.modals.create.password')"
-            name="password"
-            required
-            :hint="t('admin.supportUsers.modals.create.passwordHint')"
-          >
-            <UInput
-              v-model="newUser.password"
-              :type="showPassword ? 'text' : 'password'"
-              placeholder="••••••••"
-              icon="i-heroicons-lock-closed"
-            >
-              <template #trailing>
-                <UButton
-                  :icon="
-                    showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'
-                  "
-                  color="neutral"
-                  variant="ghost"
-                  size="xs"
-                  tabindex="-1"
-                  @click="showPassword = !showPassword"
-                />
-              </template>
-            </UInput>
-          </UFormField>
-
-          <UFormField
-            :label="t('admin.supportUsers.modals.create.role')"
-            name="role"
-            required
-          >
-            <USelectMenu
-              v-model="newUser.role"
-              :items="[
-                { label: 'Soporte', value: 'SUPPORT' },
-                { label: 'Admin', value: 'SUPER_ADMIN' },
-              ]"
-              value-key="value"
-              label-key="label"
-            />
-          </UFormField>
-        </div>
-      </template>
-      <template #footer>
-        <div class="flex justify-end gap-2">
-          <UButton
-            color="neutral"
-            variant="ghost"
-            :label="t('admin.supportUsers.modals.create.cancel')"
-            @click="isModalOpen = false"
-          />
-          <UButton
-            color="primary"
-            :label="t('admin.supportUsers.modals.create.create')"
-            icon="i-heroicons-user-plus"
-            :disabled="!isFormValid"
-            @click="saveUser"
-          />
-        </div>
-      </template>
-    </UModal>
-
-    <!-- Modal edición de usuario -->
+    <!-- Edit modal -->
     <UModal
       v-model:open="isEditModalOpen"
       :title="t('admin.supportUsers.modals.edit.title')"
     >
       <template #body>
         <div v-if="editUser" class="space-y-4">
-          <UFormField
-            :label="t('admin.supportUsers.modals.edit.fullName')"
-            name="edit-name"
-            required
-          >
-            <UInput
-              v-model="editUser.name"
-              placeholder="Ej: Laura Martínez"
-              icon="i-heroicons-user"
-            />
-          </UFormField>
-
-          <UFormField
-            :label="t('admin.supportUsers.modals.edit.email')"
-            name="edit-email"
-            required
-            :error="
-              editEmailTouched && !editEmailValid
-                ? 'Introduce un email válido'
-                : undefined
-            "
-          >
-            <UInput
-              v-model="editUser.email"
-              type="email"
-              placeholder="usuario@travelota.com"
-              icon="i-heroicons-envelope"
-              :color="editEmailTouched && !editEmailValid ? 'error' : undefined"
-              @blur="editEmailTouched = true"
-            />
-          </UFormField>
-
-          <UFormField
-            :label="t('admin.supportUsers.modals.edit.password')"
-            name="edit-password"
-            :hint="t('admin.supportUsers.modals.edit.passwordHint')"
-            :error="
-              editPassword.length > 0 && editPassword.length < 8
-                ? 'La contraseña debe tener al menos 8 caracteres'
-                : undefined
-            "
-          >
-            <UInput
-              v-model="editPassword"
-              :type="showEditPassword ? 'text' : 'password'"
-              placeholder="••••••••"
-              icon="i-heroicons-lock-closed"
-            >
-              <template #trailing>
-                <UButton
-                  :icon="
-                    showEditPassword
-                      ? 'i-heroicons-eye-slash'
-                      : 'i-heroicons-eye'
-                  "
-                  color="neutral"
-                  variant="ghost"
-                  size="xs"
-                  tabindex="-1"
-                  @click="showEditPassword = !showEditPassword"
-                />
-              </template>
-            </UInput>
-          </UFormField>
-
-          <UFormField
-            :label="t('admin.supportUsers.modals.edit.role')"
-            name="edit-role"
-            required
-          >
-            <USelectMenu
-              v-model="editUser.role"
-              :items="[
-                { label: 'Soporte', value: 'SUPPORT' },
-                { label: 'Admin', value: 'SUPER_ADMIN' },
-              ]"
-              value-key="value"
-              label-key="label"
-            />
-          </UFormField>
-
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            {{ fullName(editUser) }}
+            <span class="text-gray-400">({{ editUser.email }})</span>
+          </p>
           <UFormField
             :label="t('admin.supportUsers.modals.edit.status')"
-            name="edit-status"
+            name="edit-active"
           >
-            <USelectMenu
-              v-model="editUser.status"
-              :items="[
-                { label: 'Activo', value: 'Activo' },
-                { label: 'Inactivo', value: 'Inactivo' },
-              ]"
-              value-key="value"
-              label-key="label"
-            />
+            <UToggle v-model="editUser.is_active" />
+            <span class="ml-2 text-sm text-gray-500">
+              {{ editUser.is_active ? "Activo" : "Inactivo" }}
+            </span>
+          </UFormField>
+          <UFormField label="Bloqueado" name="edit-locked">
+            <UToggle v-model="editUser.is_locked" />
+            <span class="ml-2 text-sm text-gray-500">
+              {{ editUser.is_locked ? "Bloqueado" : "Desbloqueado" }}
+            </span>
           </UFormField>
         </div>
       </template>
@@ -585,7 +363,6 @@ function saveEditUser() {
             color="primary"
             :label="t('admin.supportUsers.modals.edit.save')"
             icon="i-heroicons-check"
-            :disabled="!isEditFormValid"
             @click="saveEditUser"
           />
         </div>

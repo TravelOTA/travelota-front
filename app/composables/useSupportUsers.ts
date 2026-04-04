@@ -1,83 +1,57 @@
+import { useState } from "#imports";
+import { computed } from "vue";
+import { apiFetch } from "~/composables/useApi";
+
 export interface SupportUser {
   id: number;
-  name: string;
+  url: string;
   email: string;
-  role: 'SUPER_ADMIN' | 'SUPPORT';
-  status: 'Activo' | 'Inactivo';
-  lastLogin: string;
+  first_name: string;
+  last_name: string;
+  is_staff: boolean;
+  is_active: boolean;
+  is_locked: boolean;
+  role: string;
+  group_names: string;
 }
 
-const MOCK_SUPPORT_USERS: SupportUser[] = [
-  {
-    id: 1,
-    name: 'Laura Martínez',
-    email: 'laura@travelota.com',
-    role: 'SUPER_ADMIN',
-    lastLogin: '2026-03-05',
-    status: 'Activo',
-  },
-  {
-    id: 2,
-    name: 'Carlos Ríos',
-    email: 'carlos@travelota.com',
-    role: 'SUPPORT',
-    lastLogin: '2026-03-04',
-    status: 'Activo',
-  },
-  {
-    id: 3,
-    name: 'Sofía Delgado',
-    email: 'sofia@travelota.com',
-    role: 'SUPPORT',
-    lastLogin: '2026-02-28',
-    status: 'Inactivo',
-  },
-];
-
 export function useSupportUsers() {
-  const users = useState<SupportUser[]>(
-    'support-users',
-    () => MOCK_SUPPORT_USERS,
-  );
+  const users = useState<SupportUser[]>("support-users", () => []);
+  const loading = useState<boolean>("support-users:loading", () => false);
+  const error = useState<string | null>("support-users:error", () => null);
 
   const stats = computed(() => ({
     total: users.value.length,
-    active: users.value.filter((u) => u.status === 'Activo').length,
-    admins: users.value.filter((u) => u.role === 'SUPER_ADMIN').length,
-    support: users.value.filter((u) => u.role === 'SUPPORT').length,
+    active: users.value.filter((u) => u.is_active).length,
+    admins: users.value.filter((u) => u.is_staff).length,
+    support: users.value.filter((u) => !u.is_staff && u.is_active).length,
   }));
 
-  function addUser(data: Omit<SupportUser, 'id' | 'lastLogin' | 'status'>) {
-    users.value.push({
-      id: users.value.length + 1,
-      lastLogin: '—',
-      status: 'Activo',
-      ...data,
-    });
-  }
-
-  function updateUser(id: number, data: Partial<SupportUser>) {
-    const user = users.value.find((u) => u.id === id);
-    if (user) Object.assign(user, data);
-  }
-
-  function deleteUser(id: number) {
-    users.value = users.value.filter((u) => u.id !== id);
-  }
-
-  function toggleStatus(id: number) {
-    const user = users.value.find((u) => u.id === id);
-    if (user) {
-      user.status = user.status === 'Activo' ? 'Inactivo' : 'Activo';
+  async function fetchUsers(): Promise<void> {
+    loading.value = true;
+    error.value = null;
+    try {
+      const data = await apiFetch<SupportUser[] | { results: SupportUser[] }>(
+        "/api/auth/users",
+      );
+      users.value = Array.isArray(data) ? data : data.results;
+    } catch (err) {
+      error.value =
+        err instanceof Error ? err.message : "Error al cargar usuarios";
+    } finally {
+      loading.value = false;
     }
   }
 
-  return {
-    users,
-    stats,
-    addUser,
-    updateUser,
-    deleteUser,
-    toggleStatus,
-  };
+  async function updateUser(
+    id: number,
+    data: Partial<Pick<SupportUser, "is_active" | "is_locked">>,
+  ): Promise<void> {
+    await apiFetch(`/api/auth/users/${id}`, { method: "PATCH", body: data });
+    const idx = users.value.findIndex((u) => u.id === id);
+    if (idx !== -1)
+      users.value[idx] = { ...users.value[idx], ...data } as SupportUser;
+  }
+
+  return { users, stats, loading, error, fetchUsers, updateUser };
 }
