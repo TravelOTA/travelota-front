@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
-import { createRegisterSchema, type RegisterInput } from '~/utils/schemas';
-import type { FormSubmitEvent } from '@nuxt/ui';
+import { reactive } from "vue";
+import { createRegisterSchema, type RegisterInput } from "~/utils/schemas";
+import type { FormSubmitEvent } from "@nuxt/ui";
+import { apiFetch } from "~/composables/useApi";
 
 const { t } = useI18n();
 const registerSchema = createRegisterSchema(t);
 
 const emit = defineEmits<{ success: [] }>();
 
-const { registerAgency } = useAgencies();
-
 const form = reactive<RegisterInput>({
-  nombreComercial: '',
-  direccionRegistrada: '',
-  nif: '',
-  telefono: '',
-  email: '',
-  web: '',
-  pais: '',
-  nombreContacto: '',
+  nombreComercial: "",
+  direccionRegistrada: "",
+  nif: "",
+  telefono: "",
+  email: "",
+  web: "",
+  pais: "",
+  nombreContacto: "",
   aceptaPrivacidad: false,
 });
 
@@ -37,8 +36,21 @@ const isFormValid = computed(
 );
 
 async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
-  registerAgency(event.data);
-  emit('success');
+  const data = event.data;
+  await apiFetch("/api/agency/agencies", {
+    method: "POST",
+    body: {
+      commercial_name: data.nombreComercial,
+      address: data.direccionRegistrada,
+      fiscal_id: data.nif,
+      phone: data.telefono,
+      email: data.email,
+      web: data.web ?? "",
+      country: data.pais,
+      contact_name: data.nombreContacto,
+    },
+  });
+  emit("success");
 }
 </script>
 
@@ -180,11 +192,11 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
           >
             <template #label>
               <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">
-                {{ t('auth.register.privacyLabel') }}
+                {{ t("auth.register.privacyLabel") }}
                 <NuxtLink
                   to="/privacy"
                   class="text-[#00A1A1] hover:text-[#008181] underline underline-offset-2 decoration-[#00A1A1]"
-                  >{{ t('auth.register.privacyLink') }}</NuxtLink
+                  >{{ t("auth.register.privacyLink") }}</NuxtLink
                 >
               </span>
             </template>
@@ -206,7 +218,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterInput>) {
           !isFormValid && 'btn-registro-disabled',
         ]"
       >
-        {{ t('auth.register.submitButton') }}
+        {{ t("auth.register.submitButton") }}
       </UButton>
     </div>
   </UForm>

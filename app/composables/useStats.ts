@@ -1,7 +1,7 @@
-import { computed } from 'vue';
-import { useAgencies } from '~/composables/useAgencies';
-import { useBookings } from '~/composables/useBookings';
-import { useSupportUsers } from '~/composables/useSupportUsers';
+import { computed } from "vue";
+import { useAgencies } from "~/composables/useAgencies";
+import { useBookings } from "~/composables/useBookings";
+import { useSupportUsers } from "~/composables/useSupportUsers";
 
 export function useStats() {
   const { agencies } = useAgencies();
@@ -10,7 +10,7 @@ export function useStats() {
 
   const adminStats = computed(() => {
     const activeAgencies = agencies.value.filter(
-      (a) => a.status === 'Activa',
+      (a) => a.status === "active",
     ).length;
     const totalBookings = bookings.value.length;
     const totalNetVolume = bookings.value.reduce(
@@ -18,10 +18,10 @@ export function useStats() {
       0,
     );
     const confirmedBookings = bookings.value.filter(
-      (b) => b.status === 'confirmed',
+      (b) => b.status === "confirmed",
     ).length;
     const pendingPayment = bookings.value.filter(
-      (b) => b.payment_status === 'pending_payment',
+      (b) => b.payment_status === "pending_payment",
     ).length;
 
     return {
@@ -37,13 +37,13 @@ export function useStats() {
   const b2bStats = computed(() => {
     // These would ideally come from an API or filtered bookings
     const activeBookings = bookings.value.filter(
-      (b) => b.status === 'confirmed',
+      (b) => b.status === "confirmed",
     ).length;
     const monthlyBookings = bookings.value.length; // Simplified mock logic
 
     return {
       activeBookings,
-      availableHotels: '500k+',
+      availableHotels: "500k+",
       activeDestinations: 180,
       monthlyBookings,
     };

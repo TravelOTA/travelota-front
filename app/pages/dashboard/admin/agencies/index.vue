@@ -1,119 +1,132 @@
 <script setup lang="ts">
-import { useAgencies, type AdminAgency } from '~/composables/useAgencies';
+import { useAgencies, type AdminAgency } from "~/composables/useAgencies";
+import { apiFetch } from "~/composables/useApi";
 
-definePageMeta({ layout: 'dashboard' });
-useHead({ title: 'Gestor de Agencias B2B - TravelOTA' });
+definePageMeta({ layout: "dashboard" });
+useHead({ title: "Gestor de Agencias B2B - TravelOTA" });
 
 const { t } = useI18n();
 
 const {
   agencies,
   agencyStats: stats,
+  fetchAgencies,
   approveAgency,
   denyAgency,
   deleteAgency,
   toggleBlock,
-  addAgency,
 } = useAgencies();
-const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
+const { groups: agencyGroups } = useAgencyGroups();
+
+onMounted(() => fetchAgencies());
 
 // ── Filters ────────────────────────────────────────────────────────────────
-const searchQuery = ref('');
-const statusFilter = ref('Todas');
+const searchQuery = ref("");
+const statusFilter = ref<"all" | "active" | "pending" | "blocked" | "denied">(
+  "all",
+);
+
+const STATUS_LABELS: Record<string, string> = {
+  active: "Activa",
+  pending: "Pendiente",
+  blocked: "Bloqueada",
+  denied: "Denegada",
+};
 
 const filteredAgencies = computed(() => {
   return agencies.value.filter((a) => {
     const matchSearch =
       !searchQuery.value ||
-      a.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      a.commercial_name
+        .toLowerCase()
+        .includes(searchQuery.value.toLowerCase()) ||
       a.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       a.country.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchStatus =
-      statusFilter.value === 'Todas' || a.status === statusFilter.value;
+      statusFilter.value === "all" || a.status === statusFilter.value;
     return matchSearch && matchStatus;
   });
 });
 
 // ── Status helpers ─────────────────────────────────────────────────────────
 function statusColor(s: string) {
-  if (s === 'Activa') return 'success';
-  if (s === 'Pendiente') return 'warning';
-  if (s === 'Bloqueada') return 'error';
-  if (s === 'Denegada') return 'neutral';
-  return 'neutral';
+  if (s === "active") return "success";
+  if (s === "pending") return "warning";
+  if (s === "blocked") return "error";
+  if (s === "denied") return "neutral";
+  return "neutral";
 }
 
 // ── Nueva Agencia modal ────────────────────────────────────────────────────
 const isCreateOpen = ref(false);
 const newAgency = ref({
-  name: '',
-  country: '',
-  email: '',
-  phone: '',
-  agencyGroup: 'Grupo Estándar',
+  commercial_name: "",
+  country: "",
+  email: "",
+  phone: "",
 });
 
 const isCreateValid = computed(
   () =>
-    newAgency.value.name.trim() !== '' &&
+    newAgency.value.commercial_name.trim() !== "" &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newAgency.value.email),
 );
 
 const groupNames = computed(() => agencyGroups.value.map((g) => g.name));
 
 function openCreate() {
-  const defaultGroupName = groupNames.value[0] || 'Grupo Estándar';
   newAgency.value = {
-    name: '',
-    country: '',
-    email: '',
-    phone: '',
-    agencyGroup: defaultGroupName,
+    commercial_name: "",
+    country: "",
+    email: "",
+    phone: "",
   };
   isCreateOpen.value = true;
 }
 
-function saveAgency() {
+async function saveAgency() {
   if (!isCreateValid.value) return;
-  const selectedGroup = agencyGroups.value.find(
-    (g) => g.name === newAgency.value.agencyGroup,
-  );
-  const appliedMarkup = selectedGroup?.baseMarkup || 10;
-  addAgency({
-    name: newAgency.value.name,
-    country: newAgency.value.country,
-    email: newAgency.value.email,
-    phone: newAgency.value.phone,
-    agencyGroup: String(
-      newAgency.value.agencyGroup || groupNames.value[0] || 'Grupo Estándar',
-    ),
-    markup: appliedMarkup,
-    registeredAt: new Date().toISOString().split('T')[0]!,
-  });
-  if (selectedGroup) incrementAgencyCount(selectedGroup.name);
+  try {
+    await apiFetch("/api/agency/agencies", {
+      method: "POST",
+      body: newAgency.value,
+    });
+    await fetchAgencies();
+  } catch {
+    // errors surfaced by composable
+  }
   isCreateOpen.value = false;
 }
 
 // ── Aprobar modal ──────────────────────────────────────────────────────────
 const isApproveOpen = ref(false);
 const agencyToApprove = ref<AdminAgency | null>(null);
-const selectedGroupName = ref<string>('');
+const selectedGroupId = ref<number | null>(null);
 
 const selectedGroup = computed(
   () =>
-    agencyGroups.value.find((g) => g.name === selectedGroupName.value) ?? null,
+    agencyGroups.value.find(
+      (g) => String(g.id) === String(selectedGroupId.value),
+    ) ?? null,
 );
+
+const selectedGroupName = computed({
+  get: () => selectedGroup.value?.name ?? "",
+  set: (name: string) => {
+    const found = agencyGroups.value.find((g) => g.name === name);
+    selectedGroupId.value = found ? Number(found.id) : null;
+  },
+});
 
 function openApprove(agency: AdminAgency) {
   agencyToApprove.value = agency;
-  selectedGroupName.value = '';
+  selectedGroupId.value = null;
   isApproveOpen.value = true;
 }
 
-function confirmApprove() {
-  if (!agencyToApprove.value || !selectedGroup.value) return;
-  approveAgency(agencyToApprove.value.id, selectedGroup.value);
-  incrementAgencyCount(selectedGroup.value.name);
+async function confirmApprove() {
+  if (!agencyToApprove.value || selectedGroupId.value === null) return;
+  await approveAgency(agencyToApprove.value.id, selectedGroupId.value);
   isApproveOpen.value = false;
   agencyToApprove.value = null;
 }
@@ -127,9 +140,9 @@ function openDeny(agency: AdminAgency) {
   isDenyOpen.value = true;
 }
 
-function confirmDeny() {
+async function confirmDeny() {
   if (!agencyToDeny.value) return;
-  denyAgency(agencyToDeny.value.id);
+  await denyAgency(agencyToDeny.value.id);
   isDenyOpen.value = false;
   agencyToDeny.value = null;
 }
@@ -143,29 +156,32 @@ function openDelete(agency: AdminAgency) {
   isDeleteOpen.value = true;
 }
 
-function confirmDelete() {
+async function confirmDelete() {
   if (!agencyToDelete.value) return;
-  deleteAgency(agencyToDelete.value.id);
+  await deleteAgency(agencyToDelete.value.id);
   isDeleteOpen.value = false;
   agencyToDelete.value = null;
 }
 
 // ── Table columns ──────────────────────────────────────────────────────────
 const columns = computed(() => [
-  { accessorKey: 'name', header: t('admin.agencies.tableHeaders.agency') },
-  { accessorKey: 'country', header: t('admin.agencies.tableHeaders.country') },
-  { accessorKey: 'email', header: t('admin.agencies.tableHeaders.contact') },
   {
-    accessorKey: 'agencyGroup',
-    header: t('admin.agencies.tableHeaders.group'),
+    accessorKey: "commercial_name",
+    header: t("admin.agencies.tableHeaders.agency"),
   },
-  { accessorKey: 'usersCount', header: t('admin.agencies.tableHeaders.users') },
+  { accessorKey: "country", header: t("admin.agencies.tableHeaders.country") },
+  { accessorKey: "email", header: t("admin.agencies.tableHeaders.contact") },
   {
-    accessorKey: 'bookingsCount',
-    header: t('admin.agencies.tableHeaders.bookings'),
+    accessorKey: "agency_group",
+    header: t("admin.agencies.tableHeaders.group"),
   },
-  { accessorKey: 'status', header: t('admin.agencies.tableHeaders.status') },
-  { accessorKey: 'actions', header: '' },
+  { accessorKey: "user_count", header: t("admin.agencies.tableHeaders.users") },
+  {
+    accessorKey: "booking_count",
+    header: t("admin.agencies.tableHeaders.bookings"),
+  },
+  { accessorKey: "status", header: t("admin.agencies.tableHeaders.status") },
+  { accessorKey: "actions", header: "" },
 ]);
 </script>
 
@@ -181,13 +197,13 @@ const columns = computed(() => [
           class="text-sm font-medium text-primary-500 hover:underline mb-2 inline-flex items-center gap-1"
         >
           <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
-          {{ t('admin.agencies.backToPanel') }}
+          {{ t("admin.agencies.backToPanel") }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-          {{ t('admin.agencies.title') }}
+          {{ t("admin.agencies.title") }}
         </h1>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          {{ t('admin.agencies.subtitle') }}
+          {{ t("admin.agencies.subtitle") }}
         </p>
       </div>
       <UButton
@@ -209,7 +225,7 @@ const columns = computed(() => [
           </div>
           <div>
             <p class="text-xs text-gray-500 font-medium">
-              {{ t('admin.agencies.stats.total') }}
+              {{ t("admin.agencies.stats.total") }}
             </p>
             <p class="text-xl font-bold">{{ stats.total }}</p>
           </div>
@@ -224,7 +240,7 @@ const columns = computed(() => [
           </div>
           <div>
             <p class="text-xs text-gray-500 font-medium">
-              {{ t('admin.agencies.stats.active') }}
+              {{ t("admin.agencies.stats.active") }}
             </p>
             <p class="text-xl font-bold">{{ stats.active }}</p>
           </div>
@@ -239,7 +255,7 @@ const columns = computed(() => [
           </div>
           <div>
             <p class="text-xs text-gray-500 font-medium">
-              {{ t('admin.agencies.stats.pending') }}
+              {{ t("admin.agencies.stats.pending") }}
             </p>
             <p class="text-xl font-bold">{{ stats.pending }}</p>
           </div>
@@ -254,7 +270,7 @@ const columns = computed(() => [
           </div>
           <div>
             <p class="text-xs text-gray-500 font-medium">
-              {{ t('admin.agencies.stats.blocked') }}
+              {{ t("admin.agencies.stats.blocked") }}
             </p>
             <p class="text-xl font-bold">{{ stats.blocked }}</p>
           </div>
@@ -286,7 +302,14 @@ const columns = computed(() => [
         />
         <USelectMenu
           v-model="statusFilter"
-          :items="['Todas', 'Pendiente', 'Activa', 'Bloqueada', 'Denegada']"
+          :items="[
+            { label: 'Todas', value: 'all' },
+            { label: 'Pendiente', value: 'pending' },
+            { label: 'Activa', value: 'active' },
+            { label: 'Bloqueada', value: 'blocked' },
+            { label: 'Denegada', value: 'denied' },
+          ]"
+          value-key="value"
           :placeholder="t('admin.agencies.filterPlaceholder')"
           class="w-40"
         />
@@ -294,10 +317,10 @@ const columns = computed(() => [
 
       <UTable :data="filteredAgencies" :columns="columns as any" class="w-full">
         <!-- Agency name -->
-        <template #name-cell="{ row }">
+        <template #commercial_name-cell="{ row }">
           <div>
             <p class="font-semibold text-gray-900 dark:text-white">
-              {{ row.original.name }}
+              {{ row.original.commercial_name }}
             </p>
             <p class="text-xs text-gray-400 font-mono">{{ row.original.id }}</p>
           </div>
@@ -313,29 +336,29 @@ const columns = computed(() => [
           </div>
         </template>
 
-        <!-- Contenedor agencyGroup -->
-        <template #agencyGroup-cell="{ row }">
+        <!-- Agency group -->
+        <template #agency_group-cell="{ row }">
           <span class="font-medium text-gray-900 dark:text-gray-100">
-            {{ row.original.agencyGroup ?? '—' }}
+            {{ row.original.agency_group?.name ?? "—" }}
           </span>
         </template>
 
         <!-- Users -->
-        <template #usersCount-cell="{ row }">
+        <template #user_count-cell="{ row }">
           <div class="flex items-center gap-1.5">
             <UIcon name="i-heroicons-users" class="w-3.5 h-3.5 text-gray-400" />
-            <span class="text-sm">{{ row.original.users.length }}</span>
+            <span class="text-sm">{{ row.original.user_count }}</span>
           </div>
         </template>
 
         <!-- Bookings -->
-        <template #bookingsCount-cell="{ row }">
+        <template #booking_count-cell="{ row }">
           <div class="flex items-center gap-1.5">
             <UIcon
               name="i-heroicons-briefcase"
               class="w-3.5 h-3.5 text-gray-400"
             />
-            <span class="text-sm">{{ row.original.bookingsCount }}</span>
+            <span class="text-sm">{{ row.original.booking_count }}</span>
           </div>
         </template>
 
@@ -346,7 +369,7 @@ const columns = computed(() => [
             variant="subtle"
             class="font-bold text-[10px] uppercase tracking-wider"
           >
-            {{ row.original.status }}
+            {{ STATUS_LABELS[row.original.status] ?? row.original.status }}
           </UBadge>
         </template>
 
@@ -363,9 +386,9 @@ const columns = computed(() => [
               />
             </UTooltip>
 
-            <!-- Pendiente: Aprobar + Denegar -->
+            <!-- pending: Aprobar + Denegar -->
             <UTooltip
-              v-if="row.original.status === 'Pendiente'"
+              v-if="row.original.status === 'pending'"
               :text="t('admin.agencies.tooltips.approve')"
             >
               <UButton
@@ -377,7 +400,7 @@ const columns = computed(() => [
               />
             </UTooltip>
             <UTooltip
-              v-if="row.original.status === 'Pendiente'"
+              v-if="row.original.status === 'pending'"
               :text="t('admin.agencies.tooltips.deny')"
             >
               <UButton
@@ -389,36 +412,34 @@ const columns = computed(() => [
               />
             </UTooltip>
 
-            <!-- Activa / Bloqueada: toggleBlock -->
+            <!-- active / blocked: toggleBlock -->
             <UTooltip
               v-if="
-                row.original.status === 'Activa' ||
-                row.original.status === 'Bloqueada'
+                row.original.status === 'active' ||
+                row.original.status === 'blocked'
               "
               :text="
-                row.original.status === 'Bloqueada'
+                row.original.status === 'blocked'
                   ? t('admin.agencies.tooltips.unblock')
                   : t('admin.agencies.tooltips.block')
               "
             >
               <UButton
                 :icon="
-                  row.original.status === 'Bloqueada'
+                  row.original.status === 'blocked'
                     ? 'i-heroicons-lock-open'
                     : 'i-heroicons-no-symbol'
                 "
-                :color="
-                  row.original.status === 'Bloqueada' ? 'success' : 'error'
-                "
+                :color="row.original.status === 'blocked' ? 'success' : 'error'"
                 variant="ghost"
                 size="xs"
                 @click="toggleBlock(row.original.id)"
               />
             </UTooltip>
 
-            <!-- Denegada: Eliminar -->
+            <!-- denied: Eliminar -->
             <UTooltip
-              v-if="row.original.status === 'Denegada'"
+              v-if="row.original.status === 'denied'"
               :text="t('admin.agencies.tooltips.delete')"
             >
               <UButton
@@ -437,7 +458,7 @@ const columns = computed(() => [
         v-if="filteredAgencies.length === 0"
         class="py-16 text-center text-sm text-gray-500"
       >
-        {{ t('admin.agencies.noResults') }}
+        {{ t("admin.agencies.noResults") }}
       </div>
     </UCard>
 
@@ -451,12 +472,12 @@ const columns = computed(() => [
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <UFormField
               :label="t('admin.agencies.modals.create.agencyName')"
-              name="name"
+              name="commercial_name"
               required
               class="sm:col-span-2"
             >
               <UInput
-                v-model="newAgency.name"
+                v-model="newAgency.commercial_name"
                 :placeholder="t('admin.agencies.modals.create.nameExample')"
                 icon="i-heroicons-building-storefront"
               />
@@ -470,17 +491,6 @@ const columns = computed(() => [
                 v-model="newAgency.country"
                 placeholder="España"
                 icon="i-heroicons-globe-alt"
-              />
-            </UFormField>
-            <UFormField
-              :label="t('admin.agencies.modals.create.agencyGroup')"
-              name="group"
-              required
-            >
-              <USelectMenu
-                v-model="newAgency.agencyGroup"
-                :items="groupNames"
-                icon="i-heroicons-user-group"
               />
             </UFormField>
             <UFormField
@@ -543,8 +553,8 @@ const columns = computed(() => [
       <template #body>
         <div class="space-y-4">
           <p class="text-sm text-gray-600 dark:text-gray-300">
-            {{ t('admin.agencies.modals.approve.selectGroup') }}
-            <strong>{{ agencyToApprove?.name }}</strong
+            {{ t("admin.agencies.modals.approve.selectGroup") }}
+            <strong>{{ agencyToApprove?.commercial_name }}</strong
             >.
           </p>
           <UFormField
@@ -595,8 +605,8 @@ const columns = computed(() => [
     >
       <template #body>
         <p class="text-sm text-gray-600 dark:text-gray-300">
-          {{ t('admin.agencies.modals.deny.message') }}
-          <strong>{{ agencyToDeny?.name }}</strong
+          {{ t("admin.agencies.modals.deny.message") }}
+          <strong>{{ agencyToDeny?.commercial_name }}</strong
           >?
         </p>
       </template>
@@ -625,9 +635,9 @@ const columns = computed(() => [
     >
       <template #body>
         <p class="text-sm text-gray-600 dark:text-gray-300">
-          {{ t('admin.agencies.modals.delete.message') }}
-          <strong>{{ agencyToDelete?.name }}</strong
-          >. {{ t('admin.agencies.modals.delete.continue') }}
+          {{ t("admin.agencies.modals.delete.message") }}
+          <strong>{{ agencyToDelete?.commercial_name }}</strong
+          >. {{ t("admin.agencies.modals.delete.continue") }}
         </p>
       </template>
       <template #footer>

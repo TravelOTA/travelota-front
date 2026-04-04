@@ -1,142 +1,163 @@
 <script setup lang="ts">
-import { useAgencies, type AdminAgencyUser } from '~/composables/useAgencies';
-import type { ICreditLine } from '#shared/types/wallet';
-import AgencyCreditModal from '~/components/b2b/admin/AgencyCreditModal.vue';
+import { useAgencies } from "~/composables/useAgencies";
 
-definePageMeta({ layout: 'dashboard' });
+definePageMeta({ layout: "dashboard" });
 
-const { t, locale } = useI18n();
+const { t } = useI18n();
 const route = useRoute();
 const agencyId = route.params.id as string;
 
 const {
+  fetchAgencies,
   getAgencyById,
   approveAgency,
   toggleBlock,
   updateAgency,
-  updateWhitelabel,
-  updateUserStatus,
-  updateCreditLine,
 } = useAgencies();
+
+onMounted(async () => {
+  // Ensure agencies are loaded if navigating directly to this page
+  if (!getAgencyById(agencyId)) {
+    await fetchAgencies();
+  }
+});
+
 const agency = computed(() => getAgencyById(agencyId) ?? null);
 
 useHead({
-  title: computed(() => `${agency.value?.name ?? 'Agencia'} - TravelOTA Admin`),
+  title: computed(
+    () => `${agency.value?.commercial_name ?? "Agencia"} - TravelOTA Admin`,
+  ),
 });
 
 // ── Tabs ───────────────────────────────────────────────────────────────────
-const activeTab = ref('info');
+const activeTab = ref("info");
 const tabs = computed(() => [
   {
-    key: 'info',
-    label: t('admin.agencyDetail.tabInfo'),
-    icon: 'i-heroicons-information-circle',
+    key: "info",
+    label: t("admin.agencyDetail.tabInfo"),
+    icon: "i-heroicons-information-circle",
   },
   {
-    key: 'users',
-    label: t('admin.agencyDetail.tabUsers'),
-    icon: 'i-heroicons-users',
+    key: "users",
+    label: t("admin.agencyDetail.tabUsers"),
+    icon: "i-heroicons-users",
   },
 ]);
 
 // ── Status helpers ─────────────────────────────────────────────────────────
 function statusColor(s: string) {
-  if (s === 'Activa') return 'success';
-  if (s === 'Pendiente') return 'warning';
-  if (s === 'Bloqueada') return 'error';
-  if (s === 'Denegada') return 'neutral';
-  return 'neutral';
+  if (s === "active") return "success";
+  if (s === "pending") return "warning";
+  if (s === "blocked") return "error";
+  if (s === "denied") return "neutral";
+  return "neutral";
 }
 
-const { groups: agencyGroups, incrementAgencyCount } = useAgencyGroups();
+const STATUS_LABELS: Record<string, string> = {
+  active: "Activa",
+  pending: "Pendiente",
+  blocked: "Bloqueada",
+  denied: "Denegada",
+};
+
+const { groups: agencyGroups } = useAgencyGroups();
 const groupNames = computed(() => agencyGroups.value.map((g) => g.name));
 
 // ── Aprobar modal ──────────────────────────────────────────────────────────
 const isApproveOpen = ref(false);
-const selectedGroupName = ref<string>('');
+const selectedGroupName = ref<string>("");
 const selectedGroup = computed(
   () =>
     agencyGroups.value.find((g) => g.name === selectedGroupName.value) ?? null,
 );
 
 function openApprove() {
-  selectedGroupName.value = '';
+  selectedGroupName.value = "";
   isApproveOpen.value = true;
 }
 
-function confirmApprove() {
+async function confirmApprove() {
   if (!selectedGroup.value) return;
-  approveAgency(agencyId, selectedGroup.value);
-  incrementAgencyCount(selectedGroup.value.name);
+  await approveAgency(agencyId, Number(selectedGroup.value.id));
   isApproveOpen.value = false;
 }
 
 // ── Edit Info modal ────────────────────────────────────────────────────────
 const isEditOpen = ref(false);
 const editForm = ref({
-  name: '',
-  country: '',
-  email: '',
-  phone: '',
-  agencyGroup: '',
+  commercial_name: "",
+  country: "",
+  email: "",
+  phone: "",
+  agency_group_id: null as number | null,
 });
 
 function openEdit() {
   if (!agency.value) return;
   editForm.value = {
-    name: agency.value.name,
+    commercial_name: agency.value.commercial_name,
     country: agency.value.country,
     email: agency.value.email,
     phone: agency.value.phone,
-    agencyGroup: agency.value.agencyGroup ?? '',
+    agency_group_id: agency.value.agency_group?.id ?? null,
   };
   isEditOpen.value = true;
 }
 
-function saveEdit() {
+const editGroupName = computed({
+  get: () =>
+    agencyGroups.value.find(
+      (g) => Number(g.id) === editForm.value.agency_group_id,
+    )?.name ?? "",
+  set: (name: string) => {
+    const found = agencyGroups.value.find((g) => g.name === name);
+    editForm.value.agency_group_id = found ? Number(found.id) : null;
+  },
+});
+
+async function saveEdit() {
   if (!agency.value) return;
-  const oldGroup = agency.value.agencyGroup;
-  let markup = agency.value.markup;
-  if (oldGroup !== editForm.value.agencyGroup) {
-    const selectedGroup = agencyGroups.value.find(
-      (g) => g.name === editForm.value.agencyGroup,
-    );
-    if (selectedGroup) {
-      markup = selectedGroup.baseMarkup;
-      incrementAgencyCount(selectedGroup.name);
-    }
+  const patch: Record<string, unknown> = {
+    commercial_name: editForm.value.commercial_name,
+    country: editForm.value.country,
+    email: editForm.value.email,
+    phone: editForm.value.phone,
+  };
+  if (editForm.value.agency_group_id !== null) {
+    patch.agency_group = { id: editForm.value.agency_group_id, name: "" };
   }
-  updateAgency(agencyId, { ...editForm.value, markup });
+  await updateAgency(agencyId, patch as Parameters<typeof updateAgency>[1]);
   isEditOpen.value = false;
 }
 
 // ── Whitelabel modal ───────────────────────────────────────────────────────
 const isWhitelabelOpen = ref(false);
 const whitelabelForm = ref({
-  logo: '',
-  colorPrimario: '',
-  publicEmail: '',
-  publicPhone: '',
+  logo: "",
+  primary_color: "",
+  public_email: "",
+  public_phone: "",
 });
 
 const colorMap: Record<string, string> = {
-  red: '#ef4444',
-  orange: '#f97316',
-  amber: '#f59e0b',
-  yellow: '#eab308',
-  lime: '#84cc16',
-  green: '#22c55e',
-  emerald: '#10b981',
-  teal: '#14b8a6',
-  cyan: '#06b6d4',
-  sky: '#0ea5e9',
-  blue: '#3b82f6',
-  indigo: '#6366f1',
-  violet: '#8b5cf6',
-  purple: '#a855f7',
-  fuchsia: '#d946ef',
-  pink: '#ec4899',
-  rose: '#f43f5e',
+  red: "#ef4444",
+  orange: "#f97316",
+  amber: "#f59e0b",
+  yellow: "#eab308",
+  lime: "#84cc16",
+  green: "#22c55e",
+  emerald: "#10b981",
+  teal: "#14b8a6",
+  cyan: "#06b6d4",
+  sky: "#0ea5e9",
+  blue: "#3b82f6",
+  indigo: "#6366f1",
+  violet: "#8b5cf6",
+  purple: "#a855f7",
+  fuchsia: "#d946ef",
+  pink: "#ec4899",
+  rose: "#f43f5e",
 };
 const themeColors = Object.keys(colorMap);
 
@@ -144,9 +165,9 @@ function openWhitelabel() {
   if (!agency.value) return;
   whitelabelForm.value = {
     logo: agency.value.logo,
-    colorPrimario: agency.value.colorPrimario,
-    publicEmail: agency.value.publicEmail,
-    publicPhone: agency.value.publicPhone,
+    primary_color: agency.value.primary_color,
+    public_email: agency.value.public_email,
+    public_phone: agency.value.public_phone,
   };
   isWhitelabelOpen.value = true;
 }
@@ -162,58 +183,15 @@ function handleLogoUpload(event: Event) {
   }
 }
 
-function saveWhitelabel() {
-  updateWhitelabel(agencyId, whitelabelForm.value);
+async function saveWhitelabel() {
+  await updateAgency(agencyId, whitelabelForm.value);
   isWhitelabelOpen.value = false;
 }
 
 // ── Users tab ──────────────────────────────────────────────────────────────
-const userSearch = ref('');
-const filteredUsers = computed(() =>
-  (agency.value?.users ?? []).filter(
-    (u) =>
-      !userSearch.value ||
-      u.name.toLowerCase().includes(userSearch.value.toLowerCase()) ||
-      u.email.toLowerCase().includes(userSearch.value.toLowerCase()),
-  ),
-);
-
-function toggleUserStatus(user: AdminAgencyUser) {
-  const newStatus = user.status === 'Activo' ? 'Inactivo' : 'Activo';
-  updateUserStatus(agencyId, user.id, newStatus);
-}
-
-const userColumns = [
-  { accessorKey: 'name', header: 'Vendedor' },
-  { accessorKey: 'email', header: 'Email' },
-  { accessorKey: 'role', header: 'Rol' },
-  { accessorKey: 'lastLogin', header: 'Último Acceso' },
-  { accessorKey: 'status', header: 'Estado' },
-  { accessorKey: 'userActions', header: '' },
-];
-
-// ── Credit modal ───────────────────────────────────────────────────────────
-const isCreditDetailOpen = ref(false);
-
-function updateAgencyCreditLine(updated: ICreditLine) {
-  updateCreditLine(agencyId, updated);
-  isCreditDetailOpen.value = false;
-}
-
-function formatAdminCurrency(amount: number): string {
-  return new Intl.NumberFormat(locale.value, {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
-}
-
-const usagePercent = computed(() => {
-  if (!agency.value?.credit_line?.limit) return 0;
-  return Math.min(
-    (agency.value.credit_line.used / agency.value.credit_line.limit) * 100,
-    100,
-  );
-});
+// Users are not fetched inline — user_count comes from AgencyDetailSerializer.
+// A dedicated endpoint (e.g. /api/agency/agencies/{id}/users) is needed for
+// the full list; this will be implemented in a future task.
 </script>
 
 <template>
@@ -225,13 +203,13 @@ const usagePercent = computed(() => {
         class="w-16 h-16 text-gray-300 mx-auto mb-4"
       />
       <h2 class="text-xl font-bold text-gray-700 dark:text-gray-300">
-        {{ t('admin.agencyDetail.notFound') }}
+        {{ t("admin.agencyDetail.notFound") }}
       </h2>
       <NuxtLink
         to="/dashboard/admin/agencies"
         class="text-primary-500 hover:underline text-sm mt-2 inline-block"
       >
-        ← {{ t('admin.agencyDetail.backToList') }}
+        ← {{ t("admin.agencyDetail.backToList") }}
       </NuxtLink>
     </div>
 
@@ -252,7 +230,7 @@ const usagePercent = computed(() => {
           >
           <UIcon name="i-heroicons-chevron-right" class="w-4 h-4" />
           <span class="text-gray-700 dark:text-gray-200 font-medium">{{
-            agency.name
+            agency.commercial_name
           }}</span>
         </div>
 
@@ -271,19 +249,19 @@ const usagePercent = computed(() => {
             <div>
               <div class="flex items-center gap-3 flex-wrap">
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                  {{ agency.name }}
+                  {{ agency.commercial_name }}
                 </h1>
                 <UBadge
                   :color="statusColor(agency.status) as any"
                   variant="subtle"
                   class="font-bold text-[10px] uppercase tracking-wider"
                 >
-                  {{ agency.status }}
+                  {{ STATUS_LABELS[agency.status] ?? agency.status }}
                 </UBadge>
               </div>
               <p class="text-sm text-gray-500">
                 {{ agency.id }} · {{ agency.country }} · Registrada el
-                {{ agency.registeredAt }}
+                {{ agency.created_at }}
               </p>
             </div>
           </div>
@@ -291,7 +269,7 @@ const usagePercent = computed(() => {
           <!-- Header actions -->
           <div class="flex items-center gap-2 flex-shrink-0">
             <UButton
-              v-if="agency.status === 'Pendiente'"
+              v-if="agency.status === 'pending'"
               icon="i-heroicons-check-circle"
               color="success"
               size="sm"
@@ -299,17 +277,17 @@ const usagePercent = computed(() => {
               @click="openApprove"
             />
             <UButton
-              v-if="agency.status === 'Activa' || agency.status === 'Bloqueada'"
+              v-if="agency.status === 'active' || agency.status === 'blocked'"
               :icon="
-                agency.status === 'Bloqueada'
+                agency.status === 'blocked'
                   ? 'i-heroicons-lock-open'
                   : 'i-heroicons-no-symbol'
               "
-              :color="agency.status === 'Bloqueada' ? 'success' : 'error'"
+              :color="agency.status === 'blocked' ? 'success' : 'error'"
               variant="soft"
               size="sm"
               :label="
-                agency.status === 'Bloqueada'
+                agency.status === 'blocked'
                   ? t('admin.agencyDetail.actions.activate')
                   : t('admin.agencyDetail.actions.block')
               "
@@ -366,7 +344,7 @@ const usagePercent = computed(() => {
                   class="w-5 h-5 text-primary-500"
                 />
                 <h2 class="font-bold">
-                  {{ t('admin.agencyDetail.generalInfo.title') }}
+                  {{ t("admin.agencyDetail.generalInfo.title") }}
                 </h2>
               </div>
             </template>
@@ -375,17 +353,17 @@ const usagePercent = computed(() => {
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  {{ t('admin.agencyDetail.generalInfo.name') }}
+                  {{ t("admin.agencyDetail.generalInfo.name") }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ agency.name }}
+                  {{ agency.commercial_name }}
                 </dd>
               </div>
               <div>
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  {{ t('admin.agencyDetail.generalInfo.operatingCountry') }}
+                  {{ t("admin.agencyDetail.generalInfo.operatingCountry") }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
                   {{ agency.country }}
@@ -395,7 +373,7 @@ const usagePercent = computed(() => {
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  {{ t('admin.agencyDetail.generalInfo.email') }}
+                  {{ t("admin.agencyDetail.generalInfo.email") }}
                 </dt>
                 <dd class="text-sm text-gray-900 dark:text-white">
                   {{ agency.email }}
@@ -405,7 +383,7 @@ const usagePercent = computed(() => {
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  {{ t('admin.agencyDetail.generalInfo.phone') }}
+                  {{ t("admin.agencyDetail.generalInfo.phone") }}
                 </dt>
                 <dd class="text-sm text-gray-900 dark:text-white">
                   {{ agency.phone }}
@@ -415,12 +393,12 @@ const usagePercent = computed(() => {
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  {{ t('admin.agencyDetail.generalInfo.agencyGroup') }}
+                  {{ t("admin.agencyDetail.generalInfo.agencyGroup") }}
                 </dt>
                 <dd
                   class="text-sm font-bold text-primary-600 dark:text-primary-400 flex items-center gap-2"
                 >
-                  {{ agency.agencyGroup }}
+                  {{ agency.agency_group?.name ?? "—" }}
                   <UBadge color="neutral" variant="soft" size="xs"
                     >{{ agency.markup }}% MK</UBadge
                   >
@@ -430,47 +408,47 @@ const usagePercent = computed(() => {
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  {{ t('admin.agencyDetail.generalInfo.registrationDate') }}
+                  {{ t("admin.agencyDetail.generalInfo.registrationDate") }}
                 </dt>
                 <dd class="text-sm text-gray-900 dark:text-white">
-                  {{ agency.registeredAt }}
+                  {{ agency.created_at }}
                 </dd>
               </div>
               <div>
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  {{ t('admin.agencyDetail.generalInfo.taxId') }}
+                  {{ t("admin.agencyDetail.generalInfo.taxId") }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ agency.rut || '—' }}
+                  {{ agency.fiscal_id || "—" }}
                 </dd>
               </div>
               <div>
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  {{ t('admin.agencyDetail.generalInfo.registeredAddress') }}
+                  {{ t("admin.agencyDetail.generalInfo.registeredAddress") }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ agency.direccionRegistrada || '—' }}
+                  {{ agency.address || "—" }}
                 </dd>
               </div>
               <div>
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  {{ t('admin.agencyDetail.generalInfo.contactName') }}
+                  {{ t("admin.agencyDetail.generalInfo.contactName") }}
                 </dt>
                 <dd class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ agency.nombreContacto || '—' }}
+                  {{ agency.contact_name || "—" }}
                 </dd>
               </div>
               <div>
                 <dt
                   class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
                 >
-                  {{ t('admin.agencyDetail.generalInfo.website') }}
+                  {{ t("admin.agencyDetail.generalInfo.website") }}
                 </dt>
                 <dd class="text-sm text-gray-900 dark:text-white">
                   <a
@@ -497,10 +475,10 @@ const usagePercent = computed(() => {
                 </div>
                 <div>
                   <p class="text-xs text-gray-500">
-                    {{ t('admin.agencyDetail.generalInfo.users') }}
+                    {{ t("admin.agencyDetail.generalInfo.users") }}
                   </p>
                   <p class="text-2xl font-bold">
-                    {{ agency.users?.length ?? 0 }}
+                    {{ agency.user_count }}
                   </p>
                 </div>
               </div>
@@ -520,63 +498,18 @@ const usagePercent = computed(() => {
               <div class="flex flex-col items-center gap-3">
                 <UAvatar
                   :src="agency.logo || undefined"
-                  :alt="agency.name"
+                  :alt="agency.commercial_name"
                   size="xl"
                   class="bg-gray-100 dark:bg-gray-800"
                 />
                 <div class="flex items-center gap-2">
                   <span
                     class="w-5 h-5 rounded-full border border-gray-200 shadow-sm"
-                    :style="`background-color: ${colorMap[agency.colorPrimario] ?? agency.colorPrimario}`"
+                    :style="`background-color: ${colorMap[agency.primary_color] ?? agency.primary_color}`"
                   />
                   <span class="text-xs text-gray-500 capitalize">{{
-                    agency.colorPrimario
+                    agency.primary_color
                   }}</span>
-                </div>
-              </div>
-            </UCard>
-
-            <!-- Credit Line Card -->
-            <UCard v-if="agency.credit_line">
-              <template #header>
-                <div class="flex items-center justify-between">
-                  <h3 class="text-sm font-bold flex items-center gap-2">
-                    <UIcon
-                      name="i-heroicons-credit-card"
-                      class="w-4 h-4 text-primary-500"
-                    />
-                    {{ t('agency.wallet.credit.title') }}
-                  </h3>
-                  <UButton
-                    size="xs"
-                    variant="ghost"
-                    @click="isCreditDetailOpen = true"
-                  >
-                    {{ t('agency.wallet.credit.manage') }}
-                  </UButton>
-                </div>
-              </template>
-              <div class="space-y-3">
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500">{{
-                    t('agency.wallet.credit.limit')
-                  }}</span>
-                  <span class="font-bold">{{
-                    formatAdminCurrency(agency.credit_line.limit)
-                  }}</span>
-                </div>
-                <UProgress v-model="usagePercent" color="primary" />
-                <div class="flex justify-between text-xs text-gray-500">
-                  <span
-                    >{{ t('agency.wallet.credit.used') }}:
-                    {{ formatAdminCurrency(agency.credit_line.used) }}</span
-                  >
-                  <span
-                    >{{ t('agency.wallet.credit.available') }}:
-                    {{
-                      formatAdminCurrency(agency.credit_line.available)
-                    }}</span
-                  >
                 </div>
               </div>
             </UCard>
@@ -595,7 +528,7 @@ const usagePercent = computed(() => {
                   class="w-5 h-5 text-primary-500"
                 />
                 <h2 class="font-bold">
-                  {{ t('admin.agencyDetail.generalInfo.agencyTeam') }}
+                  {{ t("admin.agencyDetail.generalInfo.agencyTeam") }}
                 </h2>
               </div>
               <UButton
@@ -607,71 +540,17 @@ const usagePercent = computed(() => {
               />
             </div>
           </template>
-          <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-800">
-            <UInput
-              v-model="userSearch"
-              icon="i-heroicons-magnifying-glass"
-              :placeholder="t('admin.agencyDetail.generalInfo.searchUser')"
-              class="w-72"
+          <div class="py-16 text-center text-sm text-gray-500">
+            <UIcon
+              name="i-heroicons-users"
+              class="w-10 h-10 text-gray-300 mx-auto mb-3"
             />
+            <p>{{ t("admin.agencyDetail.generalInfo.noUsersRegistered") }}</p>
+            <p class="text-xs text-gray-400 mt-1">
+              {{ agency.user_count }}
+              {{ t("admin.agencyDetail.generalInfo.users") }}
+            </p>
           </div>
-          <UTable
-            :data="filteredUsers"
-            :columns="userColumns as any"
-            class="w-full"
-          >
-            <template #role-cell="{ row }">
-              <UBadge
-                :color="
-                  row.original.role === 'Admin Agencia' ? 'primary' : 'neutral'
-                "
-                variant="soft"
-                size="xs"
-              >
-                {{ row.original.role }}
-              </UBadge>
-            </template>
-            <template #status-cell="{ row }">
-              <UBadge
-                :color="
-                  row.original.status === 'Activo' ? 'success' : 'neutral'
-                "
-                variant="subtle"
-              >
-                {{ row.original.status }}
-              </UBadge>
-            </template>
-            <template #userActions-cell="{ row }">
-              <div class="flex justify-end gap-1 pr-2">
-                <UTooltip
-                  :text="
-                    row.original.status === 'Activo'
-                      ? t('admin.supportUsers.tooltips.deactivate')
-                      : t('admin.supportUsers.tooltips.activate')
-                  "
-                >
-                  <UButton
-                    :icon="
-                      row.original.status === 'Activo'
-                        ? 'i-heroicons-no-symbol'
-                        : 'i-heroicons-check-circle'
-                    "
-                    :color="
-                      row.original.status === 'Activo' ? 'error' : 'success'
-                    "
-                    variant="ghost"
-                    size="xs"
-                    @click="toggleUserStatus(row.original)"
-                  />
-                </UTooltip>
-              </div>
-            </template>
-            <template #empty-state>
-              <div class="py-10 text-center text-sm text-gray-500">
-                {{ t('admin.agencyDetail.generalInfo.noUsersRegistered') }}
-              </div>
-            </template>
-          </UTable>
         </UCard>
       </div>
 
@@ -685,12 +564,12 @@ const usagePercent = computed(() => {
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <UFormField
                 :label="t('admin.agencyDetail.editModal.name')"
-                name="edit-name"
+                name="edit-commercial_name"
                 required
                 class="sm:col-span-2"
               >
                 <UInput
-                  v-model="editForm.name"
+                  v-model="editForm.commercial_name"
                   icon="i-heroicons-building-storefront"
                 />
               </UFormField>
@@ -710,7 +589,7 @@ const usagePercent = computed(() => {
                 required
               >
                 <USelectMenu
-                  v-model="editForm.agencyGroup"
+                  v-model="editGroupName"
                   :items="groupNames"
                   icon="i-heroicons-user-group"
                 />
@@ -763,8 +642,8 @@ const usagePercent = computed(() => {
         <template #body>
           <div class="space-y-4">
             <p class="text-sm text-gray-600 dark:text-gray-300">
-              {{ t('admin.agencies.modals.approve.selectGroup') }}
-              <strong>{{ agency?.name }}</strong
+              {{ t("admin.agencies.modals.approve.selectGroup") }}
+              <strong>{{ agency?.commercial_name }}</strong
               >.
             </p>
             <UFormField
@@ -846,23 +725,23 @@ const usagePercent = computed(() => {
                     type="button"
                     :class="[
                       'w-7 h-7 rounded-full border-2 focus:outline-none transition-transform hover:scale-110 shadow-sm',
-                      whitelabelForm.colorPrimario === color
+                      whitelabelForm.primary_color === color
                         ? 'border-gray-900 dark:border-white scale-110'
                         : 'border-transparent',
                     ]"
                     :style="`background-color: ${colorMap[color]}`"
                     :title="color"
-                    @click="whitelabelForm.colorPrimario = color"
+                    @click="whitelabelForm.primary_color = color"
                   />
                 </div>
                 <div class="flex items-center gap-2">
                   <input
-                    v-model="whitelabelForm.colorPrimario"
+                    v-model="whitelabelForm.primary_color"
                     type="color"
                     class="w-8 h-8 rounded cursor-pointer border-0 p-0 overflow-hidden"
                   />
                   <UInput
-                    v-model="whitelabelForm.colorPrimario"
+                    v-model="whitelabelForm.primary_color"
                     placeholder="#000000"
                     class="w-32"
                   />
@@ -876,7 +755,7 @@ const usagePercent = computed(() => {
               description="Visible para clientes. Distinto del correo corporativo de registro."
             >
               <UInput
-                v-model="whitelabelForm.publicEmail"
+                v-model="whitelabelForm.public_email"
                 type="email"
                 icon="i-heroicons-envelope"
               />
@@ -888,7 +767,7 @@ const usagePercent = computed(() => {
               description="Visible para clientes. Distinto del teléfono corporativo de registro."
             >
               <UInput
-                v-model="whitelabelForm.publicPhone"
+                v-model="whitelabelForm.public_phone"
                 icon="i-heroicons-phone"
               />
             </UFormField>
@@ -909,22 +788,6 @@ const usagePercent = computed(() => {
               @click="saveWhitelabel"
             />
           </div>
-        </template>
-      </UModal>
-
-      <!-- Credit Modal -->
-      <UModal
-        v-if="agency.credit_line"
-        v-model:open="isCreditDetailOpen"
-        :title="`${agency.name} — ${t('agency.wallet.credit.title')}`"
-        size="3xl"
-      >
-        <template #body>
-          <AgencyCreditModal
-            :credit-line="agency.credit_line"
-            :agency-name="agency.name"
-            @save="updateAgencyCreditLine"
-          />
         </template>
       </UModal>
     </template>
