@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import WalletWidgets from '~/components/b2b/finance/WalletWidgets.vue';
-import AgencyTransactions from '~/components/b2b/finance/AgencyTransactions.vue';
-import RechargeRequestModal from '~/components/b2b/finance/RechargeRequestModal.vue';
-import ExportTransactionsModal from '~/components/b2b/finance/ExportTransactionsModal.vue';
+import WalletWidgets from "~/components/b2b/finance/WalletWidgets.vue";
+import AgencyTransactions from "~/components/b2b/finance/AgencyTransactions.vue";
+import RechargeRequestModal from "~/components/b2b/finance/RechargeRequestModal.vue";
+import ExportTransactionsModal from "~/components/b2b/finance/ExportTransactionsModal.vue";
 
-definePageMeta({ layout: 'dashboard' });
+definePageMeta({ layout: "dashboard" });
 const { t } = useI18n();
 const appConfig = useAppConfig();
 const { agency, updateAgency } = useAgency();
@@ -18,23 +18,23 @@ const isExportModalOpen = ref(false);
 const formAgency = ref({ ...agency.value });
 
 const colorMap: Record<string, string> = {
-  red: '#ef4444',
-  orange: '#f97316',
-  amber: '#f59e0b',
-  yellow: '#eab308',
-  lime: '#84cc16',
-  green: '#22c55e',
-  emerald: '#10b981',
-  teal: '#14b8a6',
-  cyan: '#06b6d4',
-  sky: '#0ea5e9',
-  blue: '#3b82f6',
-  indigo: '#6366f1',
-  violet: '#8b5cf6',
-  purple: '#a855f7',
-  fuchsia: '#d946ef',
-  pink: '#ec4899',
-  rose: '#f43f5e',
+  red: "#ef4444",
+  orange: "#f97316",
+  amber: "#f59e0b",
+  yellow: "#eab308",
+  lime: "#84cc16",
+  green: "#22c55e",
+  emerald: "#10b981",
+  teal: "#14b8a6",
+  cyan: "#06b6d4",
+  sky: "#0ea5e9",
+  blue: "#3b82f6",
+  indigo: "#6366f1",
+  violet: "#8b5cf6",
+  purple: "#a855f7",
+  fuchsia: "#d946ef",
+  pink: "#ec4899",
+  rose: "#f43f5e",
 };
 const themeColors = Object.keys(colorMap);
 
@@ -54,8 +54,8 @@ function handleLogoUpload(event: Event) {
   }
 }
 
-function saveAgency() {
-  updateAgency(formAgency.value);
+async function saveAgency() {
+  await updateAgency(formAgency.value);
 
   if (formAgency.value.primary_color) {
     if (appConfig.ui && appConfig.ui.colors) {
@@ -71,10 +71,10 @@ function saveAgency() {
   <div class="max-w-6xl mx-auto pb-16">
     <div class="mb-8">
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-        {{ t('agency.dashboard.title') }}
+        {{ t("agency.dashboard.title") }}
       </h1>
       <p class="text-sm text-gray-500 dark:text-gray-400">
-        {{ t('agency.dashboard.subtitle') }}
+        {{ t("agency.dashboard.subtitle") }}
       </p>
     </div>
 
@@ -89,7 +89,7 @@ function saveAgency() {
           </div>
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              {{ t('agency.dashboard.quickStats.salesTeam') }}
+              {{ t("agency.dashboard.quickStats.salesTeam") }}
             </p>
             <p class="text-2xl font-bold">{{ agency.user_count }}</p>
           </div>
@@ -99,7 +99,7 @@ function saveAgency() {
             to="/dashboard/agency/users"
             class="text-primary-500 hover:text-primary-600 text-sm font-medium flex items-center gap-1"
           >
-            {{ t('agency.dashboard.quickStats.manageTeam') }}
+            {{ t("agency.dashboard.quickStats.manageTeam") }}
             <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </NuxtLink>
         </template>
@@ -114,7 +114,7 @@ function saveAgency() {
           </div>
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              {{ t('agency.dashboard.quickStats.totalBookings') }}
+              {{ t("agency.dashboard.quickStats.totalBookings") }}
             </p>
             <p class="text-2xl font-bold">{{ agency.booking_count }}</p>
           </div>
@@ -124,7 +124,7 @@ function saveAgency() {
             to="/dashboard/bookings"
             class="text-primary-500 hover:text-primary-600 text-sm font-medium flex items-center gap-1"
           >
-            {{ t('agency.dashboard.quickStats.goToMyBookings') }}
+            {{ t("agency.dashboard.quickStats.goToMyBookings") }}
             <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </NuxtLink>
         </template>
@@ -139,10 +139,10 @@ function saveAgency() {
           </div>
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              {{ t('agency.dashboard.quickStats.benefitsAndMarkup') }}
+              {{ t("agency.dashboard.quickStats.benefitsAndMarkup") }}
             </p>
             <p class="text-2xl font-bold">
-              {{ t('agency.dashboard.quickStats.active') }}
+              {{ t("agency.dashboard.quickStats.active") }}
             </p>
           </div>
         </div>
@@ -151,7 +151,7 @@ function saveAgency() {
             to="/dashboard/agency/markup"
             class="text-primary-500 hover:text-primary-600 text-sm font-medium flex items-center gap-1"
           >
-            {{ t('agency.dashboard.quickStats.configureMarkup') }}
+            {{ t("agency.dashboard.quickStats.configureMarkup") }}
             <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
           </NuxtLink>
         </template>
@@ -168,7 +168,7 @@ function saveAgency() {
               class="w-5 h-5 text-gray-500"
             />
             <h2 class="text-lg font-bold text-gray-900 dark:text-white">
-              {{ t('agency.dashboard.profile.corporateProfile') }}
+              {{ t("agency.dashboard.profile.corporateProfile") }}
             </h2>
           </div>
           <UButton
@@ -198,7 +198,7 @@ function saveAgency() {
             {{ agency.status }}
           </UBadge>
           <p class="text-xs text-gray-500 mt-2 text-center">
-            {{ t('agency.dashboard.profile.registered') }}
+            {{ t("agency.dashboard.profile.registered") }}
             {{ agency.created_at }}
           </p>
         </div>
@@ -207,7 +207,7 @@ function saveAgency() {
         <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              {{ t('agency.dashboard.profile.businessName') }}
+              {{ t("agency.dashboard.profile.businessName") }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.commercial_name }}
@@ -215,7 +215,7 @@ function saveAgency() {
           </div>
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              {{ t('agency.dashboard.profile.taxId') }}
+              {{ t("agency.dashboard.profile.taxId") }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.fiscal_id }}
@@ -223,7 +223,7 @@ function saveAgency() {
           </div>
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              {{ t('agency.dashboard.profile.registeredAddress') }}
+              {{ t("agency.dashboard.profile.registeredAddress") }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.address }}
@@ -231,7 +231,7 @@ function saveAgency() {
           </div>
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              {{ t('agency.dashboard.profile.operatingCountry') }}
+              {{ t("agency.dashboard.profile.operatingCountry") }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.country }}
@@ -239,7 +239,7 @@ function saveAgency() {
           </div>
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              {{ t('agency.dashboard.profile.adminEmail') }}
+              {{ t("agency.dashboard.profile.adminEmail") }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.email }}
@@ -247,7 +247,7 @@ function saveAgency() {
           </div>
           <div>
             <dt class="text-xs font-semibold text-gray-400 uppercase mb-1">
-              {{ t('agency.dashboard.profile.mainPhone') }}
+              {{ t("agency.dashboard.profile.mainPhone") }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
               {{ agency.phone }}
@@ -259,7 +259,7 @@ function saveAgency() {
       <!-- Support Footer Note -->
       <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800">
         <p class="text-sm text-gray-500">
-          {{ t('agency.dashboard.profile.disclaimer') }}
+          {{ t("agency.dashboard.profile.disclaimer") }}
         </p>
       </div>
     </UCard>
@@ -270,7 +270,7 @@ function saveAgency() {
         class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2"
       >
         <UIcon name="i-heroicons-wallet" class="w-6 h-6 text-indigo-500" />
-        {{ t('agency.wallet.title') }}
+        {{ t("agency.wallet.title") }}
       </h2>
       <div class="space-y-6">
         <WalletWidgets @request-recharge="isRechargeModalOpen = true" />
@@ -340,7 +340,7 @@ function saveAgency() {
               </div>
               <div class="flex items-center gap-3">
                 <div class="text-sm text-gray-500 font-medium">
-                  {{ t('agency.dashboard.whiteLabelModal.hexCode') }}
+                  {{ t("agency.dashboard.whiteLabelModal.hexCode") }}
                 </div>
                 <div class="flex items-center gap-2">
                   <input

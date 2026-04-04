@@ -1,41 +1,75 @@
-import { computed } from 'vue';
-import type { Agency } from '~/utils/schemas';
+import { useState } from "#imports";
+import { computed } from "vue";
+import { apiFetch } from "~/composables/useApi";
+import { useAuth } from "~/composables/useAuth";
+import type { Agency } from "~/utils/schemas";
 
 const defaultAgency: Agency = {
-  commercial_name: '',
-  fiscal_id: '',
-  country: '',
-  email: '',
-  phone: '',
-  address: '',
+  commercial_name: "",
+  fiscal_id: "",
+  country: "",
+  email: "",
+  phone: "",
+  address: "",
   logo: undefined,
-  primary_color: 'green',
-  created_at: '',
-  status: '',
-  user_count: 0,
-  booking_count: 0,
-  next_settlement: null,
+  primary_color: "green",
+  agency_group: null,
   markup: 0,
+  status: "pending",
+  created_at: "",
+  next_settlement: null,
 };
 
 export const useAgency = () => {
-  // Nuxt server mock — llamada directa sin apiBaseUrl (no es el backend Django)
-  const { data, refresh } = useAsyncData<Agency>('agency', () =>
-    $fetch('/api/agency'),
-  );
+  const { currentUser } = useAuth();
+  const data = useState<Agency | null>("agency:data", () => null);
+  const loading = useState<boolean>("agency:loading", () => false);
+  const error = useState<string | null>("agency:error", () => null);
 
-  // Always non-null: falls back to defaults while loading
   const agency = computed<Agency>(() => data.value ?? defaultAgency);
 
-  const updateAgency = (newData: Partial<Agency>) => {
-    if (data.value) {
-      data.value = { ...data.value, ...newData };
+  async function fetchAgency(): Promise<void> {
+    // Agency ID comes from the authenticated user profile
+    const agencyId = currentUser.value?.agency?.id;
+    if (!agencyId) return;
+
+    loading.value = true;
+    error.value = null;
+    try {
+      data.value = await apiFetch<Agency>(`/api/agency/agencies/${agencyId}`);
+    } catch (err) {
+      error.value =
+        err instanceof Error ? err.message : "Error al cargar la agencia";
+    } finally {
+      loading.value = false;
     }
-  };
+  }
+
+  async function updateAgency(patch: Partial<Agency>): Promise<void> {
+    const agencyId = currentUser.value?.agency?.id;
+    if (!agencyId) return;
+
+    loading.value = true;
+    error.value = null;
+    try {
+      data.value = await apiFetch<Agency>(`/api/agency/agencies/${agencyId}`, {
+        method: "PATCH",
+        body: patch,
+      });
+    } catch (err) {
+      error.value =
+        err instanceof Error ? err.message : "Error al actualizar la agencia";
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
 
   return {
     agency,
+    loading,
+    error,
+    fetchAgency,
     updateAgency,
-    refresh,
   };
 };
