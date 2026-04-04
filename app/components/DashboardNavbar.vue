@@ -127,13 +127,13 @@ const { netPriceVisible, toggle: toggleNetPrice } = useNetPrice();
           <template v-if="!isInternalRole">
             <UAvatar
               :src="agency.logo"
-              :alt="agency.name"
+              :alt="agency.commercial_name"
               size="sm"
               class="bg-white border border-gray-100 shadow-sm"
             />
             <span
               class="text-lg sm:text-xl font-black tracking-tight text-primary truncate max-w-[140px] sm:max-w-[200px]"
-              >{{ agency.name }}</span
+              >{{ agency.commercial_name }}</span
             >
           </template>
           <template v-else>

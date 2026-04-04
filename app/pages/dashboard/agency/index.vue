@@ -57,9 +57,9 @@ function handleLogoUpload(event: Event) {
 function saveAgency() {
   updateAgency(formAgency.value);
 
-  if (formAgency.value.primaryColor) {
+  if (formAgency.value.primary_color) {
     if (appConfig.ui && appConfig.ui.colors) {
-      appConfig.ui.colors.primary = formAgency.value.primaryColor;
+      appConfig.ui.colors.primary = formAgency.value.primary_color;
     }
   }
 
@@ -91,7 +91,7 @@ function saveAgency() {
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
               {{ t('agency.dashboard.quickStats.salesTeam') }}
             </p>
-            <p class="text-2xl font-bold">{{ agency.usersCount }}</p>
+            <p class="text-2xl font-bold">{{ agency.user_count }}</p>
           </div>
         </div>
         <template #footer>
@@ -116,7 +116,7 @@ function saveAgency() {
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
               {{ t('agency.dashboard.quickStats.totalBookings') }}
             </p>
-            <p class="text-2xl font-bold">{{ agency.bookingsCount }}</p>
+            <p class="text-2xl font-bold">{{ agency.booking_count }}</p>
           </div>
         </div>
         <template #footer>
@@ -186,7 +186,7 @@ function saveAgency() {
         <div class="flex flex-col items-center justify-start md:w-1/4 pt-2">
           <UAvatar
             :src="agency.logo"
-            :alt="agency.name"
+            :alt="agency.commercial_name"
             size="3xl"
             class="mb-4 shadow-sm"
           />
@@ -199,7 +199,7 @@ function saveAgency() {
           </UBadge>
           <p class="text-xs text-gray-500 mt-2 text-center">
             {{ t('agency.dashboard.profile.registered') }}
-            {{ agency.registeredAt }}
+            {{ agency.created_at }}
           </p>
         </div>
 
@@ -210,7 +210,7 @@ function saveAgency() {
               {{ t('agency.dashboard.profile.businessName') }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
-              {{ agency.name }}
+              {{ agency.commercial_name }}
             </dd>
           </div>
           <div>
@@ -218,7 +218,7 @@ function saveAgency() {
               {{ t('agency.dashboard.profile.taxId') }}
             </dt>
             <dd class="text-sm font-medium text-gray-900 dark:text-white">
-              {{ agency.rut }}
+              {{ agency.fiscal_id }}
             </dd>
           </div>
           <div>
@@ -329,13 +329,13 @@ function saveAgency() {
                   type="button"
                   :class="[
                     'w-8 h-8 rounded-full border-2 focus:outline-none transition-transform hover:scale-110 shadow-sm',
-                    formAgency.primaryColor === color
+                    formAgency.primary_color === color
                       ? 'border-gray-900 dark:border-white scale-110'
                       : 'border-transparent',
                   ]"
                   :style="`background-color: ${colorMap[color]}`"
                   :title="color"
-                  @click="formAgency.primaryColor = color"
+                  @click="formAgency.primary_color = color"
                 />
               </div>
               <div class="flex items-center gap-3">
@@ -344,12 +344,12 @@ function saveAgency() {
                 </div>
                 <div class="flex items-center gap-2">
                   <input
-                    v-model="formAgency.primaryColor"
+                    v-model="formAgency.primary_color"
                     type="color"
                     class="w-8 h-8 rounded cursor-pointer border-0 p-0 overflow-hidden"
                   />
                   <UInput
-                    v-model="formAgency.primaryColor"
+                    v-model="formAgency.primary_color"
                     placeholder="#000000"
                     class="w-32"
                   />

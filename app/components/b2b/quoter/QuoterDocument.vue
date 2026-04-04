@@ -52,7 +52,7 @@ const formatCurrency = (amount: number) => {
           alt="Agency Logo"
           class="h-16 w-auto object-contain mb-2 ml-auto"
         />
-        <p class="font-bold text-lg text-gray-900">{{ agency.name }}</p>
+        <p class="font-bold text-lg text-gray-900">{{ agency.commercial_name }}</p>
         <p class="text-sm text-gray-500">{{ agency.phone }}</p>
         <p class="text-sm text-gray-500">{{ agency.email }}</p>
       </div>
@@ -136,7 +136,7 @@ const formatCurrency = (amount: number) => {
     <div
       class="border-t border-gray-200 pt-6 mt-12 text-center text-xs text-gray-400"
     >
-      <p class="mb-1">{{ t('quoter.documentFooter1') }} {{ agency.name }}.</p>
+      <p class="mb-1">{{ t('quoter.documentFooter1') }} {{ agency.commercial_name }}.</p>
       <p>
         {{ t('quoter.documentFooter2') }}
       </p>

@@ -6,14 +6,14 @@ import { useSalePrice } from '~/composables/useSalePrice';
 
 vi.mock('#imports', () => ({
   useAsyncData: (_key: string, _fn: () => unknown) => ({
-    data: ref({ markupPercentage: 10 }),
+    data: ref({ markup: 10 }),
     refresh: vi.fn(),
   }),
 }));
 
 vi.mock('~/composables/useAgency', () => ({
   useAgency: () => ({
-    agency: computed(() => ({ markupPercentage: 10 })),
+    agency: computed(() => ({ markup: 10 })),
   }),
 }));
 

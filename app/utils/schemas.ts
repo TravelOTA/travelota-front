@@ -3,20 +3,25 @@ import { z } from 'zod';
 // --- Domain schemas ---
 
 export const agencySchema = z.object({
-  name: z.string(),
-  rut: z.string(),
+  commercial_name: z.string(),
+  fiscal_id: z.string(),
   country: z.string(),
   email: z.string().email(),
   phone: z.string(),
   address: z.string(),
+  web: z.string().optional(),
   logo: z.string().optional(),
-  primaryColor: z.string(),
-  registeredAt: z.string(),
+  primary_color: z.string(),
+  agency_group: z.unknown().nullable().optional(),
+  markup: z.number(),
   status: z.string(),
-  usersCount: z.number(),
-  bookingsCount: z.number(),
-  nextSettlement: z.string(),
-  markupPercentage: z.number().default(0),
+  user_count: z.number().optional(),
+  booking_count: z.number().optional(),
+  created_at: z.string(),
+  next_settlement: z.string().nullable().optional(),
+  public_email: z.string().optional(),
+  public_phone: z.string().optional(),
+  contact_name: z.string().optional(),
 });
 
 export type Agency = z.infer<typeof agencySchema>;

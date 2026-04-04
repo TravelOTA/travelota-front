@@ -2,20 +2,20 @@ import { computed } from 'vue';
 import type { Agency } from '~/utils/schemas';
 
 const defaultAgency: Agency = {
-  name: '',
-  rut: '',
+  commercial_name: '',
+  fiscal_id: '',
   country: '',
   email: '',
   phone: '',
   address: '',
   logo: undefined,
-  primaryColor: 'green',
-  registeredAt: '',
+  primary_color: 'green',
+  created_at: '',
   status: '',
-  usersCount: 0,
-  bookingsCount: 0,
-  nextSettlement: '',
-  markupPercentage: 0,
+  user_count: 0,
+  booking_count: 0,
+  next_settlement: null,
+  markup: 0,
 };
 
 export const useAgency = () => {
